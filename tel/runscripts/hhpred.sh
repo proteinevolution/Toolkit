@@ -289,8 +289,7 @@ QA3M_COUNT=$(egrep '^>' ../results/${JOBID}.a3m | wc -l)
 
 hhfilter -i ../results/${JOBID}.a3m \
          -o ../results/reduced.a3m \
-         -neff 12.0 \
-         -diff 100
+         -diff 200
 
 sed -i "1 i\#A3M#" ../results/reduced.a3m
 
@@ -400,7 +399,7 @@ fasta2json.py ../results/reduced.fas ../results/reduced.json
 hhviz.pl ${JOBID} ../results/ ../results/  &> /dev/null
 
 #Generate query template alignment
-hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas
+hhmakemodel.pl -i ../results/${JOBID}.hhr -fas ../results/alignment.fas -p %pmin.content
 # Generate Query in JSON
 fasta2json.py ../results/alignment.fas ../results/querytemplate.json
 

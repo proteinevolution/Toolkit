@@ -29,6 +29,7 @@
             </div>
 
             <div v-html="$t('jobs.results.hhpred.numHits', {num: info.num_hits})"></div>
+            <div v-html="$t('jobs.results.hhpred.queryNeff', {num: info.query_neff})"></div>
 
             <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'"
                  class="mt-2">
@@ -217,213 +218,217 @@
 </template>
 
 <script lang="ts">
-    import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
-    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
-    import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
-    import EventBus from '@/util/EventBus';
-    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
-    import {jobService} from '@/services/JobService';
-    import {resultsService} from '@/services/ResultsService';
+import Loading from '@/components/utils/Loading.vue';
+import Logger from 'js-logger';
+import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
+import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import {HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import EventBus from '@/util/EventBus';
+import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import {jobService} from '@/services/JobService';
+import {resultsService} from '@/services/ResultsService';
 
-    const logger = Logger.get('HHpredResultsTab');
+const logger = Logger.get('HHpredResultsTab');
 
-    export default SearchResultTabMixin.extend({
-        name: 'HHpredResultsTab',
-        components: {
-            Loading,
-            HitListTable,
-            HitMap,
-            IntersectionObserver,
-        },
-        data() {
-            return {
-                alignments: undefined as HHpredAlignmentItem[] | undefined,
-                info: undefined as HHpredHHInfoResult | undefined,
-                color: true,
-                breakAfter: 80,
-                hitListFields: [{
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.hhpred.table.num'),
-                    sortable: true,
-                }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hhpred.table.hit'),
-                    sortable: true,
-                }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.hhpred.table.name'),
-                    sortable: true,
-                }, {
-                    key: 'probab',
-                    label: this.$t('jobs.results.hhpred.table.probHits'),
-                    sortable: true,
-                }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hhpred.table.eVal'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'ssScore',
-                    label: this.$t('jobs.results.hhpred.table.ssScore'),
-                    sortable: true,
-                }, {
-                    key: 'alignedCols',
-                    label: this.$t('jobs.results.hhpred.table.cols'),
-                    sortable: true,
-                }, {
-                    key: 'templateRef',
-                    label: this.$t('jobs.results.hhpred.table.targetLength'),
-                    sortable: true,
-                }],
-            };
-        },
-        computed: {
-            filename(): string {
-                if (!this.viewOptions.filename) {
-                    return '';
-                }
-                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
-            },
+export default SearchResultTabMixin.extend({
+  name: 'HHpredResultsTab',
+  components: {
+    Loading,
+    HitListTable,
+    HitMap,
+    IntersectionObserver,
+  },
+  data() {
+    return {
+      alignments: undefined as HHpredAlignmentItem[] | undefined,
+      info: undefined as HHpredHHInfoResult | undefined,
+      color: true,
+      breakAfter: 80,
+      hitListFields: [{
+        key: 'numCheck',
+        label: this.$t('jobs.results.hhpred.table.num'),
+        sortable: true,
+      }, {
+        key: 'acc',
+        label: this.$t('jobs.results.hhpred.table.hit'),
+        sortable: true,
+      }, {
+        key: 'name',
+        label: this.$t('jobs.results.hhpred.table.name'),
+        sortable: true,
+      }, {
+        key: 'probab',
+        label: this.$t('jobs.results.hhpred.table.probHits'),
+        sortable: true,
+      }, {
+        key: 'eval',
+        label: this.$t('jobs.results.hhpred.table.eVal'),
+        class: 'no-wrap',
+        sortable: true,
+      }, {
+        key: 'score',
+        label: this.$t('jobs.results.hhpred.table.score'),
+        sortable: true,
+      }, {
+        key: 'ssScore',
+        label: this.$t('jobs.results.hhpred.table.ssScore'),
+        sortable: true,
+      }, {
+        key: 'alignedCols',
+        label: this.$t('jobs.results.hhpred.table.cols'),
+        sortable: true,
+      }, {
+        key: 'templateRef',
+        label: this.$t('jobs.results.hhpred.table.targetLength'),
+        sortable: true,
+      }],
+    };
+  },
+  computed: {
+    filename(): string {
+      if (!this.viewOptions.filename) {
+        return '';
+      }
+      return this.viewOptions.filename.replace(':jobID', this.job.jobID);
+    },
 
-        },
-        methods: {
-            displayTemplateStructure(accession: string): void {
-                EventBus.$emit('show-modal', {
-                    id: 'templateStructureModal', props: {accessionStructure: accession},
-                });
-            },
-            download(): void {
-                const toolName = this.tool.name;
-                const downloadFilename = `${toolName}_${this.job.jobID}.hhr`;
-                resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
-                    .catch((e) => {
-                        logger.error(e);
-                    });
-            },
-            modelSelection(): void {
-                if (!this.alignments) {
-                    return;
-                }
+  },
+  methods: {
+    displayTemplateStructure(accession: string): void {
+      EventBus.$emit('show-modal', {
+        id: 'templateStructureModal', props: {accessionStructure: accession},
+      });
+    },
+    download(): void {
+      const toolName = this.tool.name;
+      const downloadFilename = `${toolName}_${this.job.jobID}.hhr`;
+      resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
+          .catch((e) => {
+            logger.error(e);
+          });
+    },
+    modelSelection(): void {
+      if (!this.alignments) {
+        return;
+      }
 
-                const selected: number[] = Array.from(this.selectedItems);
-                if (selected.length < 1) {
-                    selected.push(this.alignments[0].num);
-                    this.$alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
-                }
+      const selected: number[] = Array.from(this.selectedItems);
+      if (selected.length < 1) {
+        selected.push(this.alignments[0].num);
+        this.$alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
+      }
 
-                if (this.info) {
-                    const submission: any = {
-                        parentID: this.job.jobID,
-                        templates: selected.join(' '),
-                        alnHash: this.info.alignmentHash,
-                    };
-                    jobService.submitJob('hhpred_manual', submission)
-                        .then((response) => {
-                            this.$router.push(`/jobs/${response.jobID}`);
-                        })
-                        .catch((response) => {
-                            logger.error('Could not submit job', response);
-                            this.$alert(this.$t('errors.general'), 'danger');
-                        });
-                }
+      if (this.info) {
+        const submission: any = {
+          parentID: this.job.jobID,
+          templates: selected.join(' '),
+          alnHash: this.info.alignmentHash,
+        };
+        jobService.submitJob('hhpred_manual', submission)
+            .then((response) => {
+              this.$router.push(`/jobs/${response.jobID}`);
+            })
+            .catch((response) => {
+              logger.error('Could not submit job', response);
+              this.$alert(this.$t('errors.general'), 'danger');
+            });
+      }
+    },
+    wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
+      if (this.wrap) {
+        const res: SearchAlignmentItemRender[] = [];
+        let qStart: number = al.query.start;
+        let tStart: number = al.template.start;
+        for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+          const end: number = start + this.breakAfter;
+          const qSeq: string = al.query.seq.slice(start, end);
+          const tSeq: string = al.template.seq.slice(start, end);
+          const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+          const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+          res.push({
+            agree: al.agree.slice(start, end),
+            query: {
+              consensus: al.query.consensus.slice(start, end),
+              end: qEnd,
+              name: al.query.name,
+              ref: al.query.ref,
+              seq: qSeq,
+              ss_dssp: al.query.ss_dssp.slice(start, end),
+              ss_pred: al.query.ss_pred.slice(start, end),
+              start: qStart,
             },
-            wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
-                if (this.wrap) {
-                    const res: SearchAlignmentItemRender[] = [];
-                    let qStart: number = al.query.start;
-                    let tStart: number = al.template.start;
-                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                        const end: number = start + this.breakAfter;
-                        const qSeq: string = al.query.seq.slice(start, end);
-                        const tSeq: string = al.template.seq.slice(start, end);
-                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                        res.push({
-                            agree: al.agree.slice(start, end),
-                            query: {
-                                consensus: al.query.consensus.slice(start, end),
-                                end: qEnd,
-                                name: al.query.name,
-                                ref: al.query.ref,
-                                seq: qSeq,
-                                ss_dssp: al.query.ss_dssp.slice(start, end),
-                                ss_pred: al.query.ss_pred.slice(start, end),
-                                start: qStart,
-                            },
-                            template: {
-                                accession: al.template.accession,
-                                consensus: al.template.consensus.slice(start, end),
-                                end: tEnd,
-                                ref: al.template.ref,
-                                seq: tSeq,
-                                ss_dssp: al.template.ss_dssp.slice(start, end),
-                                ss_pred: al.template.ss_pred.slice(start, end),
-                                start: tStart,
-                            },
-                        });
-                        qStart = qEnd + 1;
-                        tStart = tEnd + 1;
-                    }
-                    return res;
-                } else {
-                    return [al];
-                }
+            template: {
+              accession: al.template.accession,
+              consensus: al.template.consensus.slice(start, end),
+              end: tEnd,
+              ref: al.template.ref,
+              seq: tSeq,
+              ss_dssp: al.template.ss_dssp.slice(start, end),
+              ss_pred: al.template.ss_pred.slice(start, end),
+              start: tStart,
             },
-        },
-    });
+          });
+          qStart = qEnd + 1;
+          tStart = tEnd + 1;
+        }
+        return res;
+      } else {
+        return [al];
+      }
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>
-    .result-section {
-        padding-top: 3.5rem;
+.result-section {
+  padding-top: 3.5rem;
+}
+
+.result-options {
+  a {
+    @include media-breakpoint-up(lg) {
+      margin-right: 1.9rem;
+    }
+  }
+}
+
+.alignments-table {
+  font-size: 0.95em;
+
+  .blank-row {
+    height: 0.8rem;
+  }
+
+  .sequence {
+    td {
+      word-break: keep-all;
+      white-space: nowrap;
+      font-family: $font-family-monospace;
+      padding: 0 1rem 0 0;
     }
 
-    .result-options {
-        a {
-            @include media-breakpoint-up(lg) {
-                margin-right: 1.9rem;
-            }
-        }
+    .consensus-agree {
+      white-space: pre-wrap;
     }
+  }
 
-    .alignments-table {
-        font-size: 0.95em;
+  a {
+    cursor: pointer;
+    color: $primary;
 
-        .blank-row {
-            height: 0.8rem;
-        }
-
-        .sequence {
-            td {
-                word-break: keep-all;
-                white-space: nowrap;
-                font-family: $font-family-monospace;
-                padding: 0 1rem 0 0;
-            }
-
-            .consensus-agree {
-                white-space: pre-wrap;
-            }
-        }
-
-        a {
-            cursor: pointer;
-            color: $primary;
-
-            &:hover {
-                color: $tk-dark-green;
-            }
-        }
-
+    &:hover {
+      color: $tk-dark-green;
     }
+  }
 
-    .db-list {
-        border-left: 1px solid;
-        border-left-color: $tk-gray;
-        margin-left: 0.5em;
-        padding-left: 0.5em;
-    }
+}
+
+.db-list {
+  border-left: 1px solid;
+  border-left-color: $tk-gray;
+  margin-left: 0.5em;
+  padding-left: 0.5em;
+}
 </style>

@@ -216,6 +216,7 @@ export interface HHpredHHInfoResult extends HHInfoResult {
     msa_gen: string;
     qa3m_count: string;
     alignmentHash: string;
+    query_neff: number;
 }
 
 export interface StructureFileResponse {

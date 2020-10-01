@@ -35,7 +35,7 @@ export default {
                         -> A dollar '$' match the end of the sequence.</pre>`,
                     },
                     {
-                        title: 'Select database',
+                        title: 'Select target database',
                         content: `
                     The selected standard or proteome database is used in the search.
                         <ul>
@@ -62,7 +62,7 @@ export default {
                         content: `Specify the format of your pattern.`,
                     },
                     {
-                        title: 'Maximum number of sequences to display',
+                        title: 'Max target hits',
                         content: `You can select the max. count of sequences that will be fetched by your Pattern Search.`,
                     },
                 ],

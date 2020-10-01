@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe.syntax._
-import io.circe.{Decoder, HCursor, Json}
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HHPredHSP(
     query: HHPredQuery,
@@ -36,9 +36,10 @@ case class HHPredHSP(
     Map[String, Json](
       "numCheck"    -> num.asJson,
       "acc"         -> LinkUtil.getSingleLink(accession).asJson,
-      "name"        -> description.asJson,
+      "name"        -> description.slice(0, 120).asJson,
       "probab"      -> info.probab.asJson,
       "eval"        -> info.eval.asJson,
+      "score"       -> info.score.asJson,
       "ssScore"     -> ss_score.asJson,
       "alignedCols" -> info.aligned_cols.asJson,
       "templateRef" -> template.ref.asJson
@@ -48,21 +49,22 @@ case class HHPredHSP(
   // TODO
   def toAlignmentSectionJson(db: String = ""): Json = {
     Map[String, Json](
-      "num"         -> num.asJson,
-      "acc"         -> LinkUtil.getSingleLink(accession).asJson,
-      "structLink"  -> LinkUtil.displayStructLink(accession).asJson,
-      "dbLink"      -> LinkUtil.getLinksHHpred("11", accession).asJson,
-      "name"        -> description.asJson,
-      "probab"      -> info.probab.asJson,
-      "eval"        -> info.eval.asJson,
-      "score"       -> info.score.asJson,
-      "ssScore"     -> ss_score.asJson,
-      "ident"       -> "%1.0f".format(info.identities.toFloat * 100).asJson,
-      "similarity"  -> info.similarity.asJson,
-      "alignedCols" -> info.aligned_cols.asJson,
-      "template"    -> template.asJson,
-      "agree"       -> agree.asJson,
-      "query"       -> query.asJson
+      "num"           -> num.asJson,
+      "acc"           -> LinkUtil.getSingleLink(accession).asJson,
+      "structLink"    -> LinkUtil.displayStructLink(accession).asJson,
+      "dbLink"        -> LinkUtil.getLinksHHpred("11", accession).asJson,
+      "name"          -> description.asJson,
+      "probab"        -> info.probab.asJson,
+      "eval"          -> info.eval.asJson,
+      "score"         -> info.score.asJson,
+      "ssScore"       -> ss_score.asJson,
+      "template_neff" -> info.template_neff.asJson,
+      "ident"         -> "%1.0f".format(info.identities.toFloat * 100).asJson,
+      "similarity"    -> info.similarity.asJson,
+      "alignedCols"   -> info.aligned_cols.asJson,
+      "template"      -> template.asJson,
+      "agree"         -> agree.asJson,
+      "query"         -> query.asJson
     ).asJson
   }
 

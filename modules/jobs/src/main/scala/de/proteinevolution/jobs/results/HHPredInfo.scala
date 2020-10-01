@@ -25,7 +25,8 @@ case class HHPredInfo(
     identities: Double,
     probab: Double,
     score: Double,
-    similarity: Double
+    similarity: Double,
+    template_neff: Double
 )
 
 object HHPredInfo {
