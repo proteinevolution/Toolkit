@@ -1,168 +1,168 @@
 <template>
-  <Loading v-if="loading"
-           :message="$t('loading')"/>
-  <div v-else
-       class="font-small">
-    <b v-if="total === 0"
-       v-text="$t('jobs.results.hhblits.noResults')"></b>
-    <div v-else>
-      <div class="result-options">
-        <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
-        <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-        <a class="mr-4"
-           @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
-        <a class="border-right mr-4"></a>
-        <a :class="{active: allSelected}"
-           @click="toggleAllSelected">
-          {{ $t('jobs.results.actions.selectAll') }}</a>
-        <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
-        <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
-        <a :class="{active: color}"
-           @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-        <a :class="{active: wrap}"
-           @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
-      </div>
+    <Loading v-if="loading"
+             :message="$t('loading')" />
+    <div v-else
+         class="font-small">
+        <b v-if="total === 0"
+           v-text="$t('jobs.results.hhblits.noResults')"></b>
+        <div v-else>
+            <div class="result-options">
+                <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
+                <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
+                <a class="mr-4"
+                   @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a class="border-right mr-4"></a>
+                <a :class="{active: allSelected}"
+                   @click="toggleAllSelected">
+                    {{ $t('jobs.results.actions.selectAll') }}</a>
+                <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
+                <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
+                <a :class="{active: color}"
+                   @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{active: wrap}"
+                   @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+            </div>
 
-      <div v-html="$t('jobs.results.hhblits.numHits', {num: info.num_hits})"></div>
+            <div v-html="$t('jobs.results.hhblits.numHits', {num: info.num_hits})"></div>
 
-      <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'"
-           class="mt-2">
-        {{ $t('jobs.results.sequenceFeatures.header') }}
-        <b v-if="info.coil === '0'"
-           v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-        <b v-if="info.tm > '0'"
-           v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
-        <b v-if="info.signal === '1'"
-           v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
-      </div>
+            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'"
+                 class="mt-2">
+                {{ $t('jobs.results.sequenceFeatures.header') }}
+                <b v-if="info.coil === '0'"
+                   v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm > '0'"
+                   v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'"
+                   v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+            </div>
 
-      <div ref="visualization"
-           class="result-section">
-        <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
-        <hit-map :job="job"
-                 @elem-clicked="scrollToElem"
-                 @resubmit-section="resubmitSection"/>
-      </div>
+            <div ref="visualization"
+                 class="result-section">
+                <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
+                <hit-map :job="job"
+                         @elem-clicked="scrollToElem"
+                         @resubmit-section="resubmitSection" />
+            </div>
 
-      <div ref="hits"
-           class="result-section">
-        <h4 class="mb-4">
-          {{ $t('jobs.results.hitlist.hits') }}
-        </h4>
-        <hit-list-table :job="job"
-                        :fields="hitListFields"
-                        :selected-items="selectedItems"
-                        @elem-clicked="scrollToElem"/>
-      </div>
+            <div ref="hits"
+                 class="result-section">
+                <h4 class="mb-4">
+                    {{ $t('jobs.results.hitlist.hits') }}
+                </h4>
+                <hit-list-table :job="job"
+                                :fields="hitListFields"
+                                :selected-items="selectedItems"
+                                @elem-clicked="scrollToElem" />
+            </div>
 
-      <div ref="alignments"
-           class="result-section">
-        <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
+            <div ref="alignments"
+                 class="result-section">
+                <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
 
-        <div ref="scrollElem"
-             class="table-responsive">
-          <table class="alignments-table">
-            <tbody>
-            <template v-for="(al, i) in alignments">
-              <tr :key="'alignment-' + al.num"
-                  :ref="'alignment-' + al.num"
-                  class="blank-row">
-                <td colspan="4">
-                  <hr v-if="i !== 0">
-                </td>
-              </tr>
-              <tr :key="'template-alignment-' + al.num">
-                <td></td>
-                <td colspan="3">
-                  <a @click="displayTemplateAlignment(al.template.accession)"
-                     v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
-                </td>
-              </tr>
-              <tr :key="'select-alignment-' + al.num"
-                  class="font-weight-bold">
-                <td class="no-wrap">
-                  <b-checkbox class="d-inline"
-                              :checked="selectedItems.includes(al.num)"
-                              @change="check($event, al.num)"/>
-                  <span v-text="al.num + '.'"></span>
-                </td>
-                <td colspan="3"
-                    v-html="al.acc + ' ' + al.name"></td>
-              </tr>
-              <tr :key="'alignment-info-' + al.num">
-                <td></td>
-                <td colspan="3"
-                    v-html="$t('jobs.results.hhblits.alignmentInfo', al)"></td>
-              </tr>
+                <div ref="scrollElem"
+                     class="table-responsive">
+                    <table class="alignments-table">
+                        <tbody>
+                            <template v-for="(al, i) in alignments">
+                                <tr :key="'alignment-' + al.num"
+                                    :ref="'alignment-' + al.num"
+                                    class="blank-row">
+                                    <td colspan="4">
+                                        <hr v-if="i !== 0">
+                                    </td>
+                                </tr>
+                                <tr :key="'template-alignment-' + al.num">
+                                    <td></td>
+                                    <td colspan="3">
+                                        <a @click="displayTemplateAlignment(al.template.accession)"
+                                           v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
+                                    </td>
+                                </tr>
+                                <tr :key="'select-alignment-' + al.num"
+                                    class="font-weight-bold">
+                                    <td class="no-wrap">
+                                        <b-checkbox class="d-inline"
+                                                    :checked="selectedItems.includes(al.num)"
+                                                    @change="check($event, al.num)" />
+                                        <span v-text="al.num + '.'"></span>
+                                    </td>
+                                    <td colspan="3"
+                                        v-html="al.acc + ' ' + al.name"></td>
+                                </tr>
+                                <tr :key="'alignment-info-' + al.num">
+                                    <td></td>
+                                    <td colspan="3"
+                                        v-html="$t('jobs.results.hhblits.alignmentInfo', al)"></td>
+                                </tr>
 
-              <template v-for="(alPart, pi) in wrapAlignments(al)">
-                <tr :key="'alignment-part-' + i + '-' + pi"
-                    class="blank-row">
-                  <td></td>
-                </tr>
-                <tr v-if="alPart.query.seq"
-                    :key="'alignment-seq-' + i + '-' + pi"
-                    class="sequence">
-                  <td></td>
-                  <td>Q</td>
-                  <td v-text="alPart.query.start"></td>
-                  <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
-                </tr>
-                <tr v-if="alPart.query.consensus"
-                    :key="'alignment-consensus-' + i + '-' + pi"
-                    class="sequence">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td v-html="alPart.query.consensus"></td>
-                </tr>
-                <tr v-if="alPart.agree"
-                    :key="'alignment-agree-' + i + '-' + pi"
-                    class="sequence">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td class="consensus-agree"
-                      v-text="alPart.agree"></td>
-                </tr>
-                <tr v-if="alPart.template.consensus"
-                    :key="'alignment-tpl-consensus-' + i + '-' + pi"
-                    class="sequence">
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td v-html="alPart.template.consensus"></td>
-                </tr>
-                <tr v-if="alPart.template.seq"
-                    :key="'alignment-tpls-seq-' + i + '-' + pi"
-                    class="sequence">
-                  <td></td>
-                  <td>T</td>
-                  <td v-text="alPart.template.start"></td>
-                  <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
-                </tr>
-                <tr :key="'alignment-br-'  + i + '-' + pi"
-                    class="blank-row">
-                  <td></td>
-                </tr>
-              </template>
-            </template>
+                                <template v-for="(alPart, pi) in wrapAlignments(al)">
+                                    <tr :key="'alignment-part-' + i + '-' + pi"
+                                        class="blank-row">
+                                        <td></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.seq"
+                                        :key="'alignment-seq-' + i + '-' + pi"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>Q</td>
+                                        <td v-text="alPart.query.start"></td>
+                                        <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
+                                    </tr>
+                                    <tr v-if="alPart.query.consensus"
+                                        :key="'alignment-consensus-' + i + '-' + pi"
+                                        class="sequence">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td v-html="alPart.query.consensus"></td>
+                                    </tr>
+                                    <tr v-if="alPart.agree"
+                                        :key="'alignment-agree-' + i + '-' + pi"
+                                        class="sequence">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="consensus-agree"
+                                            v-text="alPart.agree"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.consensus"
+                                        :key="'alignment-tpl-consensus-' + i + '-' + pi"
+                                        class="sequence">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td v-html="alPart.template.consensus"></td>
+                                    </tr>
+                                    <tr v-if="alPart.template.seq"
+                                        :key="'alignment-tpls-seq-' + i + '-' + pi"
+                                        class="sequence">
+                                        <td></td>
+                                        <td>T</td>
+                                        <td v-text="alPart.template.start"></td>
+                                        <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
+                                    </tr>
+                                    <tr :key="'alignment-br-' + i + '-' + pi"
+                                        class="blank-row">
+                                        <td></td>
+                                    </tr>
+                                </template>
+                            </template>
 
-            <tr v-if="alignments.length !== total">
-              <td colspan="4">
-                <Loading v-if="loadingMore"
-                         :message="$t('jobs.results.alignment.loadingHits')"
-                         justify="center"
-                         class="mt-4"/>
-                <intersection-observer @intersect="intersected"/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+                            <tr v-if="alignments.length !== total">
+                                <td colspan="4">
+                                    <Loading v-if="loadingMore"
+                                             :message="$t('jobs.results.alignment.loadingHits')"
+                                             justify="center"
+                                             class="mt-4" />
+                                    <intersection-observer @intersect="intersected" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts">
