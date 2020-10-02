@@ -96,12 +96,12 @@
                                 </tr>
 
                                 <template v-for="(alPart, pi) in wrapAlignments(al)">
-                                    <tr :key="'alignment-part-' + pi"
+                                    <tr :key="'alignment-part-' + i + '-' + pi"
                                         class="blank-row">
                                         <td></td>
                                     </tr>
                                     <tr v-if="alPart.query.seq"
-                                        :key="'alignment-seq-' + pi"
+                                        :key="'alignment-seq-' + i + '-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td>Q</td>
@@ -109,7 +109,7 @@
                                         <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.consensus"
-                                        :key="'alignment-consensus-' + pi"
+                                        :key="'alignment-consensus-' + i + '-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -117,7 +117,7 @@
                                         <td v-html="alPart.query.consensus"></td>
                                     </tr>
                                     <tr v-if="alPart.agree"
-                                        :key="'alignment-agree-' + pi"
+                                        :key="'alignment-agree-' + i + '-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -126,7 +126,7 @@
                                             v-text="alPart.agree"></td>
                                     </tr>
                                     <tr v-if="alPart.template.consensus"
-                                        :key="'alignment-tpl-consensus-' + pi"
+                                        :key="'alignment-tpl-consensus-' + i + '-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
@@ -134,14 +134,14 @@
                                         <td v-html="alPart.template.consensus"></td>
                                     </tr>
                                     <tr v-if="alPart.template.seq"
-                                        :key="'alignment-tpls-seq-' + pi"
+                                        :key="'alignment-tpls-seq-' + i + '-' + pi"
                                         class="sequence">
                                         <td></td>
                                         <td>T</td>
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr :key="'alignment-br-' + pi"
+                                    <tr :key="'alignment-br-' + i + '-' + pi"
                                         class="blank-row">
                                         <td></td>
                                     </tr>
@@ -166,133 +166,133 @@
 </template>
 
 <script lang="ts">
-    import Loading from '@/components/utils/Loading.vue';
-    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
-    import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
-    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import Loading from '@/components/utils/Loading.vue';
+import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
+import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import {HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
-    export default SearchResultTabMixin.extend({
-        name: 'HHblitsResultsTab',
-        components: {
-            Loading,
-            HitListTable,
-            HitMap,
-            IntersectionObserver,
-        },
-        data() {
-            return {
-                alignments: undefined as HHblitsAlignmentItem[] | undefined,
-                info: undefined as HHblitsHHInfoResult | undefined,
-                breakAfter: 85,
-                hitListFields: [{
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.hhblits.table.num'),
-                    sortable: true,
-                }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hhblits.table.hit'),
-                    sortable: true,
-                }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.hhblits.table.name'),
-                    sortable: true,
-                }, {
-                    key: 'probab',
-                    label: this.$t('jobs.results.hhblits.table.probHits'),
-                    sortable: true,
-                }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hhblits.table.eVal'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'alignedCols',
-                    label: this.$t('jobs.results.hhblits.table.cols'),
-                    sortable: true,
-                }, {
-                    key: 'templateRef',
-                    label: this.$t('jobs.results.hhblits.table.targetLength'),
-                    sortable: true,
-                }],
-            };
-        },
-        methods: {
-            wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
-                if (this.wrap) {
-                    const res: SearchAlignmentItemRender[] = [];
-                    let qStart: number = al.query.start;
-                    let tStart: number = al.template.start;
-                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                        const end: number = start + this.breakAfter;
-                        const qSeq: string = al.query.seq.slice(start, end);
-                        const tSeq: string = al.template.seq.slice(start, end);
-                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                        res.push({
-                            agree: al.agree.slice(start, end),
-                            query: {
-                                consensus: al.query.consensus.slice(start, end),
-                                end: qEnd,
-                                name: al.query.name,
-                                ref: al.query.ref,
-                                seq: qSeq,
-                                start: qStart,
-                            },
-                            template: {
-                                accession: al.template.accession,
-                                consensus: al.template.consensus.slice(start, end),
-                                end: tEnd,
-                                ref: al.template.ref,
-                                seq: tSeq,
-                                start: tStart,
-                            },
-                        });
-                        qStart = qEnd + 1;
-                        tStart = tEnd + 1;
-                    }
-                    return res;
-                } else {
-                    return [al];
-                }
+export default SearchResultTabMixin.extend({
+  name: 'HHblitsResultsTab',
+  components: {
+    Loading,
+    HitListTable,
+    HitMap,
+    IntersectionObserver,
+  },
+  data() {
+    return {
+      alignments: undefined as HHblitsAlignmentItem[] | undefined,
+      info: undefined as HHblitsHHInfoResult | undefined,
+      breakAfter: 85,
+      hitListFields: [{
+        key: 'numCheck',
+        label: this.$t('jobs.results.hhblits.table.num'),
+        sortable: true,
+      }, {
+        key: 'acc',
+        label: this.$t('jobs.results.hhblits.table.hit'),
+        sortable: true,
+      }, {
+        key: 'name',
+        label: this.$t('jobs.results.hhblits.table.name'),
+        sortable: true,
+      }, {
+        key: 'probab',
+        label: this.$t('jobs.results.hhblits.table.probHits'),
+        sortable: true,
+      }, {
+        key: 'eval',
+        label: this.$t('jobs.results.hhblits.table.eVal'),
+        class: 'no-wrap',
+        sortable: true,
+      }, {
+        key: 'alignedCols',
+        label: this.$t('jobs.results.hhblits.table.cols'),
+        sortable: true,
+      }, {
+        key: 'templateRef',
+        label: this.$t('jobs.results.hhblits.table.targetLength'),
+        sortable: true,
+      }],
+    };
+  },
+  methods: {
+    wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
+      if (this.wrap) {
+        const res: SearchAlignmentItemRender[] = [];
+        let qStart: number = al.query.start;
+        let tStart: number = al.template.start;
+        for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+          const end: number = start + this.breakAfter;
+          const qSeq: string = al.query.seq.slice(start, end);
+          const tSeq: string = al.template.seq.slice(start, end);
+          const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+          const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+          res.push({
+            agree: al.agree.slice(start, end),
+            query: {
+              consensus: al.query.consensus.slice(start, end),
+              end: qEnd,
+              name: al.query.name,
+              ref: al.query.ref,
+              seq: qSeq,
+              start: qStart,
             },
-        },
-    });
+            template: {
+              accession: al.template.accession,
+              consensus: al.template.consensus.slice(start, end),
+              end: tEnd,
+              ref: al.template.ref,
+              seq: tSeq,
+              start: tStart,
+            },
+          });
+          qStart = qEnd + 1;
+          tStart = tEnd + 1;
+        }
+        return res;
+      } else {
+        return [al];
+      }
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>
-    .result-section {
-        padding-top: 3.5rem;
+.result-section {
+  padding-top: 3.5rem;
+}
+
+.alignments-table {
+  font-size: 0.95em;
+
+  .blank-row {
+    height: 0.8rem;
+  }
+
+  .sequence {
+    td {
+      word-break: keep-all;
+      white-space: nowrap;
+      font-family: $font-family-monospace;
+      padding: 0 1rem 0 0;
     }
 
-    .alignments-table {
-        font-size: 0.95em;
-
-        .blank-row {
-            height: 0.8rem;
-        }
-
-        .sequence {
-            td {
-                word-break: keep-all;
-                white-space: nowrap;
-                font-family: $font-family-monospace;
-                padding: 0 1rem 0 0;
-            }
-
-            .consensus-agree {
-                white-space: pre-wrap;
-            }
-        }
-
-        a {
-            cursor: pointer;
-            color: $primary;
-
-            &:hover {
-                color: $tk-dark-green;
-            }
-        }
+    .consensus-agree {
+      white-space: pre-wrap;
     }
+  }
+
+  a {
+    cursor: pointer;
+    color: $primary;
+
+    &:hover {
+      color: $tk-dark-green;
+    }
+  }
+}
 </style>

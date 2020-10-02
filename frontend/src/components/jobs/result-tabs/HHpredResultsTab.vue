@@ -127,7 +127,7 @@
                                         <td></td>
                                     </tr>
                                     <tr v-if="alPart.query.ss_pred"
-                                        :key="'alignment-ss_pred-' + i + '-' + alIdx"
+                                        :key="'query-alignment-ss_pred-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>Q ss_pred</td>
@@ -135,7 +135,7 @@
                                         <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                     </tr>
                                     <tr v-if="alPart.query.seq"
-                                        :key="'alignment-seq-' + i + '-' + alIdx"
+                                        :key="'query-alignment-seq-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td v-text="'Q '+alPart.query.name"></td>
@@ -170,7 +170,7 @@
                                         <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.seq"
-                                        :key="'alignment-seq-' + i + '-' + alIdx"
+                                        :key="'template-alignment-seq-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td v-text="'T '+alPart.template.accession"></td>
@@ -186,7 +186,7 @@
                                         <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                     </tr>
                                     <tr v-if="alPart.template.ss_pred"
-                                        :key="'alignment-ss_pred-' + i + '-' + alIdx"
+                                        :key="'template-alignment-ss_pred-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td>T ss_pred</td>
