@@ -44,6 +44,7 @@
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
                                     <b-btn class="submit-button"
+                                           data-v-step="3"
                                            :class="{ 'submit-button-margin' : loggedIn }"
                                            variant="primary"
                                            :disabled="preventSubmit"

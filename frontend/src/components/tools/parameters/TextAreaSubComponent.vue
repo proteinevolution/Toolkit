@@ -17,7 +17,8 @@
                     :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
-            <b-btn variant="link"
+            <b-btn data-v-step="2"
+                   variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
                          :size="20" />

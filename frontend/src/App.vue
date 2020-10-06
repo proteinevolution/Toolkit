@@ -48,6 +48,8 @@
             <ResetPasswordModal />
         </div>
 
+        <v-tour name="myTour" :steps="steps"></v-tour>
+
         <scroll-top-button />
 
         <notifications animation-type="velocity" />
@@ -96,10 +98,11 @@
     import CookieLaw from 'vue-cookie-law';
     import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
     import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
+    import TourMixin from "@/mixins/TourMixin";
 
     const logger = Logger.get('App');
 
-    export default Vue.extend({
+    export default TourMixin.extend({
         name: 'App',
         components: {
             OffscreenMenu,
@@ -254,6 +257,7 @@
     @import '~bootstrap/scss/bootstrap';
     @import '~bootstrap-vue/dist/bootstrap-vue.css';
     @import '~vue-multiselect/dist/vue-multiselect.min.css';
+    @import '~vue-tour/dist/vue-tour.css';
     @import './assets/scss/form-elements';
     @import './assets/scss/modals';
     @import './assets/scss/sequence-coloring';

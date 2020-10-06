@@ -39,6 +39,7 @@
     "vue-simple-spinner": "^1.2.10",
     "vue-slider-component": "^3.2.5",
     "vue-switches": "^2.0.1",
+    "vue-tour": "^1.5.0",
     "vue2-scrollbar": "^0.0.3",
     "vuex": "^3.5.1"
   },

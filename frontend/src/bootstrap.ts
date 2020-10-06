@@ -5,7 +5,9 @@ import moment from 'moment';
 import VueClipboard from 'vue-clipboard2';
 import Vue from 'vue';
 import 'es6-promise/auto';
+import VueTour from 'vue-tour';
 
+Vue.use(VueTour);
 Vue.use(BootstrapVue);
 Vue.use(Notifications, {
     browserNotifications: {
