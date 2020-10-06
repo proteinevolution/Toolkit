@@ -37,7 +37,8 @@
     "vue-router": "^3.5.4",
     "vue-simple-spinner": "^1.2.10",
     "vue-slider-component": "^3.2.20",
-    "vue-switches": "^2.0.1"
+    "vue-switches": "^2.0.1",
+    "vue-tour": "^1.5.0"
   },
   "devDependencies": {
     "@types/chai": "^4.3.1",

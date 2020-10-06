@@ -45,6 +45,7 @@
                                               class="submit-buttons pt-4">
                                     <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
                                            class="submit-button"
+                                           data-v-step="3"
                                            :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
                                            variant="primary"
