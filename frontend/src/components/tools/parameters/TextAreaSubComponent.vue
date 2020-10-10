@@ -17,7 +17,7 @@
                     :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
-            <b-btn data-v-step="2"
+            <b-btn data-v-step="paste"
                    variant="link"
                    @click="handlePasteExample">
                 <loading v-if="$store.state.loading.alignmentTextarea"
@@ -49,230 +49,233 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
-    import {transformToFormat, validation} from '@/util/validation';
-    import {ValidationResult} from '@/types/toolkit/validation';
-    import VelocityFade from '@/transitions/VelocityFade.vue';
-    import EventBus from '@/util/EventBus';
-    import Logger from 'js-logger';
-    import {sampleSeqService} from '@/services/SampleSeqService';
-    import Loading from '@/components/utils/Loading.vue';
+import Vue from 'vue';
+import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
+import {transformToFormat, validation} from '@/util/validation';
+import {ValidationResult} from '@/types/toolkit/validation';
+import VelocityFade from '@/transitions/VelocityFade.vue';
+import EventBus from '@/util/EventBus';
+import Logger from 'js-logger';
+import {sampleSeqService} from '@/services/SampleSeqService';
+import Loading from '@/components/utils/Loading.vue';
 
-    const logger = Logger.get('TextAreaSubComponent');
+const logger = Logger.get('TextAreaSubComponent');
 
-    export default Vue.extend({
-        name: 'TextAreaSubComponent',
-        components: {
-            VelocityFade,
-            Loading,
+export default Vue.extend({
+    name: 'TextAreaSubComponent',
+    components: {
+        VelocityFade,
+        Loading,
+    },
+    props: {
+        /*
+         Simply stating the interface type doesn't work, this is a workaround. See
+         https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
+         */
+        parameter: {
+            type: Object as () => TextAreaParameter,
         },
-        props: {
-            /*
-             Simply stating the interface type doesn't work, this is a workaround. See
-             https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-             */
-            parameter: {
-                type: Object as () => TextAreaParameter,
-            },
-            validationParams: {
-                type: Object as () => ValidationParams,
-            },
-            value: {
-                type: String,
-                required: true,
-            },
-            second: {
-                type: Boolean,
-                required: false,
-                default: false,
-            },
+        validationParams: {
+            type: Object as () => ValidationParams,
         },
-        data() {
-            return {
-                fileUploadProgress: 0,
-                fileDragged: false,
-                dragInterval: undefined as any,
-                uploadingFile: false,
-                autoTransformedParams: null,
-                autoTransformMessageTimeout: 2500,
-                validation: {} as ValidationResult,
-            };
+        value: {
+            type: String,
+            required: true,
         },
-        watch: {
-            value: {
-                immediate: true,
-                handler(value: string) {
-                    // validate in watcher since somehow computed properties don't update on empty strings
-                    const val: ValidationResult = validation(value, this.parameter.inputType, this.validationParams);
-                    if (val.textKey === 'shouldAutoTransform') {
-                        this.handleInput(transformToFormat(value, val.textKeyParams.transformFormat));
-                        this.displayAutoTransformMessage(val.textKeyParams);
+        second: {
+            type: Boolean,
+            required: false,
+            default: false,
+        },
+    },
+    data() {
+        return {
+            fileUploadProgress: 0,
+            fileDragged: false,
+            dragInterval: undefined as any,
+            uploadingFile: false,
+            autoTransformedParams: null,
+            autoTransformMessageTimeout: 2500,
+            validation: {} as ValidationResult,
+        };
+    },
+    watch: {
+        value: {
+            immediate: true,
+            handler(value: string) {
+                // validate in watcher since somehow computed properties don't update on empty strings
+                const val: ValidationResult = validation(value, this.parameter.inputType, this.validationParams);
+                if (val.textKey === 'shouldAutoTransform') {
+                    this.handleInput(transformToFormat(value, val.textKeyParams.transformFormat));
+                    this.displayAutoTransformMessage(val.textKeyParams);
 
-                        // trigger validation again
-                        this.validation = validation(value, this.parameter.inputType, this.validationParams);
+                    // trigger validation again
+                    this.validation = validation(value, this.parameter.inputType, this.validationParams);
+                }
+
+                // emit event if msa detected (except for second input)
+                if (!this.second && val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
+                    EventBus.$emit('msa-detected-changed', val.msaDetected);
+                }
+
+                this.validation = val;
+                this.$emit('validation', val);
+            },
+        },
+    },
+    created() {
+        (this as any).boundDragOver = this.handleDragOver.bind(this);
+        document.addEventListener('dragover', (this as any).boundDragOver);
+        // for the tour
+        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
+    },
+    beforeDestroy() {
+        document.removeEventListener('dragover', (this as any).boundDragOver);
+        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
+    },
+    methods: {
+        handleDragOver(e: Event): void {
+            e.preventDefault();
+            if (this.dragInterval) {
+                clearInterval(this.dragInterval);
+            }
+
+            this.dragInterval = setInterval(() => {
+                this.fileDragged = false;
+                clearInterval(this.dragInterval);
+            }, 100);
+            if (!this.fileDragged) {
+                this.fileDragged = true;
+            }
+        },
+        handleFileUpload($event: Event): void {
+            const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
+            if (fileUpload.files && fileUpload.files.length > 0) {
+                this.fileUploadProgress = 0;
+                this.uploadingFile = true;
+                const file = fileUpload.files[0];
+                fileUpload.value = ''; // reset file upload
+                // TODO validate MIME type
+                const reader = new FileReader();
+                reader.onload = () => {
+                    if (reader.result) {
+                        this.handleInput(reader.result.toString());
                     }
-
-                    // emit event if msa detected (except for second input)
-                    if (!this.second && val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
-                        EventBus.$emit('msa-detected-changed', val.msaDetected);
+                };
+                reader.onerror = this.errorHandler;
+                reader.onprogress = (evt: ProgressEvent) => {
+                    if (evt.lengthComputable) {
+                        this.fileUploadProgress = Math.round((evt.loaded / evt.total) * 100);
                     }
-
-                    this.validation = val;
-                    this.$emit('validation', val);
-                },
-            },
+                };
+                reader.onloadend = () => {
+                    setTimeout(() => {
+                        this.$alert(this.$t('tools.parameters.textArea.uploadedFile'));
+                        this.uploadingFile = false;
+                    }, 500);
+                };
+                reader.readAsText(file);
+            }
         },
-        created() {
-            (this as any).boundDragOver = this.handleDragOver.bind(this);
-            document.addEventListener('dragover', (this as any).boundDragOver);
+        displayAutoTransformMessage(params: any): void {
+            this.autoTransformedParams = params;
+            setTimeout(() => {
+                this.autoTransformedParams = null;
+            }, this.autoTransformMessageTimeout);
         },
-        beforeDestroy() {
-            document.removeEventListener('dragover', (this as any).boundDragOver);
+        errorHandler(evt: Event): void {
+            const error = (evt.target as FileReader).error;
+            this.uploadingFile = false;
+            if (error) {
+                switch (error.code) {
+                    case error.NOT_FOUND_ERR:
+                        this.$alert(this.$t('errors.fileNotFound'), 'danger');
+                        break;
+                    case error.ABORT_ERR:
+                        break; // noop
+                    default:
+                        this.$alert(this.$t('errors.fileUnreadable'), 'danger');
+                }
+            }
         },
-        methods: {
-            handleDragOver(e: Event): void {
-                e.preventDefault();
-                if (this.dragInterval) {
-                    clearInterval(this.dragInterval);
-                }
-
-                this.dragInterval = setInterval(() => {
-                    this.fileDragged = false;
-                    clearInterval(this.dragInterval);
-                }, 100);
-                if (!this.fileDragged) {
-                    this.fileDragged = true;
-                }
-            },
-            handleFileUpload($event: Event): void {
-                const fileUpload: HTMLInputElement = $event.target as HTMLInputElement;
-                if (fileUpload.files && fileUpload.files.length > 0) {
-                    this.fileUploadProgress = 0;
-                    this.uploadingFile = true;
-                    const file = fileUpload.files[0];
-                    fileUpload.value = ''; // reset file upload
-                    // TODO validate MIME type
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                        if (reader.result) {
-                            this.handleInput(reader.result.toString());
-                        }
-                    };
-                    reader.onerror = this.errorHandler;
-                    reader.onprogress = (evt: ProgressEvent) => {
-                        if (evt.lengthComputable) {
-                            this.fileUploadProgress = Math.round((evt.loaded / evt.total) * 100);
-                        }
-                    };
-                    reader.onloadend = () => {
-                        setTimeout(() => {
-                            this.$alert(this.$t('tools.parameters.textArea.uploadedFile'));
-                            this.uploadingFile = false;
-                        }, 500);
-                    };
-                    reader.readAsText(file);
-                }
-            },
-            displayAutoTransformMessage(params: any): void {
-                this.autoTransformedParams = params;
-                setTimeout(() => {
-                    this.autoTransformedParams = null;
-                }, this.autoTransformMessageTimeout);
-            },
-            errorHandler(evt: Event): void {
-                const error = (evt.target as FileReader).error;
-                this.uploadingFile = false;
-                if (error) {
-                    switch (error.code) {
-                        case error.NOT_FOUND_ERR:
-                            this.$alert(this.$t('errors.fileNotFound'), 'danger');
-                            break;
-                        case error.ABORT_ERR:
-                            break; // noop
-                        default:
-                            this.$alert(this.$t('errors.fileUnreadable'), 'danger');
-                    }
-                }
-            },
-            handlePasteExample(): void {
-                EventBus.$emit('paste-example');
-                this.$store.commit('startLoading', 'alignmentTextarea');
-                const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
-                sampleSeqService.fetchSampleSequence(sampleSeqKey)
-                    .then((res: string) => {
-                        this.handleInput(res);
-                    })
-                    .catch((err: any) => {
-                        logger.error('error when fetching sample sequence', err);
-                        this.handleInput('Error!');
-                    })
-                    .finally(() => {
-                        this.$store.commit('stopLoading', 'alignmentTextarea');
-                    });
-            },
-            handleInput(value: string): void {
-                this.$emit('input', value);
-            },
+        handlePasteExample(): void {
+            EventBus.$emit('paste-example');
+            this.$store.commit('startLoading', 'alignmentTextarea');
+            const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
+            sampleSeqService.fetchSampleSequence(sampleSeqKey)
+                .then((res: string) => {
+                    this.handleInput(res);
+                })
+                .catch((err: any) => {
+                    logger.error('error when fetching sample sequence', err);
+                    this.handleInput('Error!');
+                })
+                .finally(() => {
+                    this.$store.commit('stopLoading', 'alignmentTextarea');
+                });
         },
-    });
+        handleInput(value: string): void {
+            this.$emit('input', value);
+        },
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .textarea-group {
-        width: 100%;
+.textarea-group {
+  width: 100%;
 
-        .btn-link:hover, .btn-link:active, .btn-link:focus {
-            text-decoration: none;
-        }
+  .btn-link:hover, .btn-link:active, .btn-link:focus {
+    text-decoration: none;
+  }
 
-        .file-upload-progress {
-            height: 0;
-            transition: height 1s;
-        }
+  .file-upload-progress {
+    height: 0;
+    transition: height 1s;
+  }
 
-        &.uploading-file {
-            .textarea-alignment {
-                border-bottom-left-radius: 0;
-                border-bottom-right-radius: 0;
-            }
-
-            .file-upload-progress {
-                height: 1rem;
-                transition: height 0s;
-                border-top-left-radius: 0;
-                border-top-right-radius: 0;
-            }
-        }
-    }
-
+  &.uploading-file {
     .textarea-alignment {
-        font-family: $font-family-monospace;
-        width: 100%;
-        height: 20em;
-        font-size: 0.9em;
-
-        &.shrink {
-            height: 14em;
-        }
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
-    .validation-alert {
-        margin-top: 0.5rem;
-        float: right;
-        padding: 0.4rem 0.5rem;
+    .file-upload-progress {
+      height: 1rem;
+      transition: height 0s;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
     }
+  }
+}
 
-    .file-upload-dropzone {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        background-color: $tk-lighter-gray;
-        border: 1px dashed $tk-light-gray;
-        border-radius: $global-radius;
-        z-index: 1;
-        padding: 2rem;
-    }
+.textarea-alignment {
+  font-family: $font-family-monospace;
+  width: 100%;
+  height: 20em;
+  font-size: 0.9em;
+
+  &.shrink {
+    height: 14em;
+  }
+}
+
+.validation-alert {
+  margin-top: 0.5rem;
+  float: right;
+  padding: 0.4rem 0.5rem;
+}
+
+.file-upload-dropzone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: $tk-lighter-gray;
+  border: 1px dashed $tk-light-gray;
+  border-radius: $global-radius;
+  z-index: 1;
+  padding: 2rem;
+}
 </style>

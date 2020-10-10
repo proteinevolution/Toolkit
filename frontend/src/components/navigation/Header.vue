@@ -1,5 +1,20 @@
 <template>
     <b-container class="header">
+        <b-alert variant="primary"
+                 dismissible
+                 :show="showTourBanner">
+            <p class="mb-2">
+                We have a tour! Yay!
+            </p>
+            <b-button variant="link"
+                      @click="ignoreTour">
+                Ignore
+            </b-button>
+            <b-button variant="primary"
+                      @click="startTour">
+                Start
+            </b-button>
+        </b-alert>
         <b-row>
             <TopNavBar />
         </b-row>
@@ -24,29 +39,51 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import NavBar from '@/components/navigation/NavBar.vue';
-    import TopNavBar from '@/components/navigation/TopNavBar.vue';
+import Vue from 'vue';
+import NavBar from '@/components/navigation/NavBar.vue';
+import TopNavBar from '@/components/navigation/TopNavBar.vue';
 
-    export default Vue.extend({
-        name: 'Header',
-        components: {
-            NavBar,
-            TopNavBar,
+export default Vue.extend({
+    name: 'Header',
+    components: {
+        NavBar,
+        TopNavBar,
+    },
+    data() {
+        return {
+            showingTour: false,
+        };
+    },
+    computed: {
+        showTourBanner(): boolean {
+            return !this.showingTour && !this.$store.state.tourFinished;
         },
-    });
+    },
+    methods: {
+        ignoreTour(): void {
+            this.$store.commit('setTourFinished');
+        },
+        startTour(): void {
+            this.showingTour = true;
+            setTimeout(() => {
+                this.$tours['toolkitTour'].start();
+            }, 300);
+        },
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .logo-container {
-        align-items: center;
-    }
+.logo-container {
+  align-items: center;
+}
 
-    .logo-link {
-        width: 100%;
-        img {
-            height: auto;
-            width: 180px;
-        }
-    }
+.logo-link {
+  width: 100%;
+
+  img {
+    height: auto;
+    width: 180px;
+  }
+}
 </style>
