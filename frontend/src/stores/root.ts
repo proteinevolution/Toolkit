@@ -6,6 +6,7 @@ import Logger from 'js-logger';
 import {pinia} from '@/stores/index';
 import {Job} from '@/types/toolkit/jobs';
 import {useJobsStore} from '@/stores/jobs';
+import {useStorage} from '@vueuse/core';
 
 const logger = Logger.get('Store');
 
@@ -16,6 +17,7 @@ export interface LoadingState {
 export interface RootState {
     loading: LoadingState;
     offscreenMenuShow: boolean;
+    tourFinished: boolean;
     maintenance: MaintenanceState;
     reconnecting: boolean;
     clusterWorkload: number;
@@ -35,6 +37,7 @@ export const useRootStore = defineStore('root', {
             logout: false,
         },
         offscreenMenuShow: false,
+        tourFinished: useStorage<boolean>('tourFinished', false),
         maintenance: {
             message: '',
             submitBlocked: false,

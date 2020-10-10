@@ -48,7 +48,9 @@
             <ResetPasswordModal />
         </div>
 
-        <v-tour name="myTour" :steps="steps"></v-tour>
+        <v-tour name="toolkitTour"
+                :steps="steps"
+                :callbacks="{onSkip: setTourFinished, onFinish: setTourFinished}" />
 
         <scroll-top-button />
 
@@ -103,7 +105,7 @@ import {useRootStore} from '@/stores/root';
 import {useToolsStore} from '@/stores/tools';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
-import TourMixin from "@/mixins/TourMixin";
+import TourMixin from '@/mixins/TourMixin';
 
 const logger = Logger.get('App');
 
@@ -158,8 +160,7 @@ export default TourMixin.extend({
         openJobId(): string {
             return this.$route.params.jobID;
         },
-        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
-    },
+    ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),},
     created() {
         // remove title star on focus
         document.addEventListener('visibilitychange', () => {
@@ -262,6 +263,9 @@ export default TourMixin.extend({
             this.modalProps.forwardingApiOptions = undefined;
             this.modalProps.forwardingApiOptionsAlignment = undefined;
             this.modalProps.forwardingData = '';
+        },
+        setTourFinished(): void {
+            this.$store.commit('setTourFinished');
         },
     },
 });

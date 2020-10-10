@@ -20,7 +20,7 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <transition-group data-v-step="0"
+                        <transition-group data-v-step="toolbar"
                                           name="list-complete"
                                           tag="ul"
                                           class="navbar-nav lower-nav"
@@ -29,7 +29,7 @@
                                         :key="tool.name"
                                         v-b-tooltip.hover.bottom
                                         class="list-complete-item"
-                                        :data-v-step="index === 0 ? '1' : ''"
+                                        :data-v-step="index === 0 ? 'tool' : ''"
                                         :to="'/tools/' + tool.name"
                                         :title="tool.description">
                                 {{ tool.longname }}

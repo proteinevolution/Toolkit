@@ -31,6 +31,7 @@
                                 no-fade>
                             <b-tab v-for="section in parameterSections"
                                    :key="toolName + section.name"
+                                   :title-item-class="'tour-tab-' + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"
@@ -40,35 +41,6 @@
                                              :submission="submission"
                                              :remember-params="rememberParams" />
                                 </div>
-
-                                <b-form-group v-if="showSubmitButtons"
-                                              class="submit-buttons pt-4">
-                                    <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
-                                           class="submit-button"
-                                           data-v-step="3"
-                                           :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
-                                           :disabled="preventSubmit"
-                                           variant="primary"
-                                           @click="submitJob">
-                                        <loading v-if="submitLoading"
-                                                 :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
-                                                 :size="20" />
-                                        <span v-else
-                                              v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
-                                    </b-btn>
-                                    <custom-job-id-input :validation-errors="validationErrors"
-                                                         :submission="submission" />
-                                    <b-btn v-if="hasRememberedParameters"
-                                           class="reset-params-button"
-                                           variant="secondary"
-                                           :title="$t('jobs.resetParamsTitle')"
-                                           @click="clearParameterRemember"
-                                           v-text="$t('jobs.resetParams')" />
-                                    <email-notification-switch v-if="loggedIn"
-                                                               :validation-errors="validationErrors"
-                                                               :submission="submission"
-                                                               class="pull-left" />
-                                </b-form-group>
                             </b-tab>
 
                             <!-- the job form can insert more tabs here -->
@@ -98,6 +70,34 @@
                                 </div>
                             </template>
                         </b-tabs>
+                        <b-form-group v-if="showSubmitButtons"
+                                      class="submit-buttons pt-4">
+                            <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
+                                   class="submit-button"
+                                   data-v-step="3"
+                                   :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
+                                   :disabled="preventSubmit"
+                                   variant="primary"
+                                   @click="submitJob">
+                                <loading v-if="submitLoading"
+                                         :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                         :size="20" />
+                                <span v-else
+                                      v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                            </b-btn>
+                            <custom-job-id-input :validation-errors="validationErrors"
+                                                 :submission="submission" />
+                            <b-btn v-if="hasRememberedParameters"
+                                   class="reset-params-button"
+                                   variant="secondary"
+                                   :title="$t('jobs.resetParamsTitle')"
+                                   @click="clearParameterRemember"
+                                   v-text="$t('jobs.resetParams')" />
+                            <email-notification-switch v-if="loggedIn"
+                                                       :validation-errors="validationErrors"
+                                                       :submission="submission"
+                                                       class="pull-left" />
+                        </b-form-group>
                     </b-card>
                 </b-form>
             </LoadingWrapper>
@@ -236,10 +236,12 @@ export default hasHTMLTitle.extend({
         this.loadToolParameters(this.toolName);
         EventBus.$on('alignment-viewer-result-open', this.openAlignmentViewerResults);
         EventBus.$on('resubmit-section', this.resubmitSectionReceive);
+        EventBus.$on('change-tool-tab', this.changeTab);
     },
     beforeDestroy() {
         EventBus.$off('alignment-viewer-result-open', this.openAlignmentViewerResults);
         EventBus.$off('resubmit-section', this.resubmitSectionReceive);
+        EventBus.$off('change-tool-tab', this.changeTab);
     },
     methods: {
         async loadToolParameters(toolName: string): Promise<void> {
@@ -266,6 +268,9 @@ export default hasHTMLTitle.extend({
             parameterRememberService.reset(this.toolName);
             this.loadToolParameters(this.toolName);
             this.refresh();
+        },
+        changeTab(index: number): void {
+            this.tabIndex = index;
         },
         toggleFullScreen(): void {
             this.fullScreen = !this.fullScreen;
@@ -372,8 +377,7 @@ export default hasHTMLTitle.extend({
 
   .submit-buttons {
     margin-bottom: 0;
-    padding-bottom: 0;
-    padding-right: 0;
+    padding: 1.25rem;
 
 
     .submit-button {

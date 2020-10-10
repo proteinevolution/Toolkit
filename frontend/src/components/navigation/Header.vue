@@ -1,5 +1,20 @@
 <template>
     <b-container class="header">
+        <b-alert variant="primary"
+                 dismissible
+                 :show="showTourBanner">
+            <p class="mb-2">
+                We have a tour! Yay!
+            </p>
+            <b-button variant="link"
+                      @click="ignoreTour">
+                Ignore
+            </b-button>
+            <b-button variant="primary"
+                      @click="startTour">
+                Start
+            </b-button>
+        </b-alert>
         <b-row>
             <TopNavBar />
         </b-row>
@@ -28,12 +43,36 @@
 import Vue from 'vue';
 import NavBar from '@/components/navigation/NavBar.vue';
 import TopNavBar from '@/components/navigation/TopNavBar.vue';
+import {useRootStore} from '@/stores/root';
+import {mapStores} from 'pinia';
 
 export default Vue.extend({
     name: 'Header',
     components: {
         NavBar,
         TopNavBar,
+    },
+    data() {
+        return {
+            showingTour: false,
+        };
+    },
+    computed: {
+        showTourBanner(): boolean {
+            return !this.showingTour && !this.rootStore.tourFinished;
+        },
+        ...mapStores(useRootStore),
+    },
+    methods: {
+        ignoreTour(): void {
+            this.rootStore.tourFinished = true;
+        },
+        startTour(): void {
+            this.showingTour = true;
+            setTimeout(() => {
+                this.$tours['toolkitTour'].start();
+            }, 300);
+        },
     },
 });
 </script>

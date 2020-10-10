@@ -1,11 +1,10 @@
+import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import Notifications from '@/modules/notifications';
 import TitleManager from '@/modules/title_manager';
-import Vue from 'vue';
 import {PiniaVuePlugin} from 'pinia';
 import VueTour from 'vue-tour';
 
-Vue.use(VueTour);
 Vue.use(BootstrapVue);
 Vue.use(Notifications, {
     browserNotifications: {
@@ -16,3 +15,4 @@ Vue.use(Notifications, {
 });
 Vue.use(TitleManager);
 Vue.use(PiniaVuePlugin);
+Vue.use(VueTour);

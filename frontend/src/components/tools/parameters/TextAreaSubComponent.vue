@@ -18,7 +18,7 @@
                     :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
-            <b-btn data-v-step="2"
+            <b-btn data-v-step="paste"
                    variant="link"
                    @click="handlePasteExample">
                 <loading v-if="rootStore.loading.alignmentTextarea"
@@ -134,9 +134,12 @@ export default Vue.extend({
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
+        // for the tour
+        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
+        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
     },
     methods: {
         handleDragOver(e: Event): void {
