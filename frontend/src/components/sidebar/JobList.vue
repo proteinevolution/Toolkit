@@ -24,7 +24,7 @@
                 <i class="fas fa-caret-up"></i>
             </div>
 
-            <a v-for="job in sortedJobs"
+            <a v-for="job in sliceJobs"
                :key="'link-' + job.jobID"
                class="job-element"
                :class="['status-' + job.status, job.jobID === selectedJobID ? 'selected' : '']"
@@ -96,7 +96,10 @@
                 if (this.sortDescending) {
                     sorted = sorted.reverse();
                 }
-                return sorted.slice(this.startIndex * this.itemsPerPage, (this.startIndex + 1) * this.itemsPerPage);
+                return sorted;
+            },
+            sliceJobs(): Job[] {
+                return this.sortedJobs.slice(this.startIndex * this.itemsPerPage, (this.startIndex + 1) * this.itemsPerPage);
             },
             currentPage(): number {
                 return this.startIndex + 1;
@@ -115,7 +118,8 @@
             $route({name, params}: Route): void {
                 if (name === 'jobs') {
                     const jobID: string = params.jobID;
-                    const index: number = this.jobs.findIndex((job: Job) => job.jobID === jobID);
+                    const index: number = this.sortedJobs.findIndex((job: Job) => job.jobID === jobID);
+                    console.log(`looking for job ${jobID} at index ${index}`);
                     this.startIndex = Math.max(0, Math.floor(index / this.itemsPerPage));
                 }
             },
