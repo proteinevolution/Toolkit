@@ -20,3 +20,4 @@ main.log
 conf/.env
 frontend/.env*
 frontend/.yarn/cache
+.bsp
