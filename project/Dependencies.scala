@@ -35,7 +35,7 @@ object Dependencies {
     "io.circe"            %% "circe-generic"        % circeV,
     "io.circe"            %% "circe-generic-extras" % circeV,
     ("io.circe"           %% "circe-bson"           % "0.4.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
-    "org.typelevel"       %% "simulacrum"           % "1.0.0",
+    "org.typelevel"       %% "simulacrum"           % "1.0.1",
     "com.github.dalet-oss" % "mongobee"             % "1.0.4",
     "com.maxmind.geoip2"   % "geoip2"               % "2.13.0"
   )
@@ -44,7 +44,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.5.13"    % Test,
+    "org.mockito"               % "mockito-core"        % "3.5.15"    % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
     "org.awaitility"            % "awaitility"          % "4.0.3"     % Test
   )
