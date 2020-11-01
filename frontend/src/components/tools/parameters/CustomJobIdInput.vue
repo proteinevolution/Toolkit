@@ -1,6 +1,7 @@
 <template>
     <div class="custom-job-id">
         <b-form-input v-model="customJobId"
+                      v-b-tooltip.hover="$t('constraints.customerJobIdTooShort')"
                       :placeholder="$t('tools.parameters.customJobId.placeholder')"
                       aria-describedby="custom-job-id-invalid"
                       :state="valid"

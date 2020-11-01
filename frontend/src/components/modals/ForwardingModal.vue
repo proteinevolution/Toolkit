@@ -39,7 +39,7 @@
                             <b-form-radio v-model="sequenceLengthMode"
                                           :value="SequenceLengthMode.FULL"
                                           class="mt-3">
-                                Full length sequences
+                                Full-length sequences
                             </b-form-radio>
                         </b-col>
                     </b-row>
