@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2020-11-06',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of <em>Vibrio cholerae</em> serotype O1
+        (strain El Tor Inaba N16961) is now online.
+        </p>`,
+    },
+    {
         date: '2020-08-28',
         html: `<p>
         HHpred: profile HMM database for a new version of the
@@ -10,8 +17,8 @@ export default [
     {
         date: '2020-08-10',
         html: ` <p>
-        HHpred: profile HMM database (UniProt_SwissProt_viral70) for manually reviewed viral proteins from the 
-        <a href="https://www.uniprot.org/uniprot/?query=taxonomy:%22Viruses%20[10239]%22&fil=reviewed%3Ayes&sort=score" 
+        HHpred: profile HMM database (UniProt_SwissProt_viral70) for manually reviewed viral proteins from the
+        <a href="https://www.uniprot.org/uniprot/?query=taxonomy:%22Viruses%20[10239]%22&fil=reviewed%3Ayes&sort=score"
         target="_blank">UniProt/Swiss-Prot database</a>, filtered for a maximum pairwise sequence identity of 70%,
         is online.
         </p>`,
