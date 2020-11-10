@@ -59,7 +59,6 @@ case class HHBlitsHSP(
   }
 
   override val eValue: Double = info.eval
-
   override val accession: String = template.accession
 
 }

@@ -19,17 +19,17 @@ package de.proteinevolution.jobs.services
 import java.util.UUID
 
 import better.files._
-import cats.data.{ EitherT, OptionT }
+import cats.data.{EitherT, OptionT}
 import cats.implicits._
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.ToolName._
 import de.proteinevolution.jobs.db.ResultFileAccessor
 import de.proteinevolution.jobs.models.ForwardingData
 import io.circe.DecodingFailure
-import javax.inject.{ Inject, Singleton }
-import play.api.{ Configuration, Logging }
+import javax.inject.{Inject, Singleton}
+import play.api.{Configuration, Logging}
 
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
 import scala.sys.process.Process
 
 @Singleton
@@ -109,9 +109,7 @@ final class ProcessService @Inject()(
               case (HMMER, "eval", "aln") =>
                 val accStr: String = result.HSPS
                   .filter(_.eValue <= form.eval)
-                  .map { hit =>
-                    result.alignment.alignment(hit.num - 1).accession + "\n"
-                  }
+                  .map { _.num }
                   .size
                   .toString
                 (retrieveAlnEval, List("accessionsStr" -> accStr, "filename" -> tempFileName, "mode" -> "count"))
