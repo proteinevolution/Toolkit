@@ -15,14 +15,16 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <transition-group name="list-complete"
+                        <transition-group data-v-step="toolbar"
+                                          name="list-complete"
                                           tag="ul"
                                           class="navbar-nav lower-nav"
                                           :style="{borderTopColor: sectionColor}">
-                            <b-nav-item v-for="tool in displayedTools"
+                            <b-nav-item v-for="(tool, index) in displayedTools"
                                         :key="tool.name"
                                         v-b-tooltip.hover.bottom
                                         class="list-complete-item"
+                                        :data-v-step="index === 0 ? 'tool' : ''"
                                         :to="'/tools/' + tool.name"
                                         :title="tool.description">
                                 {{ tool.longname }}

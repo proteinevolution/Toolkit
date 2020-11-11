@@ -20,6 +20,7 @@ const store: StoreOptions<RootState> = {
             login: false,
             logout: false,
         },
+        tourFinished: localStorage.getItem('tourFinished') === '1',
         offscreenMenuShow: false,
         maintenanceMode: false,
         reconnecting: true,
@@ -30,6 +31,10 @@ const store: StoreOptions<RootState> = {
     mutations: {
         setOffscreenMenuShow(state, value: boolean) {
             state.offscreenMenuShow = value;
+        },
+        setTourFinished(state) {
+            state.tourFinished = true;
+            localStorage.setItem('tourFinished', '1');
         },
         updateNow(state) {
             state.now = Date.now();
