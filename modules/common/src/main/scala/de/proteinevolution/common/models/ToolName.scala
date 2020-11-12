@@ -39,6 +39,7 @@ object ToolName {
       "alnviz"    -> "AlignmentViewer",
       "clustalo"  -> "ClustalΩ",
       "deepcoil"  -> "DeepCoil",
+      "deepcoil2"  -> "DeepCoil2",
       "kalign"    -> "Kalign",
       "mafft"     -> "MAFFT",
       "msaprobs"  -> "MSAProbs",
@@ -76,6 +77,7 @@ object ToolName {
   final val TPRPRED             = ToolName("tprpred")
   final val HHBLITS             = ToolName("hhblits")
   final val DEEPCOIL            = ToolName("deepcoil")
+  final val DEEPCOIL2            = ToolName("deepcoil2")
   final val MARCOIL             = ToolName("marcoil")
   final val PCOILS              = ToolName("pcoils")
   final val REPPER              = ToolName("repper")
