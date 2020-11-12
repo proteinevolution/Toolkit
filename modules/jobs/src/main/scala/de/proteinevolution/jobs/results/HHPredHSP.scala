@@ -28,8 +28,7 @@ case class HHPredHSP(
     num: Int,
     ss_score: Double,
     confidence: String,
-    length: Int,
-    eValue: Double = -1
+    length: Int
 ) extends HSP {
 
   def toTableJson(db: String = ""): Json = {
@@ -68,6 +67,7 @@ case class HHPredHSP(
     ).asJson
   }
 
+  override val eValue: Double = info.eval
   override val accession: String = template.accession
 
 }

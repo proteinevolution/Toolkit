@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2020-11-10',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of the pathogenic Gram-negative bacterium
+        <em>Plesiomonas shigelloides</em> (strain FDAARGOS_725) is now online.
+        </p>`,
+    },
+    {
         date: '2020-11-06',
         html: `<p>
         HHpred: profile HMM database for the proteome of <em>Vibrio cholerae</em> serotype O1
