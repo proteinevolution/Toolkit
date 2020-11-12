@@ -61,6 +61,7 @@ final class WebSocketActor @Inject()(
 
   override def preStart(): Unit = {
     context.system.eventStream.subscribe(self, classOf[UpdateLoad])
+    context.system.eventStream.subscribe(self, classOf[MaintenanceAlert])
     userSessions.getUserBySessionID(sessionID).foreach {
       case Some(user) =>
         wsActorCache.get[List[ActorRef]](user.userID) match {
@@ -93,6 +94,7 @@ final class WebSocketActor @Inject()(
         }
       })
     context.system.eventStream.unsubscribe(self, classOf[UpdateLoad])
+    context.system.eventStream.unsubscribe(self, classOf[MaintenanceAlert])
     log.info(s"[WSActor] Websocket closed for session $sessionID")
   }
 
