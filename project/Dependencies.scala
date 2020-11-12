@@ -34,7 +34,7 @@ object Dependencies {
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
     "io.circe"            %% "circe-generic-extras" % circeV,
-    ("io.circe"           %% "circe-bson"           % "0.4.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
+    ("io.circe"           %% "circe-bson"           % "0.5.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
     "org.typelevel"       %% "simulacrum"           % "1.0.0",
     "com.github.dalet-oss" % "mongobee"             % "1.0.4",
     "com.maxmind.geoip2"   % "geoip2"               % "2.13.0"
