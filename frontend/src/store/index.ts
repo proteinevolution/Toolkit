@@ -6,6 +6,7 @@ import auth from './modules/auth';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
 import Logger from 'js-logger';
+import {backendService} from '@/services/BackendService';
 
 Vue.use(Vuex);
 const logger = Logger.get('Store');
@@ -14,6 +15,7 @@ const store: StoreOptions<RootState> = {
     strict: process.env.NODE_ENV !== 'production',
     state: {
         loading: {
+            maintenanceMode: false,
             tools: false,
             toolParameters: false,
             alignmentTextarea: false,
@@ -27,7 +29,18 @@ const store: StoreOptions<RootState> = {
         // allow for update of human readable time by updating reference point
         now: Date.now(),
     },
+    actions: {
+        async fetchMaintenanceMode(context) {
+            context.commit('startLoading', 'maintenanceMode');
+            const mode = await backendService.fetchMaintenanceMode();
+            context.commit('setMaintenanceMode', mode);
+            context.commit('stopLoading', 'maintenanceMode');
+        },
+    },
     mutations: {
+        setMaintenanceMode(state, mode: boolean) {
+            state.maintenanceMode = mode;
+        },
         setOffscreenMenuShow(state, value: boolean) {
             state.offscreenMenuShow = value;
         },
