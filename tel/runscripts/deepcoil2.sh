@@ -44,7 +44,7 @@ fi
 
 source $DEEPCOIL2/dc2-env/bin/activate
 
-echo "#Running DeepCoil." >> ../results/process.log
+echo "#Running DeepCoil2." >> ../results/process.log
 
 deepcoil -i ../results/${JOBID}.fas \
          -out_path ../results/ \

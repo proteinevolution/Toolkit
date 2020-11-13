@@ -4,7 +4,17 @@ export default {
     en: {
         toolHelpModals: {
             deepcoil2: {
-                overview: `<p>DeepCoil2 is a method for the accurate prediction of coiled coil domains in protein sequences.`,
+                overview: `<p><a href="https://github.com/labstructbioinf/DeepCoil" target="_blank" rel="noopener">
+                    DeepCoil2</a> is a method for the fast and accurate prediction of coiled-coil domains in
+                    protein sequences.<br/><br/>
+                    <b>New in version 2.0:</b>
+                    <ul>
+                    <li>Faster inference time by applying <a href="https://github.com/mheinzinger/SeqVec"  
+                    target="_blank" rel="noopener">SeqVec embeddings</a> instead of psiblast profiles.</li>
+                    <li>Heptad register prediction (a and d core positions).</li>
+                    <li>No maximum sequence length limit.</li>
+                    <li>Automated peak detection for improved output readability.</li>                   
+                    </ul>`,
                 parameters: [
                     {
                         title: 'Input',
