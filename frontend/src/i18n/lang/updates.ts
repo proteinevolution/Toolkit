@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2020-11-16',
+        html: `<p>
+        HHpred: profile HMM database for the proteome of the pathogenic Gram-positive bacterium
+        <em>Clostridioides difficile</em> (strain BR81) is now online.
+        </p>`,
+    },
+    {
         date: '2020-11-12',
         html: `<p>
         Included a new version of DeepCoil, DeepCoil2.
