@@ -28,12 +28,12 @@ if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
 else
       reformatValidator.pl fas fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
 fi
 
 if [[ ! -f ../results/${JOBID}.fas ]]; then
@@ -70,8 +70,7 @@ if [[ "%matrix.content" = "BLOSUM45" ]] ; then
     GAPEXT=2
 fi
 
-#Shorten the header of the query sequence to 25 characters; ffindex_from_fasta cannot handle long headers without spaces
-sed -n '1p' ../results/${JOBID}.fas | cut -c -25 > ../results/firstSeq0.fas
+sed -n '1p' ../results/${JOBID}.fas | cut -c -100 > ../results/firstSeq0.fas
 sed -n '2p' ../results/${JOBID}.fas >> ../results/firstSeq0.fas
 sed 's/[\.\-]//g' ../results/firstSeq0.fas > ../results/firstSeq.fas
 
