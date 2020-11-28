@@ -76,12 +76,12 @@ if [[ ${FORMAT} = "1" ]] ; then
       reformatValidator.pl clu fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
 else
       reformatValidator.pl fas fas \
             $(readlink -f %alignment.path) \
             $(readlink -f ../results/${JOBID}.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
 fi
 
 if [[ ! -f ../results/${JOBID}.fas ]] ; then
@@ -159,14 +159,14 @@ if [[ -f ../params/alignment_two ]] ; then
             reformatValidator.pl clu fas \
             $(readlink -f %alignment_two.path) \
             $(readlink -f ../results/${JOBID}.2.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
         else
             #remove empty lines
             sed -i '/^\s*$/d' ../params/alignment_two
             reformatValidator.pl fas fas \
             $(readlink -f %alignment_two.path) \
             $(readlink -f ../results/${JOBID}.2.fas) \
-            -d 160 -uc -l 32000
+            -d 160 -uc -l 32000 -rh 1
         fi
 
         if [[ ! -f ../results/${JOBID}.2.fas ]] ; then

@@ -52,6 +52,8 @@ export DEEPCNF="${BIOPROGS}/tools/DeepCNF_SS_v1.02_release"
 export PIPRED="${BIOPROGS}/tools/pipred"
 # DeepCoil
 export DEEPCOIL="${BIOPROGS}/tools/deepcoil"
+# DeepCoil2
+export DEEPCOIL2="${BIOPROGS}/tools/DeepCoil"
 # Setup HHrepid
 export HHREPIDPATH="${BIOPROGS}/tools/hhrepid"
 # Setup HMMER
