@@ -47,8 +47,13 @@
                                            :class="{ 'submit-button-margin' : loggedIn }"
                                            variant="primary"
                                            :disabled="preventSubmit"
-                                           @click="submitJob"
-                                           v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')" />
+                                           @click="submitJob">
+                                        <loading v-if="submitLoading"
+                                                 :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                                 :size="20" />
+                                        <span v-else
+                                              v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                                    </b-btn>
                                     <custom-job-id-input :validation-errors="validationErrors"
                                                          :submission="submission" />
                                     <b-btn v-if="hasRememberedParameters"
@@ -117,6 +122,7 @@
     import Logger from 'js-logger';
     import EventBus from '@/util/EventBus';
     import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
+    import Loading from '@/components/utils/Loading.vue';
     import {parameterRememberService} from '@/services/ParameterRememberService';
 
     const logger = Logger.get('ToolView');
@@ -131,6 +137,7 @@
             CustomJobIdInput,
             EmailNotificationSwitch,
             JobPublicToggle,
+            Loading,
             AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
                 '@/components/tools/AlignmentViewer.vue'),
         },
@@ -148,6 +155,7 @@
         },
         data() {
             return {
+                submitLoading: false,
                 tabIndex: 0,
                 fullScreen: false,
                 validationErrors: {},
@@ -185,7 +193,7 @@
                 return this.tool.longname;
             },
             preventSubmit(): boolean {
-                return Object.keys(this.validationErrors).length > 0;
+                return this.submitLoading || Object.keys(this.validationErrors).length > 0;
             },
             loggedIn(): boolean {
                 return this.$store.getters['auth/loggedIn'];
@@ -259,12 +267,15 @@
             submitJob(): void {
                 const toolName = this.toolName;
                 const submission = this.submission;
+                this.submitLoading = true;
                 jobService.submitJob(this.toolName, submission)
                     .then((response) => {
+                        this.submitLoading = false;
                         this.saveParametersToRemember(toolName);
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
                     .catch((response) => {
+                        this.submitLoading = false;
                         logger.error('Could not submit job', response);
                         this.$alert(this.$t('errors.general'), 'danger');
                     });
