@@ -47,7 +47,7 @@
 
 <style lang="scss" scoped>
     .message {
-        margin-left: 1em;
+        margin-left: 0.65em;
     }
 
     .wrapper {

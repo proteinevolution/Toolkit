@@ -29,7 +29,7 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % catsV,
-    "org.typelevel"       %% "cats-effect"          % "2.2.0",
+    "org.typelevel"       %% "cats-effect"          % "2.3.0",
     "com.chuusai"         %% "shapeless"            % "2.3.3",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
@@ -44,7 +44,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.6.0"     % Test,
+    "org.mockito"               % "mockito-core"        % "3.6.28"    % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
     "org.awaitility"            % "awaitility"          % "4.0.3"     % Test
   )
