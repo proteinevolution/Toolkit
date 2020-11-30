@@ -244,7 +244,8 @@ class JobActor @Inject()(
   }
 
   override def preStart(): Unit = {
-    val _ = context.system.eventStream.subscribe(self, classOf[PolledJobs])
+    context.system.eventStream.subscribe(self, classOf[PolledJobs])
+    val _ = context.system.eventStream.subscribe(self, classOf[DeleteList])
   }
 
   override def postStop(): Unit = {
@@ -373,6 +374,8 @@ class JobActor @Inject()(
             }
           case None => NotUsed
         }
+
+    case DeleteList(jobList, _) => val _ = Qdel.runMultiple(jobList)
 
     case CheckIPHash(jobID) =>
       getCurrentJob(jobID).foreach {
@@ -651,6 +654,9 @@ object JobActor {
 
   // JobActor is requested to Delete the job
   case class Delete(jobID: String, userID: Option[String] = None)
+
+  // Delete multiple jobs at once
+  case class DeleteList(jobIDs: List[String], userID: Option[String] = None)
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)

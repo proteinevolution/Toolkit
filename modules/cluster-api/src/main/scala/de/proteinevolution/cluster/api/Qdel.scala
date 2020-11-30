@@ -23,4 +23,6 @@ object Qdel {
 
   def run(sgeJobId: String): Int = s"qdel $sgeJobId" !
 
+  def runMultiple(sgeJobIds: List[String]): Int = s"qdel ${sgeJobIds.mkString(" ")}" !
+
 }
