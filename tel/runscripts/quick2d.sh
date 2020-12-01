@@ -144,9 +144,11 @@ if [[ -f ../results/${JOBID}.pssm ]]; then
     #RUN PiPred
     if [[ ${CHAR_COUNT} -gt "30" ]] && [[ ${CHAR_COUNT} -lt "700" ]] ; then
         echo "#Executing PiPred." >> ../results/process.log
-        ${PIPRED}/pipred -i ../results/${JOBID}.fseq \
+        source $PIPRED/pipred_env/bin/activate
+        ${PIPRED}/pipred.py -i ../results/${JOBID}.fseq \
             -pssm_path ../results/ \
             -out_path ../results/
+        deactivate
         echo "done" >> ../results/process.log
     fi
     
