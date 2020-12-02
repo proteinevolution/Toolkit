@@ -375,7 +375,10 @@ class JobActor @Inject()(
           case None => NotUsed
         }
 
-    case DeleteList(jobList) => jobList.foreach(deleteJob)
+    case DeleteList(jobList) =>
+      log.info(s"[Job Deletion] Deleting ${jobList.length} jobs")
+      jobList.foreach(deleteJob)
+      log.info("[Job Deletion] Finished cleaning up old jobs")
 
     case CheckIPHash(jobID) =>
       getCurrentJob(jobID).foreach {
