@@ -89,10 +89,14 @@ export default {
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
         citation: `A Completely Reimplemented MPI Bioinformatics Toolkit
-with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
-Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
-<a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">
-J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.`,
+            with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
+            Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
+            <a href="http://www.sciencedirect.com/science/article/pii/S0022283617305879" target="_blank" rel="noopener">
+            J Mol Biol. 2018 Jul 20. S0022-2836(17)30587-9</a>.<br><br>
+            Protein Sequence Analysis Using the MPI Bioinformatics Toolkit.
+            <br>Gabler F, Nam SZ, Till S, Mirdita M, Steinegger M, Söding J, Lupas AN, Alva V.
+            <a href="https://currentprotocols.onlinelibrary.wiley.com/doi/full/10.1002/cpbi.108" target="_blank" rel="noopener">
+            Curr Protoc Bioinformatics. 2020 Dec;72(1):e108. doi: 10.1002/cpbi.108</a>.`,
         errors: {
             general: 'Error!',
             fileNotFound: 'File not found!',
