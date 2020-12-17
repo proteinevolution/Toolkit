@@ -2,7 +2,7 @@ export default [
     {
         date: '2020-12-15',
         html: `<p>
-        Our new paper on the new Toolkit is out:
+        Our new paper on the Toolkit is out:
         Protein Sequence Analysis Using the MPI Bioinformatics Toolkit.
         Gabler F, Nam SZ, Till S, Mirdita M, Steinegger M, Söding J, Lupas AN, Alva V.
         <a href="https://currentprotocols.onlinelibrary.wiley.com/doi/full/10.1002/cpbi.108" target="_blank" rel="noopener">
