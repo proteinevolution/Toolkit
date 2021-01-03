@@ -22,7 +22,7 @@ import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
 import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.jobs.actors.JobActor.Delete
+import de.proteinevolution.jobs.actors.JobActor.DeleteList
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.services.JobActorAccess
 import javax.inject.{Inject, Singleton}
@@ -58,7 +58,7 @@ final class DatabaseMonitor @Inject()(
   // interval calling the user deletion method automatically
   private val jobDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.scheduleWithFixedDelay(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
+    context.system.scheduler.scheduleWithFixedDelay(constants.jobDeletionDelay, constants.jobDeletionInterval, self, DeleteOldJobs)(
       context.system.dispatcher
     )
   }
@@ -119,13 +119,12 @@ final class DatabaseMonitor @Inject()(
   }
 
   private def deleteOldJobs(): Unit = {
-    log.info("[Job Deletion] finding old jobs...")
-    jobDao.findOldJobs().foreach { jobList =>
-      log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
-      jobList.foreach { job =>
-        // Just send a deletion request to the job actor responsible for the job
-        jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
-      }
+    log.info("[Job Deletion] Cleaning up old jobs")
+    for {
+      jobList <- jobDao.findOldJobs()
+      jobIds  = jobList.collect(_.jobID)
+    } {
+      context.system.eventStream.publish(DeleteList(jobIds))
     }
   }
 

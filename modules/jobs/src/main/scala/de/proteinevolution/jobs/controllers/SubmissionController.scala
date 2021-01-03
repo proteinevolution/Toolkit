@@ -84,7 +84,7 @@ class SubmissionController @Inject()(
 
   def delete(jobID: String): Action[AnyContent] = userAction { implicit request =>
     logger.info("Delete Action in JobController reached")
-    jobActorAccess.sendToJobActor(jobID, Delete(jobID, Some(request.user.userID)))
+    jobActorAccess.sendToJobActor(jobID, Delete(jobID, request.user.userID))
     NoContent
   }
 
