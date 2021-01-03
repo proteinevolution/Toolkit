@@ -50,6 +50,7 @@ final class BackendController @Inject()(
     extends ToolkitController(cc)
     with Logging {
 
+  //TODO currently working mithril routes for the backend
   def index: Action[AnyContent] = userAction { implicit request =>
     if (request.user.isSuperuser) {
       NoCache(Ok(List("Index Page").asJson))

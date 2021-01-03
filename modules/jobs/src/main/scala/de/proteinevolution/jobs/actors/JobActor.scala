@@ -45,9 +45,9 @@ import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFact
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
 import javax.inject.Inject
-import play.api.Configuration
 import play.api.cache.{NamedCache, SyncCacheApi}
 import play.api.libs.mailer.MailerClient
+import play.api.Configuration
 import reactivemongo.api.bson.BSONDateTime
 
 import scala.concurrent.Future
@@ -152,7 +152,7 @@ class JobActor @Inject()(
     }
   }
 
-  private def updateJobLogAndExecution(jobID: String): Unit = {
+  private def removeJob(jobID: String): Unit = {
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (currentJobLogs.contains(jobID)) {
       currentJobs = currentJobs.filter(_._1 != jobID)
@@ -169,18 +169,16 @@ class JobActor @Inject()(
     }
   }
 
-  private def deleteJob(jobID: String): Future[Unit] = {
-    s"${constants.jobPath}${jobID}".toFile.delete(swallowIOExceptions = true)
-    updateJobLogAndExecution(jobID) // Remove the job from the current job map
-    for {
-      _ <- jobDao.removeJob(jobID)
-      _ <- userDao.removeJob(jobID)
-    } yield ()
-  }
-
-  private def sendClearEvent(job: Job): Unit = {
+  private def delete(job: Job): Future[Unit] = {
+    s"${constants.jobPath}${job.jobID}".toFile.delete(swallowIOExceptions = true)
+    removeJob(job.jobID) // Remove the job from the current job map
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
+    job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
+    for {
+      _ <- jobDao.removeJob(job.jobID)
+      _ <- userDao.removeJob(job.jobID)
+    } yield ()
   }
 
   private def updateJobState(job: Job): Future[Job] = {
@@ -246,8 +244,7 @@ class JobActor @Inject()(
   }
 
   override def preStart(): Unit = {
-    context.system.eventStream.subscribe(self, classOf[PolledJobs])
-    val _ = context.system.eventStream.subscribe(self, classOf[DeleteList])
+    val _ = context.system.eventStream.subscribe(self, classOf[PolledJobs])
   }
 
   override def postStop(): Unit = {
@@ -346,7 +343,7 @@ class JobActor @Inject()(
         case None => NotUsed
       }
 
-    case Delete(jobID, userID) =>
+    case Delete(jobID, userIDOption) =>
       val verbose = true // just switch this on / off for logging
       if (verbose) log.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
       this
@@ -363,22 +360,19 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             // Delete the job when the user is the owner and clear it otherwise
-            if (userID == job.ownerID) {
+            if (userIDOption.isEmpty || userIDOption.get == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
-              job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
-              sendClearEvent(job)
-              deleteJob(job.jobID)
+              delete(job)
             } else {
-              self ! RemoveFromWatchlist(jobID, userID)
+              userIDOption match {
+                case Some(userID) =>
+                  self ! RemoveFromWatchlist(jobID, userID)
+                case None => NotUsed
+              }
             }
           case None => NotUsed
         }
-
-    case DeleteList(jobList) =>
-      log.info(s"[Job Deletion] Deleting ${jobList.length} jobs")
-      jobList.foreach(deleteJob)
-      log.info("[Job Deletion] Finished cleaning up old jobs")
 
     case CheckIPHash(jobID) =>
       getCurrentJob(jobID).foreach {
@@ -571,7 +565,7 @@ class JobActor @Inject()(
             // Now we can update the JobState and remove it, once the update has completed
             updateJobState(job).map { job =>
               //Remove the job from the jobActor
-              updateJobLogAndExecution(job.jobID)
+              removeJob(job.jobID)
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
             }
@@ -656,10 +650,7 @@ object JobActor {
   case class RemoveFromWatchlist(jobID: String, userID: String)
 
   // JobActor is requested to Delete the job
-  case class Delete(jobID: String, userID: String)
-
-  // Delete multiple jobs at once
-  case class DeleteList(jobIDs: List[String])
+  case class Delete(jobID: String, userID: Option[String] = None)
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
