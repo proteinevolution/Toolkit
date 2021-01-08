@@ -174,7 +174,7 @@ class JobActor @Inject()(
     updateJobLogAndExecution(jobID) // Remove the job from the current job map
     for {
       _ <- jobDao.removeJob(jobID)
-      _ <- userDao.removeJob(jobID)
+      _ <- userDao.removeJobs(List(jobID))
     } yield ()
   }
 
@@ -246,8 +246,7 @@ class JobActor @Inject()(
   }
 
   override def preStart(): Unit = {
-    context.system.eventStream.subscribe(self, classOf[PolledJobs])
-    val _ = context.system.eventStream.subscribe(self, classOf[DeleteList])
+    val _ = context.system.eventStream.subscribe(self, classOf[PolledJobs])
   }
 
   override def postStop(): Unit = {
@@ -374,11 +373,6 @@ class JobActor @Inject()(
             }
           case None => NotUsed
         }
-
-    case DeleteList(jobList) =>
-      log.info(s"[Job Deletion] Deleting ${jobList.length} jobs")
-      jobList.foreach(deleteJob)
-      log.info("[Job Deletion] Finished cleaning up old jobs")
 
     case CheckIPHash(jobID) =>
       getCurrentJob(jobID).foreach {
@@ -657,9 +651,6 @@ object JobActor {
 
   // JobActor is requested to Delete the job
   case class Delete(jobID: String, userID: String)
-
-  // Delete multiple jobs at once
-  case class DeleteList(jobIDs: List[String])
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)
