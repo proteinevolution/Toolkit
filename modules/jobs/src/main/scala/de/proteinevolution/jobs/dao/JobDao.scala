@@ -147,7 +147,7 @@ class JobDao @Inject() (
   def removeJobs(jobIDs: List[String]): Future[WriteResult] = {
     eventLogCollection.foreach(
       _.findAndUpdate(
-        BSONDocument(Job.ID -> BSONDocument("$in" -> jobIDs)),
+        BSONDocument(JobEventLog.JOBID -> BSONDocument("$in" -> jobIDs)),
         BSONDocument(
           "$push" ->
             BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
