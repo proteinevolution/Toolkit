@@ -3,7 +3,7 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.6.8"
+  val akkaVersion = "2.6.10"
   val catsV       = "2.1.0"
   val circeV      = "0.13.0"
 
@@ -29,7 +29,7 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % catsV,
-    "org.typelevel"       %% "cats-effect"          % "2.3.0",
+    "org.typelevel"       %% "cats-effect"          % "2.3.1",
     "com.chuusai"         %% "shapeless"            % "2.3.3",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
