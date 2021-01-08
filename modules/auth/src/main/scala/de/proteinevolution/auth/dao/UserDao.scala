@@ -305,11 +305,11 @@ class UserDao @Inject() (
     )
 
   /* removes job association from user */
-  def removeJob(jobID: String): Future[WriteResult] =
+  def removeJobs(jobIDs: List[String]): Future[WriteResult] =
     userCollection.flatMap {
       _.update(ordered = false).one(
         BSONDocument.empty,
-        BSONDocument("$pull" -> BSONDocument("jobs" -> BSONDocument("$in" -> BSONArray(jobID)))),
+        BSONDocument("$pull" -> BSONDocument("jobs" -> BSONDocument("$in" -> jobIDs))),
         multi = true
       )
     }

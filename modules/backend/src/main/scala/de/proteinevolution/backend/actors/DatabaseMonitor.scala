@@ -16,28 +16,26 @@
 
 package de.proteinevolution.backend.actors
 
-import akka.actor.{Actor, ActorLogging, Cancellable}
+import akka.actor.{ Actor, ActorLogging, Cancellable }
+import better.files._
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.models.MailTemplate.OldAccountEmail
-import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
-import de.proteinevolution.jobs.actors.JobActor.Delete
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.services.JobActorAccess
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.mailer.MailerClient
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+import scala.util.{ Failure, Success }
 
 @Singleton
-final class DatabaseMonitor @Inject()(
+final class DatabaseMonitor @Inject() (
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
-    jobActorAccess: JobActorAccess,
     constants: ConstantsV2,
     config: Configuration
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
@@ -58,7 +56,12 @@ final class DatabaseMonitor @Inject()(
   // interval calling the user deletion method automatically
   private val jobDeletionScheduler: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.scheduleWithFixedDelay(constants.jobDeletionDelay, constants.userDeletionInterval, self, DeleteOldJobs)(
+    context.system.scheduler.scheduleWithFixedDelay(
+      constants.jobDeletionDelay,
+      constants.jobDeletionInterval,
+      self,
+      DeleteOldJobs
+    )(
       context.system.dispatcher
     )
   }
@@ -84,10 +87,12 @@ final class DatabaseMonitor @Inject()(
 
       // Finally remove the users with their userID
       userDao.removeUsers(userIDs).onComplete {
-        case Failure(exception) => if (verbose)
-          log.info(s"[User Deletion] Deleting of ${users.length} old users failed with error: $exception")
-        case Success(_) => if (verbose)
-          log.info(s"[User Deletion] Deleting of ${users.length} old users successful")
+        case Failure(exception) =>
+          if (verbose)
+            log.info(s"[User Deletion] Deleting of ${users.length} old users failed with error: $exception")
+        case Success(_) =>
+          if (verbose)
+            log.info(s"[User Deletion] Deleting of ${users.length} old users successful")
       }
     }
 
@@ -119,12 +124,27 @@ final class DatabaseMonitor @Inject()(
   }
 
   private def deleteOldJobs(): Unit = {
-    log.info("[Job Deletion] finding old jobs...")
-    jobDao.findOldJobs().foreach { jobList =>
-      log.info(s"[Job Deletion] found ${jobList.length} jobs for deletion. Sending to job actors.")
-      jobList.foreach { job =>
-        // Just send a deletion request to the job actor responsible for the job
-        jobActorAccess.sendToJobActor(job.jobID, Delete(job.jobID))
+    log.info("[Job Deletion] Cleaning up old jobs")
+    jobDao.findOldJobs().foreach { jobs =>
+      // Get the userIDs for all found users
+      val jobIDs = jobs.map(_.jobID)
+
+      jobIDs.foreach { jobID =>
+        s"${constants.jobPath}$jobID".toFile.delete(swallowIOExceptions = true)
+      }
+
+      jobDao.removeJobs(jobIDs).onComplete {
+        case Failure(exception) =>
+          log.info(s"[Job Deletion] Deleting of ${jobs.length} old jobs failed with error: $exception")
+        case Success(_) =>
+          log.info(s"[Job Deletion] Deleting of ${jobs.length} old jobs successful")
+      }
+
+      userDao.removeJobs(jobIDs).onComplete {
+        case Failure(exception) =>
+          log.info(s"[Job Deletion] Removing ${jobs.length} old jobs from user's jobs failed with error: $exception")
+        case Success(_) =>
+          log.info(s"[Job Deletion] Removing ${jobs.length} old jobs from user's jobs successful")
       }
     }
   }
