@@ -16,17 +16,13 @@
 
 package de.proteinevolution.tools
 
-import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.tools.forms.ValidationParamsForm.{
-  AccessionIDValidationParamsForm,
-  EmptyValidationParamsForm,
-  RegexValidationParamsForm,
-  SequenceValidationParamsForm
-}
-import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
+import better.files._
+import com.typesafe.config.{Config, ConfigObject}
+import de.proteinevolution.tools.forms.ValidationParamsForm.{AccessionIDValidationParamsForm, EmptyValidationParamsForm, RegexValidationParamsForm, SequenceValidationParamsForm}
+import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters._
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 import scala.jdk.CollectionConverters._
@@ -37,47 +33,59 @@ class ToolConfig @Inject() (config: Configuration, paramAccess: ParamAccess) {
 
   lazy val version: String = config.get[String]("version")
 
-  lazy val values: Map[String, Tool] = {
-    config.get[Config]("Tools").root.asScala.map {
-      case (_, configObject: ConfigObject) =>
-        val config    = configObject.toConfig
-        val inputType = Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
-        config.getString("name") -> toTool(
-          config.getString("name"),
-          config.getString("longname"),
-          config.getInt("order"),
-          config.getString("description"),
-          config.getString("code"),
-          config.getString("section").toLowerCase,
-          config.getString("version"),
-          config
-            .getStringList("parameter")
-            .asScala
-            .map { param =>
-              paramAccess.getParam(
-                param,
-                config.getString("placeholder_key"),
-                config.getString("sample_input_key"),
-                inputType
-              )
-            }
-            .toSeq,
-          // TODO remove Try when implemented for each tool
-          Try(
-            config
-              .getObjectList("result_views")
-              .asScala
-              .map(entry => entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))
-              .toSeq
-          ).getOrElse(Seq()),
-          config.getStringList("forwarding.alignment").asScala.toSeq,
-          config.getStringList("forwarding.multi_seq").asScala.toSeq,
-          Try(config.getStringList("forwarding.template_alignment").asScala.toSeq).toOption,
-          getValidationParams(inputType, config)
-        )
-      case (_, _) => throw new IllegalStateException("tool does not exist")
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+
+  private val watcher = new FileMonitor("tel/paramspec".toFile, recursive = true) {
+    override def onModify(file: File, count: Int): Unit = {
+      println(f"[TOOLS_CONFIG] refresh; loading new file contents for ${file.path.toString}")
+      values = readFromFile()
     }
-  }.toMap
+  }
+  watcher.start()
+
+  var values: Map[String, Tool] = readFromFile()
+
+  private def readFromFile(): Map[String, Tool] = {
+      config.get[Config]("Tools").root.asScala.map {
+        case (_, configObject: ConfigObject) =>
+          val config    = configObject.toConfig
+          val inputType = Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
+          config.getString("name") -> toTool(
+            config.getString("name"),
+            config.getString("longname"),
+            config.getInt("order"),
+            config.getString("description"),
+            config.getString("code"),
+            config.getString("section").toLowerCase,
+            config.getString("version"),
+            config
+              .getStringList("parameter")
+              .asScala
+              .map { param =>
+                paramAccess.getParam(
+                  param,
+                  config.getString("placeholder_key"),
+                  config.getString("sample_input_key"),
+                  inputType
+                )
+              }
+              .toSeq,
+            // TODO remove Try when implemented for each tool
+            Try(
+              config
+                .getObjectList("result_views")
+                .asScala
+                .map(entry => entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))
+                .toSeq
+            ).getOrElse(Seq()),
+            config.getStringList("forwarding.alignment").asScala.toSeq,
+            config.getStringList("forwarding.multi_seq").asScala.toSeq,
+            Try(config.getStringList("forwarding.template_alignment").asScala.toSeq).toOption,
+            getValidationParams(inputType, config)
+          )
+        case (_, _) => throw new IllegalStateException("tool does not exist")
+      }
+    }.toMap
 
   def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists {

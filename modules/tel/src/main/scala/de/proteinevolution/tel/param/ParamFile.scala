@@ -26,16 +26,16 @@ import play.api.Configuration
 import scala.collection.immutable.ListMap
 
 /**
-  * Provides methods to read Generative Params from a file
-  */
+ * Provides methods to read Generative Params from a file
+ */
 @Singleton
-class GenerativeParamFileParser @Inject()(config: Configuration) {
+class GenerativeParamFileParser @Inject() (config: Configuration) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 
   def read(filePath: String): Iterator[GenerativeParam] = {
 
-    val f = filePath.toFile
+    val f   = filePath.toFile
     val env = config.get[Map[String, String]]("tel.env")
 
     f.lineIterator.noWSLines.map { line =>
