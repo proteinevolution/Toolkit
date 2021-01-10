@@ -50,7 +50,7 @@ U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
       function fadeIn(el) {
         el.style.opacity = 0;
         var tick = function() {
-          el.style.opacity = +el.style.opacity + 0.001;
+          el.style.opacity = + el.style.opacity + 0.001;
           if (+el.style.opacity < 1) requestAnimationFrame(tick);
         };
         tick();
