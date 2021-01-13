@@ -1,84 +1,85 @@
 <template>
     <b-col cols="12"
            class="top-navbar navbar-light">
-        <div class="meta-user"></div>
-        <div class="social-nav">
-            <b-dropdown v-if="false"
-                        no-caret
-                        class="lang-dropdown">
-                <template slot="button-content">
-                    <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
-                         alt="">
-                    <span class="sr-only"
-                          v-text="$t('language.lang')"></span>
-                </template>
-                <b-dropdown-item @click="changeLanguage('en')">
-                    <img :src="require('../../assets/images/flag-en.png')"
-                         class="mr-2"
-                         alt="">
-                    <span v-text="$t('language.en')"></span>
-                </b-dropdown-item>
-                <b-dropdown-item @click="changeLanguage('de')">
-                    <img :src="require('../../assets/images/flag-de.png')"
-                         class="mr-2"
-                         alt="">
-                    <span v-text="$t('language.de')"></span>
-                </b-dropdown-item>
-            </b-dropdown>
-            <b-button variant="href"
-                      href="https://github.com/proteinevolution/Toolkit"
-                      target="_blank"
-                      rel="noopener"
-                      class="social-link">
-                <i class="fab fa-github"></i>
-            </b-button>
-            <b-button variant="href"
-                      href="https://www.facebook.com/mpitoolkit"
-                      target="_blank"
-                      rel="noopener"
-                      class="social-link">
-                <i class="fab fa-facebook-f"></i>
-            </b-button>
-            <b-button variant="href"
-                      href="https://twitter.com/mpitoolkit"
-                      target="_blank"
-                      rel="noopener"
-                      class="social-link">
-                <i class="fab fa-twitter"></i>
-            </b-button>
-            <b-button v-if="!loggedIn"
-                      variant="href"
-                      size="sm"
-                      class="sign-in-link"
-                      @click="openAuthModal"
-                      v-text="$t('auth.signIn')" />
-            <b-button v-else
-                      variant="href"
-                      size="sm"
-                      class="sign-in-link"
-                      @click="openAuthModal"
-                      v-text="user.nameLogin" />
-            <b-button v-if="loggedIn"
-                      variant="href"
-                      size="sm"
-                      @click="signOut">
-                <i class="fas fa-sign-out-alt mr-2"></i>
-            </b-button>
-        </div>
+        <div class="top-navbar-right">
+            <div class="social-nav">
+                <b-dropdown v-if="false"
+                            no-caret
+                            class="lang-dropdown">
+                    <template slot="button-content">
+                        <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
+                             alt="">
+                        <span class="sr-only"
+                              v-text="$t('language.lang')"></span>
+                    </template>
+                    <b-dropdown-item @click="changeLanguage('en')">
+                        <img :src="require('../../assets/images/flag-en.png')"
+                             class="mr-2"
+                             alt="">
+                        <span v-text="$t('language.en')"></span>
+                    </b-dropdown-item>
+                    <b-dropdown-item @click="changeLanguage('de')">
+                        <img :src="require('../../assets/images/flag-de.png')"
+                             class="mr-2"
+                             alt="">
+                        <span v-text="$t('language.de')"></span>
+                    </b-dropdown-item>
+                </b-dropdown>
+                <b-button variant="href"
+                          href="https://github.com/proteinevolution/Toolkit"
+                          target="_blank"
+                          rel="noopener"
+                          class="social-link">
+                    <i class="fab fa-github"></i>
+                </b-button>
+                <b-button variant="href"
+                          href="https://www.facebook.com/mpitoolkit"
+                          target="_blank"
+                          rel="noopener"
+                          class="social-link">
+                    <i class="fab fa-facebook-f"></i>
+                </b-button>
+                <b-button variant="href"
+                          href="https://twitter.com/mpitoolkit"
+                          target="_blank"
+                          rel="noopener"
+                          class="social-link">
+                    <i class="fab fa-twitter"></i>
+                </b-button>
+                <b-button v-if="!loggedIn"
+                          variant="href"
+                          size="sm"
+                          class="sign-in-link"
+                          @click="openAuthModal"
+                          v-text="$t('auth.signIn')" />
+                <b-button v-else
+                          variant="href"
+                          size="sm"
+                          class="sign-in-link"
+                          @click="openAuthModal"
+                          v-text="user.nameLogin" />
+                <b-button v-if="loggedIn"
+                          variant="href"
+                          size="sm"
+                          @click="signOut">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                </b-button>
+            </div>
 
-        <div class="warnings-container">
-            <b-alert variant="warning"
-                     class="maintenance-alert"
-                     fade
-                     :show="maintenanceMode">
-                <i class="fa fa-wrench"></i>
-                <b v-text="$t('maintenanceWarning')"></b>
-            </b-alert>
-            <div v-if="reconnecting"
-                 class="offline-alert"
-                 @click="reloadApp">
-                <i class="fas fa-retweet"></i>
-                <b v-text="$t('reconnecting')"></b>
+            <div class="warnings-container">
+                <b-alert variant="warning"
+                         class="maintenance-alert"
+                         fade
+                         :show="maintenanceMode">
+                    <i class="fa fa-wrench"></i>
+                    <b v-text="$t('maintenanceWarning')"></b>
+                </b-alert>
+                <div v-if="reconnecting"
+                     class="offline-alert"
+                     @click="reloadApp">
+                    <i class="fas fa-retweet"></i>
+                    <b v-text="$t('reconnecting')"></b>
+                </div>
             </div>
         </div>
 
@@ -185,6 +186,25 @@
         }
     }
 
+    .top-navbar-right {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+
+      .warnings-container {
+        margin-right: 0.5rem;
+      }
+
+      @include media-breakpoint-down(sm) {
+        flex-direction: column;
+        align-items: flex-end;
+
+        .warnings-container {
+          margin-right: 0;
+        }
+      }
+    }
+
     .social-nav {
         .social-link {
             @include media-breakpoint-down(sm) {
@@ -202,9 +222,6 @@
     }
 
     .warnings-container {
-        margin-right: 0.5rem;
-        display: flex;
-
         .maintenance-alert, .offline-alert {
             font-size: 0.8em;
             padding: 0.5rem 1rem;
