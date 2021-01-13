@@ -144,6 +144,30 @@ class JobDao @Inject() (
     jobCollection.flatMap(_.delete().one(BSONDocument(Job.ID -> jobID)))
   }
 
+  def removeJobs(jobIDs: List[String]): Future[WriteResult] = {
+    eventLogCollection.foreach(
+      _.findAndUpdate(
+        BSONDocument(JobEventLog.JOBID -> BSONDocument("$in" -> jobIDs)),
+        BSONDocument(
+          "$push" ->
+            BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
+        ),
+        fetchNewObject = true,
+        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
+        // TODO: why won't it accept it with values left out like in documentation
+        upsert = false,
+        None,
+        None,
+        bypassDocumentValidation = false,
+        WriteConcern.Default,
+        Option.empty,
+        Option.empty,
+        Seq.empty
+      )
+    )
+    jobCollection.flatMap(_.delete().one(BSONDocument(Job.ID -> BSONDocument("$in" -> jobIDs))))
+  }
+
   final def findAndSortJobs(hash: String, sort: Int = -1): Future[List[Job]] = {
     jobCollection
       .map(
