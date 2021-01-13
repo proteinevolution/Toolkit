@@ -42,7 +42,7 @@
                  responsive
                  striped
                  show-empty>
-            <template v-slot:cell(numCheck)="data">
+            <template #cell(numCheck)="data">
                 <div class="no-wrap">
                     <b-checkbox class="d-inline"
                                 :checked="selectedItems.includes(data.value)"
@@ -50,10 +50,10 @@
                     <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
                 </div>
             </template>
-            <template v-slot:cell(num)="data">
+            <template #cell(num)="data">
                 <a @click="$emit('elem-clicked', data.value)">{{ data.value }}</a>
             </template>
-            <template v-slot:cell(acc)="data">
+            <template #cell(acc)="data">
                 <span v-html="data.value"></span>
             </template>
         </b-table>
@@ -139,11 +139,11 @@
             },
             check(val: boolean, num: number): void {
                 if (val && !this.selectedItems.includes(num)) {
-                    this.selectedItems.push(num);
+                    this.selectedItems.push(num); // eslint-disable-line vue/no-mutating-props
                 } else {
                     const i: number = this.selectedItems.indexOf(num);
                     if (i > -1) {
-                        this.selectedItems.splice(i, 1);
+                        this.selectedItems.splice(i, 1); // eslint-disable-line vue/no-mutating-props
                     }
                 }
             },
