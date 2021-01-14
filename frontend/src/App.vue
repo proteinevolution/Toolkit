@@ -295,15 +295,16 @@
     .main-container {
         background-color: $bg-gray;
         box-shadow: 1px 2px 4px 3px rgba(200, 200, 200, 0.75);
-        padding: 10px 1.8rem 0 25px;
+        padding-top: 10px;
         margin-bottom: 3rem;
         border-bottom-left-radius: $global-radius;
         border-bottom-right-radius: $global-radius;
         z-index: 1;
         position: relative;
 
-        @include media-breakpoint-down(sm) {
-            padding: 10px 0.6rem 0 0.6rem;
+        @include media-breakpoint-up(md) {
+            padding-left: 1.8rem;
+            padding-right: 25px;
         }
     }
 

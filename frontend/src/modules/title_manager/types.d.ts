@@ -1,5 +1,5 @@
 // Important: import Vue from 'vue';
-import Vue from 'vue';
+import Vue from 'vue'; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 interface TitleProperties {
     base: string;

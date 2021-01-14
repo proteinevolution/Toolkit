@@ -48,27 +48,27 @@
                      show-empty
                      responsive
                      @filtered="onFiltered">
-                <template v-slot:cell(jobID)="data">
+                <template #cell(jobID)="data">
                     <router-link :to="`/jobs/${data.item.jobID}`"
                                  class="job-link">
                         {{ data.value }}
                     </router-link>
                 </template>
 
-                <template v-slot:cell(status)="{value}">
+                <template #cell(status)="{value}">
                     <b-badge variant="light"
                              :class="'status-' + value"
                              v-text="$t('jobs.states.' + value)" />
                 </template>
 
-                <template v-slot:cell(joblist)="{item}">
+                <template #cell(joblist)="{item}">
                     <i class="fas cursor-pointer"
                        :class="[item.watched ? 'fa-eye':'fa-eye-slash']"
                        :title="$t('jobManager.watched.' + item.isPublic)"
                        @click="toggleJobListStatus(item.jobID, !item.watched)"></i>
                 </template>
 
-                <template v-slot:cell(actions)="{item}">
+                <template #cell(actions)="{item}">
                     <i v-if="loggedIn"
                        class="fa fa-fw mr-3 hover-unlock cursor-pointer"
                        :class="[item.isPublic ? 'fa-lock-open text-primary' : 'fa-lock']"

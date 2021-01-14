@@ -81,7 +81,7 @@
                                                   :format="alignmentViewerFormat" />
                             </b-tab>
 
-                            <template v-slot:tabs-end>
+                            <template #tabs-end>
                                 <div class="ml-auto">
                                     <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
                                                        :job="job"
