@@ -62,7 +62,7 @@
                                       :tool="tool"
                                       :job="job" />
                 <span v-else>
-                    Error!!!!!!!!!!!!!!!!!!!
+                    Error!
                     <p class="cursor-pointer text-primary"
                        v-text="job.status"></p>                </span>
             </b-tab>
