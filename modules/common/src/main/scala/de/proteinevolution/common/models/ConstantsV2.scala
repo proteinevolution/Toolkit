@@ -50,7 +50,7 @@ class ConstantsV2 @Inject() (config: Configuration) {
   final val formMultiValueSeparator: String = " "
 
   // Job limitation settings
-  final val maxJobNum: Int        = 100  // max number of jobs that can be submitted from one ip within maxJobsWithin
+  final val maxJobNum: Int        = 200  // max number of jobs that can be submitted from one ip within maxJobsWithin
   final val maxJobsWithin: Int    = 60   // time in minutes within the max number of jobs is applied
   final val maxJobNumDay: Int     = 2000 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
   final val maxJobsWithinDay: Int = 1    // time in days within the max number of jobs is applied for a day
