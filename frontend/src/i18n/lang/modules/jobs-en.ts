@@ -23,7 +23,7 @@ export default {
         prepared: 'Your job is prepared!',
         submitted: 'Your job was successfully submitted!',
         limitReached: 'You have reached your job submission limit!',
-        limitInfo: 'A maximum of 100 jobs per hour and 2000 jobs per day are allowed.',
+        limitInfo: 'A maximum of 200 jobs per hour and 2000 jobs per day are allowed.',
     },
     results: {
         titles: {
