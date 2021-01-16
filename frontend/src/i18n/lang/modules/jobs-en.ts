@@ -22,6 +22,8 @@ export default {
         error: 'Your job has reached error state!',
         prepared: 'Your job is prepared!',
         submitted: 'Your job was successfully submitted!',
+        limitReached: 'You have reached your job submission limit!',
+        limitInfo: 'A maximum of 100 jobs per hour and 2000 jobs per day are allowed.',
     },
     results: {
         titles: {

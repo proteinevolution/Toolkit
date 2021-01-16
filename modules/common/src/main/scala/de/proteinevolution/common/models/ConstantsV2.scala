@@ -21,12 +21,12 @@ import java.io.File
 import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 
-import scala.language.postfixOps
 import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.matching.Regex
 
 @Singleton
-class ConstantsV2 @Inject()(config: Configuration) {
+class ConstantsV2 @Inject() (config: Configuration) {
 
   /** Number of jobActors */
   final val nJobActors: Int = 100
@@ -51,8 +51,8 @@ class ConstantsV2 @Inject()(config: Configuration) {
 
   // Job limitation settings
   final val maxJobNum: Int        = 100  // max number of jobs that can be submitted from one ip within maxJobsWithin
-  final val maxJobsWithin: Int    = 1    // time in minutes within the max number of jobs is applied
-  final val maxJobNumDay: Int     = 4000 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
+  final val maxJobsWithin: Int    = 60   // time in minutes within the max number of jobs is applied
+  final val maxJobNumDay: Int     = 2000 // max number of jobs that can be submitted from one ip within maxJobsWithinDay
   final val maxJobsWithinDay: Int = 1    // time in days within the max number of jobs is applied for a day
 
   // Job deletion settings
