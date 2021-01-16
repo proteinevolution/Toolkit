@@ -22,7 +22,7 @@
                  class="validation-alert mb-0"
                  v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})" />
         <b-row align-h="center"
-               class="mb-3">
+               class="my-2">
             <b-col cols="12"
                    md="4">
                 <multiselect v-model="selectedOutputFormat"
