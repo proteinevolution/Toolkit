@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h5 v-html="$t('jobs.stateMessages.limitReached')"></h5>
-        <p v-html="$t('jobs.stateMessages.limitInfo')"></p>
+        <h5 v-text="$t('jobs.stateMessages.limitReached')"></h5>
+        <p v-text="$t('jobs.stateMessages.limitInfo')"></p>
     </div>
 </template>
 
