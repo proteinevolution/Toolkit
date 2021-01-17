@@ -16,77 +16,77 @@
 </template>
 
 <script lang="ts">
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import {resultsService} from '@/services/ResultsService';
-    import Loading from '@/components/utils/Loading.vue';
+import ResultTabMixin from '@/mixins/ResultTabMixin';
+import {resultsService} from '@/services/ResultsService';
+import Loading from '@/components/utils/Loading.vue';
 
-    export default ResultTabMixin.extend({
-        name: 'NGL3DStructureView',
-        components: {
-            Loading,
-        },
-        data() {
-            return {
-                stage: undefined as any,
-                file: undefined as string | undefined,
-            };
-        },
-        beforeDestroy() {
-            window.removeEventListener('resize', this.windowResized);
-        },
-        watch: {
-            fullScreen: {
-                immediate: true,
-                handler(value: boolean): void {
-                    this.resize(value);
-                },
+export default ResultTabMixin.extend({
+    name: 'NGL3DStructureView',
+    components: {
+        Loading,
+    },
+    data() {
+        return {
+            stage: undefined as any,
+            file: undefined as string | undefined,
+        };
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.windowResized);
+    },
+    watch: {
+        fullScreen: {
+            immediate: true,
+            handler(value: boolean): void {
+                this.resize(value);
             },
         },
-        methods: {
-            async init() {
-                this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
-                import(/* webpackChunkName: "ngl" */
-                    'ngl')
-                    .then(({Stage}) => {
-                        this.stage = new Stage(this.$refs.viewport, {
-                            backgroundColor: 'white',
-                        });
-                        this.stage.loadFile(new Blob([(this.file as string)], {type: 'text/plain'}),
-                            {defaultRepresentation: true, ext: 'pdb'});
-                        window.addEventListener('resize', this.windowResized);
-                        this.windowResized();
+    },
+    methods: {
+        async init() {
+            this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
+            import(/* webpackChunkName: "ngl" */
+                'ngl')
+                .then(({Stage}) => {
+                    this.stage = new Stage(this.$refs.viewport, {
+                        backgroundColor: 'white',
                     });
-            },
-            windowResized(): void {
-                this.resize(this.fullScreen);
-            },
-            resize(fullScreen: boolean): void {
-                const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
-                if (!viewport) {
-                    return;
-                }
-                const width: number = (viewport.parentElement as HTMLElement).clientWidth;
-                const height: number = fullScreen ? window.innerHeight - 300 : 500;
-                viewport.style.height = height + 'px';
-                viewport.style.width = width + 'px';
-                this.stage.setSize(width, height);
-            },
-            downloadPdb(): void {
-                if (this.file) {
-                    const downloadFilename = `${this.tool.name}_${this.job.jobID}.pdb`;
-                    resultsService.downloadAsFile(this.file, downloadFilename);
-                }
-            },
+                    this.stage.loadFile(new Blob([(this.file as string)], {type: 'text/plain'}),
+                        {defaultRepresentation: true, ext: 'pdb'});
+                    window.addEventListener('resize', this.windowResized);
+                    this.windowResized();
+                });
         },
-    });
+        windowResized(): void {
+            this.resize(this.fullScreen);
+        },
+        resize(fullScreen: boolean): void {
+            const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
+            if (!viewport) {
+                return;
+            }
+            const width: number = (viewport.parentElement as HTMLElement).clientWidth;
+            const height: number = fullScreen ? window.innerHeight - 300 : 500;
+            viewport.style.height = height + 'px';
+            viewport.style.width = width + 'px';
+            this.stage.setSize(width, height);
+        },
+        downloadPdb(): void {
+            if (this.file) {
+                const downloadFilename = `${this.tool.name}_${this.job.jobID}.pdb`;
+                resultsService.downloadAsFile(this.file, downloadFilename);
+            }
+        },
+    },
+});
 </script>
 
 <style lang="scss">
-    .stage {
-        margin: 0 auto;
+.stage {
+  margin: 0 auto;
 
-        canvas {
-            border: 1px solid lightgray;
-        }
-    }
+  canvas {
+    border: 1px solid lightgray;
+  }
+}
 </style>

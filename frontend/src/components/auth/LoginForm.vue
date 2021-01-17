@@ -49,92 +49,92 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {ForgotPasswordData, LoginData, AuthMessage} from '@/types/toolkit/auth';
-    import {authService} from '@/services/AuthService';
-    import EventBus from '@/util/EventBus';
-    import ExpandHeight from '@/transitions/ExpandHeight.vue';
-    import {TranslateResult} from 'vue-i18n';
+import Vue from 'vue';
+import {AuthMessage, ForgotPasswordData, LoginData} from '@/types/toolkit/auth';
+import {authService} from '@/services/AuthService';
+import EventBus from '@/util/EventBus';
+import ExpandHeight from '@/transitions/ExpandHeight.vue';
+import {TranslateResult} from 'vue-i18n';
 
-    export default Vue.extend({
-        name: 'LoginForm',
-        components: {
-            ExpandHeight,
-        },
-        data() {
-            return {
-                username: '',
-                password: '',
+export default Vue.extend({
+    name: 'LoginForm',
+    components: {
+        ExpandHeight,
+    },
+    data() {
+        return {
+            username: '',
+            password: '',
+            message: '' as TranslateResult,
+            forgot: {
+                show: false,
+                eMailOrUsername: '',
+                successful: true,
                 message: '' as TranslateResult,
-                forgot: {
-                    show: false,
-                    eMailOrUsername: '',
-                    successful: true,
-                    message: '' as TranslateResult,
-                },
+            },
+        };
+    },
+    computed: {
+        eMailOrUsernameInvalid(): boolean {
+            return this.forgot.eMailOrUsername === '';
+        },
+    },
+    methods: {
+        async login() {
+            const data: LoginData = {
+                nameLogin: this.username,
+                password: this.password,
             };
+            this.$store.commit('startLoading', 'login');
+            try {
+                const msg: AuthMessage = await authService.login(data);
+                const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                if (msg.successful) {
+                    this.$store.commit('auth/setUser', msg.user);
+                    // get jobs of user
+                    this.$store.dispatch('jobs/fetchAllJobs');
+                    EventBus.$emit('hide-modal', 'auth');
+                    this.$alert(message);
+                }
+                this.message = message;
+            } catch (error) {
+                this.message = '';
+                this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
+            }
+            this.$store.commit('stopLoading', 'login');
         },
-        computed: {
-            eMailOrUsernameInvalid(): boolean {
-                return this.forgot.eMailOrUsername === '';
-            },
+        async forgotPasswordSubmit() {
+            if (this.eMailOrUsernameInvalid) {
+                return;
+            }
+            const data: ForgotPasswordData = {
+                eMailOrUsername: this.forgot.eMailOrUsername,
+            };
+            try {
+                const msg: AuthMessage = await authService.forgotPassword(data);
+                this.forgot.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                this.forgot.successful = msg.successful;
+            } catch (error) {
+                this.forgot.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
+                this.forgot.successful = false;
+            }
         },
-        methods: {
-            async login() {
-                const data: LoginData = {
-                    nameLogin: this.username,
-                    password: this.password,
-                };
-                this.$store.commit('startLoading', 'login');
-                try {
-                    const msg: AuthMessage = await authService.login(data);
-                    const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                    if (msg.successful) {
-                        this.$store.commit('auth/setUser', msg.user);
-                        // get jobs of user
-                        this.$store.dispatch('jobs/fetchAllJobs');
-                        EventBus.$emit('hide-modal', 'auth');
-                        this.$alert(message);
-                    }
-                    this.message = message;
-                } catch (error) {
-                    this.message = '';
-                    this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
-                }
-                this.$store.commit('stopLoading', 'login');
-            },
-            async forgotPasswordSubmit() {
-                if (this.eMailOrUsernameInvalid) {
-                    return;
-                }
-                const data: ForgotPasswordData = {
-                    eMailOrUsername: this.forgot.eMailOrUsername,
-                };
-                try {
-                    const msg: AuthMessage = await authService.forgotPassword(data);
-                    this.forgot.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                    this.forgot.successful = msg.successful;
-                } catch (error) {
-                    this.forgot.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
-                    this.forgot.successful = false;
-                }
-            },
-            toggleForgotContainer(): void {
-                this.forgot.show = !this.forgot.show;
-                if (!this.forgot.successful) {
-                    this.forgot.successful = true;
-                    this.forgot.message = '';
-                }
-            },
+        toggleForgotContainer(): void {
+            this.forgot.show = !this.forgot.show;
+            if (!this.forgot.successful) {
+                this.forgot.successful = true;
+                this.forgot.message = '';
+            }
         },
-    });
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .password-link {
-        padding: 0.375rem 0;
-        float: right;
-        color: $primary !important;
-        cursor: pointer;
-    }
+.password-link {
+  padding: 0.375rem 0;
+  float: right;
+  color: $primary !important;
+  cursor: pointer;
+}
 </style>

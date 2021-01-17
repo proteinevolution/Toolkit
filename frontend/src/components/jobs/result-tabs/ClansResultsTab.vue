@@ -8,9 +8,10 @@
         <br><br>
         Download the CLANS application here: <a href="/clans/clans.jar"><b>clans.jar</b></a>
         and visualize your unzipped CLANS file (<b>{{ job.jobID + '.clans' }}</b>) using the 'Load Run' option in the
-        'File' menu. Please refer to the <a href="/clans/clans_userguide.pdf"
-                                            target="”_blank”">
-            <b>CLANS user guide</b></a> for detailed instructions.
+        'File' menu. Please refer to the
+        <a href="/clans/clans_userguide.pdf"
+           target="”_blank”"><b>CLANS user guide</b></a>
+        for detailed instructions.
 
         <br><br>Please make sure you have Java Runtime Environment (JRE) installed. <br><br>
 
@@ -27,11 +28,11 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import {resultsService} from '@/services/ResultsService';
 
 export default ResultTabMixin.extend({
-  name: 'ClansResultsTab',
-  computed: {
-    fileUrl() {
-      return resultsService.getDownloadFilePath(this.job.jobID, this.job.jobID + '.clans.zip');
+    name: 'ClansResultsTab',
+    computed: {
+        fileUrl() {
+            return resultsService.getDownloadFilePath(this.job.jobID, this.job.jobID + '.clans.zip');
+        },
     },
-  },
 });
 </script>

@@ -12,19 +12,19 @@ object Dependencies {
     filters,
     ehcache,
     guice,
-    "com.typesafe.akka"    %% "akka-actor"           % akkaVersion,
-    "com.typesafe.akka"    %% "akka-cluster"         % akkaVersion,
-    "com.typesafe.akka"    %% "akka-cluster-tools"   % akkaVersion,
-    "com.typesafe.akka"    %% "akka-cluster-metrics" % akkaVersion,
-    "com.typesafe.akka"    %% "akka-slf4j"           % akkaVersion,
-    "com.typesafe.akka"    %% "akka-stream"          % akkaVersion,
+    "com.typesafe.akka"    %% "akka-actor"                 % akkaVersion,
+    "com.typesafe.akka"    %% "akka-cluster"               % akkaVersion,
+    "com.typesafe.akka"    %% "akka-cluster-tools"         % akkaVersion,
+    "com.typesafe.akka"    %% "akka-cluster-metrics"       % akkaVersion,
+    "com.typesafe.akka"    %% "akka-slf4j"                 % akkaVersion,
+    "com.typesafe.akka"    %% "akka-stream"                % akkaVersion,
     "com.typesafe.akka"    %% "akka-serialization-jackson" % akkaVersion,
-    "com.typesafe.akka"    %% "akka-actor-typed" % akkaVersion,
-    "com.typesafe.play"    %% "play-mailer"          % "8.0.1",
-    "com.typesafe.play"    %% "play-mailer-guice"    % "8.0.1",
-    "com.github.pathikrit" %% "better-files"         % "3.9.1",
-    "org.mindrot"           % "jbcrypt"              % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"  % "1.0.2-play28")
+    "com.typesafe.akka"    %% "akka-actor-typed"           % akkaVersion,
+    "com.typesafe.play"    %% "play-mailer"                % "8.0.1",
+    "com.typesafe.play"    %% "play-mailer-guice"          % "8.0.1",
+    "com.github.pathikrit" %% "better-files"               % "3.9.1",
+    "org.mindrot"           % "jbcrypt"                    % "0.4",
+    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.2-play28")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.2")
