@@ -39,7 +39,7 @@
                  :filter="filter"
                  :empty-text="$t('jobs.results.hitlist.table.noData')"
                  :empty-filtered-text="$t('jobs.results.hitlist.table.noDataFiltered')"
-                 responsive
+                 :responsive="true"
                  striped
                  show-empty>
             <template #cell(numCheck)="data">
@@ -65,102 +65,101 @@
             <span v-else
                   v-text="$t('jobs.results.hitlist.table.paginationInfoFiltered',
                              {start, end, totalRows, totalNoFilter})"></span>
-            <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
-                align="right"
-                class="mb-0"
-                aria-controls="hitListTable" />
+            <b-pagination v-model="currentPage"
+                          :total-rows="totalRows"
+                          :per-page="perPage"
+                          align="right"
+                          class="mb-0"
+                          aria-controls="hitListTable" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {resultsService} from '@/services/ResultsService';
-    import {Job} from '@/types/toolkit/jobs';
-    import {SearchHitsResponse} from '@/types/toolkit/results';
+import Vue from 'vue';
+import {resultsService} from '@/services/ResultsService';
+import {Job} from '@/types/toolkit/jobs';
+import {SearchHitsResponse} from '@/types/toolkit/results';
 
-    export default Vue.extend({
-        name: 'HitListTable',
-        props: {
-            selectedItems: {
-                type: Array as () => number[],
-                required: false,
-                default: () => [],
-            },
-            fields: {
-                type: Array as () => any[],
-                required: true,
-            },
-            job: {
-                type: Object as () => Job,
-                required: true,
-            },
+export default Vue.extend({
+    name: 'HitListTable',
+    props: {
+        selectedItems: {
+            type: Array as () => number[],
+            required: false,
+            default: () => [],
         },
-        data() {
-            return {
-                isBusy: false,
-                totalRows: 1,
-                totalNoFilter: 1,
-                start: 0,
-                end: 0,
-                filter: '',
-                currentPage: 1,
-                perPage: 25,
-                perPageOptions: [
-                    10,
-                    25,
-                    50,
-                    100,
-                    'All',
-                ],
-            };
+        fields: {
+            type: Array as () => any[],
+            required: true,
         },
-        methods: {
-            hitsProvider(ctx: any) {
+        job: {
+            type: Object as () => Job,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            isBusy: false,
+            totalRows: 1,
+            totalNoFilter: 1,
+            start: 0,
+            end: 0,
+            filter: '',
+            currentPage: 1,
+            perPage: 25,
+            perPageOptions: [
+                10,
+                25,
+                50,
+                100,
+                'All',
+            ],
+        };
+    },
+    methods: {
+        hitsProvider(ctx: any) {
 
-                if (ctx.perPage === 0) {
-                    ctx.perPage = this.totalRows;
-                }
-                const start: number = (ctx.currentPage - 1) * ctx.perPage;
-                const end: number = ctx.currentPage * ctx.perPage;
-                return resultsService.fetchHits(this.job.jobID, start, end,
-                    ctx.filter, ctx.sortBy, ctx.sortDesc)
-                    .then((data: SearchHitsResponse) => {
-                        const items = data.hits;
-                        this.totalRows = data.total;
-                        this.totalNoFilter = data.totalNoFilter;
-                        this.start = data.start + 1;
-                        this.end = Math.min(data.end, data.total);
-                        return items || [];
-                    });
-            },
-            check(val: boolean, num: number): void {
-                if (val && !this.selectedItems.includes(num)) {
-                    this.selectedItems.push(num); // eslint-disable-line vue/no-mutating-props
-                } else {
-                    const i: number = this.selectedItems.indexOf(num);
-                    if (i > -1) {
-                        this.selectedItems.splice(i, 1); // eslint-disable-line vue/no-mutating-props
-                    }
-                }
-            },
+            if (ctx.perPage === 0) {
+                ctx.perPage = this.totalRows;
+            }
+            const start: number = (ctx.currentPage - 1) * ctx.perPage;
+            const end: number = ctx.currentPage * ctx.perPage;
+            return resultsService.fetchHits(this.job.jobID, start, end,
+                ctx.filter, ctx.sortBy, ctx.sortDesc)
+                .then((data: SearchHitsResponse) => {
+                    const items = data.hits;
+                    this.totalRows = data.total;
+                    this.totalNoFilter = data.totalNoFilter;
+                    this.start = data.start + 1;
+                    this.end = Math.min(data.end, data.total);
+                    return items || [];
+                });
         },
-    });
+        check(val: boolean, num: number): void {
+            if (val && !this.selectedItems.includes(num)) {
+                this.selectedItems.push(num); // eslint-disable-line vue/no-mutating-props
+            } else {
+                const i: number = this.selectedItems.indexOf(num);
+                if (i > -1) {
+                    this.selectedItems.splice(i, 1); // eslint-disable-line vue/no-mutating-props
+                }
+            }
+        },
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    #hitListTable {
-        td {
-            a {
-                cursor: pointer;
+#hitListTable {
+  td {
+    a {
+      cursor: pointer;
 
-                &:hover {
-                    color: $primary;
-                }
-            }
-        }
+      &:hover {
+        color: $primary;
+      }
     }
+  }
+}
 </style>

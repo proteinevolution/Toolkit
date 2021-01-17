@@ -210,149 +210,149 @@
 </template>
 
 <script lang="ts">
-    import Loading from '@/components/utils/Loading.vue';
-    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
-    import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
-    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import Loading from '@/components/utils/Loading.vue';
+import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
+import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import {HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
-    export default SearchResultTabMixin.extend({
-        name: 'HHompResultsTab',
-        components: {
-            Loading,
-            HitListTable,
-            HitMap,
-            IntersectionObserver,
-        },
-        data() {
-            return {
-                alignments: undefined as HHompAlignmentItem[] | undefined,
-                info: undefined as HHompHHInfoResult | undefined,
-                breakAfter: 70,
-                hitListFields: [{
-                    key: 'num',
-                    label: this.$t('jobs.results.hhomp.table.num'),
-                    sortable: true,
-                }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hhomp.table.hit'),
-                    sortable: true,
-                }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.hhomp.table.name'),
-                    sortable: true,
-                }, {
-                    key: 'probabHit',
-                    label: this.$t('jobs.results.hhomp.table.probHits'),
-                    sortable: true,
-                }, {
-                    key: 'probabOMP',
-                    label: this.$t('jobs.results.hhomp.table.probOMP'),
-                    sortable: true,
-                }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hhomp.table.eVal'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'ssScore',
-                    label: this.$t('jobs.results.hhomp.table.ssScore'),
-                    sortable: true,
-                }, {
-                    key: 'alignedCols',
-                    label: this.$t('jobs.results.hhomp.table.cols'),
-                    sortable: true,
-                }, {
-                    key: 'templateRef',
-                    label: this.$t('jobs.results.hhomp.table.targetLength'),
-                    sortable: true,
-                }],
-            };
-        },
-        methods: {
-            wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItemRender[] {
-                if (this.wrap) {
-                    const res: SearchAlignmentItemRender[] = [];
-                    let qStart: number = al.query.start;
-                    let tStart: number = al.template.start;
-                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                        const end: number = start + this.breakAfter;
-                        const qSeq: string = al.query.seq.slice(start, end);
-                        const tSeq: string = al.template.seq.slice(start, end);
-                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                        res.push({
-                            agree: al.agree.slice(start, end),
-                            query: {
-                                consensus: al.query.consensus.slice(start, end),
-                                end: qEnd,
-                                name: al.query.name,
-                                ref: al.query.ref,
-                                seq: qSeq,
-                                ss_conf: al.query.ss_conf.slice(start, end),
-                                ss_dssp: al.query.ss_dssp.slice(start, end),
-                                ss_pred: al.query.ss_pred.slice(start, end),
-                                start: qStart,
-                            },
-                            template: {
-                                accession: al.template.accession,
-                                bb_conf: al.template.bb_conf.slice(start, end),
-                                bb_pred: al.template.bb_pred.slice(start, end),
-                                consensus: al.template.consensus.slice(start, end),
-                                end: tEnd,
-                                ref: al.template.ref,
-                                seq: tSeq,
-                                ss_conf: al.template.ss_conf.slice(start, end),
-                                ss_dssp: al.template.ss_dssp.slice(start, end),
-                                ss_pred: al.template.ss_pred.slice(start, end),
-                                start: tStart,
-                            },
-                        });
-                        qStart = qEnd + 1;
-                        tStart = tEnd + 1;
-                    }
-                    return res;
-                } else {
-                    return [al];
+export default SearchResultTabMixin.extend({
+    name: 'HHompResultsTab',
+    components: {
+        Loading,
+        HitListTable,
+        HitMap,
+        IntersectionObserver,
+    },
+    data() {
+        return {
+            alignments: undefined as HHompAlignmentItem[] | undefined,
+            info: undefined as HHompHHInfoResult | undefined,
+            breakAfter: 70,
+            hitListFields: [{
+                key: 'num',
+                label: this.$t('jobs.results.hhomp.table.num'),
+                sortable: true,
+            }, {
+                key: 'acc',
+                label: this.$t('jobs.results.hhomp.table.hit'),
+                sortable: true,
+            }, {
+                key: 'name',
+                label: this.$t('jobs.results.hhomp.table.name'),
+                sortable: true,
+            }, {
+                key: 'probabHit',
+                label: this.$t('jobs.results.hhomp.table.probHits'),
+                sortable: true,
+            }, {
+                key: 'probabOMP',
+                label: this.$t('jobs.results.hhomp.table.probOMP'),
+                sortable: true,
+            }, {
+                key: 'eval',
+                label: this.$t('jobs.results.hhomp.table.eVal'),
+                class: 'no-wrap',
+                sortable: true,
+            }, {
+                key: 'ssScore',
+                label: this.$t('jobs.results.hhomp.table.ssScore'),
+                sortable: true,
+            }, {
+                key: 'alignedCols',
+                label: this.$t('jobs.results.hhomp.table.cols'),
+                sortable: true,
+            }, {
+                key: 'templateRef',
+                label: this.$t('jobs.results.hhomp.table.targetLength'),
+                sortable: true,
+            }],
+        };
+    },
+    methods: {
+        wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItemRender[] {
+            if (this.wrap) {
+                const res: SearchAlignmentItemRender[] = [];
+                let qStart: number = al.query.start;
+                let tStart: number = al.template.start;
+                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                    const end: number = start + this.breakAfter;
+                    const qSeq: string = al.query.seq.slice(start, end);
+                    const tSeq: string = al.template.seq.slice(start, end);
+                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                    res.push({
+                        agree: al.agree.slice(start, end),
+                        query: {
+                            consensus: al.query.consensus.slice(start, end),
+                            end: qEnd,
+                            name: al.query.name,
+                            ref: al.query.ref,
+                            seq: qSeq,
+                            ss_conf: al.query.ss_conf.slice(start, end),
+                            ss_dssp: al.query.ss_dssp.slice(start, end),
+                            ss_pred: al.query.ss_pred.slice(start, end),
+                            start: qStart,
+                        },
+                        template: {
+                            accession: al.template.accession,
+                            bb_conf: al.template.bb_conf.slice(start, end),
+                            bb_pred: al.template.bb_pred.slice(start, end),
+                            consensus: al.template.consensus.slice(start, end),
+                            end: tEnd,
+                            ref: al.template.ref,
+                            seq: tSeq,
+                            ss_conf: al.template.ss_conf.slice(start, end),
+                            ss_dssp: al.template.ss_dssp.slice(start, end),
+                            ss_pred: al.template.ss_pred.slice(start, end),
+                            start: tStart,
+                        },
+                    });
+                    qStart = qEnd + 1;
+                    tStart = tEnd + 1;
                 }
-            },
+                return res;
+            } else {
+                return [al];
+            }
         },
-    });
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .result-section {
-        padding-top: 3.5rem;
+.result-section {
+  padding-top: 3.5rem;
+}
+
+.alignments-table {
+  font-size: 0.95em;
+
+  .blank-row {
+    height: 0.8rem;
+  }
+
+  .sequence {
+    td {
+      word-break: keep-all;
+      white-space: nowrap;
+      font-family: $font-family-monospace;
+      padding: 0 1rem 0 0;
     }
 
-    .alignments-table {
-        font-size: 0.95em;
-
-        .blank-row {
-            height: 0.8rem;
-        }
-
-        .sequence {
-            td {
-                word-break: keep-all;
-                white-space: nowrap;
-                font-family: $font-family-monospace;
-                padding: 0 1rem 0 0;
-            }
-
-            .consensus-agree {
-                white-space: pre-wrap;
-            }
-        }
-
-        a {
-            cursor: pointer;
-            color: $primary;
-
-            &:hover {
-                color: $tk-dark-green;
-            }
-        }
+    .consensus-agree {
+      white-space: pre-wrap;
     }
+  }
+
+  a {
+    cursor: pointer;
+    color: $primary;
+
+    &:hover {
+      color: $tk-dark-green;
+    }
+  }
+}
 </style>

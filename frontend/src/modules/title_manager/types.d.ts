@@ -9,7 +9,9 @@ interface TitleProperties {
 
 interface TKTitleFunctions {
     addon(value: string): void;
+
     alert(value: boolean): void;
+
     refresh(): void;
 }
 

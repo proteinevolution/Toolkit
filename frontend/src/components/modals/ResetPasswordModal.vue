@@ -30,77 +30,77 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import BaseModal from './BaseModal.vue';
-    import {PasswordResetData, AuthMessage} from '@/types/toolkit/auth';
-    import {authService} from '@/services/AuthService';
-    import EventBus from '@/util/EventBus';
-    import {TranslateResult} from 'vue-i18n';
+import Vue from 'vue';
+import BaseModal from './BaseModal.vue';
+import {AuthMessage, PasswordResetData} from '@/types/toolkit/auth';
+import {authService} from '@/services/AuthService';
+import EventBus from '@/util/EventBus';
+import {TranslateResult} from 'vue-i18n';
 
-    export default Vue.extend({
-        name: 'ResetPasswordModal',
-        components: {
-            BaseModal,
+export default Vue.extend({
+    name: 'ResetPasswordModal',
+    components: {
+        BaseModal,
+    },
+    data() {
+        return {
+            newPassword: '',
+            newPasswordState: null as boolean | null,
+            confirmPassword: '',
+            confirmPasswordState: null as boolean | null,
+            message: '' as TranslateResult,
+        };
+    },
+    computed: {
+        token(): string {
+            return this.$route.query.token as string;
         },
-        data() {
-            return {
-                newPassword: '',
-                newPasswordState: null as boolean | null,
-                confirmPassword: '',
-                confirmPasswordState: null as boolean | null,
-                message: '' as TranslateResult,
+        nameLogin(): string {
+            return this.$route.query.nameLogin as string;
+        },
+        newPasswordValid(): boolean {
+            return /^.{8,128}$/.test(this.newPassword);
+        },
+        confirmPasswordValid(): boolean {
+            return this.confirmPassword === this.newPassword;
+        },
+        valid(): boolean {
+            return this.nameLogin !== '' && this.token !== '' &&
+                this.newPasswordValid
+                && this.confirmPasswordValid;
+        },
+    },
+    methods: {
+        validateNewPassword() {
+            this.newPasswordState = this.newPasswordValid ? null : false;
+        },
+        validateConfirmPassword() {
+            this.confirmPasswordState = this.confirmPasswordValid ? null : false;
+        },
+        async resetPassword() {
+            if (!this.valid) {
+                return;
+            }
+            const data: PasswordResetData = {
+                passwordNew: this.newPassword,
+                token: this.token,
+                nameLogin: this.nameLogin,
             };
-        },
-        computed: {
-            token(): string {
-              return this.$route.query.token as string;
-            },
-            nameLogin(): string {
-                return this.$route.query.nameLogin as string;
-            },
-            newPasswordValid(): boolean {
-                return /^.{8,128}$/.test(this.newPassword);
-            },
-            confirmPasswordValid(): boolean {
-                return this.confirmPassword === this.newPassword;
-            },
-            valid(): boolean {
-                return this.nameLogin !== '' && this.token !== '' &&
-                    this.newPasswordValid
-                    && this.confirmPasswordValid;
-            },
-        },
-        methods: {
-            validateNewPassword() {
-                this.newPasswordState = this.newPasswordValid ? null : false;
-            },
-            validateConfirmPassword() {
-                this.confirmPasswordState = this.confirmPasswordValid ? null : false;
-            },
-            async resetPassword() {
-                if (!this.valid) {
-                    return;
+            try {
+                const msg: AuthMessage = await authService.resetPassword(data);
+                const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                if (msg.successful) {
+                    this.$store.commit('auth/setUser', msg.user);
+                    EventBus.$emit('hide-modal', 'resetPassword');
+                    this.$router.replace('/');
+                    this.$alert(message);
                 }
-                const data: PasswordResetData = {
-                    passwordNew: this.newPassword,
-                    token: this.token,
-                    nameLogin: this.nameLogin,
-                };
-                try {
-                    const msg: AuthMessage = await authService.resetPassword(data);
-                    const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                    if (msg.successful) {
-                        this.$store.commit('auth/setUser', msg.user);
-                        EventBus.$emit('hide-modal', 'resetPassword');
-                        this.$router.replace('/');
-                        this.$alert(message);
-                    }
-                    this.message = message;
-                } catch (error) {
-                    this.message = '';
-                    this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
-                }
-            },
+                this.message = message;
+            } catch (error) {
+                this.message = '';
+                this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
+            }
         },
-    });
+    },
+});
 </script>

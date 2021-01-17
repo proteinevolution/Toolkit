@@ -51,7 +51,7 @@ export const FASTA: Format = {
 
     read(value: string): Sequence[] {
         const newlines = value.split('\n')
-        // remove empty lines
+            // remove empty lines
             .filter((line: string) => line !== '');
 
         const result: Sequence[] = [];

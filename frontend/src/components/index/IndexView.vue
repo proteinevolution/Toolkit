@@ -18,61 +18,62 @@
 </template>
 
 <script lang="ts">
-    import ToolFinder from './ToolFinder.vue';
-    import UpdatesSection from './UpdatesSection.vue';
-    import hasHTMLTitle from '@/mixins/hasHTMLTitle';
-    import EventBus from '@/util/EventBus';
+import ToolFinder from './ToolFinder.vue';
+import UpdatesSection from './UpdatesSection.vue';
+import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+import EventBus from '@/util/EventBus';
 
-    export default hasHTMLTitle.extend({
-        name: 'IndexView',
-        components: {
-            ToolFinder,
-            UpdatesSection,
-        },
-        watch: {
-            // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
-            '$route.query': {
-                immediate: true,
-                async handler(query: any) {
-                    if (query && query.action) {
-                        EventBus.$emit('show-modal', {id: query.action});
-                    }
-                },
+export default hasHTMLTitle.extend({
+    name: 'IndexView',
+    components: {
+        ToolFinder,
+        UpdatesSection,
+    },
+    watch: {
+        // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
+        '$route.query': {
+            immediate: true,
+            async handler(query: any) {
+                if (query && query.action) {
+                    EventBus.$emit('show-modal', {id: query.action});
+                }
             },
         },
-    });
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .caption-container {
-        position: relative;
+.caption-container {
+  position: relative;
 
-        .img-fluid {
-            border-radius: $global-radius;
-        }
-        .caption {
-            border-top-right-radius: $global-radius;
-            border-bottom-right-radius: $global-radius;
-            position: absolute;
-            height: 100%;
-            width: 23%;
-            color: white;
-            letter-spacing: 1px;
-            background: rgba(4, 4, 4, 0.9);
-            opacity: 0.55;
-            top: 0;
-            right: 0;
-            padding: 2.5rem 2rem;
+  .img-fluid {
+    border-radius: $global-radius;
+  }
 
-            .caption-header {
-                margin-bottom: 1rem;
-                font-size: 1.1em;
-            }
+  .caption {
+    border-top-right-radius: $global-radius;
+    border-bottom-right-radius: $global-radius;
+    position: absolute;
+    height: 100%;
+    width: 23%;
+    color: white;
+    letter-spacing: 1px;
+    background: rgba(4, 4, 4, 0.9);
+    opacity: 0.55;
+    top: 0;
+    right: 0;
+    padding: 2.5rem 2rem;
 
-            .caption-body {
-                font-size: 0.9em;
-                line-height: 1.5rem;
-            }
-        }
+    .caption-header {
+      margin-bottom: 1rem;
+      font-size: 1.1em;
     }
+
+    .caption-body {
+      font-size: 0.9em;
+      line-height: 1.5rem;
+    }
+  }
+}
 </style>

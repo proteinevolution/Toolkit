@@ -6,18 +6,18 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+import Vue from 'vue';
 
-    export default Vue.extend({
-        name: 'LoadingView',
-    });
+export default Vue.extend({
+    name: 'LoadingView',
+});
 </script>
 
 <style lang="scss" scoped>
-    .loading-view {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translateX(-50%) translateY(-50%);
-    }
+.loading-view {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
 </style>

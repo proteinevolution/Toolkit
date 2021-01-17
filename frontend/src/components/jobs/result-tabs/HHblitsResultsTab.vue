@@ -174,90 +174,90 @@ import {HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender} fr
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
 export default SearchResultTabMixin.extend({
-  name: 'HHblitsResultsTab',
-  components: {
-    Loading,
-    HitListTable,
-    HitMap,
-    IntersectionObserver,
-  },
-  data() {
-    return {
-      alignments: undefined as HHblitsAlignmentItem[] | undefined,
-      info: undefined as HHblitsHHInfoResult | undefined,
-      breakAfter: 85,
-      hitListFields: [{
-        key: 'numCheck',
-        label: this.$t('jobs.results.hhblits.table.num'),
-        sortable: true,
-      }, {
-        key: 'acc',
-        label: this.$t('jobs.results.hhblits.table.hit'),
-        sortable: true,
-      }, {
-        key: 'name',
-        label: this.$t('jobs.results.hhblits.table.name'),
-        sortable: true,
-      }, {
-        key: 'probab',
-        label: this.$t('jobs.results.hhblits.table.probHits'),
-        sortable: true,
-      }, {
-        key: 'eval',
-        label: this.$t('jobs.results.hhblits.table.eVal'),
-        class: 'no-wrap',
-        sortable: true,
-      }, {
-        key: 'alignedCols',
-        label: this.$t('jobs.results.hhblits.table.cols'),
-        sortable: true,
-      }, {
-        key: 'templateRef',
-        label: this.$t('jobs.results.hhblits.table.targetLength'),
-        sortable: true,
-      }],
-    };
-  },
-  methods: {
-    wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
-      if (this.wrap) {
-        const res: SearchAlignmentItemRender[] = [];
-        let qStart: number = al.query.start;
-        let tStart: number = al.template.start;
-        for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-          const end: number = start + this.breakAfter;
-          const qSeq: string = al.query.seq.slice(start, end);
-          const tSeq: string = al.template.seq.slice(start, end);
-          const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-          const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-          res.push({
-            agree: al.agree.slice(start, end),
-            query: {
-              consensus: al.query.consensus.slice(start, end),
-              end: qEnd,
-              name: al.query.name,
-              ref: al.query.ref,
-              seq: qSeq,
-              start: qStart,
-            },
-            template: {
-              accession: al.template.accession,
-              consensus: al.template.consensus.slice(start, end),
-              end: tEnd,
-              ref: al.template.ref,
-              seq: tSeq,
-              start: tStart,
-            },
-          });
-          qStart = qEnd + 1;
-          tStart = tEnd + 1;
-        }
-        return res;
-      } else {
-        return [al];
-      }
+    name: 'HHblitsResultsTab',
+    components: {
+        Loading,
+        HitListTable,
+        HitMap,
+        IntersectionObserver,
     },
-  },
+    data() {
+        return {
+            alignments: undefined as HHblitsAlignmentItem[] | undefined,
+            info: undefined as HHblitsHHInfoResult | undefined,
+            breakAfter: 85,
+            hitListFields: [{
+                key: 'numCheck',
+                label: this.$t('jobs.results.hhblits.table.num'),
+                sortable: true,
+            }, {
+                key: 'acc',
+                label: this.$t('jobs.results.hhblits.table.hit'),
+                sortable: true,
+            }, {
+                key: 'name',
+                label: this.$t('jobs.results.hhblits.table.name'),
+                sortable: true,
+            }, {
+                key: 'probab',
+                label: this.$t('jobs.results.hhblits.table.probHits'),
+                sortable: true,
+            }, {
+                key: 'eval',
+                label: this.$t('jobs.results.hhblits.table.eVal'),
+                class: 'no-wrap',
+                sortable: true,
+            }, {
+                key: 'alignedCols',
+                label: this.$t('jobs.results.hhblits.table.cols'),
+                sortable: true,
+            }, {
+                key: 'templateRef',
+                label: this.$t('jobs.results.hhblits.table.targetLength'),
+                sortable: true,
+            }],
+        };
+    },
+    methods: {
+        wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
+            if (this.wrap) {
+                const res: SearchAlignmentItemRender[] = [];
+                let qStart: number = al.query.start;
+                let tStart: number = al.template.start;
+                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                    const end: number = start + this.breakAfter;
+                    const qSeq: string = al.query.seq.slice(start, end);
+                    const tSeq: string = al.template.seq.slice(start, end);
+                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                    res.push({
+                        agree: al.agree.slice(start, end),
+                        query: {
+                            consensus: al.query.consensus.slice(start, end),
+                            end: qEnd,
+                            name: al.query.name,
+                            ref: al.query.ref,
+                            seq: qSeq,
+                            start: qStart,
+                        },
+                        template: {
+                            accession: al.template.accession,
+                            consensus: al.template.consensus.slice(start, end),
+                            end: tEnd,
+                            ref: al.template.ref,
+                            seq: tSeq,
+                            start: tStart,
+                        },
+                    });
+                    qStart = qEnd + 1;
+                    tStart = tEnd + 1;
+                }
+                return res;
+            } else {
+                return [al];
+            }
+        },
+    },
 });
 </script>
 

@@ -29,62 +29,62 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {PasswordChangeData, AuthMessage} from '@/types/toolkit/auth';
-    import {authService} from '@/services/AuthService';
-    import {TranslateResult} from 'vue-i18n';
+import Vue from 'vue';
+import {AuthMessage, PasswordChangeData} from '@/types/toolkit/auth';
+import {authService} from '@/services/AuthService';
+import {TranslateResult} from 'vue-i18n';
 
-    export default Vue.extend({
-        name: 'Settings',
-        data() {
-            return {
-                oldPassword: '',
-                oldPasswordState: null as boolean | null,
-                newPassword: '',
-                newPasswordState: null as boolean | null,
-                confirmPassword: '',
-                confirmPasswordState: null as boolean | null,
-                message: '' as TranslateResult,
-                successful: true,
+export default Vue.extend({
+    name: 'Settings',
+    data() {
+        return {
+            oldPassword: '',
+            oldPasswordState: null as boolean | null,
+            newPassword: '',
+            newPasswordState: null as boolean | null,
+            confirmPassword: '',
+            confirmPasswordState: null as boolean | null,
+            message: '' as TranslateResult,
+            successful: true,
+        };
+    },
+    computed: {
+        newPasswordValid(): boolean {
+            return /^.{8,128}$/.test(this.newPassword);
+        },
+        confirmPasswordValid(): boolean {
+            return this.confirmPassword === this.newPassword;
+        },
+        valid(): boolean {
+            return this.oldPassword !== ''
+                && this.newPasswordValid
+                && this.confirmPasswordValid;
+        },
+    },
+    methods: {
+        validateNewPassword() {
+            this.newPasswordState = this.newPasswordValid ? null : false;
+        },
+        validateConfirmPassword() {
+            this.confirmPasswordState = this.confirmPasswordValid ? null : false;
+        },
+        async changePassword() {
+            if (!this.valid) {
+                return;
+            }
+            const data: PasswordChangeData = {
+                passwordOld: this.oldPassword,
+                passwordNew: this.newPassword,
             };
+            try {
+                const msg: AuthMessage = await authService.changePassword(data);
+                this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                this.successful = msg.successful;
+            } catch (error) {
+                this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
+                this.successful = false;
+            }
         },
-        computed: {
-            newPasswordValid(): boolean {
-                return /^.{8,128}$/.test(this.newPassword);
-            },
-            confirmPasswordValid(): boolean {
-                return this.confirmPassword === this.newPassword;
-            },
-            valid(): boolean {
-                return this.oldPassword !== ''
-                    && this.newPasswordValid
-                    && this.confirmPasswordValid;
-            },
-        },
-        methods: {
-            validateNewPassword() {
-                this.newPasswordState = this.newPasswordValid ? null : false;
-            },
-            validateConfirmPassword() {
-                this.confirmPasswordState = this.confirmPasswordValid ? null : false;
-            },
-            async changePassword() {
-                if (!this.valid) {
-                    return;
-                }
-                const data: PasswordChangeData = {
-                    passwordOld: this.oldPassword,
-                    passwordNew: this.newPassword,
-                };
-                try {
-                    const msg: AuthMessage = await authService.changePassword(data);
-                    this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                    this.successful = msg.successful;
-                } catch (error) {
-                    this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
-                    this.successful = false;
-                }
-            },
-        },
-    });
+    },
+});
 </script>
