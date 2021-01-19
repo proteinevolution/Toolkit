@@ -12,6 +12,7 @@ export default {
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
         maintenanceWarning: 'Maintenance in a few seconds!',
+        maintenanceSubmitBlock: 'Cannot submit jobs during maintenance.',
         language: {
             lang: 'Language',
             de: 'Deutsch',

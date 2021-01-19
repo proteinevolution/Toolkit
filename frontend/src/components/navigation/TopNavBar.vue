@@ -68,7 +68,7 @@
 
             <div class="warnings-container">
                 <b-alert variant="warning"
-                         class="maintenance-alert"
+                         class="maintenance-alert mb-0"
                          fade
                          :show="maintenanceMode">
                     <i class="fa fa-wrench"></i>

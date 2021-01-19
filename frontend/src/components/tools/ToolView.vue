@@ -62,6 +62,9 @@
                                            :title="$t('jobs.resetParamsTitle')"
                                            @click="clearParameterRemember"
                                            v-text="$t('jobs.resetParams')" />
+                                    <div v-if="maintenanceMode"
+                                         class="maintenance-warning"
+                                         v-text="$t('maintenanceSubmitBlock')"></div>
                                     <email-notification-switch v-if="loggedIn"
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
@@ -192,8 +195,11 @@ export default hasHTMLTitle.extend({
             }
             return this.tool.longname;
         },
+        maintenanceMode(): boolean {
+            return this.$store.state.maintenanceMode;
+        },
         preventSubmit(): boolean {
-            return this.submitLoading || Object.keys(this.validationErrors).length > 0;
+            return this.maintenanceMode || this.submitLoading || Object.keys(this.validationErrors).length > 0;
         },
         loggedIn(): boolean {
             return this.$store.getters['auth/loggedIn'];
@@ -411,6 +417,14 @@ export default hasHTMLTitle.extend({
       ::placeholder {
         text-align: center;
       }
+    }
+
+    .maintenance-warning {
+      float: right;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      line-height: 2.4;
+      color: $danger;
     }
   }
 
