@@ -64,7 +64,7 @@
                                            v-text="$t('jobs.resetParams')" />
                                     <div v-if="maintenanceMode"
                                          class="maintenance-warning"
-                                         v-text="$t('maintenanceSubmitBlock')"></div>
+                                         v-text="$t('maintenance.blockSubmit')"></div>
                                     <email-notification-switch v-if="loggedIn"
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"

@@ -48,8 +48,13 @@ case class User(
 
   def getUserData: UserData = {
     // This should only return user data when the user is logged in.
-    userData.getOrElse(UserData("invalid", "invalid", "invalid"))
+    userData match {
+      case None => UserData("invalid", "invalid", "invalid")
+      case Some(data) => data.copy(isAdmin = isSuperuser)
+    }
   }
+
+  def isRegistered: Boolean = userData.isDefined
 
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {

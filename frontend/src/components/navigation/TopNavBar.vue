@@ -49,13 +49,13 @@
                 <b-button v-if="!loggedIn"
                           variant="href"
                           size="sm"
-                          class="sign-in-link"
+                          class="top-navbar-link"
                           @click="openAuthModal"
                           v-text="$t('auth.signIn')" />
                 <b-button v-else
                           variant="href"
                           size="sm"
-                          class="sign-in-link"
+                          class="top-navbar-link"
                           @click="openAuthModal"
                           v-text="user.nameLogin" />
                 <b-button v-if="loggedIn"
@@ -72,7 +72,7 @@
                          fade
                          :show="maintenanceMode">
                     <i class="fa fa-wrench"></i>
-                    <b v-text="$t('maintenanceWarning')"></b>
+                    <b v-text="$t('maintenance.headerWarning')"></b>
                 </b-alert>
                 <div v-if="reconnecting"
                      class="offline-alert"
@@ -80,6 +80,15 @@
                     <i class="fas fa-retweet"></i>
                     <b v-text="$t('reconnecting')"></b>
                 </div>
+            </div>
+
+            <div v-if="isAdmin"
+                 class="admin-actions">
+                <b-button variant="href"
+                          size="sm"
+                          class="top-navbar-link"
+                          @click="toggleMaintenanceMode"
+                          v-text="$t('maintenance.' + (maintenanceMode ? 'end' : 'start'))" />
             </div>
         </div>
 
@@ -102,6 +111,7 @@ import {AuthMessage, User} from '@/types/toolkit/auth';
 import {authService} from '@/services/AuthService';
 import Logger from 'js-logger';
 import {loadLanguageAsync, possibleLanguages} from '@/i18n';
+import {backendService} from '@/services/BackendService';
 
 const logger = Logger.get('TopNavBar');
 
@@ -120,10 +130,20 @@ export default Vue.extend({
         user(): User | null {
             return this.$store.getters['auth/user'];
         },
+        isAdmin(): boolean {
+            return this.user !== null && this.user.isAdmin;
+        },
     },
     methods: {
         reloadApp(): void {
             window.location.reload();
+        },
+        toggleMaintenanceMode(): void {
+            if (this.maintenanceMode) {
+                backendService.endMaintenance();
+            } else {
+                backendService.startMaintenance();
+            }
         },
         openAuthModal(): void {
             EventBus.$emit('show-modal', {id: 'auth'});
@@ -216,10 +236,10 @@ export default Vue.extend({
       color: $tk-dark-gray;
     }
   }
+}
 
-  .sign-in-link {
-    color: $primary;
-  }
+.top-navbar-link {
+  color: $primary;
 }
 
 .warnings-container {

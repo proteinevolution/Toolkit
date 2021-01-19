@@ -169,6 +169,9 @@ export default Vue.extend({
         (this.$options as any).sockets.onmessage = (response: any) => {
             const json = JSON.parse(response.data);
             switch (json.mutation) {
+                case 'SOCKET_MaintenanceAlert':
+                    this.showNotification('maintenance.notificationTitle', 'maintenance.notificationBody', {});
+                    break;
                 case 'SOCKET_ShowNotification':
                     this.showNotification(json.title, json.body, json.arguments);
                     break;

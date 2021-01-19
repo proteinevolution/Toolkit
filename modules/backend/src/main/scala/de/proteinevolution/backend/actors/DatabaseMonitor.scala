@@ -81,7 +81,7 @@ final class DatabaseMonitor @Inject() (
       val userIDs = users.map(_.userID)
       // Store the deleted users in the user statistics
       backendDao.getStats.foreach { statisticsObject =>
-        val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.userData.nonEmpty)
+        val currentDeleted: Int = statisticsObject.userStatistics.currentDeleted + users.count(_.isRegistered)
         backendDao.setStatsCurrentDeleted(statisticsObject, currentDeleted)
       }
 

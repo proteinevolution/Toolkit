@@ -38,7 +38,7 @@ trait JSONTemplate {
       "messageKey"      -> Json.fromString(messageKey),
       "messageArguments" -> messageArguments.asJson,
       "successful"      -> Json.fromBoolean(success),
-      "user"            -> userOption.map(user => user.userData.asJson).getOrElse(Json.Null)
+      "user"            -> userOption.map(user => user.getUserData.asJson).getOrElse(Json.Null)
     )
   }
 

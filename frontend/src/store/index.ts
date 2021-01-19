@@ -73,6 +73,7 @@ const store: StoreOptions<RootState> = {
             state.clusterWorkload = message.load;
         },
         SOCKET_MaintenanceAlert(state, message) {
+            // notification handled in App.vue
             logger.log('Maintenance alert with message', message);
             state.maintenanceMode = message.maintenanceMode;
         },

@@ -24,6 +24,7 @@ case class UserData(
     nameLogin: String,
     password: String,
     eMail: String,
+    isAdmin: Boolean = false,
     nameFirst: Option[String] = None,
     nameLast: Option[String] = None,
     country: Option[String] = None
