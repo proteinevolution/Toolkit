@@ -170,7 +170,13 @@ export default Vue.extend({
             const json = JSON.parse(response.data);
             switch (json.mutation) {
                 case 'SOCKET_MaintenanceAlert':
-                    this.showNotification('maintenance.notificationTitle', 'maintenance.notificationBody', {});
+                    if (json.maintenanceMode) {
+                        this.$alert({
+                            title: this.$t('maintenance.notificationTitle'),
+                            text: this.$t('maintenance.notificationBody'),
+                            useBrowserNotifications: false,
+                        } as TKNotificationOptions);
+                    }
                     break;
                 case 'SOCKET_ShowNotification':
                     this.showNotification(json.title, json.body, json.arguments);
