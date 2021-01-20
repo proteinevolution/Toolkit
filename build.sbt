@@ -78,7 +78,7 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 lazy val backend = (project in file("modules/backend"))
   .commonSettings("de.proteinevolution.backend")
   .enablePlugins(PlayScala)
-  .dependsOn(common, base, auth, jobs, tel, tools, user, statistics)
+  .dependsOn(common, base, auth, jobs, message, tel, tools, user, statistics)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val statistics = (project in file("modules/statistics"))

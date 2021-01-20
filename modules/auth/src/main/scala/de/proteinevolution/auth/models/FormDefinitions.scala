@@ -87,8 +87,8 @@ object FormDefinitions {
       ) { (eMail, nameFirst, nameLast, country, password) =>
         if (user.checkPassword(password)) {
           Some(
-            user.getUserData.copy(
-              eMail = eMail.getOrElse(user.getUserData.eMail),
+            user.userData.get.copy(
+              eMail = eMail.getOrElse(user.userData.get.eMail),
               nameFirst = nameFirst,
               nameLast = nameLast,
               country = country

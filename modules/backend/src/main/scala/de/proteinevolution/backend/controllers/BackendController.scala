@@ -19,14 +19,14 @@ package de.proteinevolution.backend.controllers
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, ActorSystem }
 import de.proteinevolution.auth.dao.UserDao
-import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
@@ -37,26 +37,20 @@ import play.api.mvc._
 import scala.concurrent.ExecutionContext
 
 @Singleton
-final class BackendController @Inject()(
-    userSessions: UserSessionService,
+final class BackendController @Inject() (
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
     toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
+    actorSystem: ActorSystem,
     cc: ControllerComponents,
     userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc)
     with Logging {
 
-  def index: Action[AnyContent] = userAction { implicit request =>
-    if (request.user.isSuperuser) {
-      NoCache(Ok(List("Index Page").asJson))
-    } else {
-      NotFound
-    }
-  }
+  private var maintenanceMode: Boolean = false
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
     logger.info("Statistics called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
@@ -126,7 +120,7 @@ final class BackendController @Inject()(
         }
       }
     } else {
-      fuccess(NotFound)
+      fuccess(Unauthorized)
     }
   }
 
@@ -136,7 +130,7 @@ final class BackendController @Inject()(
       databaseMonitor ! DeleteOldUsers
       NoContent
     } else {
-      NotFound
+      Unauthorized
     }
   }
 
@@ -146,7 +140,7 @@ final class BackendController @Inject()(
       databaseMonitor ! DeleteOldJobs
       NoContent
     } else {
-      NotFound
+      Unauthorized
     }
   }
 
@@ -156,16 +150,21 @@ final class BackendController @Inject()(
         NoCache(Ok(users.asJson))
       }
     } else {
-      fuccess(NotFound)
+      fuccess(Unauthorized)
     }
   }
 
-  def maintenance: Action[AnyContent] = userAction { implicit request =>
+  def getMaintenanceMode: Action[AnyContent] = Action {
+      Ok(maintenanceMode.toString)
+    }
+
+  def sendMaintenanceAlert(mode: Boolean): Action[AnyContent] = userAction { implicit request =>
     if (request.user.isSuperuser) {
-      //clusterMonitor ! Multicast TODO put somewhere else
+      maintenanceMode = mode
+      actorSystem.eventStream.publish(MaintenanceAlert(mode))
       Ok
     } else {
-      NotFound
+      Unauthorized
     }
   }
 

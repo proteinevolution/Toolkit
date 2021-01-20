@@ -43,13 +43,12 @@ case class User(
 ) { // Account updated on
 
   def checkPassword(plainPassword: String): Boolean = {
-    BCrypt.checkpw(plainPassword, getUserData.password)
+    BCrypt.checkpw(plainPassword, userData.map(_.password).getOrElse(""))
   }
 
-  def getUserData: UserData = {
-    // This should only return user data when the user is logged in.
-    userData.getOrElse(UserData("invalid", "invalid", "invalid"))
-  }
+  def getUserDataWithAdmin: Option[UserData] = userData.map(_.copy(isAdmin = isSuperuser))
+
+  def isRegistered: Boolean = userData.isDefined
 
   // Mock up function to show how a possible function to check user levels could look like.
   def isSuperuser: Boolean = {
@@ -64,7 +63,7 @@ case class User(
     s"""userID: $userID
        |sessionID: ${sessionID.getOrElse("not logged in")}
        |connected: ${if (connected) "Yes" else "No"}
-       |nameLogin: ${getUserData.nameLogin}
+       |nameLogin: ${userData.map(_.nameLogin)}
        |watched jobIDs: ${jobs.mkString(",")}""".stripMargin
   }
 }
@@ -99,8 +98,8 @@ object User {
       (SESSION_DATA, u.sessionData.asJson),
       (CONNECTED, Json.fromBoolean(u.connected)),
       (ACCOUNT_TYPE, Json.fromInt(u.accountType)),
-      (UserData.NAME_LOGIN, Json.fromString(u.getUserData.nameLogin)),
-      (UserData.EMAIL, Json.fromString(u.getUserData.eMail)),
+      (UserData.NAME_LOGIN, u.userData.map(_.nameLogin).map(Json.fromString).getOrElse(Json.Null)),
+      (UserData.EMAIL, u.userData.map(_.eMail).map(Json.fromString).getOrElse(Json.Null)),
       (JOBS, u.jobs.asJson),
       (DATE_LAST_LOGIN, Json.fromString(u.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter))),
       (DATE_CREATED, Json.fromString(u.dateCreated.format(ZonedDateTimeHelper.dateTimeFormatter))),

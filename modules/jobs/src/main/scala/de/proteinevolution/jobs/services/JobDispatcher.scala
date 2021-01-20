@@ -16,9 +16,6 @@
 
 package de.proteinevolution.jobs.services
 
-import java.security.MessageDigest
-import java.time.ZonedDateTime
-
 import cats.data.{ EitherT, OptionT }
 import cats.implicits._
 import de.proteinevolution.auth.dao.UserDao
@@ -28,13 +25,15 @@ import de.proteinevolution.jobs.actors.JobActor.PrepareJob
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.jobs.models.{ Job, JobSubmitError }
 import de.proteinevolution.user.{ AccountType, User }
-import javax.inject.{ Inject, Singleton }
 import play.api.Logging
 
+import java.security.MessageDigest
+import java.time.ZonedDateTime
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class JobDispatcher @Inject()(
+final class JobDispatcher @Inject() (
     jobDao: JobDao,
     constants: ConstantsV2,
     jobIdProvider: JobIdProvider,
@@ -57,7 +56,7 @@ final class JobDispatcher @Inject()(
         _               <- validateJobId(generatedId)
         _               <- checkNotAlreadyTaken(generatedId)
         job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
-        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
+        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.userData.map(_.eMail).getOrElse("").matches(".+@tuebingen.mpg.de"))
         _               <- EitherT.liftF(jobDao.insertJob(job))
         _               <- EitherT.liftF(assignJob(user, job))
         _               <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))
@@ -85,7 +84,7 @@ final class JobDispatcher @Inject()(
   private[this] def isJobId(id: String): Boolean = constants.jobIDVersionOptionPattern.pattern.matcher(id).matches
 
   private[this] def generateJobId(parts: Map[String, String]): EitherT[Future, JobSubmitError, String] = {
-    if (parts.get("jobID").isEmpty) {
+    if (!parts.contains("jobID")) {
       EitherT.liftF(jobIdProvider.runSafe.unsafeToFuture())
     } else {
       EitherT.rightT[Future, JobSubmitError](parts("jobID"))
@@ -112,10 +111,10 @@ final class JobDispatcher @Inject()(
       user: User
   ): Job = {
     val now = ZonedDateTime.now
-    val dateDeletionOn = user.userData match {
-      case Some(_) => now.plusDays(constants.jobDeletionRegistered.toLong)
-      case None    => now.plusDays(constants.jobDeletion.toLong)
-    }
+    val dateDeletionOn = now.plusDays(
+      if (user.isRegistered) constants.jobDeletionRegistered.toLong
+      else constants.jobDeletion.toLong
+    )
     new Job(
       jobID = jobID,
       ownerID = user.userID,

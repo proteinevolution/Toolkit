@@ -43,10 +43,11 @@
 
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
-                                    <b-btn class="submit-button"
-                                           :class="{ 'submit-button-margin' : loggedIn }"
-                                           variant="primary"
+                                    <b-btn v-b-tooltip="maintenanceMode ? $t('maintenance.blockSubmit') : null"
+                                           class="submit-button"
+                                           :class="{ 'margin' : loggedIn, 'maintenance': maintenanceMode }"
                                            :disabled="preventSubmit"
+                                           variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
                                                  :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
@@ -192,6 +193,9 @@ export default hasHTMLTitle.extend({
             }
             return this.tool.longname;
         },
+        maintenanceMode(): boolean {
+            return this.$store.state.maintenanceMode;
+        },
         preventSubmit(): boolean {
             return this.submitLoading || Object.keys(this.validationErrors).length > 0;
         },
@@ -265,6 +269,9 @@ export default hasHTMLTitle.extend({
             }
         },
         submitJob(): void {
+            if (this.preventSubmit || this.maintenanceMode) {
+                return;
+            }
             const toolName = this.toolName;
             const submission = this.submission;
             this.submitLoading = true;
@@ -371,9 +378,21 @@ export default hasHTMLTitle.extend({
       }
     }
 
-    .submit-button-margin {
+    .submit-button.margin {
       @media (max-width: 560px) {
         margin-top: 3em;
+      }
+    }
+
+    .submit-button.maintenance {
+      opacity: 0.65;
+      cursor: default;
+      background-color: $primary !important;
+      border-color: $primary !important;
+      color: $white !important;
+
+      &:focus {
+        box-shadow: none;
       }
     }
 

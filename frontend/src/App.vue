@@ -1,7 +1,7 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools" />
+            <LoadingView v-if="$store.state.loading.tools || $store.state.loading.maintenanceMode" />
             <b-container v-else
                          class="main-container">
                 <OffscreenMenu />
@@ -159,6 +159,7 @@ export default Vue.extend({
             }
         });
 
+        this.$store.dispatch('fetchMaintenanceMode');
         this.$store.dispatch('tools/fetchAllTools');
         this.$store.dispatch('jobs/fetchAllJobs');
         // this also makes sure the session id is set
@@ -168,6 +169,15 @@ export default Vue.extend({
         (this.$options as any).sockets.onmessage = (response: any) => {
             const json = JSON.parse(response.data);
             switch (json.mutation) {
+                case 'SOCKET_MaintenanceAlert':
+                    if (json.maintenanceMode) {
+                        this.$alert({
+                            title: this.$t('maintenance.notificationTitle'),
+                            text: this.$t('maintenance.notificationBody'),
+                            useBrowserNotifications: false,
+                        } as TKNotificationOptions);
+                    }
+                    break;
                 case 'SOCKET_ShowNotification':
                     this.showNotification(json.title, json.body, json.arguments);
                     break;
