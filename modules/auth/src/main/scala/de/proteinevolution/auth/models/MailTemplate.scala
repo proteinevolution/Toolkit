@@ -39,7 +39,7 @@ sealed trait MailTemplate {
     val email = Email(
       subject,
       "Toolkit Team <mpi-toolkit@tuebingen.mpg.de>",
-      Seq(userName + " <" + user.userData.get.eMail + ">"),
+      Seq(userName() + " <" + user.userData.get.eMail + ">"),
       attachments = Seq(),
       bodyText = Some(this.bodyText), // Text version of the E-Mail in case the User has no HTML E-Mail client
       bodyHtml = Some(this.bodyHtml) // HTML formatted E-Mail content
@@ -343,10 +343,10 @@ object MailTemplate {
 
     val user: User = userParam
 
-    val verificationLink = s"$origin/verify/${userName}/$token"
+    val verificationLink = s"$origin/verify/${userName()}/$token"
 
     val bodyText: String = {
-      s"""Welcome ${userName},
+      s"""Welcome ${userName()},
          |your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.
          |To do this, visit
          |$verificationLink
@@ -360,7 +360,7 @@ object MailTemplate {
         s"""<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Welcome ${userName},<br/><br/>
+           |      Welcome ${userName()},<br/><br/>
            |      your registration was successful. Please take a moment and verify that this is indeed your E-Mail account.<br />
            |      </div>
            |  </td>
@@ -397,10 +397,10 @@ object MailTemplate {
 
     val user: User = userParam
 
-    val resetPasswordLink = s"$origin/reset-password/${userName}/$token"
+    val resetPasswordLink = s"$origin/reset-password/${userName()}/$token"
 
     val bodyText: String = {
-      s"""Dear ${userName},
+      s"""Dear ${userName()},
          |you requested to reset your password and set a new one.
          |To complete the process, visit
          |$resetPasswordLink
@@ -415,7 +415,7 @@ object MailTemplate {
         s"""<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Dear ${userName},<br/><br/>
+           |      Dear ${userName()},<br/><br/>
            |      you requested to reset your password and set a new one. Please take a moment to complete the process.<br/>
            |    </div>
            |  </td>
@@ -461,7 +461,7 @@ object MailTemplate {
     val user: User = userParam
 
     val bodyText: String = {
-      s"""Dear ${userName},
+      s"""Dear ${userName()},
          |as requested your password has been changed. You can do this at any time in your user profile.
          |If You did not request this, then someone else may have changed your password.
          |Your Toolkit Team
@@ -474,7 +474,7 @@ object MailTemplate {
         s"""<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Dear ${userName},<br/><br/>
+           |      Dear ${userName()},<br/><br/>
            |      your password was reset successfully.<br/>
            |      You can change it at any time in your user profile.<br/><br/>
            |      If you did not request this, then someone else may have changed your password.<br/>
@@ -505,7 +505,7 @@ object MailTemplate {
     }
 
     val bodyText: String = {
-      s"""Dear ${userName},
+      s"""Dear ${userName()},
          |$statusMessage
          |you can view it at any time at $origin/jobs/$jobId
          |Your Toolkit Team
@@ -519,7 +519,7 @@ object MailTemplate {
         s"""<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Dear ${userName},<br/><br/>
+           |      Dear ${userName()},<br/><br/>
            |      $statusMessage<br/>
            |    </div>
            |  </td>
@@ -557,7 +557,7 @@ object MailTemplate {
     val user: User = userParam
 
     val bodyText: String = {
-      s"""Dear ${userName},
+      s"""Dear ${userName()},
          |we have noticed, that you have not logged in since ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.
@@ -576,7 +576,7 @@ object MailTemplate {
         s"""<tr>
            |  <td align="center" style="font-size:0px;padding:10px 25px;word-break:break-word;">
            |    <div style="font-family:Noto Sans;font-size:14px;line-height:1;text-align:center;color:grey;">
-           |      Dear ${userName},<br/><br/>
+           |      Dear ${userName()},<br/><br/>
            |      we have noticed, that you have not logged in since
            |      ${user.dateLastLogin.format(ZonedDateTimeHelper.dateTimeFormatter)}.<br/><br/>
            |      To keep our system running smoothly and to keep the data we collect from our users to a minimum,

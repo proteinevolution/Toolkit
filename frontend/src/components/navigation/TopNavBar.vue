@@ -86,7 +86,7 @@
                  class="admin-actions">
                 <b-button variant="href"
                           size="sm"
-                          class="top-navbar-link"
+                          class="top-navbar-link mr-2"
                           @click="toggleMaintenanceMode"
                           v-text="$t('maintenance.' + (maintenanceMode ? 'end' : 'start'))" />
             </div>
