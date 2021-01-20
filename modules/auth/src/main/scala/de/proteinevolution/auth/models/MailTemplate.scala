@@ -30,7 +30,7 @@ sealed trait MailTemplate {
   val bodyText: String
   val bodyHtml: String
 
-  val userName: String = user.userData.get.nameLogin
+  def userName(): String = user.userData.get.nameLogin
 
   def send(implicit mailerClient: MailerClient): Unit = {
     if (!user.isRegistered) {
