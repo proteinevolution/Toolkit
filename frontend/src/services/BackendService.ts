@@ -4,7 +4,6 @@ class BackendService {
 
     public fetchMaintenanceMode(): Promise<boolean> {
         return new Promise<boolean>(((resolve, reject) => {
-            resolve(false);
             axios.get(`/api/backend/maintenance`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
