@@ -62,7 +62,7 @@ class AuthController @Inject() (
 
   def getUserData: Action[AnyContent] = userAction { implicit request =>
     logger.info("Sending user data.")
-    Ok(request.user.getUserData.asJson).withSession(
+    Ok(request.user.getUserDataWithAdmin.asJson).withSession(
       // this is very important as it is a call every frontend makes. Perfect place to enforce a session
       userSessionService.sessionCookie(request, request.user.sessionID.getOrElse(""))
     )
@@ -159,10 +159,10 @@ class AuthController @Inject() (
             } else {
               // Check database for existing users with the same email or login name
               userDao
-                .findUserByUsernameOrEmail(signUpFormUser.getUserData.nameLogin, signUpFormUser.getUserData.eMail)
+                .findUserByUsernameOrEmail(signUpFormUser.userData.get.nameLogin, signUpFormUser.userData.get.eMail)
                 .flatMap {
                   case Some(otherUser) =>
-                    if (signUpFormUser.getUserData.eMail == otherUser.getUserData.eMail) {
+                    if (signUpFormUser.userData.get.eMail == otherUser.userData.get.eMail) {
                       Future.successful(Ok(accountEmailUsed()))
                     } else {
                       Future.successful(Ok(accountNameUsed()))
@@ -175,7 +175,7 @@ class AuthController @Inject() (
                       userToken = Some(
                         UserToken(
                           tokenType = UserToken.EMAIL_VERIFICATION_TOKEN,
-                          eMail = Some(signUpFormUser.getUserData.eMail)
+                          eMail = Some(signUpFormUser.userData.get.eMail)
                         )
                       )
                     )
@@ -332,7 +332,7 @@ class AuthController @Inject() (
           {
             case Some(editedProfileUserData) =>
               // check that new email does not exist already
-              if (editedProfileUserData.eMail != user.getUserData.eMail) {
+              if (editedProfileUserData.eMail != user.userData.get.eMail) {
                 userDao.findUserByEmail(editedProfileUserData.eMail).map {
                   case Some(_) =>
                     Ok(accountEmailUsed())
@@ -341,7 +341,7 @@ class AuthController @Inject() (
               }
 
               userDao
-                .updateUserData(user.userID, editedProfileUserData.copy(nameLogin = user.getUserData.nameLogin))
+                .updateUserData(user.userID, editedProfileUserData.copy(nameLogin = user.userData.get.nameLogin))
                 .map {
                   case Some(updatedUser) =>
                     // Everything is ok, let the user know that they are logged in now

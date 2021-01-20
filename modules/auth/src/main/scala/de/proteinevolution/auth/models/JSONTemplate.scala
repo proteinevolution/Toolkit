@@ -22,12 +22,6 @@ import io.circe.syntax._
 
 trait JSONTemplate {
 
-  final val SHOWPASSWORDRESETVIEW = "showPasswordResetView"
-
-  def userToJSON(user: User): Json = {
-    Json.obj("nameLogin" -> Json.fromString(user.getUserData.nameLogin))
-  }
-
   def authMessage(
       messageKey: String,
       messageArguments: List[String] = List(),
@@ -35,17 +29,17 @@ trait JSONTemplate {
       userOption: Option[User] = None
   ): Json = {
     Json.obj(
-      "messageKey"      -> Json.fromString(messageKey),
+      "messageKey"       -> Json.fromString(messageKey),
       "messageArguments" -> messageArguments.asJson,
-      "successful"      -> Json.fromBoolean(success),
-      "user"            -> userOption.map(user => user.getUserData.asJson).getOrElse(Json.Null)
+      "successful"       -> Json.fromBoolean(success),
+      "user"             -> userOption.map(user => user.getUserDataWithAdmin).asJson
     )
   }
 
   def loggedIn(user: User): Json = {
     authMessage(
       "loginSuccess",
-      messageArguments = List(user.getUserData.nameLogin),
+      messageArguments = List(user.userData.get.nameLogin),
       success = true,
       userOption = Some(user)
     )
@@ -114,7 +108,7 @@ trait JSONTemplate {
   def verificationSuccessful(user: User): Json = {
     authMessage(
       "verificationSuccessful",
-      messageArguments = List(user.getUserData.nameLogin),
+      messageArguments = List(user.userData.get.nameLogin),
       success = true,
       userOption = Some(user)
     )
@@ -149,7 +143,7 @@ trait JSONTemplate {
   }
 
   def showPasswordResetView(): Json = {
-    authMessage(SHOWPASSWORDRESETVIEW, success = true)
+    authMessage("showPasswordResetView", success = true)
   }
 
   def noSuchUser: Json = {

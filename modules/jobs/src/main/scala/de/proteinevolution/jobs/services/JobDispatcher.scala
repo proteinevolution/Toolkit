@@ -56,7 +56,7 @@ final class JobDispatcher @Inject() (
         _               <- validateJobId(generatedId)
         _               <- checkNotAlreadyTaken(generatedId)
         job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
-        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.getUserData.eMail.matches(".+@tuebingen.mpg.de"))
+        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.userData.map(_.eMail).getOrElse("").matches(".+@tuebingen.mpg.de"))
         _               <- EitherT.liftF(jobDao.insertJob(job))
         _               <- EitherT.liftF(assignJob(user, job))
         _               <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))

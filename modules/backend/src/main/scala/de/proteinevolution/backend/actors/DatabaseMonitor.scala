@@ -24,10 +24,10 @@ import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, Delet
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.dao.JobDao
-import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.libs.mailer.MailerClient
 
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success }
 
@@ -110,7 +110,7 @@ final class DatabaseMonitor @Inject() (
         OldAccountEmail(user, constants.userDeletionWarning, config).send
         if (verbose)
           log.info(
-            "[User Deletion] eMail sent to user: " + user.getUserData.nameLogin + " Last login: " + user.dateLastLogin.toString
+            "[User Deletion] eMail sent to user: " + user.userData.get.nameLogin + " Last login: " + user.dateLastLogin.toString
           )
         userDao.setDeletionWarningSent(user.userID)
         user.userID
