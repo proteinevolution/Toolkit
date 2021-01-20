@@ -43,10 +43,11 @@
 
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
-                                    <b-btn class="submit-button"
-                                           :class="{ 'submit-button-margin' : loggedIn }"
-                                           variant="primary"
+                                    <b-btn v-b-tooltip="maintenanceMode ? $t('maintenance.blockSubmit') : null"
+                                           class="submit-button"
+                                           :class="{ 'margin' : loggedIn, 'maintenance': maintenanceMode }"
                                            :disabled="preventSubmit"
+                                           variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
                                                  :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
@@ -62,9 +63,6 @@
                                            :title="$t('jobs.resetParamsTitle')"
                                            @click="clearParameterRemember"
                                            v-text="$t('jobs.resetParams')" />
-                                    <div v-if="maintenanceMode"
-                                         class="maintenance-warning"
-                                         v-text="$t('maintenance.blockSubmit')"></div>
                                     <email-notification-switch v-if="loggedIn"
                                                                :validation-errors="validationErrors"
                                                                :submission="submission"
@@ -199,7 +197,7 @@ export default hasHTMLTitle.extend({
             return this.$store.state.maintenanceMode;
         },
         preventSubmit(): boolean {
-            return this.maintenanceMode || this.submitLoading || Object.keys(this.validationErrors).length > 0;
+            return this.submitLoading || Object.keys(this.validationErrors).length > 0;
         },
         loggedIn(): boolean {
             return this.$store.getters['auth/loggedIn'];
@@ -271,6 +269,9 @@ export default hasHTMLTitle.extend({
             }
         },
         submitJob(): void {
+            if (this.preventSubmit || this.maintenanceMode) {
+                return;
+            }
             const toolName = this.toolName;
             const submission = this.submission;
             this.submitLoading = true;
@@ -377,9 +378,21 @@ export default hasHTMLTitle.extend({
       }
     }
 
-    .submit-button-margin {
+    .submit-button.margin {
       @media (max-width: 560px) {
         margin-top: 3em;
+      }
+    }
+
+    .submit-button.maintenance {
+      opacity: 0.65;
+      cursor: default;
+      background-color: $primary !important;
+      border-color: $primary !important;
+      color: $white !important;
+
+      &:focus {
+        box-shadow: none;
       }
     }
 
@@ -417,14 +430,6 @@ export default hasHTMLTitle.extend({
       ::placeholder {
         text-align: center;
       }
-    }
-
-    .maintenance-warning {
-      float: right;
-      margin-left: 0.5rem;
-      margin-right: 0.5rem;
-      line-height: 2.4;
-      color: $danger;
     }
   }
 
