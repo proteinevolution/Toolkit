@@ -243,6 +243,9 @@ export default Vue.extend({
 }
 
 .warnings-container {
+  display: flex;
+  align-items: center;
+
   .maintenance-alert, .offline-alert {
     font-size: 0.8em;
     padding: 0.5rem 1rem;
