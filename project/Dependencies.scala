@@ -3,7 +3,7 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.6.12"
+  val akkaVersion = "2.6.13"
   val catsV       = "2.1.0"
   val circeV      = "0.13.0"
 
@@ -24,14 +24,14 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"          % "8.0.1",
     "com.github.pathikrit" %% "better-files"               % "3.9.1",
     "org.mindrot"           % "jbcrypt"                    % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.2-play28")
+    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.3-play28")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.2")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.3")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % catsV,
-    "org.typelevel"       %% "cats-effect"          % "2.3.1",
+    "org.typelevel"       %% "cats-effect"          % "2.3.3",
     "com.chuusai"         %% "shapeless"            % "2.3.3",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
@@ -46,7 +46,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.7.7"     % Test,
+    "org.mockito"               % "mockito-core"        % "3.8.0"     % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
     "org.awaitility"            % "awaitility"          % "4.0.3"     % Test
   )
