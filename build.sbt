@@ -11,7 +11,7 @@ inThisBuild(
     organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
     startYear := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-    scalaVersion := "2.13.3"
+    scalaVersion := "2.13.5"
   )
 )
 
@@ -43,7 +43,7 @@ lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala)
   .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
   .settings(scalacOptions += "-Ymacro-annotations")
-  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))

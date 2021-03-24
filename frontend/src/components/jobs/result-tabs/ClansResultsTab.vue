@@ -6,7 +6,8 @@
         for your
         sequences and unzip it.
         <br><br>
-        Download the CLANS application here: <a href="/clans/clans.jar"><b>clans.jar</b></a>
+        Download the CLANS application here: <a
+            href="/clans/clans.jar" download><b>clans.jar</b></a>
         and visualize your unzipped CLANS file (<b>{{ job.jobID + '.clans' }}</b>) using the 'Load Run' option in the
         'File' menu. Please refer to the
         <a href="/clans/clans_userguide.pdf"
@@ -28,11 +29,11 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import {resultsService} from '@/services/ResultsService';
 
 export default ResultTabMixin.extend({
-    name: 'ClansResultsTab',
-    computed: {
-        fileUrl() {
-            return resultsService.getDownloadFilePath(this.job.jobID, this.job.jobID + '.clans.zip');
-        },
+  name: 'ClansResultsTab',
+  computed: {
+    fileUrl() {
+      return resultsService.getDownloadFilePath(this.job.jobID, this.job.jobID + '.clans.zip');
     },
+  },
 });
 </script>
