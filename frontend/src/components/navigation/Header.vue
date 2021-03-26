@@ -24,29 +24,30 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import NavBar from '@/components/navigation/NavBar.vue';
-    import TopNavBar from '@/components/navigation/TopNavBar.vue';
+import Vue from 'vue';
+import NavBar from '@/components/navigation/NavBar.vue';
+import TopNavBar from '@/components/navigation/TopNavBar.vue';
 
-    export default Vue.extend({
-        name: 'Header',
-        components: {
-            NavBar,
-            TopNavBar,
-        },
-    });
+export default Vue.extend({
+    name: 'Header',
+    components: {
+        NavBar,
+        TopNavBar,
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .logo-container {
-        align-items: center;
-    }
+.logo-container {
+  align-items: center;
+}
 
-    .logo-link {
-        width: 100%;
-        img {
-            height: auto;
-            width: 180px;
-        }
-    }
+.logo-link {
+  width: 100%;
+
+  img {
+    height: auto;
+    width: 180px;
+  }
+}
 </style>

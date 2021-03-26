@@ -70,7 +70,7 @@ describe('SelectParameter', () => {
 
     it('uses existing submission for multi selection', () => {
         const wrapper = initSelectParameter(2, 'option1 option3');
-        expect((wrapper.vm as any).selected).to.deep.equal([ options[0], options[2]]);
+        expect((wrapper.vm as any).selected).to.deep.equal([options[0], options[2]]);
     });
 });
 

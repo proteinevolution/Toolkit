@@ -64,131 +64,131 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {ProfileData, User, AuthMessage} from '@/types/toolkit/auth';
-    import countries from '@/i18n/lang/countries';
-    import ExpandHeight from '@/transitions/ExpandHeight.vue';
-    import {authService} from '@/services/AuthService';
-    import {TranslateResult} from 'vue-i18n';
+import Vue from 'vue';
+import {AuthMessage, ProfileData, User} from '@/types/toolkit/auth';
+import countries from '@/i18n/lang/countries';
+import ExpandHeight from '@/transitions/ExpandHeight.vue';
+import {authService} from '@/services/AuthService';
+import {TranslateResult} from 'vue-i18n';
 
-    const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
+const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
 
-    export default Vue.extend({
-        name: 'Profile',
-        components: {
-            ExpandHeight,
+export default Vue.extend({
+    name: 'Profile',
+    components: {
+        ExpandHeight,
+    },
+    data() {
+        return {
+            needsConfirmation: false,
+            firstName: '',
+            firstNameState: null as boolean | null,
+            lastName: '',
+            lastNameState: null as boolean | null,
+            eMail: '',
+            eMailState: null as boolean | null,
+            country: '',
+            countries: options,
+            password: '',
+            message: '' as TranslateResult,
+        };
+    },
+    computed: {
+        user(): User | null {
+            return this.$store.getters['auth/user'];
         },
-        data() {
-            return {
-                needsConfirmation: false,
-                firstName: '',
-                firstNameState: null as boolean | null,
-                lastName: '',
-                lastNameState: null as boolean | null,
-                eMail: '',
-                eMailState: null as boolean | null,
-                country: '',
-                countries: options,
-                password: '',
-                message: '' as TranslateResult,
-            };
+        editButtonEnabled(): boolean {
+            if (this.user) {
+                return this.firstName !== this.user.nameFirst
+                    || this.lastName !== this.user.nameLast
+                    || this.eMail !== this.user.eMail
+                    || this.country !== this.user.country;
+            }
+            return false;
         },
-        computed: {
-            user(): User | null {
-                return this.$store.getters['auth/user'];
-            },
-            editButtonEnabled(): boolean {
-                if (this.user) {
-                    return this.firstName !== this.user.nameFirst
-                        || this.lastName !== this.user.nameLast
-                        || this.eMail !== this.user.eMail
-                        || this.country !== this.user.country;
-                }
-                return false;
-            },
-            firstNameValid(): boolean {
-                return /^.{0,25}$/.test(this.firstName);
-            },
-            lastNameValid(): boolean {
-                return /^.{0,25}$/.test(this.lastName);
-            },
-            eMailValid(): boolean {
-                return /^\S+@\S+$/.test(this.eMail);
-            },
-            passwordValid(): boolean {
-                return this.password !== '';
-            },
-            valid(): boolean {
-                return this.firstNameValid
-                    && this.lastNameValid
-                    && this.eMailValid
-                    && this.passwordValid;
-            },
+        firstNameValid(): boolean {
+            return /^.{0,25}$/.test(this.firstName);
         },
-        watch: {
-            user: {
-                immediate: true,
-                handler() {
-                    this.resetValues();
-                },
-            },
+        lastNameValid(): boolean {
+            return /^.{0,25}$/.test(this.lastName);
         },
-        methods: {
-            validateFirstName() {
-                this.firstNameState = this.firstNameValid ? null : false;
-            },
-            validateLastName() {
-                this.lastNameState = this.lastNameValid ? null : false;
-            },
-            validateEmail() {
-                this.eMailState = this.eMailValid ? null : false;
-            },
-            resetValues() {
-                if (this.user) {
-                    this.firstName = this.user.nameFirst;
-                    this.lastName = this.user.nameLast;
-                    this.eMail = this.user.eMail;
-                    this.country = this.user.country;
-                }
-            },
-            cancel() {
-                this.needsConfirmation = false;
+        eMailValid(): boolean {
+            return /^\S+@\S+$/.test(this.eMail);
+        },
+        passwordValid(): boolean {
+            return this.password !== '';
+        },
+        valid(): boolean {
+            return this.firstNameValid
+                && this.lastNameValid
+                && this.eMailValid
+                && this.passwordValid;
+        },
+    },
+    watch: {
+        user: {
+            immediate: true,
+            handler() {
                 this.resetValues();
             },
-            onSubmit() {
-                if (this.needsConfirmation) {
-                    this.editProfileSubmit();
-                } else {
-                    this.needsConfirmation = true;
-                }
-            },
-            async editProfileSubmit() {
-                if (!this.valid) {
-                    return;
-                }
-                const data: ProfileData = {
-                    nameLogin: this.user !== null ? this.user.nameLogin : '',
-                    nameFirst: this.firstName,
-                    nameLast: this.lastName,
-                    eMail: this.eMail,
-                    country: this.country,
-                    password: this.password,
-                };
-                try {
-                    const msg: AuthMessage = await authService.editProfile(data);
-                    if (msg.successful) {
-                        if (msg.user !== null) {
-                            this.$store.commit('auth/setUser', msg.user);
-                        }
-                        this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
-                    } else {
-                        this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
-                    }
-                } catch (error) {
-                    this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
-                }
-                this.cancel();
-            },
         },
-    });
+    },
+    methods: {
+        validateFirstName() {
+            this.firstNameState = this.firstNameValid ? null : false;
+        },
+        validateLastName() {
+            this.lastNameState = this.lastNameValid ? null : false;
+        },
+        validateEmail() {
+            this.eMailState = this.eMailValid ? null : false;
+        },
+        resetValues() {
+            if (this.user) {
+                this.firstName = this.user.nameFirst;
+                this.lastName = this.user.nameLast;
+                this.eMail = this.user.eMail;
+                this.country = this.user.country;
+            }
+        },
+        cancel() {
+            this.needsConfirmation = false;
+            this.resetValues();
+        },
+        onSubmit() {
+            if (this.needsConfirmation) {
+                this.editProfileSubmit();
+            } else {
+                this.needsConfirmation = true;
+            }
+        },
+        async editProfileSubmit() {
+            if (!this.valid) {
+                return;
+            }
+            const data: ProfileData = {
+                nameLogin: this.user !== null ? this.user.nameLogin : '',
+                nameFirst: this.firstName,
+                nameLast: this.lastName,
+                eMail: this.eMail,
+                country: this.country,
+                password: this.password,
+            };
+            try {
+                const msg: AuthMessage = await authService.editProfile(data);
+                if (msg.successful) {
+                    if (msg.user !== null) {
+                        this.$store.commit('auth/setUser', msg.user);
+                    }
+                    this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
+                } else {
+                    this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
+                }
+            } catch (error) {
+                this.message = this.$t('auth.responses.' + error.messageKey, error.messageArguments);
+            }
+            this.cancel();
+        },
+    },
+});
 </script>

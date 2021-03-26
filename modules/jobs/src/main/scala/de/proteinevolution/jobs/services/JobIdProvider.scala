@@ -56,7 +56,7 @@ final class JobIdProvider @Inject()(jobDao: JobDao)(implicit ec: ExecutionContex
   def runSafe: IO[String] = {
     Ref.of[IO, HashSet[String]](HashSet.empty[String]).flatMap { ref =>
       (for {
-        jobId <- Resource.liftF(ref.get).use(generateSafe)
+        jobId <- Resource.eval(ref.get).use(generateSafe)
         set   <- ref.get
       } yield (jobId, set)).flatMap {
         case (jobId, set) =>

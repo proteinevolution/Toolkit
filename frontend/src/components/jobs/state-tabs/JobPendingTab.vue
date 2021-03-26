@@ -16,64 +16,64 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import moment from 'moment';
-    import {jobService} from '@/services/JobService';
-    import {SimilarJobResult} from '@/types/toolkit/jobs';
-    import Logger from 'js-logger';
+import Vue from 'vue';
+import moment from 'moment';
+import {jobService} from '@/services/JobService';
+import {SimilarJobResult} from '@/types/toolkit/jobs';
+import Logger from 'js-logger';
 
-    const logger = Logger.get('JobPendingTab');
+const logger = Logger.get('JobPendingTab');
 
-    export default Vue.extend({
-        name: 'JobPendingTab',
-        props: {
-            job: {
-                type: Object,
-                required: true,
+export default Vue.extend({
+    name: 'JobPendingTab',
+    props: {
+        job: {
+            type: Object,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            similarJob: {
+                jobID: '',
+                dateCreated: 0,
             },
-        },
-        data() {
-            return {
-                similarJob: {
-                    jobID: '',
-                    dateCreated: 0,
-                },
-            };
-        },
-        created(): void {
-            jobService.getSimilarJob(this.job.jobID)
-                .then((similarJob: SimilarJobResult) => {
-                    this.similarJob = similarJob;
-                })
+        };
+    },
+    created(): void {
+        jobService.getSimilarJob(this.job.jobID)
+            .then((similarJob: SimilarJobResult) => {
+                this.similarJob = similarJob;
+            })
+            .catch(() => {
+                logger.error('No similar job returned');
+                this.$alert(this.$t('errors.general'), 'danger');
+            });
+    },
+    methods: {
+        startJob() {
+            jobService.startJob(this.job.jobID)
                 .catch(() => {
-                    logger.error('No similar job returned');
+                    logger.error('Could not start job!');
                     this.$alert(this.$t('errors.general'), 'danger');
                 });
         },
-        methods: {
-            startJob() {
-                jobService.startJob(this.job.jobID)
-                    .catch(() => {
-                        logger.error('Could not start job!');
-                        this.$alert(this.$t('errors.general'), 'danger');
-                    });
-            },
-            loadExistingJobAndDelete() {
-                const oldJobID: string = this.job.jobID;
-                logger.debug(`loading existing job ${this.similarJob.jobID}, deleting job ${oldJobID}`);
-                this.$router.push(`/jobs/${this.similarJob.jobID}`);
-                jobService.deleteJob(oldJobID)
-                    .then(() => {
-                        this.$store.commit('jobs/removeJob', {jobID: oldJobID});
-                    })
-                    .catch(() => {
-                        logger.error('Could not delete old job!');
-                        this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
-                    });
-            },
-            fromNow(date: string): string {
-                return moment(date).fromNow();
-            },
+        loadExistingJobAndDelete() {
+            const oldJobID: string = this.job.jobID;
+            logger.debug(`loading existing job ${this.similarJob.jobID}, deleting job ${oldJobID}`);
+            this.$router.push(`/jobs/${this.similarJob.jobID}`);
+            jobService.deleteJob(oldJobID)
+                .then(() => {
+                    this.$store.commit('jobs/removeJob', {jobID: oldJobID});
+                })
+                .catch(() => {
+                    logger.error('Could not delete old job!');
+                    this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
+                });
         },
-    });
+        fromNow(date: string): string {
+            return moment(date).fromNow();
+        },
+    },
+});
 </script>

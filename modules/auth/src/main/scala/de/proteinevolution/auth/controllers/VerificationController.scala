@@ -23,8 +23,6 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.user.{ AccountType, UserToken }
 import javax.inject.{ Inject, Singleton }
-import play.api.Configuration
-import play.api.cache._
 import play.api.libs.mailer._
 import play.api.mvc._
 
@@ -34,9 +32,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 final class VerificationController @Inject()(
     userDao: UserDao,
     userSessionService: UserSessionService,
-    @NamedCache("wsActorCache") wsActorCache: SyncCacheApi,
     cc: ControllerComponents,
-    config: Configuration,
     userAction: UserAction
 )(implicit ec: ExecutionContext, mailerClient: MailerClient)
     extends ToolkitController(cc)

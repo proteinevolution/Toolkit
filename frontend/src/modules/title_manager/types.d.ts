@@ -1,5 +1,5 @@
 // Important: import Vue from 'vue';
-import Vue from 'vue';
+import Vue from 'vue'; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 interface TitleProperties {
     base: string;
@@ -9,7 +9,9 @@ interface TitleProperties {
 
 interface TKTitleFunctions {
     addon(value: string): void;
+
     alert(value: boolean): void;
+
     refresh(): void;
 }
 

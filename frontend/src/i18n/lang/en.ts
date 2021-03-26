@@ -11,7 +11,6 @@ export default {
         loading: 'Loading...',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
-        maintenanceWarning: 'Maintenance in a few seconds!',
         language: {
             lang: 'Language',
             de: 'Deutsch',
@@ -123,6 +122,14 @@ export default {
             invalidCustomJobId: 'Invalid job ID. Try "{0}"',
             customerJobIdTooShort: 'needs to have more than two characters.',
             modellerNoConnection: 'could not validate the key. Try again later!',
+        },
+        maintenance: {
+            headerWarning: 'Maintenance in a few seconds!',
+            blockSubmit: 'Cannot submit jobs during maintenance.',
+            notificationTitle: 'Maintenance Alert',
+            notificationBody: 'The Toolkit is undergoing maintenance.',
+            start: 'Start Maintenance',
+            end: 'End Maintenance',
         },
     },
 };

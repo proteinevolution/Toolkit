@@ -8,19 +8,19 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+import Vue from 'vue';
 
-    export default Vue.extend({
-        name: 'JobPreparedTab',
-        props: {
-            job: {
-                type: Object,
-                required: true,
-            },
-            tool: {
-                type: Object,
-                required: true,
-            },
+export default Vue.extend({
+    name: 'JobPreparedTab',
+    props: {
+        job: {
+            type: Object,
+            required: true,
         },
-    });
+        tool: {
+            type: Object,
+            required: true,
+        },
+    },
+});
 </script>

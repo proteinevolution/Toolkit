@@ -20,73 +20,73 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {parseProcessLog} from '@/util/Utils';
-    import {ProcessLogItem} from '@/types/toolkit/jobs';
+import Vue from 'vue';
+import {parseProcessLog} from '@/util/Utils';
+import {ProcessLogItem} from '@/types/toolkit/jobs';
 
-    export default Vue.extend({
-        name: 'JobRunningTab',
-        props: {
-            job: {
-                type: Object,
-                required: true,
-            },
-            tool: {
-                type: Object,
-                required: true,
-            },
+export default Vue.extend({
+    name: 'JobRunningTab',
+    props: {
+        job: {
+            type: Object,
+            required: true,
         },
-        data() {
-            return {
-                runningLog: [] as ProcessLogItem[],
-            };
+        tool: {
+            type: Object,
+            required: true,
         },
-        created() {
-            (this.$options as any).sockets.onmessage = (response: any) => {
-                const json = JSON.parse(response.data);
-                if (json.mutation === 'SOCKET_WatchLogFile') {
-                    if (json.jobID === this.job.jobID) {
-                        this.runningLog = parseProcessLog(json.lines);
-                    }
+    },
+    data() {
+        return {
+            runningLog: [] as ProcessLogItem[],
+        };
+    },
+    created() {
+        (this.$options as any).sockets.onmessage = (response: any) => {
+            const json = JSON.parse(response.data);
+            if (json.mutation === 'SOCKET_WatchLogFile') {
+                if (json.jobID === this.job.jobID) {
+                    this.runningLog = parseProcessLog(json.lines);
                 }
-            };
-        },
-        destroyed(): void {
-            delete (this.$options as any).sockets.onmessage;
-        },
-    });
+            }
+        };
+    },
+    destroyed(): void {
+        delete (this.$options as any).sockets.onmessage;
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .job-log-element {
-        display: flex;
-        align-items: center;
+.job-log-element {
+  display: flex;
+  align-items: center;
 
-        i {
-            width: 32px;
-            height: 18px;
-            margin-top: 0.2em;
-            font-size: 1.3em;
-        }
+  i {
+    width: 32px;
+    height: 18px;
+    margin-top: 0.2em;
+    font-size: 1.3em;
+  }
 
-        .running {
-            background: url('../../../assets/images/ellipsis.gif') no-repeat center center;
-        }
+  .running {
+    background: url('../../../assets/images/ellipsis.gif') no-repeat center center;
+  }
 
-        .done {
-            color: rgba(40, 120, 111, 0.636);
+  .done {
+    color: rgba(40, 120, 111, 0.636);
 
-            &:before {
-                content: '\f058';
-            }
-        }
-
-        .error {
-            color: #da4453;
-
-            &:before {
-                content: '\f057';
-            }
-        }
+    &:before {
+      content: '\f058';
     }
+  }
+
+  .error {
+    color: #da4453;
+
+    &:before {
+      content: '\f057';
+    }
+  }
+}
 </style>

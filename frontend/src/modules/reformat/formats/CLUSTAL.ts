@@ -138,7 +138,7 @@ function parseDataLine(line: string): Line | undefined {
     const regex = /^(?:\s*)(\S+)(?:\s+)(\S+)(?:\s*)(\d*)(?:\s*|$)/g;
     const match = regex.exec(line);
     if (!match) {
-       return undefined;
+        return undefined;
     }
     return [match[1], match[2]];
 }
