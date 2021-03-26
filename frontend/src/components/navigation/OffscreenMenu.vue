@@ -19,6 +19,11 @@
                                     @click="close">
                             Home
                         </b-nav-item>
+                        <b-nav-item v-if="isAdmin"
+                                    class="section-link"
+                                    @click="switchToAdminView()">
+                            Admin
+                        </b-nav-item>
                         <b-nav-item v-for="(section, i) in sections"
                                     :key="section"
                                     class="section-link"
@@ -63,6 +68,7 @@ import Vue from 'vue';
 import JobList from '@/components/sidebar/JobList.vue';
 import {sectionColors, sections} from '@/conf/ToolSections';
 import {Tool} from '@/types/toolkit/tools';
+import {User} from '@/types/toolkit/auth';
 
 export default Vue.extend({
     name: 'OffscreenMenu',
@@ -86,14 +92,22 @@ export default Vue.extend({
         displayedTools(): Tool[] {
             return this.tools.filter((tool: Tool) => tool.section === this.selectedSection);
         },
+        user(): User | null {
+            return this.$store.getters['auth/user'];
+        },
+        isAdmin(): boolean {
+            return this.user !== null && this.user.isAdmin;
+        },
     },
     methods: {
-
-
         close(): void {
             this.$store.commit('setOffscreenMenuShow', false);
             this.selectedSection = '';
         },
+        switchToAdminView(): void {
+            this.close();
+            this.$router.push("/admin");
+        }
     },
 });
 </script>

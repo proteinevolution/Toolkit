@@ -17,23 +17,26 @@
 package de.proteinevolution.backend
 
 import de.proteinevolution.backend.controllers.BackendController
-import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
+
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
 
   private lazy val backendRoutes: Routes = {
-    case GET(p"/statistics")        => ctrl.statistics
-    case GET(p"/runusersweep")      => ctrl.runUserSweep
-    case GET(p"/runjobsweep")       => ctrl.runJobSweep
-    case GET(p"/users")             => ctrl.users
-    case GET(p"/maintenance")       => ctrl.getMaintenanceMode
-    case POST(p"/users")            => ctrl.users
-    case POST(p"/startmaintenance") => ctrl.sendMaintenanceAlert(true)
-    case POST(p"/endmaintenance")   => ctrl.sendMaintenanceAlert(false)
+    case GET(p"/statistics")           => ctrl.statistics
+    case GET(p"/runusersweep")         => ctrl.runUserSweep
+    case GET(p"/runjobsweep")          => ctrl.runJobSweep
+    case GET(p"/users")                => ctrl.users
+    case GET(p"/maintenance")          => ctrl.getMaintenanceMode
+    case GET(p"/maintenance/message")  => ctrl.getMaintenanceMessage
+    case POST(p"/users")               => ctrl.users
+    case POST(p"/maintenance/start")   => ctrl.sendMaintenanceAlert(true)
+    case POST(p"/maintenance/end")     => ctrl.sendMaintenanceAlert(false)
+    case POST(p"/maintenance/message") => ctrl.setMaintenanceMessage
   }
 
   override lazy val routes: Routes = {

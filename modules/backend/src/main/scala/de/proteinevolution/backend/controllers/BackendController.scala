@@ -51,6 +51,7 @@ final class BackendController @Inject() (
     with Logging {
 
   private var maintenanceMode: Boolean = false
+  private var maintenanceMessage: String = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
     logger.info("Statistics called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
@@ -162,6 +163,19 @@ final class BackendController @Inject() (
     if (request.user.isSuperuser) {
       maintenanceMode = mode
       actorSystem.eventStream.publish(MaintenanceAlert(mode))
+      Ok
+    } else {
+      Unauthorized
+    }
+  }
+
+  def getMaintenanceMessage: Action[AnyContent] = Action {
+    Ok(maintenanceMessage)
+  }
+
+  def setMaintenanceMessage(): Action[AnyContent] = userAction { implicit request =>
+    if (request.user.isSuperuser) {
+      maintenanceMessage = request.body.toString
       Ok
     } else {
       Unauthorized
