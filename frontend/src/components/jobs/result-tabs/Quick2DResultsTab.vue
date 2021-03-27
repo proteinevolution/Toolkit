@@ -56,117 +56,117 @@
 </template>
 
 <script lang="ts">
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import Loading from '@/components/utils/Loading.vue';
-    import {resultsService} from '@/services/ResultsService';
-    import {Quick2dResults} from '@/types/toolkit/results';
-    import {quick2dColor} from '@/util/SequenceUtils';
+import ResultTabMixin from '@/mixins/ResultTabMixin';
+import Loading from '@/components/utils/Loading.vue';
+import {resultsService} from '@/services/ResultsService';
+import {Quick2dResults} from '@/types/toolkit/results';
+import {quick2dColor} from '@/util/SequenceUtils';
 
-    export default ResultTabMixin.extend({
-        name: 'Quick2DResultsTab',
-        components: {
-            Loading,
+export default ResultTabMixin.extend({
+    name: 'Quick2DResultsTab',
+    components: {
+        Loading,
+    },
+    data() {
+        return {
+            results: undefined as Quick2dResults | undefined,
+            breakAfter: 85,
+            subTools: {
+                'psipred': 'SS_PSIPRED',
+                'spider': 'SS_SPIDER3',
+                'psspred': 'SS_PSSPRED4',
+                'deepcnf': 'SS_DEEPCNF',
+                'netsurfpss': 'SS_NETSURFP2',
+                'pipred': 'SS_PIPRED',
+                'marcoil': 'CC_MARCOIL',
+                'coils_w28': 'CC_COILS_W28',
+                'pcoils_w28': 'CC_PCOILS_W28',
+                'tmhmm': 'TM_TMHMM',
+                'phobius': 'TM_PHOBIUS',
+                'polyphobius': 'TM_POLYPHOBIUS',
+                'netsurfpd': 'DO_NETSURFPD2',
+                'disopred': 'DO_DISOPRED',
+                'spot-d': 'DO_SPOTD',
+                'iupred': 'DO_IUPRED',
+            },
+        };
+    },
+    computed: {
+        header(): string {
+            if (!this.results) {
+                return '';
+            }
+            return this.results.query.header.slice(1, 50);
         },
-        data() {
-            return {
-                results: undefined as Quick2dResults | undefined,
-                breakAfter: 85,
-                subTools: {
-                    'psipred': 'SS_PSIPRED',
-                    'spider': 'SS_SPIDER3',
-                    'psspred': 'SS_PSSPRED4',
-                    'deepcnf': 'SS_DEEPCNF',
-                    'netsurfpss': 'SS_NETSURFP2',
-                    'pipred': 'SS_PIPRED',
-                    'marcoil': 'CC_MARCOIL',
-                    'coils_w28': 'CC_COILS_W28',
-                    'pcoils_w28': 'CC_PCOILS_W28',
-                    'tmhmm': 'TM_TMHMM',
-                    'phobius': 'TM_PHOBIUS',
-                    'polyphobius': 'TM_POLYPHOBIUS',
-                    'netsurfpd': 'DO_NETSURFPD2',
-                    'disopred': 'DO_DISOPRED',
-                    'spot-d': 'DO_SPOTD',
-                    'iupred': 'DO_IUPRED',
-                },
-            };
+        filteredSubTools(): Record<string, string> {
+            return Object.fromEntries(Object.entries(this.subTools).filter(([k]) => k in this.brokenResults));
         },
-        computed: {
-            header(): string {
-                if (!this.results) {
-                    return '';
-                }
-                return this.results.query.header.slice(1, 50);
-            },
-            filteredSubTools(): Record<string, string> {
-                return Object.fromEntries(Object.entries(this.subTools).filter(([k]) => k in this.brokenResults));
-            },
-            brokenQuery(): string[] {
-                if (!this.results) {
-                    return [];
-                }
-                const res: string[] = [];
-                let breakIt = 0;
-                const value: string = this.results.query.sequence;
-                while (breakIt * this.breakAfter < value.length) {
-                    res.push(value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter));
-                    breakIt++;
-                }
-                return res;
-            },
-            brokenResults(): { [key: string]: string[] } {
-                if (!this.results) {
-                    return {};
-                }
-                // alignments need to be broken into pieces
-                const res: { [key: string]: string[] } = {};
-                for (const key in this.subTools) {
-                    if (key in this.results.results
-                        && this.results.results[key].length > 0) {
-                        res[key] = [];
-                        let breakIt = 0;
-                        const value: string = this.results.results[key];
-                        while (breakIt < value.length) {
-                            const cut: string = value.slice(breakIt, breakIt + this.breakAfter);
-                            const colored: string = quick2dColor(key, cut);
-                            res[key].push(colored);
-                            breakIt += this.breakAfter;
-                        }
+        brokenQuery(): string[] {
+            if (!this.results) {
+                return [];
+            }
+            const res: string[] = [];
+            let breakIt = 0;
+            const value: string = this.results.query.sequence;
+            while (breakIt * this.breakAfter < value.length) {
+                res.push(value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter));
+                breakIt++;
+            }
+            return res;
+        },
+        brokenResults(): { [key: string]: string[] } {
+            if (!this.results) {
+                return {};
+            }
+            // alignments need to be broken into pieces
+            const res: { [key: string]: string[] } = {};
+            for (const key in this.subTools) {
+                if (key in this.results.results
+                    && this.results.results[key].length > 0) {
+                    res[key] = [];
+                    let breakIt = 0;
+                    const value: string = this.results.results[key];
+                    while (breakIt < value.length) {
+                        const cut: string = value.slice(breakIt, breakIt + this.breakAfter);
+                        const colored: string = quick2dColor(key, cut);
+                        res[key].push(colored);
+                        breakIt += this.breakAfter;
                     }
                 }
-                return res;
-            },
+            }
+            return res;
         },
-        methods: {
-            async init() {
-                this.results = await resultsService.fetchResults(this.job.jobID);
-            },
-            min(a: number, b: number): number {
-                return Math.min(a, b);
-            },
+    },
+    methods: {
+        async init() {
+            this.results = await resultsService.fetchResults(this.job.jobID);
         },
-    });
+        min(a: number, b: number): number {
+            return Math.min(a, b);
+        },
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .alignment-table {
-        font-family: $font-family-monospace;
-        font-size: 0.85em;
-        white-space: pre;
+.alignment-table {
+  font-family: $font-family-monospace;
+  font-size: 0.85em;
+  white-space: pre;
 
-        td {
-            padding: 0 1.5rem 0 0;
-            border-spacing: 0;
-            line-height: 1.3;
-        }
+  td {
+    padding: 0 1.5rem 0 0;
+    border-spacing: 0;
+    line-height: 1.3;
+  }
 
-        .sequence {
-            font-weight: 600;
-            border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);
-        }
+  .sequence {
+    font-weight: 600;
+    border-bottom: 0.2em solid rgba(128, 128, 128, 0.37);
+  }
 
-        .empty-row td {
-            height: 4em;
-        }
-    }
+  .empty-row td {
+    height: 4em;
+  }
+}
 </style>

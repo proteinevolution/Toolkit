@@ -65,92 +65,92 @@
 </template>
 
 <script lang="ts">
-    import ResultTabMixin from '@/mixins/ResultTabMixin';
-    import Loading from '@/components/utils/Loading.vue';
-    import {resultsService} from '@/services/ResultsService';
-    import Logger from 'js-logger';
-    import {HhrepidResults} from '@/types/toolkit/results';
-    import EventBus from '@/util/EventBus';
-    import {colorSequence} from '@/util/SequenceUtils';
+import ResultTabMixin from '@/mixins/ResultTabMixin';
+import Loading from '@/components/utils/Loading.vue';
+import {resultsService} from '@/services/ResultsService';
+import Logger from 'js-logger';
+import {HhrepidResults} from '@/types/toolkit/results';
+import EventBus from '@/util/EventBus';
+import {colorSequence} from '@/util/SequenceUtils';
 
-    const logger = Logger.get('HhrepidResultsTab');
+const logger = Logger.get('HhrepidResultsTab');
 
-    export default ResultTabMixin.extend({
-        name: 'HhrepidResultsTab',
-        components: {
-            Loading,
+export default ResultTabMixin.extend({
+    name: 'HhrepidResultsTab',
+    components: {
+        Loading,
+    },
+    data() {
+        return {
+            results: undefined as HhrepidResults | undefined,
+            breakAfter: 80,
+            file: '',
+        };
+    },
+    computed: {
+        filename(): string {
+            if (!this.viewOptions.filename) {
+                return '';
+            }
+            return this.viewOptions.filename.replace(':jobID', this.job.jobID);
         },
-        data() {
-            return {
-                results: undefined as HhrepidResults | undefined,
-                breakAfter: 80,
-                file: '',
-            };
+        forwardingEnabled(): boolean {
+            return 'forwarding' in this.viewOptions;
         },
-        computed: {
-            filename(): string {
-                if (!this.viewOptions.filename) {
-                    return '';
-                }
-                return this.viewOptions.filename.replace(':jobID', this.job.jobID);
-            },
-            forwardingEnabled(): boolean {
-                return 'forwarding' in this.viewOptions;
-            },
+    },
+    methods: {
+        async init() {
+            this.results = await resultsService.fetchResults(this.job.jobID);
+            this.file = await resultsService.getFile(this.job.jobID, this.filename);
         },
-        methods: {
-            async init() {
-                this.results = await resultsService.fetchResults(this.job.jobID);
-                this.file = await resultsService.getFile(this.job.jobID, this.filename);
-            },
-            getFilePath(typ: string): string {
-                const jobID: string = this.job.jobID;
-                return resultsService.getDownloadFilePath(jobID, `query_${typ}.png`);
-            },
-            forwardQueryA3M(): void {
-                if (this.tool.parameters) {
-                    EventBus.$emit('show-modal', {
-                        id: 'forwardingModal', props: {
-                            forwardingJobID: this.job.jobID,
-                            forwardingData: this.file,
-                            forwardingMode: this.tool.parameters.forwarding,
-                        },
-                    });
-                } else {
-                    logger.error('tool parameters not loaded. Cannot forward');
-                }
-            },
-            breakIndices(length: number): number[] {
-                const res: number[] = [];
-                for (let i = 0; i < length; i += this.breakAfter) {
-                    res.push(i);
-                }
-                return res;
-            },
-            coloredSeq: colorSequence,
+        getFilePath(typ: string): string {
+            const jobID: string = this.job.jobID;
+            return resultsService.getDownloadFilePath(jobID, `query_${typ}.png`);
         },
-    });
+        forwardQueryA3M(): void {
+            if (this.tool.parameters) {
+                EventBus.$emit('show-modal', {
+                    id: 'forwardingModal', props: {
+                        forwardingJobID: this.job.jobID,
+                        forwardingData: this.file,
+                        forwardingMode: this.tool.parameters.forwarding,
+                    },
+                });
+            } else {
+                logger.error('tool parameters not loaded. Cannot forward');
+            }
+        },
+        breakIndices(length: number): number[] {
+            const res: number[] = [];
+            for (let i = 0; i < length; i += this.breakAfter) {
+                res.push(i);
+            }
+            return res;
+        },
+        coloredSeq: colorSequence,
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    img {
-        max-width: 100%;
-    }
+img {
+  max-width: 100%;
+}
 
-    .alignment-table {
-        width: 100%;
-        @include media-breakpoint-up(xl) {
-            width: 100%;
-        }
-        font-size: 0.85em;
+.alignment-table {
+  width: 100%;
+  @include media-breakpoint-up(xl) {
+    width: 100%;
+  }
+  font-size: 0.85em;
 
-        .sequence-alignment {
-            font-family: $font-family-monospace;
-            letter-spacing: 0.05em;
-        }
-    }
+  .sequence-alignment {
+    font-family: $font-family-monospace;
+    letter-spacing: 0.05em;
+  }
+}
 
-    .empty-row {
-        height: 2em;
-    }
+.empty-row {
+  height: 2em;
+}
 </style>

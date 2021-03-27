@@ -4,6 +4,7 @@ export interface User {
     nameLast: string;
     eMail: string;
     country: string;
+    isAdmin: boolean;
 }
 
 export interface LoginData {

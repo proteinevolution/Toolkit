@@ -142,122 +142,122 @@
 </template>
 
 <script lang="ts">
-    import Loading from '@/components/utils/Loading.vue';
-    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
-    import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {HMMERAlignmentItem, HMMERHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
-    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import Loading from '@/components/utils/Loading.vue';
+import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
+import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import {HMMERAlignmentItem, HMMERHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
-    export default SearchResultTabMixin.extend({
-        name: 'HmmerResultsTab',
-        components: {
-            Loading,
-            HitListTable,
-            HitMap,
-            IntersectionObserver,
-        },
-        data() {
-            return {
-                alignments: undefined as HMMERAlignmentItem[] | undefined,
-                info: undefined as HMMERHHInfoResult | undefined,
-                breakAfter: 90,
-                hitListFields: [{
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.hmmer.table.num'),
-                    sortable: true,
-                }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hmmer.table.accession'),
-                    sortable: true,
-                }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.hmmer.table.description'),
-                    sortable: true,
-                }, {
-                    key: 'fullEval',
-                    label: this.$t('jobs.results.hmmer.table.full_evalue'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hmmer.table.eValue'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'bitScore',
-                    label: this.$t('jobs.results.hmmer.table.bitscore'),
-                    sortable: true,
-                }, {
-                    key: 'hitLen',
-                    label: this.$t('jobs.results.hmmer.table.hit_len'),
-                    sortable: true,
-                }],
-            };
-        },
-        methods: {
-            wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItemRender[] {
-                if (this.wrap) {
-                    const res: SearchAlignmentItemRender[] = [];
-                    let qStart: number = al.query.start;
-                    let tStart: number = al.template.start;
-                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                        const end: number = start + this.breakAfter;
-                        const qSeq: string = al.query.seq.slice(start, end);
-                        const tSeq: string = al.template.seq.slice(start, end);
-                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                        res.push({
-                            agree: al.agree.slice(start, end),
-                            query: {
-                                end: qEnd,
-                                seq: qSeq,
-                                start: qStart,
-                            },
-                            template: {
-                                end: tEnd,
-                                seq: tSeq,
-                                start: tStart,
-                            },
-                        });
-                        qStart = qEnd + 1;
-                        tStart = tEnd + 1;
-                    }
-                    return res;
-                } else {
-                    return [al];
+export default SearchResultTabMixin.extend({
+    name: 'HmmerResultsTab',
+    components: {
+        Loading,
+        HitListTable,
+        HitMap,
+        IntersectionObserver,
+    },
+    data() {
+        return {
+            alignments: undefined as HMMERAlignmentItem[] | undefined,
+            info: undefined as HMMERHHInfoResult | undefined,
+            breakAfter: 90,
+            hitListFields: [{
+                key: 'numCheck',
+                label: this.$t('jobs.results.hmmer.table.num'),
+                sortable: true,
+            }, {
+                key: 'acc',
+                label: this.$t('jobs.results.hmmer.table.accession'),
+                sortable: true,
+            }, {
+                key: 'name',
+                label: this.$t('jobs.results.hmmer.table.description'),
+                sortable: true,
+            }, {
+                key: 'fullEval',
+                label: this.$t('jobs.results.hmmer.table.full_evalue'),
+                class: 'no-wrap',
+                sortable: true,
+            }, {
+                key: 'eval',
+                label: this.$t('jobs.results.hmmer.table.eValue'),
+                class: 'no-wrap',
+                sortable: true,
+            }, {
+                key: 'bitScore',
+                label: this.$t('jobs.results.hmmer.table.bitscore'),
+                sortable: true,
+            }, {
+                key: 'hitLen',
+                label: this.$t('jobs.results.hmmer.table.hit_len'),
+                sortable: true,
+            }],
+        };
+    },
+    methods: {
+        wrapAlignments(al: HMMERAlignmentItem): SearchAlignmentItemRender[] {
+            if (this.wrap) {
+                const res: SearchAlignmentItemRender[] = [];
+                let qStart: number = al.query.start;
+                let tStart: number = al.template.start;
+                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                    const end: number = start + this.breakAfter;
+                    const qSeq: string = al.query.seq.slice(start, end);
+                    const tSeq: string = al.template.seq.slice(start, end);
+                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                    res.push({
+                        agree: al.agree.slice(start, end),
+                        query: {
+                            end: qEnd,
+                            seq: qSeq,
+                            start: qStart,
+                        },
+                        template: {
+                            end: tEnd,
+                            seq: tSeq,
+                            start: tStart,
+                        },
+                    });
+                    qStart = qEnd + 1;
+                    tStart = tEnd + 1;
                 }
-            },
+                return res;
+            } else {
+                return [al];
+            }
         },
-    });
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .result-section {
-        padding-top: 3.5rem;
+.result-section {
+  padding-top: 3.5rem;
+}
+
+.alignments-table {
+  font-size: 0.95em;
+
+  .blank-row {
+    height: 0.8rem;
+  }
+
+  .sequence td {
+    word-break: keep-all;
+    white-space: nowrap;
+    font-family: $font-family-monospace;
+    padding: 0 1rem 0 0;
+  }
+
+  a {
+    cursor: pointer;
+    color: $primary;
+
+    &:hover {
+      color: $tk-dark-green;
     }
-
-    .alignments-table {
-        font-size: 0.95em;
-
-        .blank-row {
-            height: 0.8rem;
-        }
-
-        .sequence td {
-            word-break: keep-all;
-            white-space: nowrap;
-            font-family: $font-family-monospace;
-            padding: 0 1rem 0 0;
-        }
-
-        a {
-            cursor: pointer;
-            color: $primary;
-
-            &:hover {
-                color: $tk-dark-green;
-            }
-        }
-    }
+  }
+}
 </style>

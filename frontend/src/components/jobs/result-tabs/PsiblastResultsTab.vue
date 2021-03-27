@@ -148,150 +148,150 @@
 </template>
 
 <script lang="ts">
-    import Loading from '@/components/utils/Loading.vue';
-    import Logger from 'js-logger';
-    import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
-    import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
-    import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-    import {PSIBLASTAlignmentItem, PsiblastHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
-    import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
-    import {resultsService} from '@/services/ResultsService';
+import Loading from '@/components/utils/Loading.vue';
+import Logger from 'js-logger';
+import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
+import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
+import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import {PSIBLASTAlignmentItem, PsiblastHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import {resultsService} from '@/services/ResultsService';
 
-    const logger = Logger.get('PsiblastResultsTab');
+const logger = Logger.get('PsiblastResultsTab');
 
-    export default SearchResultTabMixin.extend({
-        name: 'PsiblastResultsTab',
-        components: {
-            Loading,
-            HitListTable,
-            HitMap,
-            IntersectionObserver,
-        },
-        data() {
-            return {
-                alignments: undefined as PSIBLASTAlignmentItem[] | undefined,
-                info: undefined as PsiblastHHInfoResult | undefined,
-                breakAfter: 90,
-                hitListFields: [{
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.psiblast.table.num'),
-                    sortable: true,
-                }, {
-                    key: 'acc',
-                    label: this.$t('jobs.results.psiblast.table.accession'),
-                    sortable: true,
-                }, {
-                    key: 'name',
-                    label: this.$t('jobs.results.psiblast.table.description'),
-                    sortable: true,
-                }, {
-                    key: 'eval',
-                    label: this.$t('jobs.results.psiblast.table.eValue'),
-                    class: 'no-wrap',
-                    sortable: true,
-                }, {
-                    key: 'bitScore',
-                    label: this.$t('jobs.results.psiblast.table.bitscore'),
-                    sortable: true,
-                }, {
-                    key: 'refLen',
-                    label: this.$t('jobs.results.psiblast.table.ref_len'),
-                    sortable: true,
-                }, {
-                    key: 'hitLen',
-                    label: this.$t('jobs.results.psiblast.table.hit_len'),
-                    sortable: true,
-                }],
-            };
-        },
-        methods: {
-            async init(): Promise<void> {
-                await this.loadAlignments(0, this.perPage);
-                if (this.info) {
-                    for (let i = 1; i <= this.info.belowEvalThreshold; i++) {
-                        this.selectedItems.push(i);
-                    }
+export default SearchResultTabMixin.extend({
+    name: 'PsiblastResultsTab',
+    components: {
+        Loading,
+        HitListTable,
+        HitMap,
+        IntersectionObserver,
+    },
+    data() {
+        return {
+            alignments: undefined as PSIBLASTAlignmentItem[] | undefined,
+            info: undefined as PsiblastHHInfoResult | undefined,
+            breakAfter: 90,
+            hitListFields: [{
+                key: 'numCheck',
+                label: this.$t('jobs.results.psiblast.table.num'),
+                sortable: true,
+            }, {
+                key: 'acc',
+                label: this.$t('jobs.results.psiblast.table.accession'),
+                sortable: true,
+            }, {
+                key: 'name',
+                label: this.$t('jobs.results.psiblast.table.description'),
+                sortable: true,
+            }, {
+                key: 'eval',
+                label: this.$t('jobs.results.psiblast.table.eValue'),
+                class: 'no-wrap',
+                sortable: true,
+            }, {
+                key: 'bitScore',
+                label: this.$t('jobs.results.psiblast.table.bitscore'),
+                sortable: true,
+            }, {
+                key: 'refLen',
+                label: this.$t('jobs.results.psiblast.table.ref_len'),
+                sortable: true,
+            }, {
+                key: 'hitLen',
+                label: this.$t('jobs.results.psiblast.table.hit_len'),
+                sortable: true,
+            }],
+        };
+    },
+    methods: {
+        async init(): Promise<void> {
+            await this.loadAlignments(0, this.perPage);
+            if (this.info) {
+                for (let i = 1; i <= this.info.belowEvalThreshold; i++) {
+                    this.selectedItems.push(i);
                 }
-            },
-            wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
-                if (this.wrap) {
-                    const res: SearchAlignmentItemRender[] = [];
-                    let qStart: number = al.query.start;
-                    let tStart: number = al.template.start;
-                    for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                        const end: number = start + this.breakAfter;
-                        const qSeq: string = al.query.seq.slice(start, end);
-                        const tSeq: string = al.template.seq.slice(start, end);
-                        const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                        const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                        res.push({
-                            agree: al.agree.slice(start, end),
-                            query: {
-                                end: qEnd,
-                                seq: qSeq,
-                                start: qStart,
-                            },
-                            template: {
-                                end: tEnd,
-                                seq: tSeq,
-                                start: tStart,
-                            },
-                        });
-                        qStart = qEnd + 1;
-                        tStart = tEnd + 1;
-                    }
-                    return res;
-                } else {
-                    return [al];
-                }
-            },
-            download(): void {
-                if (this.viewOptions.filename) {
-                    const toolName = this.tool.name;
-                    const downloadFilename = `${toolName}_${this.job.jobID}.aln`;
-                    resultsService.downloadFile(this.job.jobID, this.viewOptions.filename, downloadFilename)
-                        .catch((e) => {
-                            logger.error(e);
-                        });
-                }
-            },
+            }
         },
+        wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
+            if (this.wrap) {
+                const res: SearchAlignmentItemRender[] = [];
+                let qStart: number = al.query.start;
+                let tStart: number = al.template.start;
+                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
+                    const end: number = start + this.breakAfter;
+                    const qSeq: string = al.query.seq.slice(start, end);
+                    const tSeq: string = al.template.seq.slice(start, end);
+                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                    res.push({
+                        agree: al.agree.slice(start, end),
+                        query: {
+                            end: qEnd,
+                            seq: qSeq,
+                            start: qStart,
+                        },
+                        template: {
+                            end: tEnd,
+                            seq: tSeq,
+                            start: tStart,
+                        },
+                    });
+                    qStart = qEnd + 1;
+                    tStart = tEnd + 1;
+                }
+                return res;
+            } else {
+                return [al];
+            }
+        },
+        download(): void {
+            if (this.viewOptions.filename) {
+                const toolName = this.tool.name;
+                const downloadFilename = `${toolName}_${this.job.jobID}.aln`;
+                resultsService.downloadFile(this.job.jobID, this.viewOptions.filename, downloadFilename)
+                    .catch((e) => {
+                        logger.error(e);
+                    });
+            }
+        },
+    },
 
-    });
+});
 </script>
 
 <style lang="scss" scoped>
-    .result-section {
-        padding-top: 3.5rem;
+.result-section {
+  padding-top: 3.5rem;
+}
+
+.alignments-table {
+  font-size: 0.95em;
+
+  .blank-row {
+    height: 0.8rem;
+  }
+
+  .sequence {
+    td {
+      word-break: keep-all;
+      white-space: nowrap;
+      font-family: $font-family-monospace;
+      padding: 0 1rem 0 0;
     }
 
-    .alignments-table {
-        font-size: 0.95em;
-
-        .blank-row {
-            height: 0.8rem;
-        }
-
-        .sequence {
-            td {
-                word-break: keep-all;
-                white-space: nowrap;
-                font-family: $font-family-monospace;
-                padding: 0 1rem 0 0;
-            }
-
-            .consensus-agree {
-                white-space: pre-wrap;
-            }
-        }
-
-        a {
-            cursor: pointer;
-            color: $primary;
-
-            &:hover {
-                color: $tk-dark-green;
-            }
-        }
+    .consensus-agree {
+      white-space: pre-wrap;
     }
+  }
+
+  a {
+    cursor: pointer;
+    color: $primary;
+
+    &:hover {
+      color: $tk-dark-green;
+    }
+  }
+}
 </style>

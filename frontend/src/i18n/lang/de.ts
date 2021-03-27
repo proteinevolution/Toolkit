@@ -6,7 +6,6 @@ export default {
         loading: 'Lädt...',
         fetching: 'Fetching...',
         reconnecting: 'Verbindungsaufbau...',
-        maintenanceWarning: 'Wartungsarbeiten stehen bevor!',
         language: {
             lang: 'Sprache',
             de: 'Deutsch',
@@ -18,5 +17,9 @@ export default {
             loadBarLabel: 'CLuster-Last: {load}%',
             searchPlaceholder: 'Suche nach Job ID oder Name des Tools',
         },
+        maintenance: {
+            headerWarning: 'Wartungsarbeiten stehen bevor!',
+            blockSubmit: 'Starten eines Jobs während Wartungsarbeiten nicht möglich.',
+        }
     },
 };
