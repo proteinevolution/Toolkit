@@ -32,6 +32,8 @@ class JobFrontendToolsService @Inject()(
     jobDao: JobDao
 )(implicit ec: ExecutionContext) {
 
+  import cats.effect.unsafe.implicits.global
+
   def logFrontendJob(toolName: String): Future[WriteResult] = {
     for {
       jobId <- jobIdProvider.runSafe.unsafeToFuture()
