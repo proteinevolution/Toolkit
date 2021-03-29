@@ -31,7 +31,7 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % catsV,
-    "org.typelevel"       %% "cats-effect"          % "2.4.0",
+    "org.typelevel"       %% "cats-effect"          % "3.0.0",
     "com.chuusai"         %% "shapeless"            % "2.3.3",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
