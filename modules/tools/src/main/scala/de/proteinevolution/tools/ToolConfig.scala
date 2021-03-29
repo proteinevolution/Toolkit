@@ -17,29 +17,24 @@
 package de.proteinevolution.tools
 
 import better.files._
-import com.typesafe.config.{ Config, ConfigObject }
+import com.typesafe.config.{Config, ConfigObject}
 import de.proteinevolution.tel.param.ParamCollector
-import de.proteinevolution.tools.forms.ValidationParamsForm.{
-  AccessionIDValidationParamsForm,
-  EmptyValidationParamsForm,
-  RegexValidationParamsForm,
-  SequenceValidationParamsForm
-}
-import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
+import de.proteinevolution.tools.forms.ValidationParamsForm.{AccessionIDValidationParamsForm, EmptyValidationParamsForm, RegexValidationParamsForm, SequenceValidationParamsForm}
+import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters._
-import javax.inject.{ Inject, Singleton }
+
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
+import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 @Singleton
-class ToolConfig @Inject() (config: Configuration, pc: ParamCollector, paramAccess: ParamAccess) {
+class ToolConfig @Inject() (config: Configuration, pc: ParamCollector, paramAccess: ParamAccess)(implicit ec: ExecutionContext) {
 
   lazy val version: String = config.get[String]("version")
-
-  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   config
     .get[Option[String]]("tel.params_refresh")
