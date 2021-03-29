@@ -43,6 +43,8 @@ final class JobDispatcher @Inject() (
 )(implicit ec: ExecutionContext)
     extends Logging {
 
+  import cats.effect.unsafe.implicits.global
+
   def submitJob(
       toolName: String,
       parts: Map[String, String],
