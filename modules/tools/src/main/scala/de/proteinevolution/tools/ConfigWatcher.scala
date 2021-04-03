@@ -22,6 +22,7 @@ import fs2.Stream
 import cats.effect.{IO, Resource}
 import fs2.io.file.Files
 import better.files._
+import cats.effect.unsafe.implicits.global
 import fs2.io.Watcher
 
 import java.nio.file.Path
@@ -41,7 +42,7 @@ class ConfigWatcher @Inject()(pc: ParamCollector, config: Configuration) extends
       case Watcher.Event.Overflow(_) => logger.warn(s"file $REFRESH_FILE overflow")
       case Watcher.Event.NonStandard(_, _) => logger.warn(s"file $REFRESH_FILE changed unexpectedly")
     }
-  }.compile.drain
+  }.compile.drain.unsafeRunSync()
 
   private def configFile: Resource[IO, Path] =
     Resource.eval(IO.
