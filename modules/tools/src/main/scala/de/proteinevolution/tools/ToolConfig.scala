@@ -16,9 +16,7 @@
 
 package de.proteinevolution.tools
 
-import better.files._
 import com.typesafe.config.{ Config, ConfigObject }
-import de.proteinevolution.tel.param.ParamCollector
 import de.proteinevolution.tools.forms.ValidationParamsForm.{
   AccessionIDValidationParamsForm,
   EmptyValidationParamsForm,
@@ -36,24 +34,13 @@ import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 @Singleton
-class ToolConfig @Inject() (config: Configuration, pc: ParamCollector, paramAccess: ParamAccess)(implicit
+class ToolConfig @Inject() (config: Configuration, paramAccess: ParamAccess)(implicit
     ec: ExecutionContext
 ) {
 
   lazy val version: String = config.get[String]("version")
 
-  config
-    .get[Option[String]]("tel.params_refresh")
-    .map(file =>
-      new FileMonitor(file.toFile, recursive = true) {
-        override def onModify(file: File, count: Int): Unit = {
-          pc.reloadValues()
-          values = readFromFile()
-        }
-      }.start()
-    )
-
-  var values: Map[String, Tool] = readFromFile()
+  def values: Map[String, Tool] = readFromFile()
 
   private def readFromFile(): Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
