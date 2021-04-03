@@ -28,13 +28,15 @@ import java.nio.file.Path
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ConfigWatcher @Inject()(pc: ParamCollector,config: Configuration) extends Logging {
+class ConfigWatcher @Inject()(pc: ParamCollector, config: Configuration) extends Logging {
 
   private final val REFRESH_FILE = "tel.params_refresh"
 
   Stream.resource(configFile).flatMap{ f =>
     Files[IO].watch(f).map{
-      case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) => pc.reloadValues()
+      case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
+        logger.info(s"file $REFRESH_FILE changed, reloading parameters...")
+        pc.reloadValues()
       case Watcher.Event.Deleted(_, _) => logger.warn(s"file $REFRESH_FILE was deleted")
       case Watcher.Event.Overflow(_) => logger.warn(s"file $REFRESH_FILE overflow")
       case Watcher.Event.NonStandard(_, _) => logger.warn(s"file $REFRESH_FILE changed unexpectedly")
