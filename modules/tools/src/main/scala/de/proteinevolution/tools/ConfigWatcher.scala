@@ -17,23 +17,34 @@
 package de.proteinevolution.tools
 
 import de.proteinevolution.tel.param.ParamCollector
-import play.api.Configuration
+import play.api.{Configuration, Logging}
 import fs2.Stream
 import cats.effect.{IO, Resource}
 import fs2.io.file.Files
 import better.files._
+import fs2.io.Watcher
 
+import java.nio.file.Path
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class ConfigWatcher @Inject()(pc: ParamCollector,config: Configuration) {
+class ConfigWatcher @Inject()(pc: ParamCollector,config: Configuration) extends Logging {
 
-  Stream.resource(for {
-    f <- Resource.eval(IO.fromOption(config.get[Option[String]]("tel.params_refresh"))(new IllegalArgumentException(s"file tel.params_refresh is missing")))
-  } yield {
-    f.toFile.path
-  }).flatMap{ f =>
-    Files[IO].watch(f, Nil).map(_ => pc.reloadValues())
+  private final val REFRESH_FILE = "tel.params_refresh"
+
+  Stream.resource(configFile).flatMap{ f =>
+    Files[IO].watch(f).map{
+      case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) => pc.reloadValues()
+      case Watcher.Event.Deleted(_, _) => logger.warn(s"file $REFRESH_FILE was deleted")
+      case Watcher.Event.Overflow(_) => logger.warn(s"file $REFRESH_FILE overflow")
+      case Watcher.Event.NonStandard(_, _) => logger.warn(s"file $REFRESH_FILE changed unexpectedly")
+    }
   }.compile.drain
+
+  private def configFile: Resource[IO, Path] =
+    Resource.eval(IO.
+      fromOption(config.get[Option[String]](REFRESH_FILE))(new IllegalArgumentException(s"file $REFRESH_FILE is missing")).map {
+      _.toFile.path
+    })
 
 }
