@@ -2,6 +2,22 @@ import axios from 'axios';
 
 class BackendService {
 
+    public setMaintenanceMessage(message: string): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.post(`/api/backend/maintenance/message`, {message: message})
+                .then(() => resolve())
+                .catch(reject);
+        }));
+    }
+
+    public fetchMaintenanceMessage(): Promise<string> {
+        return new Promise<string>(((resolve, reject) => {
+            axios.get(`/api/backend/maintenance/message`)
+                .then((response) => resolve(response.data))
+                .catch(reject);
+        }));
+    }
+
     public fetchMaintenanceMode(): Promise<boolean> {
         return new Promise<boolean>(((resolve, reject) => {
             axios.get(`/api/backend/maintenance`)
@@ -10,18 +26,18 @@ class BackendService {
         }));
     }
 
-    public startMaintenance(): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
-            axios.post(`/api/backend/startmaintenance`)
-                .then((response) => resolve(response.data))
+    public startMaintenance(): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.post(`/api/backend/maintenance/start`)
+                .then(() => resolve())
                 .catch(reject);
         }));
     }
 
-    public endMaintenance(): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
-            axios.post(`/api/backend/endmaintenance`)
-                .then((response) => resolve(response.data))
+    public endMaintenance(): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.post(`/api/backend/maintenance/end`)
+                .then(() => resolve())
                 .catch(reject);
         }));
     }
