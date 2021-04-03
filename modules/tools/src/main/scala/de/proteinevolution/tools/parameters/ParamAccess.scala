@@ -17,17 +17,30 @@
 package de.proteinevolution.tools.parameters
 
 import de.proteinevolution.tel.TEL
-import de.proteinevolution.tools.parameters.Parameter.{HHpredSelectsParameter, ModellerParameter, NumberParameter, SelectOption, SelectParameter, TextAreaParameter, TextInputParameter}
+import de.proteinevolution.tools.parameters.Parameter.{
+  HHpredSelectsParameter,
+  ModellerParameter,
+  NumberParameter,
+  SelectOption,
+  SelectParameter,
+  TextAreaParameter,
+  TextInputParameter
+}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 /**
  * Provides the specification of the Parameters as they appear in the individual tools
- **/
+ */
 @Singleton
-class ParamAccess @Inject()(tel: TEL) {
+class ParamAccess @Inject() (tel: TEL) {
 
-  def select(name: String, default: Option[String], maxSelectedOptions: Int = 1, onDetectedMSA: Option[String] = None) =
+  def select(
+      name: String,
+      default: Option[String],
+      maxSelectedOptions: Int = 1,
+      onDetectedMSA: Option[String] = None
+  ): SelectParameter =
     SelectParameter(
       name,
       default,
@@ -55,16 +68,16 @@ class ParamAccess @Inject()(tel: TEL) {
   ): Parameter = paramName match {
 
     // Common
-    case "ALIGNMENT"   => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
-    case "STANDARD_DB" => select("standarddb", default = Some("nr50"))
-    case "PMIN" => select ("pmin", default = Some("20"))
+    case "ALIGNMENT"         => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
+    case "STANDARD_DB"       => select("standarddb", default = Some("nr50"))
+    case "PMIN"              => select("pmin", default = Some("20"))
     case "DESC"              => select("desc", default = Some("250"))
     case "MAXROUNDS"         => select("maxrounds", default = Some("1"))
     case "EVALUE"            => select("evalue", default = Some("1e-3"))
     case "OUTPUT_ORDER"      => select("output_order", default = Some("input"))
     case "PCOILS_INPUT_MODE" => select("pcoils_input_mode", default = Some("0"), onDetectedMSA = Some("1"))
     case "MATRIX"            => select("matrix", default = Some("BLOSUM62"))
-    case "MIN_SEQID_QUERY" => select("min_seqid_query", default = Some("0"))
+    case "MIN_SEQID_QUERY"   => select("min_seqid_query", default = Some("0"))
 
     // HHblits
     case "HHBLITSDB" => select("hhblitsdb", default = Some("UniRef30"))
@@ -88,7 +101,7 @@ class ParamAccess @Inject()(tel: TEL) {
     case "MSA_GEN_MAX_ITER" => select("msa_gen_max_iter", default = Some("3"), onDetectedMSA = Some("0"))
     case "HHPRED_INCL_EVAL" =>
       select("hhpred_incl_eval", default = Some("1e-3"))
-    case "MIN_COV" => select("min_cov", default = Some("20"))
+    case "MIN_COV"      => select("min_cov", default = Some("20"))
     case "SS_SCORING"   => select("ss_scoring", default = Some("2"))
     case "ALIGNMACMODE" => select("alignmacmode", default = Some("loc"))
     case "MACTHRESHOLD" => select("macthreshold", default = Some("0.3"))
