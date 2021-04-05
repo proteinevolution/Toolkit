@@ -50,8 +50,8 @@ final class BackendController @Inject() (
     extends ToolkitController(cc)
     with Logging {
 
-  private var maintenanceMode: Boolean   = false
-  private var maintenanceMessage: String = ""
+  private var maintenanceSubmitBlocked: Boolean = false
+  private var maintenanceMessage: String        = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
     logger.info("Statistics called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
@@ -155,30 +155,25 @@ final class BackendController @Inject() (
     }
   }
 
-  def getMaintenanceMode: Action[AnyContent] = Action {
-    Ok(maintenanceMode.toString)
+  def getMaintenanceState: Action[AnyContent] = Action {
+    NoCache(
+      Ok(
+        Json.obj(
+          "message"       -> Json.fromString(maintenanceMessage),
+          "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
+        )
+      )
+    )
   }
 
-  def sendMaintenanceAlert(mode: Boolean): Action[AnyContent] = userAction { implicit request =>
-    if (request.user.isSuperuser) {
-      maintenanceMode = mode
-      actorSystem.eventStream.publish(MaintenanceAlert(mode))
-      Ok
-    } else {
-      Unauthorized
-    }
-  }
-
-  def getMaintenanceMessage: Action[AnyContent] = Action {
-    NoCache(Ok(Json.obj("message" -> Json.fromString(maintenanceMessage))))
-  }
-
-  def setMaintenanceMessage(): Action[Json] = userAction(circe.json) { implicit request =>
+  def setMaintenanceState(): Action[Json] = userAction(circe.json) { implicit request =>
     if (request.user.isSuperuser) {
       request.body.asObject match {
         case None => BadRequest
         case Some(value) =>
           maintenanceMessage = value("message").get.asString.orElse(Some("")).get
+          maintenanceSubmitBlocked = value("submitBlocked").get.asBoolean.orElse(Some(false)).get
+          actorSystem.eventStream.publish(MaintenanceAlert(maintenanceMessage, maintenanceSubmitBlocked))
           Ok
       }
     } else {

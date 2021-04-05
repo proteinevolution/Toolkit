@@ -6,23 +6,33 @@
         </div>
 
         <b-card>
-            <h4>Maintenance Mode</h4>
-            <b-button variant="primary"
-                      @click="toggleMaintenanceMode"
-                      v-text="$t('maintenance.' + (maintenanceMode ? 'end' : 'start'))" />
-            <hr>
-            <h4>Maintenance Messages</h4>
+            <h4>Maintenance</h4>
             <b-form-group>
-                <b-textarea v-model="maintenanceMessage"
+                <b-textarea v-model="maintenance.message"
                             class="mb-2" />
+                <b-row class="mb-2">
+                    <b-col>
+                        <span class="mr-2">Block Submit</span>
+                        <switches v-model="maintenance.submitBlocked" />
+                    </b-col>
+                </b-row>
                 <b-button variant="primary"
                           class="mr-2"
-                          :disabled="messageLoading"
-                          @click="setMaintenanceMessage">
-                    <loading v-if="messageLoading"
+                          :disabled="maintenanceStateLoading"
+                          @click="setMaintenanceState">
+                    <loading v-if="maintenanceStateLoading"
                              message="Set"
                              :size="20" />
                     <span v-else>Set</span>
+                </b-button>
+                <b-button variant="primary"
+                          class="mr-2"
+                          :disabled="maintenanceStateLoading"
+                          @click="resetMaintenanceState">
+                    <loading v-if="maintenanceStateLoading"
+                             message="Reset"
+                             :size="20" />
+                    <span v-else>Reset</span>
                 </b-button>
             </b-form-group>
         </b-card>
@@ -35,27 +45,26 @@ import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 import {backendService} from '@/services/BackendService';
 import {User} from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
+import Switches from 'vue-switches';
 
 export default hasHTMLTitle.extend({
     name: 'AdminView',
     components: {
         Loading,
-    },
-    created() {
-        this.fetchMaintenanceMessage();
+        Switches,
     },
     data() {
         return {
-            maintenanceMessage: '',
-            messageLoading: false,
+            maintenance: {
+              message: this.$store.state.maintenance.message,
+              submitBlocked: this.$store.state.maintenance.submitBlocked,
+            },
+            maintenanceStateLoading: false,
         };
     },
     computed: {
         htmlTitle() {
             return 'Admin Page';
-        },
-        maintenanceMode(): boolean {
-            return this.$store.state.maintenanceMode;
         },
         loggedIn(): boolean {
             return this.$store.getters['auth/loggedIn'];
@@ -68,26 +77,16 @@ export default hasHTMLTitle.extend({
         },
     },
     methods: {
-        toggleMaintenanceMode(): void {
-            if (this.maintenanceMode) {
-                backendService.endMaintenance();
-            } else {
-                backendService.startMaintenance();
-            }
-        },
-        fetchMaintenanceMessage(): void {
-            this.messageLoading = true;
-            backendService.fetchMaintenanceMessage().then((msg: string) => {
-                this.maintenanceMessage = msg;
-            }).finally(() => {
-                this.messageLoading = false;
+        setMaintenanceState(): void {
+            this.maintenanceStateLoading = true;
+            backendService.setMaintenanceState(this.maintenance).finally(() => {
+                this.maintenanceStateLoading = false;
             });
         },
-        setMaintenanceMessage(): void {
-            this.messageLoading = true;
-            backendService.setMaintenanceMessage(this.maintenanceMessage).finally(() => {
-                this.messageLoading = false;
-            });
+        resetMaintenanceState(): void {
+            this.maintenance.message = '';
+            this.maintenance.submitBlocked = false;
+            this.setMaintenanceState();
         },
     },
 });

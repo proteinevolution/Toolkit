@@ -13,7 +13,6 @@
             </div>
         </div>
         <ToolFinder />
-        <MaintenanceMessage />
         <UpdatesSection />
     </div>
 </template>
@@ -23,12 +22,10 @@ import ToolFinder from './ToolFinder.vue';
 import UpdatesSection from './UpdatesSection.vue';
 import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 import EventBus from '@/util/EventBus';
-import MaintenanceMessage from '@/components/index/MaintenanceMessage.vue';
 
 export default hasHTMLTitle.extend({
     name: 'IndexView',
     components: {
-        MaintenanceMessage,
         ToolFinder,
         UpdatesSection,
     },
