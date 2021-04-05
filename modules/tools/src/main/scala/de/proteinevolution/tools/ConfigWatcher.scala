@@ -19,35 +19,55 @@ package de.proteinevolution.tools
 import de.proteinevolution.tel.param.ParamCollector
 import play.api.{Configuration, Logging}
 import fs2.Stream
-import cats.effect.{IO, Resource}
+import cats.effect.{IO, Resource, Ref}
 import fs2.io.file.Files
 import better.files._
-import cats.effect.unsafe.implicits.global
 import fs2.io.Watcher
 
 import java.nio.file.Path
 import javax.inject.{Inject, Singleton}
+import cats.effect.unsafe.implicits.global
 
 @Singleton
-class ConfigWatcher @Inject()(pc: ParamCollector, config: Configuration) extends Logging {
+class ConfigWatcher @Inject()(
+    pc: ParamCollector,
+    config: Configuration,
+    toolConfig: ToolConfig
+) extends Logging {
 
   private final val REFRESH_FILE = "tel.params_refresh"
 
-  Stream.resource(configFile).flatMap{ f =>
-    Files[IO].watch(f).map{
-      case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
-        logger.info(s"file $REFRESH_FILE changed, reloading parameters...")
-        pc.reloadValues()
-      case Watcher.Event.Deleted(_, _) => logger.warn(s"file $REFRESH_FILE was deleted")
-      case Watcher.Event.Overflow(_) => logger.warn(s"file $REFRESH_FILE overflow")
-      case Watcher.Event.NonStandard(_, _) => logger.warn(s"file $REFRESH_FILE changed unexpectedly")
-    }
-  }.compile.drain.unsafeRunSync()
+  // start the file watcher
+  toolConfig.ref
+    .flatMap(watch)
+    .unsafeRunSync()
+
+  private def watch(r: Ref[IO, Map[String, Tool]]): IO[Unit] =
+    Stream
+      .resource(configFile)
+      .flatMap { f =>
+        Files[IO].watch(f).map {
+          case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
+            logger.info(s"file $REFRESH_FILE changed, reloading parameters...")
+            r.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
+            pc.reloadValues() // reload params
+          case Watcher.Event.Deleted(_, _) =>
+            logger.warn(s"file $REFRESH_FILE was deleted")
+          case Watcher.Event.Overflow(_) =>
+            logger.warn(s"file $REFRESH_FILE overflow")
+          case Watcher.Event.NonStandard(_, _) =>
+            logger.warn(s"file $REFRESH_FILE changed unexpectedly")
+        }
+      }
+      .compile
+      .drain
 
   private def configFile: Resource[IO, Path] =
-    Resource.eval(IO.
-      fromOption(config.get[Option[String]](REFRESH_FILE))(new IllegalArgumentException(s"file $REFRESH_FILE is missing")).map {
-      _.toFile.path
-    })
+    Resource.eval(
+      IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
+          new IllegalArgumentException(s"file $REFRESH_FILE is missing"))
+        .map {
+          _.toFile.path
+        })
 
 }
