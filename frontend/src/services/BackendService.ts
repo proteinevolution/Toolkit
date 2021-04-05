@@ -13,7 +13,7 @@ class BackendService {
     public fetchMaintenanceMessage(): Promise<string> {
         return new Promise<string>(((resolve, reject) => {
             axios.get(`/api/backend/maintenance/message`)
-                .then((response) => resolve(response.data))
+                .then((response) => resolve(response.data.message))
                 .catch(reject);
         }));
     }

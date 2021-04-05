@@ -17,11 +17,10 @@
 package de.proteinevolution.backend
 
 import de.proteinevolution.backend.controllers.BackendController
+import javax.inject.{ Inject, Singleton }
 import play.api.routing.Router.Routes
 import play.api.routing.SimpleRouter
 import play.api.routing.sird._
-
-import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
@@ -36,7 +35,7 @@ class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
     case POST(p"/users")               => ctrl.users
     case POST(p"/maintenance/start")   => ctrl.sendMaintenanceAlert(true)
     case POST(p"/maintenance/end")     => ctrl.sendMaintenanceAlert(false)
-    case POST(p"/maintenance/message") => ctrl.setMaintenanceMessage
+    case POST(p"/maintenance/message") => ctrl.setMaintenanceMessage()
   }
 
   override lazy val routes: Routes = {

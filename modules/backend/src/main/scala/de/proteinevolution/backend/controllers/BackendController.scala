@@ -50,7 +50,7 @@ final class BackendController @Inject() (
     extends ToolkitController(cc)
     with Logging {
 
-  private var maintenanceMode: Boolean = false
+  private var maintenanceMode: Boolean   = false
   private var maintenanceMessage: String = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
@@ -156,8 +156,8 @@ final class BackendController @Inject() (
   }
 
   def getMaintenanceMode: Action[AnyContent] = Action {
-      Ok(maintenanceMode.toString)
-    }
+    Ok(maintenanceMode.toString)
+  }
 
   def sendMaintenanceAlert(mode: Boolean): Action[AnyContent] = userAction { implicit request =>
     if (request.user.isSuperuser) {
@@ -170,13 +170,17 @@ final class BackendController @Inject() (
   }
 
   def getMaintenanceMessage: Action[AnyContent] = Action {
-    Ok(maintenanceMessage)
+    NoCache(Ok(Json.obj("message" -> Json.fromString(maintenanceMessage))))
   }
 
-  def setMaintenanceMessage(): Action[AnyContent] = userAction { implicit request =>
+  def setMaintenanceMessage(): Action[Json] = userAction(circe.json) { implicit request =>
     if (request.user.isSuperuser) {
-      maintenanceMessage = request.body.toString
-      Ok
+      request.body.asObject match {
+        case None => BadRequest
+        case Some(value) =>
+          maintenanceMessage = value("message").get.asString.orElse(Some("")).get
+          Ok
+      }
     } else {
       Unauthorized
     }
