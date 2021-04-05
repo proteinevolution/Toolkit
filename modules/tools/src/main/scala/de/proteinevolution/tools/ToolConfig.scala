@@ -42,7 +42,7 @@ class ToolConfig @Inject()(
 
   lazy val version: String = config.get[String]("version")
 
-  // safe mutable atomic reference of the config, init from `readFromFile`
+  // safe mutable atomic reference of the config, init with `readFromFile`
   private[tools] val ref: IO[Ref[IO, Map[String, Tool]]] =
     Ref.of(readFromFile())
 

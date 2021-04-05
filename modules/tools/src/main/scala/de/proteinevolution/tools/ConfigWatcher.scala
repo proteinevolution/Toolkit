@@ -29,20 +29,21 @@ import javax.inject.{Inject, Singleton}
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-class ConfigWatcher @Inject()(
+final private[tools] class ConfigWatcher @Inject()(
     pc: ParamCollector,
     config: Configuration,
     toolConfig: ToolConfig
 ) extends Logging {
 
-  private final val REFRESH_FILE = "tel.params_refresh"
+  private[this] final val REFRESH_FILE = "tel.params_refresh"
 
   // start the file watcher
   toolConfig.ref
     .flatMap(watch)
     .unsafeRunSync()
 
-  private def watch(r: Ref[IO, Map[String, Tool]]): IO[Unit] =
+  // fs2 file watcher
+  private[this] def watch(r: Ref[IO, Map[String, Tool]]): IO[Unit] =
     Stream
       .resource(configFile)
       .flatMap { f =>
@@ -62,7 +63,8 @@ class ConfigWatcher @Inject()(
       .compile
       .drain
 
-  private def configFile: Resource[IO, Path] =
+  // wrap the file path in a `Resource[IO, Path]` so that it can be consumed by a fs2 Stream
+  private[this] def configFile: Resource[IO, Path] =
     Resource.eval(
       IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
           new IllegalArgumentException(s"file $REFRESH_FILE is missing"))
