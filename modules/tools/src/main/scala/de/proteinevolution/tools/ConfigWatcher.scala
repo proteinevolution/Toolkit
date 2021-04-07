@@ -40,6 +40,7 @@ final private[tools] class ConfigWatcher @Inject()(
   // start the file watcher
   toolConfig.ref
     .flatMap(watch)
+    .foreverM
     .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
