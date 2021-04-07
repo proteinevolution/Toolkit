@@ -47,18 +47,21 @@ final private[tools] class ConfigWatcher @Inject()(
     Stream
       .resource(configFile)
       .flatMap { f =>
-        Files[IO].watch(f).map {
-          case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
-            logger.info(s"file $REFRESH_FILE changed, reloading parameters...")
-            r.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
-            pc.reloadValues() // reload params
-          case Watcher.Event.Deleted(_, _) =>
-            logger.warn(s"file $REFRESH_FILE was deleted")
-          case Watcher.Event.Overflow(_) =>
-            logger.warn(s"file $REFRESH_FILE overflow")
-          case Watcher.Event.NonStandard(_, _) =>
-            logger.warn(s"file $REFRESH_FILE changed unexpectedly")
-        }
+        Files[IO]
+          .watch(f, List(Watcher.EventType.Created, Watcher.EventType.Modified))
+          .map {
+            case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
+              logger.info(
+                s"file $REFRESH_FILE changed, reloading parameters...")
+              r.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
+              pc.reloadValues() // reload params
+            case Watcher.Event.Deleted(_, _) =>
+              logger.warn(s"file $REFRESH_FILE was deleted")
+            case Watcher.Event.Overflow(_) =>
+              logger.warn(s"file $REFRESH_FILE overflow")
+            case Watcher.Event.NonStandard(_, _) =>
+              logger.warn(s"file $REFRESH_FILE changed unexpectedly")
+          }
       }
       .compile
       .drain
