@@ -39,21 +39,17 @@ final private[tools] class ConfigWatcher @Inject()(
   private[this] final val REFRESH_FILE = "tel.params_refresh"
 
   // start the file watcher
-  Stream
-    .eval(for {
-      refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
-        new IllegalArgumentException(
-          s"configured file $REFRESH_FILE is missing"))
-      path = refreshFile.toFile.path
-      _ <- IO(logger.info(s"using $path as trigger for param reload"))
-      ref <- toolConfig.ref
-    } yield (path, ref))
-    .evalMap {
+  (for {
+    refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
+      new IllegalArgumentException(s"configured file $REFRESH_FILE is missing"))
+    path = refreshFile.toFile.path
+    _ <- IO(logger.info(s"using $path as trigger for param reload"))
+    ref <- toolConfig.ref
+  } yield (path, ref))
+    .flatMap {
       case (p, r) =>
         watch(Resource.eval(IO(p)), r).repeat.compile.drain
     }
-    .compile
-    .drain
     .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
