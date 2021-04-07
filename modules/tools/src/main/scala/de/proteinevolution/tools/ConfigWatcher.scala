@@ -18,15 +18,16 @@ package de.proteinevolution.tools
 
 import de.proteinevolution.tel.param.ParamCollector
 import play.api.{Configuration, Logging}
-import fs2.Stream
-import cats.effect.{IO, Resource, Ref}
-import fs2.io.file.Files
 import better.files._
+import cats.effect.{IO, Resource, Ref}
+import fs2.Stream
+import fs2.io.file.Files
 import fs2.io.Watcher
+
+import cats.effect.unsafe.implicits.global
 
 import java.nio.file.Path
 import javax.inject.{Inject, Singleton}
-import cats.effect.unsafe.implicits.global
 
 @Singleton
 final private[tools] class ConfigWatcher @Inject()(
@@ -38,19 +39,28 @@ final private[tools] class ConfigWatcher @Inject()(
   private[this] final val REFRESH_FILE = "tel.params_refresh"
 
   // start the file watcher
-  (for {
-    refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
-      new IllegalArgumentException(s"file $REFRESH_FILE is missing"))
-    path = refreshFile.toFile.path
-    _ <- IO(logger.info(s"using $path as trigger for param reload"))
-    r <- toolConfig.ref
-  } yield watch(Resource.eval(IO(path)), r)).foreverM.unsafeRunAsync(_ => ())
+  Stream
+    .eval(for {
+      refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
+        new IllegalArgumentException(
+          s"configured file $REFRESH_FILE is missing"))
+      path = refreshFile.toFile.path
+      _ <- IO(logger.info(s"using $path as trigger for param reload"))
+      ref <- toolConfig.ref
+    } yield (path, ref))
+    .evalMap {
+      case (p, r) =>
+        watch(Resource.eval(IO(p)), r).repeat.compile.drain
+    }
+    .compile
+    .drain
+    .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
   private[this] def watch(
       source: Resource[IO, Path],
       r: Ref[IO, Map[String, Tool]]
-  ): IO[Unit] =
+  ): Stream[IO, Unit] =
     Stream
       .resource(source)
       .flatMap { f =>
@@ -59,7 +69,7 @@ final private[tools] class ConfigWatcher @Inject()(
           .map {
             case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
               logger.info(
-                s"file $REFRESH_FILE changed, reloading parameters...")
+                s"file $REFRESH_FILE changed, reloading parameters ...")
               r.modify(_ => (toolConfig.readFromFile(), ())) // update since the config has to be re-parsed
               pc.reloadValues() // reload params
             case Watcher.Event.Deleted(_, _) =>
@@ -70,7 +80,5 @@ final private[tools] class ConfigWatcher @Inject()(
               logger.warn(s"file $REFRESH_FILE changed unexpectedly")
           }
       }
-      .compile
-      .drain
 
 }

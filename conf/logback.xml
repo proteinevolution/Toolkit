@@ -31,7 +31,7 @@
     <logger name="http.filters" level="INFO"/>
     <logger name="play" level="INFO"/>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="ASYNCSTDOUT"/>
     </root>
 
