@@ -44,7 +44,7 @@ final private[tools] class ConfigWatcher @Inject()(
     path = refreshFile.toFile.path
     _ <- IO(logger.info(s"using $path as trigger for param reload"))
     r <- toolConfig.ref
-  } yield watch(Resource.eval(IO(path)), r).foreverM).unsafeRunAsync(_ => ())
+  } yield watch(Resource.eval(IO(path)), r)).foreverM.unsafeRunAsync(_ => ())
 
   // fs2 file watcher
   private[this] def watch(
