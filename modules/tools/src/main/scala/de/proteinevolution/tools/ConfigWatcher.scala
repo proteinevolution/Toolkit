@@ -48,32 +48,31 @@ final private[tools] class ConfigWatcher @Inject()(
   } yield (path, ref))
     .flatMap {
       case (p, r) =>
-        watch(Resource.eval(IO(p)), r).repeat.compile.drain
+        watch(p, r).repeat.compile.drain
     }
     .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
   private[this] def watch(
-      source: Resource[IO, Path],
-      r: Ref[IO, Map[String, Tool]]
+      path: Path,
+      ref: Ref[IO, Map[String, Tool]]
   ): Stream[IO, Unit] =
     Stream
-      .resource(source)
+      .resource(Resource.eval(IO(path)))
       .flatMap { f =>
         Files[IO]
           .watch(f)
           .map {
             case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
-              logger.info(
-                s"file $REFRESH_FILE changed, reloading parameters ...")
-              r.modify(_ => (toolConfig.readFromFile(), ())) // update since the config has to be re-parsed
+              logger.info(s"file $path changed, reloading parameters ...")
+              ref.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
               pc.reloadValues() // reload params
             case Watcher.Event.Deleted(_, _) =>
-              logger.warn(s"file $REFRESH_FILE was deleted")
+              logger.warn(s"file $path was deleted")
             case Watcher.Event.Overflow(_) =>
-              logger.warn(s"file $REFRESH_FILE overflow")
+              logger.warn(s"file $path overflow")
             case Watcher.Event.NonStandard(_, _) =>
-              logger.warn(s"file $REFRESH_FILE changed unexpectedly")
+              logger.warn(s"file $path changed unexpectedly")
           }
       }
 
