@@ -38,15 +38,21 @@ final private[tools] class ConfigWatcher @Inject()(
   private[this] final val REFRESH_FILE = "tel.params_refresh"
 
   // start the file watcher
-  toolConfig.ref
-    .flatMap(watch)
-    .foreverM
-    .unsafeRunAsync(_ => ())
+  (for {
+    refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
+      new IllegalArgumentException(s"file $REFRESH_FILE is missing"))
+    path = refreshFile.toFile.path
+    _ <- IO(logger.info(s"using $path as trigger for param reload"))
+    r <- toolConfig.ref
+  } yield watch(Resource.eval(IO(path)), r).foreverM).unsafeRunAsync(_ => ())
 
   // fs2 file watcher
-  private[this] def watch(r: Ref[IO, Map[String, Tool]]): IO[Unit] =
+  private[this] def watch(
+      source: Resource[IO, Path],
+      r: Ref[IO, Map[String, Tool]]
+  ): IO[Unit] =
     Stream
-      .resource(configFile)
+      .resource(source)
       .flatMap { f =>
         Files[IO]
           .watch(f)
@@ -54,7 +60,7 @@ final private[tools] class ConfigWatcher @Inject()(
             case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
               logger.info(
                 s"file $REFRESH_FILE changed, reloading parameters...")
-              r.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
+              r.modify(_ => (toolConfig.readFromFile(), ())) // update since the config has to be re-parsed
               pc.reloadValues() // reload params
             case Watcher.Event.Deleted(_, _) =>
               logger.warn(s"file $REFRESH_FILE was deleted")
@@ -66,14 +72,5 @@ final private[tools] class ConfigWatcher @Inject()(
       }
       .compile
       .drain
-
-  // wrap the file path in a `Resource[IO, Path]` so that it can be consumed by a fs2 Stream
-  private[this] def configFile: Resource[IO, Path] =
-    Resource.eval(
-      IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
-          new IllegalArgumentException(s"file $REFRESH_FILE is missing"))
-        .map {
-          _.toFile.path
-        })
 
 }
