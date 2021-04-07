@@ -40,7 +40,7 @@ final private[tools] class ConfigWatcher @Inject()(
   // start the file watcher
   toolConfig.ref
     .flatMap(watch)
-    .unsafeRunSync()
+    .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
   private[this] def watch(r: Ref[IO, Map[String, Tool]]): IO[Unit] =
