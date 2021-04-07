@@ -49,7 +49,7 @@ final private[tools] class ConfigWatcher @Inject()(
       .resource(configFile)
       .flatMap { f =>
         Files[IO]
-          .watch(f, List(Watcher.EventType.Created, Watcher.EventType.Modified))
+          .watch(f)
           .map {
             case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
               logger.info(
