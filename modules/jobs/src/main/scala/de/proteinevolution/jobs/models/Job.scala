@@ -52,10 +52,8 @@ case class Job(
       toolConfig: ToolConfig,
       user: User,
       paramValues: Option[Map[String, String]] = None
-  )(implicit
-    config: Configuration): JsonObject = {
-    val toolConfVal = toolConfig.values.unsafeRunSync()
-    val toolObj = toolConfVal(tool)
+  )(implicit config: Configuration): JsonObject = {
+    val toolObj = toolConfig.values.unsafeRunSync().apply(tool)
     JsonObject(
       "jobID" -> jobID.asJson,
       "parentID" -> parentID.asJson,
