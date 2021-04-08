@@ -67,9 +67,8 @@ final private[tools] class ConfigWatcher @Inject()(
               for {
                 _ <- IO(
                   logger.info(s"file $path changed, reloading parameters ..."))
-                msg <- ref.modify(_ =>
-                  (toolConfig.readFromFile(), s"updated the toolConfig"))
-                _ <- IO(logger.info(msg))
+                _ <- ref.set(toolConfig.readFromFile())
+                _ <- IO(logger.info(s"updated tool config"))
                 _ <- IO(pc.reloadValues())
               } yield ()
             case Watcher.Event.Deleted(_, _) =>
