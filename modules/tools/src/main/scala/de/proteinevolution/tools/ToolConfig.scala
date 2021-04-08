@@ -27,8 +27,8 @@ import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters._
 import play.api.Configuration
-import cats.effect.unsafe.implicits.global
 import cats.effect.{IO, Ref}
+import cats.effect.unsafe.implicits.global
 
 import javax.inject.{Inject, Singleton}
 import scala.jdk.CollectionConverters._
@@ -46,7 +46,7 @@ class ToolConfig @Inject()(
   private[tools] val ref: IO[Ref[IO, Map[String, Tool]]] =
     Ref.of(readFromFile())
 
-  def values: Map[String, Tool] = ref.flatMap(_.get).unsafeRunSync()
+  val values: IO[Map[String, Tool]] = ref.flatMap(_.get)
 
   private[tools] def readFromFile(): Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
@@ -98,6 +98,7 @@ class ToolConfig @Inject()(
 
   def isTool(toolName: String): Boolean = {
     toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values
+      .unsafeRunSync()
       .exists {
         case (_, tool) =>
           tool.isToolName(toolName)
