@@ -62,17 +62,22 @@ final private[tools] class ConfigWatcher @Inject()(
       .flatMap { f =>
         Files[IO]
           .watch(f)
-          .map {
+          .evalMap {
             case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
-              logger.info(s"file $path changed, reloading parameters ...")
-              ref.update(_ => toolConfig.readFromFile()) // update since the config has to be re-parsed
-              pc.reloadValues() // reload params
+              for {
+                _ <- IO(
+                  logger.info(s"file $path changed, reloading parameters ..."))
+                msg <- ref.modify(_ =>
+                  (toolConfig.readFromFile(), s"updated the toolConfig"))
+                _ <- IO(logger.info(msg))
+                _ <- IO(pc.reloadValues())
+              } yield ()
             case Watcher.Event.Deleted(_, _) =>
-              logger.warn(s"file $path was deleted")
+              IO(logger.warn(s"file $path was deleted"))
             case Watcher.Event.Overflow(_) =>
-              logger.warn(s"file $path overflow")
+              IO(logger.warn(s"file $path overflow"))
             case Watcher.Event.NonStandard(_, _) =>
-              logger.warn(s"file $path changed unexpectedly")
+              IO(logger.warn(s"file $path changed unexpectedly"))
           }
       }
 
