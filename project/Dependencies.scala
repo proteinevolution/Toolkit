@@ -4,7 +4,6 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.6.14"
-  val catsV       = "2.1.0"
   val circeV      = "0.13.0"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
@@ -30,8 +29,10 @@ object Dependencies {
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.3")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    "org.typelevel"       %% "cats-core"            % catsV,
+    "org.typelevel"       %% "cats-core"            % "2.5.0",
     "org.typelevel"       %% "cats-effect"          % "3.0.1",
+    "co.fs2"              %% "fs2-core"             % "3.0.0",
+    "co.fs2"              %% "fs2-io"               % "3.0.0",
     "com.chuusai"         %% "shapeless"            % "2.3.3",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
