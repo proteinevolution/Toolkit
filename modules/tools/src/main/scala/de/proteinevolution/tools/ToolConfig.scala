@@ -27,12 +27,14 @@ import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters._
 import play.api.Configuration
-import cats.effect.{IO, Ref}
+import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 
 import javax.inject.{Inject, Singleton}
 import scala.jdk.CollectionConverters._
 import scala.util.Try
+
+import java.util.concurrent.atomic._
 
 @Singleton
 class ToolConfig @Inject()(
@@ -42,11 +44,10 @@ class ToolConfig @Inject()(
 
   lazy val version: String = config.get[String]("version")
 
-  // safe mutable atomic reference of the config, init with `readFromFile`
-  private[tools] val ref: IO[Ref[IO, Map[String, Tool]]] =
-    Ref.of(readFromFile())
+  private[tools] val ref: AtomicReference[Map[String, Tool]] =
+    new AtomicReference[Map[String, Tool]](readFromFile())
 
-  val values: IO[Map[String, Tool]] = ref.flatMap(_.get)
+  def values: IO[Map[String, Tool]] = IO(ref.get())
 
   private[tools] def readFromFile(): Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {

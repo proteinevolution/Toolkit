@@ -19,14 +19,14 @@ package de.proteinevolution.tools
 import de.proteinevolution.tel.param.ParamCollector
 import play.api.{Configuration, Logging}
 import better.files._
-import cats.effect.{IO, Resource, Ref}
+import cats.effect.{IO, Resource}
 import fs2.Stream
 import fs2.io.file.Files
 import fs2.io.Watcher
-
 import cats.effect.unsafe.implicits.global
 
 import java.nio.file.Path
+import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
 
 @Singleton
@@ -44,18 +44,16 @@ final private[tools] class ConfigWatcher @Inject()(
       new IllegalArgumentException(s"configured file $REFRESH_FILE is missing"))
     path = refreshFile.toFile.path
     _ <- IO(logger.info(s"using $path as trigger for param reload"))
-    ref <- toolConfig.ref
-  } yield (path, ref))
-    .flatMap {
-      case (p, r) =>
-        watch(p, r).repeat.compile.drain
+  } yield path)
+    .flatMap { p =>
+      watch(p, toolConfig.ref).repeat.compile.drain
     }
     .unsafeRunAsync(_ => ())
 
   // fs2 file watcher
   private[this] def watch(
       path: Path,
-      ref: Ref[IO, Map[String, Tool]]
+      ref: AtomicReference[Map[String, Tool]]
   ): Stream[IO, Unit] =
     Stream
       .resource(Resource.eval(IO(path)))
@@ -67,7 +65,7 @@ final private[tools] class ConfigWatcher @Inject()(
               for {
                 _ <- IO(
                   logger.info(s"file $path changed, reloading parameters ..."))
-                _ <- ref.set(toolConfig.readFromFile())
+                _ <- IO(ref.set(toolConfig.readFromFile()))
                 _ <- IO(logger.info(s"updated tool config"))
                 _ <- IO(pc.reloadValues())
               } yield ()
