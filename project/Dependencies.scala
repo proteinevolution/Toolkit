@@ -32,7 +32,7 @@ object Dependencies {
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % catsV,
     "org.typelevel"       %% "cats-effect"          % "3.0.1",
-    "com.chuusai"         %% "shapeless"            % "2.3.3",
+    "com.chuusai"         %% "shapeless"            % "2.3.4",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
     "io.circe"            %% "circe-generic-extras" % circeV,
