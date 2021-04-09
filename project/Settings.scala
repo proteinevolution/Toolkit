@@ -55,8 +55,8 @@ object Settings {
   lazy val compileSettings: Seq[Def.Setting[Task[Seq[String]]]] = Seq(scalacOptions ++= allFlags)
 
   lazy val disableDocs: Seq[Def.Setting[_]] = Seq[Setting[_]](
-    sources in (Compile, doc) := Seq.empty,
-    publishArtifact in (Compile, packageDoc) := false
+    Compile / doc / sources := Seq.empty,
+    Compile / packageDoc / publishArtifact := false
   )
 
   implicit class SettingsFromProject(project: Project) {

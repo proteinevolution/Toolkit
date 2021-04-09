@@ -147,10 +147,10 @@ resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapsh
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
-fork in Test := true
-logLevel in Test := Level.Info
+Test / fork := true
+Test / logLevel := Level.Info
 
-scalacOptions in Test ++= Seq("-Yrangepos")
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+Test / scalacOptions ++= Seq("-Yrangepos")
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")
