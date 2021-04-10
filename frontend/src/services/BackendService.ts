@@ -1,26 +1,19 @@
 import axios from 'axios';
+import {MaintenanceState} from '@/types/toolkit/auth';
 
 class BackendService {
 
-    public fetchMaintenanceMode(): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
+    public setMaintenanceState(state: MaintenanceState): Promise<void> {
+        return new Promise<void>(((resolve, reject) => {
+            axios.post(`/api/backend/maintenance`, state)
+                .then(() => resolve())
+                .catch(reject);
+        }));
+    }
+
+    public fetchMaintenanceState(): Promise<MaintenanceState> {
+        return new Promise<MaintenanceState>(((resolve, reject) => {
             axios.get(`/api/backend/maintenance`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
-    }
-
-    public startMaintenance(): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
-            axios.post(`/api/backend/startmaintenance`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
-    }
-
-    public endMaintenance(): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
-            axios.post(`/api/backend/endmaintenance`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));
