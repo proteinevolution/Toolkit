@@ -130,13 +130,3 @@ export default ToolParameterMixin.extend({
     },
 });
 </script>
-
-<style lang="scss">
-.vue-switcher-theme--default.vue-switcher-color--default div {
-  background-color: lighten($primary, 15%);
-}
-
-.vue-switcher-theme--default.vue-switcher-color--default div:after {
-  background-color: $primary;
-}
-</style>

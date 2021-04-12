@@ -50,3 +50,7 @@ export interface AuthMessage {
     user: User | null;
 }
 
+export interface MaintenanceState {
+    message: string;
+    submitBlocked: boolean;
+}

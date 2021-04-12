@@ -26,14 +26,13 @@ import play.api.routing.sird._
 class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
 
   private lazy val backendRoutes: Routes = {
-    case GET(p"/statistics")        => ctrl.statistics
-    case GET(p"/runusersweep")      => ctrl.runUserSweep
-    case GET(p"/runjobsweep")       => ctrl.runJobSweep
-    case GET(p"/users")             => ctrl.users
-    case GET(p"/maintenance")       => ctrl.getMaintenanceMode
-    case POST(p"/users")            => ctrl.users
-    case POST(p"/startmaintenance") => ctrl.sendMaintenanceAlert(true)
-    case POST(p"/endmaintenance")   => ctrl.sendMaintenanceAlert(false)
+    case GET(p"/statistics")   => ctrl.statistics
+    case GET(p"/runusersweep") => ctrl.runUserSweep
+    case GET(p"/runjobsweep")  => ctrl.runJobSweep
+    case GET(p"/users")        => ctrl.users
+    case GET(p"/maintenance")  => ctrl.getMaintenanceState
+    case POST(p"/users")       => ctrl.users
+    case POST(p"/maintenance") => ctrl.setMaintenanceState()
   }
 
   override lazy val routes: Routes = {

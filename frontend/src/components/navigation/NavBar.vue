@@ -9,9 +9,14 @@
                         <b-navbar-nav class="upper-nav">
                             <b-nav-item v-for="section in sections"
                                         :key="section"
-                                        :class="[section === selectedSection ? 'active' : '']"
+                                        :class="[section === selectedSection && $route.name !== 'admin' ? 'active' : '']"
                                         @click="selectSection(section)">
                                 {{ $t(`tools.sections.${section}.title`) }}
+                            </b-nav-item>
+                            <b-nav-item v-if="isAdmin"
+                                        :class="[$route.name === 'admin' ? 'active' : '']"
+                                        to="/admin">
+                                Admin
                             </b-nav-item>
                         </b-navbar-nav>
 
@@ -40,6 +45,7 @@ import Vue from 'vue';
 import {Tool} from '@/types/toolkit/tools';
 import {Job} from '@/types/toolkit/jobs';
 import {sectionColors, sections} from '@/conf/ToolSections';
+import {User} from '@/types/toolkit/auth';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -67,6 +73,12 @@ export default Vue.extend({
         },
         selectedSection(): string {
             return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
+        },
+        user(): User | null {
+            return this.$store.getters['auth/user'];
+        },
+        isAdmin(): boolean {
+            return this.user !== null && this.user.isAdmin;
         },
     },
     watch: {
@@ -108,7 +120,6 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .navbar-container .navbar {
   padding-left: 0;
-  max-width: 750px;
 
   .navbar-nav {
     .nav-item a {

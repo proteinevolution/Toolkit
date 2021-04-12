@@ -1,5 +1,5 @@
 <template>
-    <div class="tool-finder-container">
+    <div class="tool-finder-container mb-3">
         <div class="tool-finder container">
             <b-row class="live-table">
                 <b-col cols="6">

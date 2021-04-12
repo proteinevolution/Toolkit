@@ -16,7 +16,8 @@
             </b-col>
             <b-col cols="12"
                    lg="9"
-                   xl="10">
+                   xl="10"
+                   class="d-none d-lg-flex">
                 <NavBar />
             </b-col>
         </b-row>

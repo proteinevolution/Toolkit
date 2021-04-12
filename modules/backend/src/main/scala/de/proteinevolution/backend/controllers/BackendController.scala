@@ -19,13 +19,10 @@ package de.proteinevolution.backend.controllers
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ ActorRef, ActorSystem }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.backend.actors.DatabaseMonitor.{
-  DeleteOldJobs,
-  DeleteOldUsers
-}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
@@ -33,7 +30,7 @@ import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logging
 import play.api.mvc._
 
@@ -41,7 +38,7 @@ import scala.concurrent.ExecutionContext
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-final class BackendController @Inject()(
+final class BackendController @Inject() (
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
@@ -54,19 +51,18 @@ final class BackendController @Inject()(
     extends ToolkitController(cc)
     with Logging {
 
-  private var maintenanceMode: Boolean = false
+  private var maintenanceSubmitBlocked: Boolean = false
+  private var maintenanceMessage: String        = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
     logger.info(
       "Statistics called. Access " + (if (request.user.isSuperuser) "granted."
-                                      else "denied."))
+                                      else "denied.")
+    )
     if (request.user.isSuperuser) {
       // Get the first moment of the last month as a DateTime object
       val firstOfLastMonth: ZonedDateTime =
-        ZonedDateTime.now
-          .minusMonths(1)
-          .truncatedTo(ChronoUnit.DAYS)
-          .withDayOfMonth(1)
+        ZonedDateTime.now.minusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
 
       // Grab the current statistics
       logger.info("Loading Statistics...")
@@ -74,9 +70,7 @@ final class BackendController @Inject()(
 
       // Ensure all tools are in the statistics, even if they have not been used yet
       logger.info("Statistics loaded.... checking for new tools")
-      val statsUpdated = stats.map(
-        _.updateTools(
-          toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList))
+      val statsUpdated = stats.map(_.updateTools(toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList))
 
       // Collect the job events up until the first of the last month
       statsUpdated.flatMap { statistics =>
@@ -89,10 +83,7 @@ final class BackendController @Inject()(
               )
               statistics.addMonthsToTools(
                 jobEventLogs,
-                statistics.lastPushed
-                  .plusMonths(1)
-                  .truncatedTo(ChronoUnit.DAYS)
-                  .withDayOfMonth(1),
+                statistics.lastPushed.plusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1),
                 firstOfLastMonth
               )
             }
@@ -109,7 +100,7 @@ final class BackendController @Inject()(
                     Ok(
                       Json.obj(
                         "success" -> Json.fromString("new statistics added"),
-                        "stat" -> statisticsObjectUpdated.asJson
+                        "stat"    -> statisticsObjectUpdated.asJson
                       )
                     )
                   )
@@ -119,21 +110,17 @@ final class BackendController @Inject()(
                   NoCache(
                     Ok(
                       Json.obj(
-                        "error" -> Json.fromString(
-                          "could not reload new stats from DB"),
-                        "stat" -> statisticsObject.asJson
+                        "error" -> Json.fromString("could not reload new stats from DB"),
+                        "stat"  -> statisticsObject.asJson
                       )
                     )
                   )
               }
             }
         } else {
-          logger.info(
-            "No need to push statistics. Last Push: " + statistics.lastPushed)
+          logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
           fuccess(
-            NoCache(
-              Ok(Json.obj("success" -> Json.fromString("old statistics used"),
-                          "stat" -> statistics.asJson)))
+            NoCache(Ok(Json.obj("success" -> Json.fromString("old statistics used"), "stat" -> statistics.asJson)))
           )
         }
       }
@@ -146,7 +133,8 @@ final class BackendController @Inject()(
     logger.info(
       "User deletion called. Access " + (if (request.user.isSuperuser)
                                            "granted."
-                                         else "denied."))
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldUsers
       NoContent
@@ -159,7 +147,8 @@ final class BackendController @Inject()(
     logger.info(
       "User deletion called. Access " + (if (request.user.isSuperuser)
                                            "granted."
-                                         else "denied."))
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldJobs
       NoContent
@@ -178,19 +167,31 @@ final class BackendController @Inject()(
     }
   }
 
-  def getMaintenanceMode: Action[AnyContent] = Action {
-    Ok(maintenanceMode.toString)
+  def getMaintenanceState: Action[AnyContent] = Action {
+    NoCache(
+      Ok(
+        Json.obj(
+          "message"       -> Json.fromString(maintenanceMessage),
+          "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
+        )
+      )
+    )
   }
 
-  def sendMaintenanceAlert(mode: Boolean): Action[AnyContent] = userAction {
-    implicit request =>
-      if (request.user.isSuperuser) {
-        maintenanceMode = mode
-        actorSystem.eventStream.publish(MaintenanceAlert(mode))
-        Ok
-      } else {
-        Unauthorized
+  def setMaintenanceState(): Action[Json] = userAction(circe.json) { implicit request =>
+    if (request.user.isSuperuser) {
+      request.body.asObject match {
+        case None => BadRequest
+        case Some(value) =>
+          maintenanceMessage = value("message").get.asString.orElse(Some("")).get
+          maintenanceSubmitBlocked = value("submitBlocked").get.asBoolean.orElse(Some(false)).get
+          actorSystem.eventStream.publish(MaintenanceAlert(maintenanceMessage, maintenanceSubmitBlocked))
+          Ok
       }
+    } else {
+      Unauthorized
+    }
+
   }
 
 }
