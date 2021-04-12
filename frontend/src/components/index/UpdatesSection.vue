@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex mt-3 mt-md-5 justify-content-center">
+    <div class="d-flex mt-3 justify-content-center">
         <b-col md="9"
                class="tile-main-container">
             <b-row>

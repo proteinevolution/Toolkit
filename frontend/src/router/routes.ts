@@ -2,11 +2,13 @@ import IndexView from '../components/index/IndexView.vue';
 import Loading from '../components/utils/Loading.vue';
 import TimeoutView from '../components/utils/TimeoutView.vue';
 import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
-import {Location, Route, RouteConfig} from 'vue-router';
+import {Location, NavigationGuardNext, Route, RouteConfig} from 'vue-router';
+import {authService} from '@/services/AuthService';
 
 const ToolView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue'));
 const JobView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "job" */ '../components/jobs/JobView.vue'));
 const JobManagerView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/jobmanager/JobManagerView.vue'));
+const AdminView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "admin" */ '../components/admin/AdminView.vue'));
 const NotFoundView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
 
 const routes: RouteConfig[] = [
@@ -40,6 +42,22 @@ const routes: RouteConfig[] = [
         component: JobManagerView,
         meta: {
             showJobList: true,
+        },
+    },
+    {
+        path: '/admin',
+        name: 'admin',
+        component: AdminView,
+        meta: {
+            showJobList: true,
+        },
+        beforeEnter: async (to: Route, from: Route, next: NavigationGuardNext): Promise<void> => {
+            const user = await authService.fetchUserData();
+            if (user != null && user.isAdmin) {
+                next();
+            } else {
+                next({name: 'index'});
+            }
         },
     },
     {

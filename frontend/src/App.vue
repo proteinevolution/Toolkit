@@ -1,7 +1,7 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools || $store.state.loading.maintenanceMode" />
+            <LoadingView v-if="$store.state.loading.tools || $store.state.loading.maintenanceState" />
             <b-container v-else
                          class="main-container">
                 <OffscreenMenu />
@@ -159,7 +159,7 @@ export default Vue.extend({
             }
         });
 
-        this.$store.dispatch('fetchMaintenanceMode');
+        this.$store.dispatch('fetchMaintenance');
         this.$store.dispatch('tools/fetchAllTools');
         this.$store.dispatch('jobs/fetchAllJobs');
         // this also makes sure the session id is set
@@ -170,7 +170,7 @@ export default Vue.extend({
             const json = JSON.parse(response.data);
             switch (json.mutation) {
                 case 'SOCKET_MaintenanceAlert':
-                    if (json.maintenanceMode) {
+                    if (json.submitBlocked) {
                         this.$alert({
                             title: this.$t('maintenance.notificationTitle'),
                             text: this.$t('maintenance.notificationBody'),
@@ -438,6 +438,16 @@ body {
   }
   div:after {
     display: none;
+  }
+}
+
+.toolkit .vue-switcher-theme--default.vue-switcher-color--default {
+  div {
+    background-color: lighten($primary, 15%);
+  }
+
+  div:after {
+    background-color: $primary;
   }
 }
 </style>

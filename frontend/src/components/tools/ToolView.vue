@@ -43,9 +43,9 @@
 
                                 <b-form-group v-if="showSubmitButtons"
                                               class="submit-buttons pt-4">
-                                    <b-btn v-b-tooltip="maintenanceMode ? $t('maintenance.blockSubmit') : null"
+                                    <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
                                            class="submit-button"
-                                           :class="{ 'margin' : loggedIn, 'maintenance': maintenanceMode }"
+                                           :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
                                            variant="primary"
                                            @click="submitJob">
@@ -193,8 +193,8 @@ export default hasHTMLTitle.extend({
             }
             return this.tool.longname;
         },
-        maintenanceMode(): boolean {
-            return this.$store.state.maintenanceMode;
+        submitBlocked(): boolean {
+            return this.$store.state.maintenance.submitBlocked;
         },
         preventSubmit(): boolean {
             return this.submitLoading || Object.keys(this.validationErrors).length > 0;
@@ -269,7 +269,7 @@ export default hasHTMLTitle.extend({
             }
         },
         submitJob(): void {
-            if (this.preventSubmit || this.maintenanceMode) {
+            if (this.preventSubmit || this.submitBlocked) {
                 return;
             }
             const toolName = this.toolName;
