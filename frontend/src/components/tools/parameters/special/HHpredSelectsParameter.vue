@@ -7,7 +7,7 @@
                                         :validation-errors="validationErrors"
                                         :submission="submission"
                                         :remember-params="rememberParams"
-                                        data-v-step="structural-domain-databse"
+                                        data-v-step="structural-domain-database"
                                         max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
                                         :disabled="disabled"
                                         :force-select-none="disabled"

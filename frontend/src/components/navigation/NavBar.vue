@@ -20,7 +20,7 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <transition-group data-v-step="toolbar"
+                        <transition-group data-v-step="tool-bar"
                                           name="list-complete"
                                           tag="ul"
                                           class="navbar-nav lower-nav"
