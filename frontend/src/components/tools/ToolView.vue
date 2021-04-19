@@ -48,6 +48,7 @@
                                            class="submit-button"
                                            :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
+                                           data-v-step="submit"
                                            variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
@@ -56,7 +57,8 @@
                                         <span v-else
                                               v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
                                     </b-btn>
-                                    <custom-job-id-input :validation-errors="validationErrors"
+                                    <custom-job-id-input data-v-step="job-id"
+                                                         :validation-errors="validationErrors"
                                                          :submission="submission" />
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
@@ -99,28 +101,6 @@
                                 </div>
                             </template>
                         </b-tabs>
-                        <b-form-group v-if="showSubmitButtons"
-                                      class="submit-buttons">
-                            <b-btn class="submit-button"
-                                   data-v-step="submit"
-                                   :class="{ 'submit-button-margin' : loggedIn }"
-                                   variant="primary"
-                                   :disabled="preventSubmit"
-                                   @click="submitJob"
-                                   v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')" />
-                            <custom-job-id-input :validation-errors="validationErrors"
-                                                 :submission="submission" />
-                            <b-btn v-if="hasRememberedParameters"
-                                   class="reset-params-button"
-                                   variant="secondary"
-                                   :title="$t('jobs.resetParamsTitle')"
-                                   @click="clearParameterRemember"
-                                   v-text="$t('jobs.resetParams')" />
-                            <email-notification-switch v-if="loggedIn"
-                                                       :validation-errors="validationErrors"
-                                                       :submission="submission"
-                                                       class="pull-left" />
-                        </b-form-group>
                     </b-card>
                 </b-form>
             </LoadingWrapper>

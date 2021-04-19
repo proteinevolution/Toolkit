@@ -4,6 +4,7 @@
         <b-form-textarea class="textarea-alignment break-all"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          :value="value"
+                         data-v-step="input"
                          cols="70"
                          spellcheck="false"
                          @input="handleInput" />
@@ -125,6 +126,9 @@ export default Vue.extend({
                 this.$emit('validation', val);
             },
         },
+    },
+    mounted() {
+        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
     },
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
