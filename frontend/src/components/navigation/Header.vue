@@ -1,6 +1,7 @@
 <template>
     <b-container class="header">
         <b-alert variant="primary"
+                 class="tour-banner"
                  dismissible
                  :show="showTourBanner">
             <p class="mb-2">
@@ -90,4 +91,11 @@ export default Vue.extend({
     width: 180px;
   }
 }
+
+.tour-banner {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}
+
 </style>

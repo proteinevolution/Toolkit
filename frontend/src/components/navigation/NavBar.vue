@@ -29,7 +29,7 @@
                                         :key="tool.name"
                                         v-b-tooltip.hover.bottom
                                         class="list-complete-item"
-                                        :data-v-step="index === 0 ? 'tool' : ''"
+                                        :data-v-step="index === 1 ? 'tool' : ''"
                                         :to="'/tools/' + tool.name"
                                         :title="tool.description">
                                 {{ tool.longname }}

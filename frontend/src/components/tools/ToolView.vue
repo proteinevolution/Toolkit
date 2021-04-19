@@ -41,6 +41,36 @@
                                              :submission="submission"
                                              :remember-params="rememberParams" />
                                 </div>
+
+                                <b-form-group v-if="showSubmitButtons"
+                                              class="submit-buttons pt-4">
+                                    <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
+                                           class="submit-button"
+                                           :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
+                                           :disabled="preventSubmit"
+                                           data-v-step="submit"
+                                           variant="primary"
+                                           @click="submitJob">
+                                        <loading v-if="submitLoading"
+                                                 :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                                 :size="20" />
+                                        <span v-else
+                                              v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                                    </b-btn>
+                                    <custom-job-id-input data-v-step="job-id"
+                                                         :validation-errors="validationErrors"
+                                                         :submission="submission" />
+                                    <b-btn v-if="hasRememberedParameters"
+                                           class="reset-params-button"
+                                           variant="secondary"
+                                           :title="$t('jobs.resetParamsTitle')"
+                                           @click="clearParameterRemember"
+                                           v-text="$t('jobs.resetParams')" />
+                                    <email-notification-switch v-if="loggedIn"
+                                                               :validation-errors="validationErrors"
+                                                               :submission="submission"
+                                                               class="pull-left" />
+                                </b-form-group>
                             </b-tab>
 
                             <!-- the job form can insert more tabs here -->
@@ -70,34 +100,6 @@
                                 </div>
                             </template>
                         </b-tabs>
-                        <b-form-group v-if="showSubmitButtons"
-                                      class="submit-buttons pt-4">
-                            <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
-                                   class="submit-button"
-                                   data-v-step="3"
-                                   :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
-                                   :disabled="preventSubmit"
-                                   variant="primary"
-                                   @click="submitJob">
-                                <loading v-if="submitLoading"
-                                         :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
-                                         :size="20" />
-                                <span v-else
-                                      v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
-                            </b-btn>
-                            <custom-job-id-input :validation-errors="validationErrors"
-                                                 :submission="submission" />
-                            <b-btn v-if="hasRememberedParameters"
-                                   class="reset-params-button"
-                                   variant="secondary"
-                                   :title="$t('jobs.resetParamsTitle')"
-                                   @click="clearParameterRemember"
-                                   v-text="$t('jobs.resetParams')" />
-                            <email-notification-switch v-if="loggedIn"
-                                                       :validation-errors="validationErrors"
-                                                       :submission="submission"
-                                                       class="pull-left" />
-                        </b-form-group>
                     </b-card>
                 </b-form>
             </LoadingWrapper>
@@ -377,7 +379,8 @@ export default hasHTMLTitle.extend({
 
   .submit-buttons {
     margin-bottom: 0;
-    padding: 1.25rem;
+    padding-bottom: 0;
+    padding-right: 0;
 
 
     .submit-button {
