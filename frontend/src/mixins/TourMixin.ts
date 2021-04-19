@@ -8,11 +8,11 @@ const TourMixin = Vue.extend({
         return {
             steps: [
                 {
-                    target: '[data-v-step="toolbar"]',
+                    target: '[data-v-step="tool-bar"]',
                     header: {
                         title: 'Toolbar',
                     },
-                    content: `These are the different tools you can use`,
+                    content: this.$t('tour.toolBar'),
                     params: {
                         enableScrolling: false,
                     },
@@ -29,7 +29,7 @@ const TourMixin = Vue.extend({
                     // the image is loaded. The image then pushes the search bar down, away from
                     // the tour element
                     target: '[data-v-step="search-bar"]',
-                    content: `search for jobs or tools`,
+                    content: this.$t('tour.searchBar'),
                     params: {
                         enableScrolling: false,
                     },
@@ -49,14 +49,14 @@ const TourMixin = Vue.extend({
                     // TODO: make sure that the "Search" Tab is selected. Otherwise
                     // the tooltip won't show the HHpred tool
                     target: '[data-v-step="tool"]',
-                    content: `Let's checkout this tool.`,
+                    content: this.$t('tour.tool'),
                     params: {
                         enableScrolling: false,
                     },
                 },
                 {
                     target: '[data-v-step="input"]',
-                    content: `Here you can input a protein sequence.`,
+                    content: this.$t('tour.input'),
                     params: {
                         enableScrolling: false,
                         placement: 'top'
@@ -78,7 +78,7 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '[data-v-step="paste"]',
-                    content: 'Paste an example.',
+                    content: this.$t('tour.paste'),
                     params: {
                         placement: 'left',
                     },
@@ -90,8 +90,8 @@ const TourMixin = Vue.extend({
                     }),
                 },
                 {
-                    target: '[data-v-step="structural-domain-databse"]',
-                    content: `Select structural/domain databases`,
+                    target: '[data-v-step="structural-domain-database"]',
+                    content: this.$t('tour.structuralDomainDatabase'),
                     params: {
                         placement: 'top',
                     },
@@ -104,14 +104,14 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '[data-v-step="proteomes"]',
-                    content: `Select proteomes`,
+                    content: this.$t('tour.proteomes'),
                     params: {
                         placement: 'top',
                     },
                 },
                 {
                     target: '.tour-tab-Parameters',
-                    content: `Change tool parameters`,
+                    content: this.$t('tour.parametersTab'),
                     params: {
                         placement: 'right',
                     },
@@ -120,15 +120,15 @@ const TourMixin = Vue.extend({
                     // since every tab has its own buttons, we have to select the ones in
                     // the active tab
                     target: '.tab-pane[aria-hidden=false] [data-v-step="job-id"]',
-                    content: `Create a custom Job ID`,
+                    content: this.$t('tour.jobId'),
                 },
                 {
                     target: '.tab-pane[aria-hidden=false] [data-v-step="submit"]',
-                    content: `Submit your job`,
+                    content: this.$t('tour.submit'),
                 },
                 {
                     target: '[data-v-step="job-manager"]',
-                    content: `Your running/completed jobs. Click here to open the job manager.`,
+                    content: this.$t('tour.jobManager'),
                     params: {
                         placement: 'right'
                     }
