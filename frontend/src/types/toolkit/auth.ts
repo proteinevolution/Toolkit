@@ -4,6 +4,7 @@ export interface User {
     nameLast: string;
     eMail: string;
     country: string;
+    isAdmin: boolean;
 }
 
 export interface LoginData {
@@ -49,3 +50,7 @@ export interface AuthMessage {
     user: User | null;
 }
 
+export interface MaintenanceState {
+    message: string;
+    submitBlocked: boolean;
+}

@@ -16,8 +16,6 @@
 
 package de.proteinevolution.jobs.actors
 
-import java.time.ZonedDateTime
-
 import akka.NotUsed
 import akka.actor._
 import akka.event.LoggingReceive
@@ -29,32 +27,33 @@ import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.helpers.ToolkitTypes
 import de.proteinevolution.cluster.api.Polling.PolledJobs
 import de.proteinevolution.cluster.api.SGELoad._
-import de.proteinevolution.cluster.api.{QStat, Qdel}
+import de.proteinevolution.cluster.api.{ QStat, Qdel }
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.common.models.database.jobs.JobState._
 import de.proteinevolution.common.models.database.jobs._
 import de.proteinevolution.jobs.actors.JobActor._
 import de.proteinevolution.jobs.dao.JobDao
-import de.proteinevolution.jobs.models.{Job, JobClusterData}
-import de.proteinevolution.jobs.services.{JobHasher, JobTerminator}
-import de.proteinevolution.statistics.{JobEvent, JobEventLog}
+import de.proteinevolution.jobs.models.{ Job, JobClusterData }
+import de.proteinevolution.jobs.services.{ JobHasher, JobTerminator }
+import de.proteinevolution.statistics.{ JobEvent, JobEventLog }
 import de.proteinevolution.tel.TEL
 import de.proteinevolution.tel.execution.ExecutionContext.FileAlreadyExists
 import de.proteinevolution.tel.execution.WrapperExecutionFactory.RunningExecution
-import de.proteinevolution.tel.execution.{ExecutionContext, WrapperExecutionFactory}
+import de.proteinevolution.tel.execution.{ ExecutionContext, WrapperExecutionFactory }
 import de.proteinevolution.tel.runscripts.Runscript.Evaluation
 import de.proteinevolution.tel.runscripts._
-import javax.inject.Inject
-import play.api.cache.{NamedCache, SyncCacheApi}
-import play.api.libs.mailer.MailerClient
 import play.api.Configuration
+import play.api.cache.{ NamedCache, SyncCacheApi }
+import play.api.libs.mailer.MailerClient
 import reactivemongo.api.bson.BSONDateTime
 
+import java.time.ZonedDateTime
+import javax.inject.Inject
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class JobActor @Inject()(
+class JobActor @Inject() (
     runscriptManager: RunscriptManager,
     hashService: JobHasher,
     jobDao: JobDao,
@@ -79,7 +78,9 @@ class JobActor @Inject()(
   private val fetchLatestInterval = 500 millis
   private val Tick: Cancellable = {
     // scheduler should use the system dispatcher
-    context.system.scheduler.scheduleWithFixedDelay(Duration.Zero, fetchLatestInterval, self, UpdateLog)(context.system.dispatcher)
+    context.system.scheduler.scheduleWithFixedDelay(Duration.Zero, fetchLatestInterval, self, UpdateLog)(
+      context.system.dispatcher
+    )
   }
 
   // Running executions
@@ -152,7 +153,7 @@ class JobActor @Inject()(
     }
   }
 
-  private def removeJob(jobID: String): Unit = {
+  private def updateJobLogAndExecution(jobID: String): Unit = {
     // Save Job Event Log to the collection and remove it from the map afterwards
     if (currentJobLogs.contains(jobID)) {
       currentJobs = currentJobs.filter(_._1 != jobID)
@@ -169,16 +170,18 @@ class JobActor @Inject()(
     }
   }
 
-  private def delete(job: Job): Future[Unit] = {
-    s"${constants.jobPath}${job.jobID}".toFile.delete(swallowIOExceptions = true)
-    removeJob(job.jobID) // Remove the job from the current job map
+  private def deleteJob(jobID: String): Future[Unit] = {
+    s"${constants.jobPath}${jobID}".toFile.delete(swallowIOExceptions = true)
+    updateJobLogAndExecution(jobID) // Remove the job from the current job map
+    for {
+      _ <- jobDao.removeJob(jobID)
+      _ <- userDao.removeJobs(List(jobID))
+    } yield ()
+  }
+
+  private def sendClearEvent(job: Job): Unit = {
     val foundWatchers = job.watchList.flatMap(userID => wsActorCache.get(userID): Option[List[ActorRef]])
     foundWatchers.flatten.foreach(_ ! ClearJob(job.jobID))
-    job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
-    for {
-      _ <- jobDao.removeJob(job.jobID)
-      _ <- userDao.removeJob(job.jobID)
-    } yield ()
   }
 
   private def updateJobState(job: Job): Future[Job] = {
@@ -189,32 +192,32 @@ class JobActor @Inject()(
     if (job.status == JobState.Queued)
       context.system.eventStream.publish(UpdateRunningJobs(Add))
 
-      // Update job in the database and notify watcher upon completion
-      jobDao
-        .updateJobStatus(job.jobID, job.status)
-        .map { _ =>
-          val jobLog = currentJobLogs.get(job.jobID) match {
-            case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
-            case None =>
-              JobEventLog(jobID = job.jobID,
-                          toolName = job.tool,
-                          events = List(JobEvent(job.status, Some(ZonedDateTime.now))))
-          }
-          currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
-          val foundWatchers =
-            job.watchList.flatMap(userID => wsActorCache.get(userID): Option[List[ActorRef]])
-          foundWatchers.flatten.foreach(_ ! PushJob(job))
-          if (job.status == Done) {
-            foundWatchers.flatten.foreach(
-              _ !ShowJobNotification(
-                job.jobID,
-                "jobs.notifications.titles.update",
-                "jobs.notifications.jobFinished"
-              )
-            )
-          }
-          job
-        }
+    // Update job in the database and notify watcher upon completion
+    jobDao.updateJobStatus(job.jobID, job.status).map { _ =>
+      val jobLog = currentJobLogs.get(job.jobID) match {
+        case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
+        case None =>
+          JobEventLog(
+            jobID = job.jobID,
+            toolName = job.tool,
+            events = List(JobEvent(job.status, Some(ZonedDateTime.now)))
+          )
+      }
+      currentJobLogs = currentJobLogs.updated(job.jobID, jobLog)
+      val foundWatchers =
+        job.watchList.flatMap(userID => wsActorCache.get(userID): Option[List[ActorRef]])
+      foundWatchers.flatten.foreach(_ ! PushJob(job))
+      if (job.status == Done) {
+        foundWatchers.flatten.foreach(
+          _ ! ShowJobNotification(
+            job.jobID,
+            "jobs.notifications.titles.update",
+            "jobs.notifications.jobFinished"
+          )
+        )
+      }
+      job
+    }
 
   }
 
@@ -227,14 +230,12 @@ class JobActor @Inject()(
     if (job.emailUpdate) {
       userDao.findUserByID(job.ownerID).foreach {
         case Some(user) =>
-          user.userData match {
-            case Some(_) =>
-              log.info(
-                s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
-              )
-              JobFinishedMail(user, job.jobID, job.status, config).send
-            case None => NotUsed
-          }
+          if (user.isRegistered) {
+            log.info(
+              s"[JobActor[$jobActorNumber].sendJobUpdateMail] Sending eMail to job owner for job ${job.jobID}: Job is ${job.status.toString}"
+            )
+            JobFinishedMail(user, job.jobID, job.status, config).send
+          } else NotUsed
         case None => NotUsed
       }
       true
@@ -266,15 +267,19 @@ class JobActor @Inject()(
         currentExecutionContexts = currentExecutionContexts.updated(job.jobID, executionContext)
 
         // Create a log for this job
-        currentJobLogs =
-          currentJobLogs.updated(job.jobID,
-                                 JobEventLog(jobID = job.jobID,
-                                             toolName = job.tool,
-                                             internalJob = isInternalJob,
-                                             events = List(JobEvent(job.status, Some(ZonedDateTime.now)))))
+        currentJobLogs = currentJobLogs.updated(
+          job.jobID,
+          JobEventLog(
+            jobID = job.jobID,
+            toolName = job.tool,
+            internalJob = isInternalJob,
+            events = List(JobEvent(job.status, Some(ZonedDateTime.now)))
+          )
+        )
 
         // Get new runscript instance from the runscript manager
-        val runscript: Runscript = runscriptManager(job.tool).withEnvironment(config.get[Map[String, String]]("tel.env"))
+        val runscript: Runscript =
+          runscriptManager(job.tool).withEnvironment(config.get[Map[String, String]]("tel.env"))
 
         // Validate the Parameters right away
         val validParameters = validatedParameters(job, runscript, extendedParams)
@@ -325,8 +330,8 @@ class JobActor @Inject()(
               // Find the Jobs in the Database
               jobDao.findAndSortJobs(jobHash).foreach { jobList =>
                 // Check if the jobs are owned by the user, unless they are public and if the job is Done
-                jobList.find(
-                  filterJob => (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
+                jobList.find(filterJob =>
+                  (filterJob.isPublic || filterJob.ownerID == job.ownerID) && filterJob.status == Done
                 ) match {
                   case Some(oldJob) =>
                     log.info(
@@ -343,7 +348,7 @@ class JobActor @Inject()(
         case None => NotUsed
       }
 
-    case Delete(jobID, userIDOption) =>
+    case Delete(jobID, userID) =>
       val verbose = true // just switch this on / off for logging
       if (verbose) log.info(s"[JobActor[$jobActorNumber].Delete] Received Delete for $jobID")
       this
@@ -360,16 +365,14 @@ class JobActor @Inject()(
         .foreach {
           case Some(job) =>
             // Delete the job when the user is the owner and clear it otherwise
-            if (userIDOption.isEmpty || userIDOption.get == job.ownerID) {
+            if (userID == job.ownerID) {
               if (verbose)
                 log.info(s"[JobActor[$jobActorNumber].Delete] Found Job with ${job.jobID} - starting file deletion")
-              delete(job)
+              job.clusterData.foreach(clusterData => Qdel.run(clusterData.sgeID))
+              sendClearEvent(job)
+              deleteJob(job.jobID)
             } else {
-              userIDOption match {
-                case Some(userID) =>
-                  self ! RemoveFromWatchlist(jobID, userID)
-                case None => NotUsed
-              }
+              self ! RemoveFromWatchlist(jobID, userID)
             }
           case None => NotUsed
         }
@@ -379,29 +382,33 @@ class JobActor @Inject()(
         case Some(job) =>
           job.IPHash match {
             case Some(hash) =>
-              jobDao.countJobsForHashSinceTime(
-                hash,
-                ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
-              ).map { count =>
-                jobDao.countJobsForHashSinceTime(
+              jobDao
+                .countJobsForHashSinceTime(
                   hash,
-                  ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
-                ).map { countDay =>
-                  log.info(
-                    BSONDateTime(
-                      ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
-                    ).toString
-                  )
-                  log.info(
-                    s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
-                  )
-                  if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
-                    self ! StartJob(job.jobID)
-                  } else {
-                    self ! JobStateChanged(job.jobID, LimitReached)
-                  }
+                  ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
+                )
+                .map { count =>
+                  jobDao
+                    .countJobsForHashSinceTime(
+                      hash,
+                      ZonedDateTime.now.minusDays(constants.maxJobsWithinDay.toLong).toInstant.toEpochMilli
+                    )
+                    .map { countDay =>
+                      log.info(
+                        BSONDateTime(
+                          ZonedDateTime.now.minusMinutes(constants.maxJobsWithin.toLong).toInstant.toEpochMilli
+                        ).toString
+                      )
+                      log.info(
+                        s"[JobActor[$jobActorNumber].StartJob] IP ${job.IPHash} has requested $count jobs within the last ${constants.maxJobsWithin} minute and $countDay within the last 24 hours."
+                      )
+                      if (count <= constants.maxJobNum && countDay <= constants.maxJobNumDay) {
+                        self ! StartJob(job.jobID)
+                      } else {
+                        self ! JobStateChanged(job.jobID, LimitReached)
+                      }
+                    }
                 }
-              }
             case None =>
               // TODO: remove this as soon as possible, because soon all jobs should hold the hashed IP
               self ! StartJob(job.jobID)
@@ -435,9 +442,9 @@ class JobActor @Inject()(
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
               val newEnv: Map[String, String] = config.get[Map[String, String]]("tel.env") ++ Map(
-                "MEMORY" -> s"${h_vmem}G",
-                "SOFTMEMORY" -> s"${s_vmem}G",
-                "THREADS" -> threads.toString,
+                "MEMORY"      -> s"${h_vmem}G",
+                "SOFTMEMORY"  -> s"${s_vmem}G",
+                "THREADS"     -> threads.toString,
                 "HARDRUNTIME" -> h_rt.toString,
                 "SOFTRUNTIME" -> s_rt.toString
               )
@@ -448,42 +455,40 @@ class JobActor @Inject()(
 
               val clusterData = JobClusterData("", Some(h_vmem), Some(threads), Some(h_rt))
 
-              jobDao
-                .updateClusterDataAndHash(job.jobID, clusterData, jobHash)
-                .foreach {
-                  case Some(_) =>
-                    // Get new runscript instance from the runscript manager
-                    val runscript: Runscript = runscriptManager(job.tool).withEnvironment(newEnv)
-                    // Load the parameters from the serialized parameters file
-                    val params = executionContext.reloadParams
-                    // Validate the Parameters (again) to ensure that everything works
-                    val validParameters = validatedParameters(job, runscript, params)
+              jobDao.updateClusterDataAndHash(job.jobID, clusterData, jobHash).foreach {
+                case Some(_) =>
+                  // Get new runscript instance from the runscript manager
+                  val runscript: Runscript = runscriptManager(job.tool).withEnvironment(newEnv)
+                  // Load the parameters from the serialized parameters file
+                  val params = executionContext.reloadParams
+                  // Validate the Parameters (again) to ensure that everything works
+                  val validParameters = validatedParameters(job, runscript, params)
 
-                    // adds the params of the disabled controls from formData, sets value of those to "false"
-                    validParameters.filterNot(pv => params.contains(pv._1.toLowerCase())).foreach { pv =>
-                      params.+(pv._1 -> "false")
+                  // adds the params of the disabled controls from formData, sets value of those to "false"
+                  validParameters.filterNot(pv => params.contains(pv._1.toLowerCase())).foreach { pv =>
+                    params.+(pv._1 -> "false")
+                  }
+
+                  if (isComplete(validParameters)) {
+                    val pendingExecution = wrapperExecutionFactory.getInstance(
+                      runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))),
+                      newEnv
+                    )
+
+                    if (!executionContext.blocked) {
+
+                      executionContext.accept(pendingExecution)
+                      log.info(s"[JobActor[$jobActorNumber].StartJob] Running job now.")
+                      runningExecutions = runningExecutions.updated(job.jobID, executionContext.executeNext.run())
                     }
+                  } else {
+                    // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
+                    log.info("STAY")
+                  }
 
-                    if (isComplete(validParameters)) {
-                      val pendingExecution = wrapperExecutionFactory.getInstance(
-                        runscript(validParameters.map(t => (t._1, t._2._2.get.asInstanceOf[ValidArgument]))),
-                        newEnv
-                      )
-
-                      if (!executionContext.blocked) {
-
-                        executionContext.accept(pendingExecution)
-                        log.info(s"[JobActor[$jobActorNumber].StartJob] Running job now.")
-                        runningExecutions = runningExecutions.updated(job.jobID, executionContext.executeNext.run())
-                      }
-                    } else {
-                      // TODO Implement Me. This specifies what the JobActor should do if not all parameters have been specified
-                      log.info("STAY")
-                    }
-
-                    self ! JobStateChanged(job.jobID, Prepared)
-                  case None => NotUsed
-                }
+                  self ! JobStateChanged(job.jobID, Prepared)
+                case None => NotUsed
+              }
             case None => NotUsed
           }
         case None => NotUsed
@@ -491,63 +496,59 @@ class JobActor @Inject()(
 
     // User Starts watching job
     case AddToWatchlist(jobID, userID) =>
-      val _ = jobDao
-        .addUserToWatchList(jobID, userID)
-        .map {
-          case Some(updatedJob) =>
-            userDao.addJobsToUser(userID, List(jobID))
-              .map {
-                case Some(user) =>
-                  userSessionService.updateUserInCache(user)
-                case None =>
-              }
-              .foreach { _ =>
-                currentJobs = currentJobs.updated(jobID, updatedJob)
-                val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
-                wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
-              }
-          case None => NotUsed
-        }
+      val _ = jobDao.addUserToWatchList(jobID, userID).map {
+        case Some(updatedJob) =>
+          userDao
+            .addJobsToUser(userID, List(jobID))
+            .map {
+              case Some(user) =>
+                userSessionService.updateUserInCache(user)
+              case None =>
+            }
+            .foreach { _ =>
+              currentJobs = currentJobs.updated(jobID, updatedJob)
+              val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
+              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+            }
+        case None => NotUsed
+      }
 
     // User does no longer watch this Job (stays in JobManager)
     case RemoveFromWatchlist(jobID, userID) =>
-      jobDao
-        .removeUserFromWatchList(jobID, userID)
-        .foreach {
-          case Some(updatedJob) =>
-            userDao.removeJobsFromUser(userID, List(jobID))
-              .map {
-                case Some(user) =>
-                  userSessionService.updateUserInCache(user)
-                case None =>
-              }
-              .foreach { _ =>
-                currentJobs = currentJobs.updated(jobID, updatedJob)
-                val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
-                wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
-              }
-          case None => NotUsed
-        }
+      jobDao.removeUserFromWatchList(jobID, userID).foreach {
+        case Some(updatedJob) =>
+          userDao
+            .removeJobsFromUser(userID, List(jobID))
+            .map {
+              case Some(user) =>
+                userSessionService.updateUserInCache(user)
+              case None =>
+            }
+            .foreach { _ =>
+              currentJobs = currentJobs.updated(jobID, updatedJob)
+              val wsActors = wsActorCache.get(userID): Option[List[ActorRef]]
+              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+            }
+        case None => NotUsed
+      }
 
     case SetJobPublic(jobID, isPublic) =>
-      jobDao
-        .setJobPublic(jobID, isPublic)
-        .foreach {
-          case Some(updatedJob) =>
-              currentJobs = currentJobs.updated(jobID, updatedJob)
-              val wsActors = wsActorCache.get(updatedJob.ownerID): Option[List[ActorRef]]
-              wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
+      jobDao.setJobPublic(jobID, isPublic).foreach {
+        case Some(updatedJob) =>
+          currentJobs = currentJobs.updated(jobID, updatedJob)
+          val wsActors = wsActorCache.get(updatedJob.ownerID): Option[List[ActorRef]]
+          wsActors.foreach(_.foreach(_ ! PushJob(updatedJob)))
 
-            if (!updatedJob.isPublic) {
+          if (!updatedJob.isPublic) {
             // remove other watchers (now without access)
-              updatedJob.watchList.filterNot(_ == updatedJob.ownerID).foreach { otherUserID =>
-                val wsActors = wsActorCache.get(otherUserID): Option[List[ActorRef]]
-                wsActors.foreach(_.foreach(_ ! ClearJob(updatedJob.jobID)))
-              }
+            updatedJob.watchList.filterNot(_ == updatedJob.ownerID).foreach { otherUserID =>
+              val wsActors = wsActorCache.get(otherUserID): Option[List[ActorRef]]
+              wsActors.foreach(_.foreach(_ ! ClearJob(updatedJob.jobID)))
             }
+          }
 
-          case None => NotUsed
-        }
+        case None => NotUsed
+      }
 
     // Message from outside that the jobState has changed
     case JobStateChanged(jobID: String, jobState: JobState) =>
@@ -565,7 +566,7 @@ class JobActor @Inject()(
             // Now we can update the JobState and remove it, once the update has completed
             updateJobState(job).map { job =>
               //Remove the job from the jobActor
-              removeJob(job.jobID)
+              updateJobLogAndExecution(job.jobID)
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
             }
@@ -593,13 +594,11 @@ class JobActor @Inject()(
 
     // Sets the cluster job ID for a job
     case SetSGEID(jobID: String, sgeID: String) =>
-      jobDao
-        .updateSGEID(jobID, sgeID)
-        .foreach {
-          case Some(job) =>
-            currentJobs = currentJobs.updated(job.jobID, job)
-          case None => NotUsed
-        }
+      jobDao.updateSGEID(jobID, sgeID).foreach {
+        case Some(job) =>
+          currentJobs = currentJobs.updated(job.jobID, job)
+        case None => NotUsed
+      }
 
     case UpdateLog =>
       currentJobs.foreach { job =>
@@ -650,7 +649,7 @@ object JobActor {
   case class RemoveFromWatchlist(jobID: String, userID: String)
 
   // JobActor is requested to Delete the job
-  case class Delete(jobID: String, userID: Option[String] = None)
+  case class Delete(jobID: String, userID: String)
 
   // Job Controller receives a job state change from the SGE or from any other valid source
   case class JobStateChanged(jobID: String, jobState: JobState)

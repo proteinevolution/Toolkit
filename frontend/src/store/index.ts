@@ -6,6 +6,8 @@ import auth from './modules/auth';
 import {RootState} from './types';
 import localStoragePlugin from './plugins/localStoragePlugin';
 import Logger from 'js-logger';
+import {backendService} from '@/services/BackendService';
+import {MaintenanceState} from '@/types/toolkit/auth';
 
 Vue.use(Vuex);
 const logger = Logger.get('Store');
@@ -14,6 +16,7 @@ const store: StoreOptions<RootState> = {
     strict: process.env.NODE_ENV !== 'production',
     state: {
         loading: {
+            maintenanceState: false,
             tools: false,
             toolParameters: false,
             alignmentTextarea: false,
@@ -22,13 +25,27 @@ const store: StoreOptions<RootState> = {
         },
         tourFinished: localStorage.getItem('tourFinished') === '1',
         offscreenMenuShow: false,
-        maintenanceMode: false,
+        maintenance: {
+            message: '',
+            submitBlocked: false,
+        },
         reconnecting: true,
         clusterWorkload: 0,
         // allow for update of human readable time by updating reference point
         now: Date.now(),
     },
+    actions: {
+        async fetchMaintenance(context) {
+            context.commit('startLoading', 'maintenanceState');
+            const maintenanceState = await backendService.fetchMaintenanceState();
+            context.commit('setMaintenance', maintenanceState);
+            context.commit('stopLoading', 'maintenanceState');
+        },
+    },
     mutations: {
+        setMaintenance(state, maintenanceState: MaintenanceState) {
+            state.maintenance = maintenanceState;
+        },
         setOffscreenMenuShow(state, value: boolean) {
             state.offscreenMenuShow = value;
         },
@@ -64,9 +81,10 @@ const store: StoreOptions<RootState> = {
         SOCKET_UpdateLoad(state, message) {
             state.clusterWorkload = message.load;
         },
-        SOCKET_MaintenanceAlert(state, message) {
-            logger.log('Maintenance alert with message', message);
-            state.maintenanceMode = message.maintenanceMode;
+        SOCKET_MaintenanceAlert(state, maintenanceState) {
+            // notification handled in App.vue
+            logger.log('Maintenance alert', maintenanceState);
+            state.maintenance = maintenanceState;
         },
         SOCKET_ONMESSAGE(state, message) {
             logger.log('Uncaught message from websocket', message);

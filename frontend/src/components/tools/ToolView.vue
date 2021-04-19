@@ -41,6 +41,34 @@
                                              :submission="submission"
                                              :remember-params="rememberParams" />
                                 </div>
+
+                                <b-form-group v-if="showSubmitButtons"
+                                              class="submit-buttons pt-4">
+                                    <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
+                                           class="submit-button"
+                                           :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
+                                           :disabled="preventSubmit"
+                                           variant="primary"
+                                           @click="submitJob">
+                                        <loading v-if="submitLoading"
+                                                 :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                                 :size="20" />
+                                        <span v-else
+                                              v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                                    </b-btn>
+                                    <custom-job-id-input :validation-errors="validationErrors"
+                                                         :submission="submission" />
+                                    <b-btn v-if="hasRememberedParameters"
+                                           class="reset-params-button"
+                                           variant="secondary"
+                                           :title="$t('jobs.resetParamsTitle')"
+                                           @click="clearParameterRemember"
+                                           v-text="$t('jobs.resetParams')" />
+                                    <email-notification-switch v-if="loggedIn"
+                                                               :validation-errors="validationErrors"
+                                                               :submission="submission"
+                                                               class="pull-left" />
+                                </b-form-group>
                             </b-tab>
 
                             <!-- the job form can insert more tabs here -->
@@ -55,7 +83,7 @@
                                                   :format="alignmentViewerFormat" />
                             </b-tab>
 
-                            <template v-slot:tabs-end>
+                            <template #tabs-end>
                                 <div class="ml-auto">
                                     <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
                                                        :job="job"
@@ -118,6 +146,7 @@ import {authService} from '@/services/AuthService';
 import Logger from 'js-logger';
 import EventBus from '@/util/EventBus';
 import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
+import Loading from '@/components/utils/Loading.vue';
 import {parameterRememberService} from '@/services/ParameterRememberService';
 
 const logger = Logger.get('ToolView');
@@ -132,6 +161,7 @@ export default hasHTMLTitle.extend({
         CustomJobIdInput,
         EmailNotificationSwitch,
         JobPublicToggle,
+        Loading,
         AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
             '@/components/tools/AlignmentViewer.vue'),
     },
@@ -149,6 +179,7 @@ export default hasHTMLTitle.extend({
     },
     data() {
         return {
+            submitLoading: false,
             tabIndex: 0,
             fullScreen: false,
             validationErrors: {},
@@ -185,8 +216,11 @@ export default hasHTMLTitle.extend({
             }
             return this.tool.longname;
         },
+        submitBlocked(): boolean {
+            return this.$store.state.maintenance.submitBlocked;
+        },
         preventSubmit(): boolean {
-            return Object.keys(this.validationErrors).length > 0;
+            return this.submitLoading || Object.keys(this.validationErrors).length > 0;
         },
         loggedIn(): boolean {
             return this.$store.getters['auth/loggedIn'];
@@ -263,14 +297,20 @@ export default hasHTMLTitle.extend({
             }
         },
         submitJob(): void {
+            if (this.preventSubmit || this.submitBlocked) {
+                return;
+            }
             const toolName = this.toolName;
             const submission = this.submission;
+            this.submitLoading = true;
             jobService.submitJob(this.toolName, submission)
                 .then((response) => {
+                    this.submitLoading = false;
                     this.saveParametersToRemember(toolName);
                     this.$router.push(`/jobs/${response.jobID}`);
                 })
                 .catch((response) => {
+                    this.submitLoading = false;
                     logger.error('Could not submit job', response);
                     this.$alert(this.$t('errors.general'), 'danger');
                 });
@@ -352,7 +392,8 @@ export default hasHTMLTitle.extend({
 
   .submit-buttons {
     margin-bottom: 0;
-    padding: 1.25rem;
+    padding-bottom: 0;
+    padding-right: 0;
 
 
     .submit-button {
@@ -365,9 +406,21 @@ export default hasHTMLTitle.extend({
       }
     }
 
-    .submit-button-margin {
+    .submit-button.margin {
       @media (max-width: 560px) {
         margin-top: 3em;
+      }
+    }
+
+    .submit-button.maintenance {
+      opacity: 0.65;
+      cursor: default;
+      background-color: $primary !important;
+      border-color: $primary !important;
+      color: $white !important;
+
+      &:focus {
+        box-shadow: none;
       }
     }
 

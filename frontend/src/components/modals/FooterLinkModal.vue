@@ -6,19 +6,19 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import BaseModal from './BaseModal.vue';
+import Vue from 'vue';
+import BaseModal from './BaseModal.vue';
 
-    export default Vue.extend({
-        name: 'FooterLinkModal',
-        components: {
-            BaseModal,
+export default Vue.extend({
+    name: 'FooterLinkModal',
+    components: {
+        BaseModal,
+    },
+    props: {
+        modal: {
+            type: String,
+            required: true,
         },
-        props: {
-            modal: {
-                type: String,
-                required: true,
-            },
-        },
-    });
+    },
+});
 </script>

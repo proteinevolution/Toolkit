@@ -18,7 +18,7 @@ package de.proteinevolution.tel.param
 
 import java.nio.file.attribute.PosixFilePermission
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import better.files._
 import de.proteinevolution.tel.param.Implicits._
 import play.api.Configuration
@@ -26,16 +26,16 @@ import play.api.Configuration
 import scala.collection.immutable.ListMap
 
 /**
-  * Provides methods to read Generative Params from a file
-  */
+ * Provides methods to read Generative Params from a file
+ */
 @Singleton
-class GenerativeParamFileParser @Inject()(config: Configuration) {
+class GenerativeParamFileParser @Inject() (config: Configuration) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 
   def read(filePath: String): Iterator[GenerativeParam] = {
 
-    val f = filePath.toFile
+    val f   = filePath.toFile
     val env = config.get[Map[String, String]]("tel.env")
 
     f.lineIterator.noWSLines.map { line =>
@@ -48,26 +48,17 @@ class GenerativeParamFileParser @Inject()(config: Configuration) {
         s"${f.parent.pathAsString}/${spt(2)}"
       }
       (spt(1), spt(2).substring(spt(2).lastIndexOf('.'))) match {
-        case (this.genKeyword, ".sh") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case (this.genKeyword, ".py") => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".sh")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
+        case (this.genKeyword, ".py")   => new ExecGenParamFile(spt(0), paramPath).withEnvironment(env)
         case (this.genKeyword, ".prop") => new ListGenParamFile(spt(0), paramPath).withEnvironment(env)
-        case _ => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
+        case _                          => throw new IllegalStateException("no valid paramfile extension found. Must be .sh, .py, or .prop")
       }
     }
   }
 }
 
-/*
- * Parameters obtained from files
- */
-abstract class GenerativeParamFile(name: String) extends GenerativeParam(name) {
-
-  /* Load the parameters from the file */
-  def load(): Unit
-}
-
 class ExecGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-  extends GenerativeParamFile(name) {
+    extends GenerativeParam(name) {
 
   private var env: Option[Map[String, String]] = None
 
@@ -114,7 +105,7 @@ class ExecGenParamFile(name: String, path: String, private var allowed: Set[Stri
 }
 
 class ListGenParamFile(name: String, path: String, private var allowed: Set[String] = Set.empty[String])
-  extends GenerativeParamFile(name) {
+    extends GenerativeParam(name) {
 
   private val f = path.toFile
 

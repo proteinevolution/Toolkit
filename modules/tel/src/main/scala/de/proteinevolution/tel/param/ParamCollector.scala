@@ -16,17 +16,24 @@
 
 package de.proteinevolution.tel.param
 
-import javax.inject.Singleton
+import play.api.Logging
 
+import javax.inject.Singleton
 import scala.collection.immutable.ListMap
 
 @Singleton
-class ParamCollector extends Params {
+class ParamCollector extends Params with Logging {
 
   // Maps Parameter name to the underlying object
   private var generativeParams: ListMap[String, GenerativeParam] = ListMap.empty
 
-  def generateValues(name: String): ListMap[String, String] = generativeParams(name).generate
+  def reloadValues(): Unit = generativeParams.values.foreach { p =>
+    p.load()
+    logger.info(s"reloading generative param ${p.name}")
+  }
+
+  def generateValues(name: String): ListMap[String, String] =
+    generativeParams(name).generate
 
   def addParam(name: String, param: GenerativeParam): Unit = {
     generativeParams = generativeParams + (name -> param)

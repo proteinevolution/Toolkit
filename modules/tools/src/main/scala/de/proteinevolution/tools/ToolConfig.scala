@@ -16,32 +16,45 @@
 
 package de.proteinevolution.tools
 
-import com.typesafe.config.{ Config, ConfigObject }
+import com.typesafe.config.{Config, ConfigObject}
 import de.proteinevolution.tools.forms.ValidationParamsForm.{
   AccessionIDValidationParamsForm,
   EmptyValidationParamsForm,
   RegexValidationParamsForm,
   SequenceValidationParamsForm
 }
-import de.proteinevolution.tools.forms.{ ToolFormSimple, ValidationParamsForm }
+import de.proteinevolution.tools.forms.{ToolFormSimple, ValidationParamsForm}
 import de.proteinevolution.tools.parameters.TextAreaInputType.TextAreaInputType
 import de.proteinevolution.tools.parameters._
-import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
+import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 
+import javax.inject.{Inject, Singleton}
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
+import java.util.concurrent.atomic._
+
 @Singleton
-class ToolConfig @Inject() (config: Configuration, paramAccess: ParamAccess) {
+class ToolConfig @Inject()(
+    config: Configuration,
+    paramAccess: ParamAccess
+) {
 
   lazy val version: String = config.get[String]("version")
 
-  lazy val values: Map[String, Tool] = {
+  private[tools] val ref: AtomicReference[Map[String, Tool]] =
+    new AtomicReference[Map[String, Tool]](readFromFile())
+
+  def values: IO[Map[String, Tool]] = IO(ref.get())
+
+  private[tools] def readFromFile(): Map[String, Tool] = {
     config.get[Config]("Tools").root.asScala.map {
       case (_, configObject: ConfigObject) =>
-        val config    = configObject.toConfig
-        val inputType = Try(config.getString("input_type")).getOrElse(TextAreaInputType.SEQUENCE)
+        val config = configObject.toConfig
+        val inputType = Try(config.getString("input_type"))
+          .getOrElse(TextAreaInputType.SEQUENCE)
         config.getString("name") -> toTool(
           config.getString("name"),
           config.getString("longname"),
@@ -67,12 +80,17 @@ class ToolConfig @Inject() (config: Configuration, paramAccess: ParamAccess) {
             config
               .getObjectList("result_views")
               .asScala
-              .map(entry => entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))
+              .map(entry =>
+                entry.unwrapped().asScala.toMap.map(a => a._1 -> a._2.toString))
               .toSeq
           ).getOrElse(Seq()),
           config.getStringList("forwarding.alignment").asScala.toSeq,
           config.getStringList("forwarding.multi_seq").asScala.toSeq,
-          Try(config.getStringList("forwarding.template_alignment").asScala.toSeq).toOption,
+          Try(
+            config
+              .getStringList("forwarding.template_alignment")
+              .asScala
+              .toSeq).toOption,
           getValidationParams(inputType, config)
         )
       case (_, _) => throw new IllegalStateException("tool does not exist")
@@ -80,23 +98,33 @@ class ToolConfig @Inject() (config: Configuration, paramAccess: ParamAccess) {
   }.toMap
 
   def isTool(toolName: String): Boolean = {
-    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values.exists {
-      case (_, tool) =>
-        tool.isToolName(toolName)
-      case _ => false
-    }
+    toolName.toUpperCase == "REFORMAT" || toolName.toUpperCase == "ALNVIZ" || values
+      .unsafeRunSync()
+      .exists {
+        case (_, tool) =>
+          tool.isToolName(toolName)
+        case _ => false
+      }
   }
 
-  def getValidationParams(inputType: TextAreaInputType, config: Config): ValidationParamsForm =
+  def getValidationParams(inputType: TextAreaInputType,
+                          config: Config): ValidationParamsForm =
     inputType match {
       case TextAreaInputType.SEQUENCE =>
         SequenceValidationParamsForm(
-          Try(config.getStringList("sequence_restrictions.formats").asScala.toSeq).getOrElse(Seq("FASTA")),
-          Try(config.getString("sequence_restrictions.type")).getOrElse("PROTEIN"),
+          Try(
+            config.getStringList("sequence_restrictions.formats").asScala.toSeq)
+            .getOrElse(Seq("FASTA")),
+          Try(config.getString("sequence_restrictions.type"))
+            .getOrElse("PROTEIN"),
           Try(config.getInt("sequence_restrictions.min_char_per_seq")).toOption,
-          Some(Try(config.getInt("sequence_restrictions.max_char_per_seq")).getOrElse(20000)),
+          Some(
+            Try(config.getInt("sequence_restrictions.max_char_per_seq"))
+              .getOrElse(20000)),
           Try(config.getInt("sequence_restrictions.min_num_seq")).toOption,
-          Some(Try(config.getInt("sequence_restrictions.max_num_seq")).getOrElse(10000)),
+          Some(
+            Try(config.getInt("sequence_restrictions.max_num_seq"))
+              .getOrElse(10000)),
           Try(config.getBoolean("sequence_restrictions.same_length")).toOption,
           Try(config.getBoolean("sequence_restrictions.allow_empty")).toOption
         )

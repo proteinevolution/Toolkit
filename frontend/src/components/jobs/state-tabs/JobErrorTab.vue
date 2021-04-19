@@ -19,65 +19,65 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import {resultsService} from '@/services/ResultsService';
-    import {parseProcessLog} from '@/util/Utils';
-    import {ProcessLogItem} from '@/types/toolkit/jobs';
+import Vue from 'vue';
+import {resultsService} from '@/services/ResultsService';
+import {parseProcessLog} from '@/util/Utils';
+import {ProcessLogItem} from '@/types/toolkit/jobs';
 
-    export default Vue.extend({
-        name: 'JobErrorTab',
-        props: {
-            job: {
-                type: Object,
-                required: true,
-            },
-            tool: {
-                type: Object,
-                required: true,
-            },
+export default Vue.extend({
+    name: 'JobErrorTab',
+    props: {
+        job: {
+            type: Object,
+            required: true,
         },
-        data() {
-            return {
-                runningLog: [] as ProcessLogItem[],
-            };
+        tool: {
+            type: Object,
+            required: true,
         },
-        async created() {
-            const file: string = await resultsService.getFile(this.job.jobID, 'process.log');
-            this.runningLog = parseProcessLog(file);
-        },
-    });
+    },
+    data() {
+        return {
+            runningLog: [] as ProcessLogItem[],
+        };
+    },
+    async created() {
+        const file: string = await resultsService.getFile(this.job.jobID, 'process.log');
+        this.runningLog = parseProcessLog(file);
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .job-log-element {
-        display: flex;
-        align-items: center;
+.job-log-element {
+  display: flex;
+  align-items: center;
 
-        i {
-            width: 32px;
-            height: 18px;
-            margin-top: 0.2em;
-            font-size: 1.3em;
-        }
+  i {
+    width: 32px;
+    height: 18px;
+    margin-top: 0.2em;
+    font-size: 1.3em;
+  }
 
-        .running {
-            background: url('../../../assets/images/ellipsis.gif') no-repeat center center;
-        }
+  .running {
+    background: url('../../../assets/images/ellipsis.gif') no-repeat center center;
+  }
 
-        .done {
-            color: rgba(40, 120, 111, 0.636);
+  .done {
+    color: rgba(40, 120, 111, 0.636);
 
-            &:before {
-                content: '\f058';
-            }
-        }
-
-        .error {
-            color: #da4453;
-
-            &:before {
-                content: '\f057';
-            }
-        }
+    &:before {
+      content: '\f058';
     }
+  }
+
+  .error {
+    color: #da4453;
+
+    &:before {
+      content: '\f057';
+    }
+  }
+}
 </style>

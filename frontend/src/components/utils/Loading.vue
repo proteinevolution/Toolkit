@@ -12,70 +12,70 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
-    import VueSimpleSpinner from 'vue-simple-spinner';
+import Vue from 'vue';
+import VueSimpleSpinner from 'vue-simple-spinner';
 
-    export default Vue.extend({
-        name: 'Loading',
-        components: {
-            VueSimpleSpinner,
+export default Vue.extend({
+    name: 'Loading',
+    components: {
+        VueSimpleSpinner,
+    },
+    props: {
+        variant: {
+            type: String,
+            required: false,
+            default: 'primary',
         },
-        props: {
-            variant: {
-                type: String,
-                required: false,
-                default: 'primary',
-            },
-            message: {
-                type: String,
-                required: false,
-                default: '',
-            },
-            size: {
-                type: Number,
-                required: false,
-                default: 32,
-            },
-            justify: {
-                type: String,
-                required: false,
-                default: 'left',
-            },
+        message: {
+            type: String,
+            required: false,
+            default: '',
         },
-    });
+        size: {
+            type: Number,
+            required: false,
+            default: 32,
+        },
+        justify: {
+            type: String,
+            required: false,
+            default: 'left',
+        },
+    },
+});
 </script>
 
 <style lang="scss" scoped>
-    .message {
-        margin-left: 1em;
-    }
+.message {
+  margin-left: 0.65em;
+}
 
-    .wrapper {
-        display: flex;
-        align-items: center;
-    }
+.wrapper {
+  display: flex;
+  align-items: center;
+}
 
-    .wrapper-secondary {
-        opacity: 0.6;
-    }
+.wrapper-secondary {
+  opacity: 0.6;
+}
 </style>
 
 <style lang="scss">
-    .vue-simple-spinner-primary .vue-simple-spinner {
-        // "important" is needed here to override the 'style'-property in vue-simple-spinner
-        border-top-color: $primary !important;
-        border-bottom-color: $tk-lighter-gray !important;
-        border-right-color: $tk-lighter-gray !important;
-        border-left-color: $tk-lighter-gray !important;
-    }
+.vue-simple-spinner-primary .vue-simple-spinner {
+  // "important" is needed here to override the 'style'-property in vue-simple-spinner
+  border-top-color: $primary !important;
+  border-bottom-color: $tk-lighter-gray !important;
+  border-right-color: $tk-lighter-gray !important;
+  border-left-color: $tk-lighter-gray !important;
+}
 
-    .vue-simple-spinner-secondary .vue-simple-spinner {
-        // "important" is needed here to override the 'style'-property in vue-simple-spinner
-        border-top-color: $tk-gray !important;
-        border-bottom-color: $tk-lighter-gray !important;
-        border-right-color: $tk-lighter-gray !important;
-        border-left-color: $tk-lighter-gray !important;
-    }
+.vue-simple-spinner-secondary .vue-simple-spinner {
+  // "important" is needed here to override the 'style'-property in vue-simple-spinner
+  border-top-color: $tk-gray !important;
+  border-bottom-color: $tk-lighter-gray !important;
+  border-right-color: $tk-lighter-gray !important;
+  border-left-color: $tk-lighter-gray !important;
+}
 </style>
 
 

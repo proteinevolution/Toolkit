@@ -51,15 +51,18 @@ if [[ "%matrix.content" = "BLOSUM45" ]] ; then
     GAPEXT=2
 fi
 
-#remove '-' from sequences, merge sequences split into multiple lines, create an indexed copy of the FASTA file
+# remove '-' from sequences, merge sequences split into multiple lines, create an indexed copy of the FASTA file
 prepareForClans.pl %alignment.path ../results/${JOBID}.0.fas ../results/${JOBID}.1.fas
 
 echo "#Performing ${SEQ_COUNT} X ${SEQ_COUNT} pairwise BLAST+ comparisons." >> ../results/process.log
 
-#BLAST formatted database
-makeblastdb -in ../results/${JOBID}.1.fas -dbtype prot
+# BLAST formatted database
+# makeblastdb produces version 5 databases by default, which uses LMDB.
+# LMDB requires virtual memory of about 800 GB.
+# https://www.ncbi.nlm.nih.gov/books/NBK279688/
+makeblastdb -in ../results/${JOBID}.1.fas -dbtype prot -blastdb_version 4
 
-#NXN BLAST
+# NXN BLAST
 blastp -query ../results/${JOBID}.1.fas \
        -db ../results/${JOBID}.1.fas \
        -outfmt "6 qacc sacc evalue" \

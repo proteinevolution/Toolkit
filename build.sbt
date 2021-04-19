@@ -11,7 +11,7 @@ inThisBuild(
     organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
     startYear := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-    scalaVersion := "2.13.3"
+    scalaVersion := "2.13.5"
   )
 )
 
@@ -43,7 +43,7 @@ lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala)
   .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
   .settings(scalacOptions += "-Ymacro-annotations")
-  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.0").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))
@@ -78,7 +78,7 @@ lazy val clusterApi = (project in file("modules/cluster-api"))
 lazy val backend = (project in file("modules/backend"))
   .commonSettings("de.proteinevolution.backend")
   .enablePlugins(PlayScala)
-  .dependsOn(common, base, auth, jobs, tel, tools, user, statistics)
+  .dependsOn(common, base, auth, jobs, message, tel, tools, user, statistics)
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val statistics = (project in file("modules/statistics"))
@@ -147,10 +147,10 @@ resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapsh
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
-fork in Test := true
-logLevel in Test := Level.Info
+Test / fork := true
+Test / logLevel := Level.Info
 
-scalacOptions in Test ++= Seq("-Yrangepos")
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
+Test / scalacOptions ++= Seq("-Yrangepos")
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 
 PlayKeys.devSettings := Seq("play.server.http.idleTimeout" -> "220s")

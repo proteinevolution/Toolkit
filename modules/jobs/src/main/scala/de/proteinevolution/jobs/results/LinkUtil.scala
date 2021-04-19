@@ -28,7 +28,6 @@ object LinkUtil {
   private val tigrReg       = """(^TIGR[0-9]{5})""".r
   private val prkReg        = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
   private val mmcifReg      = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
-  private val mmcifShortReg = """([0-9]+)""".r
   private val pfamReg       = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg       = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
   private val ecodReg       = """(ECOD_[0-9]+)_.*""".r
@@ -152,7 +151,6 @@ object LinkUtil {
 
   def identifyDatabase(id: String): String = id match {
     case scopReg(_)       => "scop"
-    case mmcifShortReg(_) => "mmcif"
     case mmcifReg(_)      => "mmcif"
     case prkReg(_)        => "prk"
     case ncbiCDReg(_)     => "ncbicd"

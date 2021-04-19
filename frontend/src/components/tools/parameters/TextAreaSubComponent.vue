@@ -8,6 +8,7 @@
                          spellcheck="false"
                          @input="handleInput" />
         <input :id="'file-upload-' + parameter.name + '-' + second"
+               :ref="'fileUpload' + parameter.name + '-' + second"
                type="file"
                :class="{'d-none': !fileDragged}"
                class="file-upload-dropzone"
@@ -26,7 +27,9 @@
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
             <label class="btn btn-link mb-0 cursor-pointer"
+                   tabindex="0"
                    :for="'file-upload-' + parameter.name + '-' + second"
+                   @keyup.enter="$refs['fileUpload' + parameter.name + '-' + second].click()"
                    v-text="$t('tools.parameters.textArea.uploadFile')"></label>
         </b-button-group>
         <VelocityFade v-if="value">
@@ -126,12 +129,9 @@ export default Vue.extend({
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
-        // for the tour
-        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
-        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
     },
     methods: {
         handleDragOver(e: Event): void {

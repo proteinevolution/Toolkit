@@ -7,8 +7,8 @@ module.exports = {
             .url(process.env.VUE_DEV_SERVER_URL)
             .waitForElementVisible('#app', 5000)
             .assert.elementPresent('.toolkit')
-        // .assert.containsText('h1', 'Welcome to Your Vue.js + TypeScript App')
-        // .assert.elementCount('img', 1)
-            .end()
-    }
+            // .assert.containsText('h1', 'Welcome to Your Vue.js + TypeScript App')
+            // .assert.elementCount('img', 1)
+            .end();
+    },
 };

@@ -19,14 +19,14 @@ package de.proteinevolution.backend.controllers
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import akka.actor.ActorRef
+import akka.actor.{ ActorRef, ActorSystem }
 import de.proteinevolution.auth.dao.UserDao
-import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
+import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
@@ -35,32 +35,30 @@ import play.api.Logging
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
+import cats.effect.unsafe.implicits.global
 
 @Singleton
-final class BackendController @Inject()(
-    userSessions: UserSessionService,
+final class BackendController @Inject() (
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
     toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
+    actorSystem: ActorSystem,
     cc: ControllerComponents,
     userAction: UserAction
 )(implicit ec: ExecutionContext)
     extends ToolkitController(cc)
     with Logging {
 
-  //TODO currently working mithril routes for the backend
-  def index: Action[AnyContent] = userAction { implicit request =>
-    if (request.user.isSuperuser) {
-      NoCache(Ok(List("Index Page").asJson))
-    } else {
-      NotFound
-    }
-  }
+  private var maintenanceSubmitBlocked: Boolean = false
+  private var maintenanceMessage: String        = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
-    logger.info("Statistics called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "Statistics called. Access " + (if (request.user.isSuperuser) "granted."
+                                      else "denied.")
+    )
     if (request.user.isSuperuser) {
       // Get the first moment of the last month as a DateTime object
       val firstOfLastMonth: ZonedDateTime =
@@ -72,7 +70,7 @@ final class BackendController @Inject()(
 
       // Ensure all tools are in the statistics, even if they have not been used yet
       logger.info("Statistics loaded.... checking for new tools")
-      val statsUpdated = stats.map(_.updateTools(toolConfig.values.values.map(_.toolNameShort).toList))
+      val statsUpdated = stats.map(_.updateTools(toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList))
 
       // Collect the job events up until the first of the last month
       statsUpdated.flatMap { statistics =>
@@ -127,27 +125,35 @@ final class BackendController @Inject()(
         }
       }
     } else {
-      fuccess(NotFound)
+      fuccess(Unauthorized)
     }
   }
 
   def runUserSweep: Action[AnyContent] = userAction { implicit request =>
-    logger.info("User deletion called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "User deletion called. Access " + (if (request.user.isSuperuser)
+                                           "granted."
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldUsers
       NoContent
     } else {
-      NotFound
+      Unauthorized
     }
   }
 
   def runJobSweep: Action[AnyContent] = userAction { implicit request =>
-    logger.info("User deletion called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "User deletion called. Access " + (if (request.user.isSuperuser)
+                                           "granted."
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldJobs
       NoContent
     } else {
-      NotFound
+      Unauthorized
     }
   }
 
@@ -157,17 +163,35 @@ final class BackendController @Inject()(
         NoCache(Ok(users.asJson))
       }
     } else {
-      fuccess(NotFound)
+      fuccess(Unauthorized)
     }
   }
 
-  def maintenance: Action[AnyContent] = userAction { implicit request =>
+  def getMaintenanceState: Action[AnyContent] = Action {
+    NoCache(
+      Ok(
+        Json.obj(
+          "message"       -> Json.fromString(maintenanceMessage),
+          "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
+        )
+      )
+    )
+  }
+
+  def setMaintenanceState(): Action[Json] = userAction(circe.json) { implicit request =>
     if (request.user.isSuperuser) {
-      //clusterMonitor ! Multicast TODO put somewhere else
-      Ok
+      request.body.asObject match {
+        case None => BadRequest
+        case Some(value) =>
+          maintenanceMessage = value("message").get.asString.orElse(Some("")).get
+          maintenanceSubmitBlocked = value("submitBlocked").get.asBoolean.orElse(Some(false)).get
+          actorSystem.eventStream.publish(MaintenanceAlert(maintenanceMessage, maintenanceSubmitBlocked))
+          Ok
+      }
     } else {
-      NotFound
+      Unauthorized
     }
+
   }
 
 }

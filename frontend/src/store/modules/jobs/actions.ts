@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import {ActionTree} from 'vuex';
-import {RootState, JobState} from '../../types';
+import {JobState, RootState} from '../../types';
 import {Job} from '@/types/toolkit/jobs';
 import {jobService} from '@/services/JobService';
 import {WebSocketActions} from '@/types/toolkit/enums';
