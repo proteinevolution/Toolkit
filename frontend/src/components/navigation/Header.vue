@@ -5,15 +5,15 @@
                  dismissible
                  :show="showTourBanner">
             <p class="mb-2">
-                We have a tour! Yay!
+                {{ this.$t('tour.banner.message') }}
             </p>
             <b-button variant="link"
                       @click="ignoreTour">
-                Ignore
+                {{ this.$t('tour.banner.ignore') }}
             </b-button>
             <b-button variant="primary"
                       @click="startTour">
-                Start
+                {{ this.$t('tour.banner.start') }}
             </b-button>
         </b-alert>
         <b-row>

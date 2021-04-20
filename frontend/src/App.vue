@@ -50,6 +50,7 @@
 
         <v-tour name="toolkitTour"
                 :steps="steps"
+                :options="options"
                 :callbacks="{onSkip: setTourFinished, onFinish: setTourFinished}" />
 
         <scroll-top-button />

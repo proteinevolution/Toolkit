@@ -86,17 +86,30 @@ export default {
             accept: 'Got it!',
         },
         tour: {
-            toolBar: 'These are the different tools you can use',
-            searchBar: 'search for jobs or tools',
-            tool: 'Let\'s checkout this tool.',
-            input: 'Here you can input a protein sequence.',
-            paste: 'Paste an example.',
-            structuralDomainDatabase: 'Select structural/domain databases',
-            proteomes: 'Select proteomes',
-            parametersTab: 'Change tool parameters',
-            jobId: 'Create a custom Job ID',
-            submit: 'Submit your job',
-            jobManager: 'Your running/completed jobs. Click here to open the job manager.',
+            content: {
+                toolBar: 'These are the different tools you can use',
+                searchBar: 'search for jobs or tools',
+                tool: 'Let\'s checkout this tool.',
+                input: 'Here you can input a protein sequence.',
+                paste: 'Paste an example.',
+                structuralDomainDatabase: 'Select structural/domain databases',
+                proteomes: 'Select proteomes',
+                parametersTab: 'Change tool parameters',
+                jobId: 'Create a custom Job ID',
+                submit: 'Submit your job',
+                jobManager: 'Your running/completed jobs. Click here to open the job manager.',
+            },
+            labels: {
+                buttonSkip: 'Skip tour',
+                buttonPrevious: 'Previous',
+                buttonNext: 'Next',
+                buttonStop: 'Finish'
+            },
+            banner: {
+                message: 'We have a tour! Yay!',
+                ignore: 'Ignore',
+                start: 'Start',
+            }
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
             'Max Planck Institute for Developmental Biology, Tübingen',
