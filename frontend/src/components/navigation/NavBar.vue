@@ -48,6 +48,7 @@ import {Tool} from '@/types/toolkit/tools';
 import {Job} from '@/types/toolkit/jobs';
 import {sectionColors, sections} from '@/conf/ToolSections';
 import {User} from '@/types/toolkit/auth';
+import EventBus from '@/util/EventBus';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -82,6 +83,9 @@ export default Vue.extend({
         isAdmin(): boolean {
             return this.user !== null && this.user.isAdmin;
         },
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     watch: {
         '$route.params': {
