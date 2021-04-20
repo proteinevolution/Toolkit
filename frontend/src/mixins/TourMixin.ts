@@ -46,13 +46,15 @@ const TourMixin = Vue.extend({
                     }),
                 },
                 {
-                    // TODO: make sure that the "Search" Tab is selected. Otherwise
-                    // the tooltip won't show the HHpred tool
                     target: '[data-v-step="tool"]',
                     content: this.$t('tour.content.tool'),
                     params: {
                         enableScrolling: false,
                     },
+                    before: () => new Promise<void>((resolve) => {
+                        EventBus.$emit('select-nav-bar-section', 'search');
+                        resolve();
+                    }),
                 },
                 {
                     target: '[data-v-step="input"]',

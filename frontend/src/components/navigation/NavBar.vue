@@ -52,6 +52,7 @@ import {mapStores} from 'pinia';
 import {useToolsStore} from '@/stores/tools';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
+import EventBus from '@/util/EventBus';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -87,6 +88,9 @@ export default Vue.extend({
             return this.user !== null && this.user.isAdmin;
         },
         ...mapStores(useAuthStore, useToolsStore, useJobsStore),
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     watch: {
         '$route.params': {
