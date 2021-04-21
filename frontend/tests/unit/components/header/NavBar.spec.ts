@@ -4,6 +4,7 @@ import {createLocalVue, shallowMount} from '@vue/test-utils';
 import NavBar from '@/components/navigation/NavBar.vue';
 import {tools1} from '../../mocks/tools';
 import {sections} from '@/conf/ToolSections';
+import {Store} from 'vuex';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
@@ -20,6 +21,10 @@ function initNavBar(toolNameRouteParam: string | undefined) {
         mocks: {
             $route,
             $t: (arg: string) => arg,
+            $store: new Store({
+                getters: {
+                },
+            }),
         },
         computed: {
             tools: () => tools1,
