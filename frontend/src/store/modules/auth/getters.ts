@@ -10,7 +10,7 @@ const getters: GetterTree<AuthState, RootState> = {
         return state.user !== null;
     },
     isAdmin(state): boolean {
-        return state.user != null && state.user.isAdmin;
+        return state.user !== null && state.user.isAdmin;
     }
 };
 
