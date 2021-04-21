@@ -9,6 +9,9 @@ const getters: GetterTree<AuthState, RootState> = {
     loggedIn(state): boolean {
         return state.user !== null;
     },
+    isAdmin(state): boolean {
+        return state.user != null && state.user.isAdmin;
+    }
 };
 
 export default getters;
