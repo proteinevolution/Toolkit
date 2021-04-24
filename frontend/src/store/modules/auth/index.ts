@@ -6,6 +6,7 @@ import {AuthState, RootState} from '../../types';
 
 export const state: AuthState = {
     user: null,
+    isAdmin: false,
 };
 
 const namespaced: boolean = true;
