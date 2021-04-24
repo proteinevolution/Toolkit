@@ -12,7 +12,7 @@ on:
 
 jobs:
   build-frontend:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     name: Build with Node ${{ matrix.node }}
     strategy:
       matrix:
