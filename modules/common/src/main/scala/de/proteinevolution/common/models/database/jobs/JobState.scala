@@ -66,6 +66,10 @@ object JobState {
     override def toInt = 9
   }
 
+  case object UndefinedState extends JobState {
+    override def toInt = 10
+  }
+
   private def states: immutable.Seq[JobState] =
     implicitly[AllSingletons[
       JobState,
@@ -81,7 +85,7 @@ object JobState {
     ]].values
 
   implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
-    c.downField("status").as[Int].map(n => states.find(_.toInt == n).getOrElse(Error))
+    c.downField("status").as[Int].map(n => states.find(_.toInt == n).getOrElse(UndefinedState))
 
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 

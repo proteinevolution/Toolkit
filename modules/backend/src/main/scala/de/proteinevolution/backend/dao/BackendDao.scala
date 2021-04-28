@@ -16,11 +16,8 @@
 
 package de.proteinevolution.backend.dao
 
-import de.proteinevolution.statistics.{ StatisticsObject, UserStatistic }
 import javax.inject.{ Inject, Singleton }
 import play.modules.reactivemongo.ReactiveMongoApi
-import reactivemongo.api.WriteConcern
-import reactivemongo.api.bson.BSONDocument
 import reactivemongo.api.bson.collection.BSONCollection
 
 import scala.concurrent.{ ExecutionContext, Future }
@@ -30,60 +27,6 @@ class BackendDao @Inject() (private val reactiveMongoApi: ReactiveMongoApi)(impl
 
   private[backend] lazy val statisticsCol: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))
-
-  def getStats: Future[StatisticsObject] = {
-    statisticsCol
-      .map(_.find(BSONDocument(), Option.empty[BSONDocument]))
-      .flatMap(_.one[StatisticsObject])
-      .map(_.getOrElse(StatisticsObject()))
-  }
-
-  def updateStats(statisticsObject: StatisticsObject): Future[Option[StatisticsObject]] = {
-    statisticsCol.flatMap(
-      _.findAndUpdate(
-        BSONDocument(StatisticsObject.ID -> statisticsObject.statisticsID),
-        statisticsObject,
-        fetchNewObject = true,
-        upsert = true,
-        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
-        // TODO: why won't it accept it with values left out like in documentation
-        None,
-        None,
-        bypassDocumentValidation = false,
-        WriteConcern.Default,
-        Option.empty,
-        Option.empty,
-        Seq.empty
-      ).map(_.result[StatisticsObject])
-    )
-  }
-
-  def setStatsCurrentDeleted(
-      statisticsObject: StatisticsObject,
-      currentDeleted: Int
-  ): Future[Option[StatisticsObject]] = {
-    statisticsCol.flatMap(
-      _.findAndUpdate(
-        selector = BSONDocument(StatisticsObject.ID -> statisticsObject.statisticsID),
-        update = BSONDocument(
-          "$set" -> BSONDocument(
-            s"${StatisticsObject.USERSTATISTICS}.${UserStatistic.CURRENTDELETED}" -> currentDeleted
-          )
-        ),
-        fetchNewObject = true,
-        // the following values are default values that are used to distinguish findAndUpdate from deprecated version
-        // TODO: why won't it accept it with values left out like in documentation
-        upsert = false,
-        None,
-        None,
-        bypassDocumentValidation = false,
-        WriteConcern.Default,
-        Option.empty,
-        Option.empty,
-        Seq.empty
-      ).map(_.result[StatisticsObject])
-    )
-  }
 
   lazy val loadStatisticsCollection: Future[BSONCollection] = {
     reactiveMongoApi.database.map(_.collection[BSONCollection]("loadStatistics"))
