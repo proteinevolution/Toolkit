@@ -31,6 +31,7 @@ class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
     case GET(p"/runjobsweep")  => ctrl.runJobSweep
     case GET(p"/users")        => ctrl.users
     case GET(p"/maintenance")  => ctrl.getMaintenanceState
+    case GET(p"/statistics2")   => ctrl.statistics2
     case POST(p"/users")       => ctrl.users
     case POST(p"/maintenance") => ctrl.setMaintenanceState()
   }
