@@ -16,105 +16,38 @@
 
 package de.proteinevolution.statistics
 
+import de.proteinevolution.common.models.database.jobs.JobState
 import io.circe.Encoder
 import io.circe.generic.semiauto._
-import reactivemongo.api.bson._
+import de.proteinevolution.common.models.database.jobs.JobState._
 
 case class ToolStatistic(
     toolName: String,
-    monthly: List[Int] = List.empty[Int],
-    monthlyFailed: List[Int] = List.empty[Int],
-    monthlyDeleted: List[Int] = List.empty[Int],
-    monthlyInternal: List[Int] = List.empty[Int]
+    var count: Int = 0,
+    var failedCount: Int = 0,
+    var deletedCount: Int = 0,
+    var internalCount: Int = 0,
 ) {
 
-  /**
-   * Returns the total amount of jobs used with the tool
-   */
-  def total: Long = monthly.map(_.toLong).sum[Long]
-
-  /**
-   * Returns the total amount of failed jobs used with the tool
-   */
-  def totalFailed: Long = monthlyFailed.map(_.toLong).sum[Long]
-
-  /**
-   * Returns the total amount of deleted jobs used with the tool
-   */
-  def totalDeleted: Long = monthlyFailed.map(_.toLong).sum[Long]
-
-  /**
-   * Returns the total amount of internal jobs used with the tool
-   */
-  def totalInternal: Long = monthlyInternal.map(_.toLong).sum[Long]
-
-  /**
-   * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-   */
-  def addMonth(current: Int, currentFailed: Int, currentDeleted: Int, currentInternal: Int): ToolStatistic = {
-    this.copy(
-      monthly = monthly.::(current),
-      monthlyFailed = monthlyFailed.::(currentFailed),
-      monthlyDeleted = monthlyDeleted.::(currentDeleted),
-      monthlyInternal = monthlyInternal.::(currentInternal)
+  def addJobEventLog(jobEventLog: JobEventLog): Unit = {
+    val jobStates: List[JobState] = jobEventLog.events.map(jobEvent =>
+      jobEvent.jobState
     )
+    count += 1
+    if (jobStates.contains(Error)) {
+      failedCount += 1
+    }
+    if (jobStates.contains(Deleted)) {
+      deletedCount += 1
+    }
+    if (jobEventLog.internalJob) {
+      internalCount += 1
+    }
   }
 
-  /**
-   * Creates a new ToolStatistic object which is a copy of this one - with the current month added
-   */
-  def addMonths(
-      currents: List[Int],
-      currentsFailed: List[Int],
-      currentsDeleted: List[Int],
-      currentsInternal: List[Int]
-  ): ToolStatistic = {
-    this.copy(
-      monthly = monthly ::: currents,
-      monthlyFailed = monthlyFailed ::: currentsFailed,
-      monthlyDeleted = monthlyDeleted ::: currentsDeleted,
-      monthlyInternal = monthlyInternal ::: currentsInternal
-    )
-  }
-
-  /**
-   * Adds empty months "amount" of times recursively
-   */
-  def addEmptyMonths(amount: Int = 1): ToolStatistic = {
-    if (amount > 0) this.addMonth(0, 0, 0, 0).addEmptyMonths(amount - 1)
-    else this
-  }
 }
 
 object ToolStatistic {
 
-  val TOOLNAME        = "tool"
-  val MONTHLY         = "monthly"
-  val MONTHLYFAILED   = "monthlyFailed"
-  val MONTHLYDELETED  = "monthlyDeleted"
-  val MONTHLYINTERNAL = "monthlyInternal"
-
   implicit val toolStatsEncoder: Encoder[ToolStatistic] = deriveEncoder[ToolStatistic]
-
-  implicit def reader: BSONDocumentReader[ToolStatistic] =
-    BSONDocumentReader[ToolStatistic] { bson =>
-      ToolStatistic(
-        toolName = bson.getAsTry[String](TOOLNAME).getOrElse("invalid"),
-        monthly = bson.getAsTry[List[Int]](MONTHLY).getOrElse(List.empty),
-        monthlyFailed = bson.getAsTry[List[Int]](MONTHLYFAILED).getOrElse(List.empty),
-        monthlyDeleted = bson.getAsTry[List[Int]](MONTHLYDELETED).getOrElse(List.empty),
-        monthlyInternal = bson.getAsTry[List[Int]](MONTHLYINTERNAL).getOrElse(List.empty)
-      )
-    }
-
-  implicit def writer: BSONDocumentWriter[ToolStatistic] =
-    BSONDocumentWriter[ToolStatistic] { toolStatistic =>
-      BSONDocument(
-        TOOLNAME        -> toolStatistic.toolName,
-        MONTHLY         -> toolStatistic.monthly,
-        MONTHLYFAILED   -> toolStatistic.monthlyFailed,
-        MONTHLYDELETED  -> toolStatistic.monthlyDeleted,
-        MONTHLYINTERNAL -> toolStatistic.monthlyDeleted
-      )
-    }
 }

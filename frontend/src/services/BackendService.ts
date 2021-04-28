@@ -22,7 +22,7 @@ class BackendService {
 
     public fetchStatistics(): Promise<Statistics> {
         return new Promise<Statistics>(((resolve, reject) => {
-            axios.get(`/api/backend/statistics2`)
+            axios.get(`/api/backend/statistics`)
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));
