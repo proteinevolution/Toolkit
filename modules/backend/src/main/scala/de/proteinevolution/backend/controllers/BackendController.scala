@@ -19,10 +19,10 @@ package de.proteinevolution.backend.controllers
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
-import akka.actor.{ ActorRef, ActorSystem }
+import akka.actor.{ActorRef, ActorSystem}
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
+import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
 import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
@@ -30,11 +30,11 @@ import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
 import de.proteinevolution.tools.ToolConfig
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{Inject, Named, Singleton}
 import play.api.Logging
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import cats.effect.unsafe.implicits.global
 
 @Singleton
@@ -191,6 +191,42 @@ final class BackendController @Inject() (
     } else {
       Unauthorized
     }
+
+  }
+
+  def statistics2: Action[AnyContent] = userAction.async { implicit request =>
+
+
+    val tools = toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList
+    val oldTools: List[String] = List()
+    val toolCount: scala.collection.mutable.Map[String, Int] = scala.collection.mutable.Map[String, Int]()
+    tools.foreach(toolName => toolCount += toolName -> 0)
+
+    jobDao
+      .findAllJobEventLogs()
+      .map { jobEventLogs =>
+        logger.info(
+          "Collectedd " + jobEventLogs.length + " elements from the job event logs."
+        )
+        jobEventLogs.foreach(jobEventLog => {
+          val toolName = jobEventLog.toolName
+          if (toolCount.contains(toolName)) {
+            toolCount += toolName -> (toolCount.apply(toolName) + 1)
+          } else {
+            toolName :: oldTools
+          }
+        })
+        toolCount
+      }
+      .flatMap {tools =>
+        Future.successful(
+          Ok(Json.obj(
+            "tools"       -> Json.fromString(toolCount.toString()),
+            "oldTools" -> Json.fromString(oldTools.toString())
+          ))
+        )
+      }
+
 
   }
 

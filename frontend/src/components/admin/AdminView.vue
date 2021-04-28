@@ -35,6 +35,14 @@
                     <span v-else>Reset</span>
                 </b-button>
             </b-form-group>
+          <h4>Statistics</h4>
+          <b-form-group>
+            <b-button variant="primary"
+                      class="mr-2"
+                      @click="loadStatistics">
+              Load Statistics
+            </b-button>
+          </b-form-group>
         </b-card>
     </div>
     <div v-else></div>
@@ -78,10 +86,15 @@ export default hasHTMLTitle.extend({
     },
     methods: {
         setMaintenanceState(): void {
-            this.maintenanceStateLoading = true;
-            backendService.setMaintenanceState(this.maintenance).finally(() => {
-                this.maintenanceStateLoading = false;
-            });
+          this.maintenanceStateLoading = true;
+          backendService.setMaintenanceState(this.maintenance).finally(() => {
+            this.maintenanceStateLoading = false;
+          });
+        },
+        loadStatistics(): void {
+          backendService.fetchStatistics().then((statistics) => {
+            console.log(statistics.statistics);
+          })
         },
         resetMaintenanceState(): void {
             this.maintenance.message = '';

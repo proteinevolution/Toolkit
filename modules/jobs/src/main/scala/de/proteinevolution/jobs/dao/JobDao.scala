@@ -266,21 +266,32 @@ class JobDao @Inject() (
   final def addJobLog(jobEventLog: JobEventLog): Future[WriteResult] =
     eventLogCollection.flatMap(_.insert(ordered = false).one(jobEventLog))
 
+  // TODO: find out why this returns no documents for instant = 0
   final def findJobEventLogs(instant: Long): Future[scala.List[JobEventLog]] = {
     eventLogCollection
       .map(
         _.find(
           BSONDocument(
             JobEventLog.EVENTS ->
-            BSONDocument(
-              "$elemMatch" ->
               BSONDocument(
-                JobEvent.TIMESTAMP ->
-                BSONDocument("$lt" -> BSONDateTime(instant))
+                "$elemMatch" ->
+                  BSONDocument(
+                    JobEvent.TIMESTAMP ->
+                      BSONDocument("$lt" -> BSONDateTime(instant))
+                  )
               )
-            )
           ),
           Option.empty[BSONDocument]
+        ).cursor[JobEventLog]()
+      )
+      .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
+  }
+
+  final def findAllJobEventLogs(): Future[scala.List[JobEventLog]] = {
+    eventLogCollection
+      .map(
+        _.find(
+          BSONDocument(), Option.empty[BSONDocument]
         ).cursor[JobEventLog]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))
