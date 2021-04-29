@@ -20,9 +20,10 @@ class BackendService {
         }));
     }
 
-    public fetchStatistics(): Promise<Statistics> {
+    public fetchStatistics(fromDate: string, toDate: string): Promise<Statistics> {
         return new Promise<Statistics>(((resolve, reject) => {
-            axios.get(`/api/backend/statistics`)
+            const params = {fromDate, toDate};
+            axios.get(`/api/backend/statistics`, {params})
                 .then((response) => resolve(response.data))
                 .catch(reject);
         }));

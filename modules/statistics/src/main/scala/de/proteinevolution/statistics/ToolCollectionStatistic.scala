@@ -30,16 +30,20 @@ case class ToolCollectionStatistic(
     }
     toolStatistics(jobEventLog.toolName).addJobEventLog(jobEventLog)
   }
+
+  def asList(): List[ToolStatistic] = {
+    toolStatistics.toList.map(tuple => tuple._2)
+  }
 }
 
   object ToolCollectionStatistic {
 
   val SUMMARY = "summary"
-  val TOOLSTATISTICS = "toolStats"
+  val TOOLSTATISTICS = "singleToolStats"
 
   implicit val toolCollectionEncoder : Encoder[ToolCollectionStatistic] = (obj: ToolCollectionStatistic) =>
     Json.obj(
-      (TOOLSTATISTICS, obj.toolStatistics.asJson)
+      (TOOLSTATISTICS, obj.asList().asJson)
     )
 
 }

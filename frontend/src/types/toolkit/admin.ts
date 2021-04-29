@@ -1,3 +1,15 @@
+interface singleToolStats {
+    toolName: string,
+    count: number,
+    failedCount: number,
+    internalCount: number,
+    deletedCount: number
+}
+
+interface toolStatsCollection {
+    singleToolStats: singleToolStats[]
+}
+
 export interface Statistics {
-    statistics: string;
+    totalToolStats: toolStatsCollection;
 }
