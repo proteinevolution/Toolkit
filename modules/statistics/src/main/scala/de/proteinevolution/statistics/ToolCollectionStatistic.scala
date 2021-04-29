@@ -20,6 +20,7 @@ import io.circe.syntax._
 import io.circe.{Encoder, Json}
 
 case class ToolCollectionStatistic(
+    var summaryStatistics: ToolStatistic = ToolStatistic("summary"),
     var toolStatistics: Map[String, ToolStatistic] = Map()
 ) {
 
@@ -28,6 +29,7 @@ case class ToolCollectionStatistic(
     if (!toolStatistics.contains(jobEventLog.toolName)) {
       toolStatistics += (jobEventLog.toolName -> ToolStatistic(jobEventLog.toolName))
     }
+    summaryStatistics.addJobEventLog(jobEventLog)
     toolStatistics(jobEventLog.toolName).addJobEventLog(jobEventLog)
   }
 
@@ -43,6 +45,7 @@ case class ToolCollectionStatistic(
 
   implicit val toolCollectionEncoder : Encoder[ToolCollectionStatistic] = (obj: ToolCollectionStatistic) =>
     Json.obj(
+      (SUMMARY, obj.summaryStatistics.asJson),
       (TOOLSTATISTICS, obj.asList().asJson)
     )
 

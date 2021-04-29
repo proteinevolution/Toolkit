@@ -16,7 +16,7 @@
 
 package de.proteinevolution.statistics
 
-import java.time.{LocalDate}
+import java.time.LocalDate
 import java.time.temporal.IsoFields
 
 import de.proteinevolution.common.models.database.jobs.JobState.Submitted
@@ -26,11 +26,42 @@ import io.circe.{Encoder, Json}
 case class StatisticsObject(
     fromTime: LocalDate,
     toTime: LocalDate,
-    totalToolCollection: ToolCollectionStatistic = ToolCollectionStatistic(),
-    monthlyToolCollection: Map[(Int, Int), ToolCollectionStatistic] = Map((2021, 2) -> ToolCollectionStatistic()),
-    weeklyToolCollection: Map[(Int, Int), ToolCollectionStatistic] =
-      Map((2021, 2) -> ToolCollectionStatistic(), (2021, 3) -> ToolCollectionStatistic())
 ) {
+
+  val totalToolCollection: ToolCollectionStatistic = ToolCollectionStatistic()
+  var monthlyToolCollection: Map[(Int, Int), ToolCollectionStatistic] = Map()
+  var weeklyToolCollection: Map[(Int, Int), ToolCollectionStatistic] = Map()
+
+  // fill monthlyToolCollection with empty ToolCollectionStatistics
+  var year: Int = fromTime.getYear
+  var month: Int = fromTime.getMonthValue
+  var toYear: Int = toTime.getYear
+  var toMonth: Int = toTime.getMonthValue
+  while (year <= toYear || month <= toMonth) {
+    monthlyToolCollection += (year, month) -> ToolCollectionStatistic()
+    if (month == 12) {
+      month = 1
+      year += 1
+    } else {
+      month += 1
+    }
+  }
+  // fill weeklyToolCollection with empty ToolCollectionStatistics
+  year = fromTime.get(IsoFields.WEEK_BASED_YEAR)
+  var week: Int = fromTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+  toYear = toTime.get(IsoFields.WEEK_BASED_YEAR)
+  var toWeek: Int = toTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+  while (year <= toYear || week <= toWeek) {
+    weeklyToolCollection += (year, week) -> ToolCollectionStatistic()
+    // TODO: check if year only has 52 weeks
+    if (week == 53) {
+      week = 1
+      year += 1
+    } else {
+      week += 1
+    }
+  }
+
 
   def addJobEventLog(jobEventLog: JobEventLog): Unit = {
     // TODO: check if this has to be an option
