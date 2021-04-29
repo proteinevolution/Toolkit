@@ -9,6 +9,7 @@ import axios from 'axios';
 import './bootstrap.ts';
 import '@/util/LoggerConfig';
 import Logger from 'js-logger';
+import HighchartsVue from 'highcharts-vue'
 
 const devMode: boolean = process.env.NODE_ENV === 'development';
 Vue.config.productionTip = false;
@@ -20,6 +21,7 @@ if (devMode) {
     axios.defaults.withCredentials = true;
 }
 
+
 const isSecure: boolean = location.protocol === 'https:';
 const websocketUrl: string = isSecure ? 'wss://' + location.host + '/ws/' : 'ws://' + location.host + '/ws/';
 Vue.use(VueNativeSock, websocketUrl, {
@@ -29,6 +31,8 @@ Vue.use(VueNativeSock, websocketUrl, {
     reconnectionAttempts: 5,
     reconnectionDelay: 2000,
 });
+
+Vue.use(HighchartsVue, {tagName: 'highcharts'});
 
 (window as any).vm = new Vue({
     router,

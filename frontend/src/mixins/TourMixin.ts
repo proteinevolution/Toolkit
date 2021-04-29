@@ -153,7 +153,6 @@ const TourMixin = Vue.extend({
     },
     watch: {
         '$route.path'(path: string): void {
-            console.log(this.tour.currentStep)
             if (this.tour.currentStep === 2 && path === '/tools/hhpred') {
                 this.tour.nextStep();
             } else {

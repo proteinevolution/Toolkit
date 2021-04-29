@@ -16,6 +16,9 @@
 
 package de.proteinevolution.backend.controllers
 
+import java.time.{LocalDate}
+import java.time.format.DateTimeFormatter
+
 import akka.actor.{ActorRef, ActorSystem}
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserAction
@@ -116,24 +119,31 @@ final class BackendController @Inject() (
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
 
-    val statisticsObject: StatisticsObject = StatisticsObject()
+
+    val fromDateString = request.getQueryString("fromDate").getOrElse("")
+    val fromDate = LocalDate.parse(fromDateString, DateTimeFormatter.ISO_DATE)
+    val toDateString = request.getQueryString("toDate").getOrElse("")
+    val toDate = LocalDate.parse(toDateString, DateTimeFormatter.ISO_DATE)
+    logger.info(fromDate.toString)
+
+
+    val statisticsObject: StatisticsObject = StatisticsObject(fromDate, toDate)
+
+    logger.info(
+      request.toString()
+    )
 
     jobDao
       .findAllJobEventLogs()
-      .map { jobEventLogs =>
+      .flatMap { jobEventLogs =>
         logger.info(
           "Collected " + jobEventLogs.length + " elements from the job event logs."
         )
         jobEventLogs.foreach(jobEventLog => {
           statisticsObject.addJobEventLog(jobEventLog)
         })
-      }
-      .flatMap {tools =>
-      print("test")
         Future.successful(
-          Ok(Json.obj(
-            "tools"       -> statisticsObject.asJson),
-          )
+          Ok(statisticsObject.asJson),
         )
       }
 
