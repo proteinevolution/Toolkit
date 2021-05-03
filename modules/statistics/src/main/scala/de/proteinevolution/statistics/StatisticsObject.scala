@@ -53,8 +53,9 @@ case class StatisticsObject(
   var toWeek: Int = toTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
   while (year < toYear || (year == toYear && week <= toWeek)) {
     weeklyToolCollection += (year, week) -> ToolCollectionStatistic()
-    // TODO: check if year only has 52 weeks
-    if (week == 53) {
+    val weekOfDecember31: Int = LocalDate.of(year, 12, 31).get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+    val weeksInYear: Int = if (weekOfDecember31 == 1) 52 else weekOfDecember31
+    if (week == weeksInYear) {
       week = 1
       year += 1
     } else {
