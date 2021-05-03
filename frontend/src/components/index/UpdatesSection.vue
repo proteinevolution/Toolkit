@@ -1,34 +1,39 @@
 <template>
-    <div class="d-flex mt-3 justify-content-center">
-        <b-col md="9"
-               class="tile-main-container">
-            <b-row>
-                <b-col class="tile-image d-none d-md-flex" />
-                <b-col class="update-section col-sm-7 col-md-6 col-lg-7 col-xl-7 px-4 py-4">
-                    <h4>Recent Updates</h4>
-                    <div v-for="update in updates"
-                         :key="update.date"
-                         class="update-item"
-                         @click="launchUpdatesModal">
-                        <h6 v-text="moment(update.date).format('LL')"></h6>
-                        <p v-html="update.html"></p>
-                    </div>
-                </b-col>
+    <div class="d-flex mt-3 justify-content-between">
+        <b-row>
+            <b-col md="9"
+                   class="tile-main-container">
+                <b-row>
+                    <b-col class="tile-image d-none d-md-flex" />
+                    <b-col class="update-section col-sm-7 col-md-6 col-lg-7 col-xl-7 px-4 py-4">
+                        <h4>Recent Updates</h4>
+                        <div v-for="update in updates"
+                             :key="update.date"
+                             class="update-item"
+                             @click="launchUpdatesModal">
+                            <h6 v-text="moment(update.date).format('LL')"></h6>
+                            <p v-html="update.html"></p>
+                        </div>
+                    </b-col>
 
-                <b-col class="quick-link-section col-sm-4 col-md-4 col-lg-3 py-4 px-sm-4 px-3">
-                    <h4>Quick Links</h4>
-                    <b-nav vertical>
-                        <router-link v-for="quickLink in quickLinks"
-                                     :key="quickLink.title"
-                                     :to="quickLink.link"
-                                     class="quick-link">
-                            {{ quickLink.title }}
-                            <i class="fa fa-angle-right"></i>
-                        </router-link>
-                    </b-nav>
-                </b-col>
-            </b-row>
-        </b-col>
+                    <b-col class="quick-link-section col-sm-4 col-md-4 col-lg-3 py-4 px-sm-4 px-3">
+                        <h4>Quick Links</h4>
+                        <b-nav vertical>
+                            <router-link v-for="quickLink in quickLinks"
+                                         :key="quickLink.title"
+                                         :to="quickLink.link"
+                                         class="quick-link">
+                                {{ quickLink.title }}
+                                <i class="fa fa-angle-right"></i>
+                            </router-link>
+                        </b-nav>
+                    </b-col>
+                </b-row>
+            </b-col>
+            <b-col md="3" class="twitter-feed">
+                <a class="twitter-timeline" href="https://twitter.com/mpitoolkit?ref_src=twsrc%5Etfw">Tweets by mpitoolkit</a>
+            </b-col>
+        </b-row>
     </div>
 </template>
 
@@ -75,6 +80,11 @@ export default Vue.extend({
         updates() {
             return updates.slice(0, 3);
         },
+    },
+    created() {
+        let twitterScript = document.createElement('script');
+        twitterScript.setAttribute('src',"https://platform.twitter.com/widgets.js");
+        document.head.appendChild(twitterScript);
     },
     methods: {
         launchUpdatesModal() {
@@ -188,6 +198,11 @@ export default Vue.extend({
     color: $primary;
     border-radius: 2px;
   }
-
 }
+
+.twitter-feed {
+    max-height: 800px;
+    overflow: auto;
+}
+
 </style>
