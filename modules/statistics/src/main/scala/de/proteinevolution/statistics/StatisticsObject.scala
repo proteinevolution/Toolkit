@@ -37,7 +37,7 @@ case class StatisticsObject(
   var month: Int = fromTime.getMonthValue
   var toYear: Int = toTime.getYear
   var toMonth: Int = toTime.getMonthValue
-  while (year <= toYear || month <= toMonth) {
+  while (year < toYear || (year == toYear && month <= toMonth)) {
     monthlyToolCollection += (year, month) -> ToolCollectionStatistic()
     if (month == 12) {
       month = 1
@@ -51,7 +51,7 @@ case class StatisticsObject(
   var week: Int = fromTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
   toYear = toTime.get(IsoFields.WEEK_BASED_YEAR)
   var toWeek: Int = toTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
-  while (year <= toYear || week <= toWeek) {
+  while (year < toYear || (year == toYear && week <= toWeek)) {
     weeklyToolCollection += (year, week) -> ToolCollectionStatistic()
     // TODO: check if year only has 52 weeks
     if (week == 53) {
@@ -64,7 +64,6 @@ case class StatisticsObject(
 
 
   def addJobEventLog(jobEventLog: JobEventLog): Unit = {
-    // TODO: check if this has to be an option
     val submitEvent: Option[JobEvent] = jobEventLog.events.find(jobEvent => jobEvent.jobState == Submitted)
     // check if submit event with timestamp exists
     submitEvent match {
@@ -77,27 +76,18 @@ case class StatisticsObject(
                   totalToolCollection.addJobEventLog(jobEventLog)
                 }
 
-                // check if jobEventLog falls into one of the weekly or monthly collections
-                jobEventLog.events
-                  .filter(jobEvent => jobEvent.jobState == Submitted)
-                  .foreach(jobEvent =>
-                    jobEvent.timestamp match {
-                      case Some(timestamp) =>
-                        val week          = timestamp.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
-                        val weekBasedYear = timestamp.get(IsoFields.WEEK_BASED_YEAR)
-                        val year          = timestamp.getYear
-                        val month         = timestamp.getMonthValue
+                val week          = timestamp.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+                val weekBasedYear = timestamp.get(IsoFields.WEEK_BASED_YEAR)
+                val year          = timestamp.getYear
+                val month         = timestamp.getMonthValue
 
-                        if (monthlyToolCollection.contains((year, month))) {
-                          monthlyToolCollection((year, month)).addJobEventLog(jobEventLog)
-                        }
-                        if (weeklyToolCollection.contains((weekBasedYear, week))) {
-                          weeklyToolCollection((weekBasedYear, week)).addJobEventLog(jobEventLog)
-                        }
+                if (monthlyToolCollection.contains((year, month))) {
+                  monthlyToolCollection((year, month)).addJobEventLog(jobEventLog)
+                }
+                if (weeklyToolCollection.contains((weekBasedYear, week))) {
+                  weeklyToolCollection((weekBasedYear, week)).addJobEventLog(jobEventLog)
+                }
 
-                      case None =>
-                    }
-                  )
               case None =>
         }
       }
@@ -112,7 +102,7 @@ case class StatisticsObject(
         month = entry._1._2,
         entry._2
       )
-    )
+    ).sortBy(weeklyToolStats => weeklyToolStats.month).sortBy(weeklyToolStats => weeklyToolStats.year)
   }
   def weeklyToolCollectionList(): List[WeeklyToolStats] = {
     weeklyToolCollection.toList.map(entry =>
@@ -121,7 +111,7 @@ case class StatisticsObject(
         week = entry._1._2,
         entry._2
       )
-    )
+    ).sortBy(weeklyToolStats => weeklyToolStats.week).sortBy(weeklyToolStats => weeklyToolStats.year)
   }
 
 }
