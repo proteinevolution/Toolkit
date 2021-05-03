@@ -99,7 +99,8 @@ export default {
                 parametersTab: 'Change tool parameters',
                 jobId: 'Create a custom Job ID',
                 submit: 'Submit your job',
-                jobManager: 'Your running/completed jobs. Click here to open the job manager.',
+                jobList: 'Your running/completed jobs. Click here to open the job manager.',
+                jobManager: 'Here you can see a more detailed list of your jobs.',
             },
             labels: {
                 buttonSkip: 'Skip tour',

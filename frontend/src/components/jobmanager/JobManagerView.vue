@@ -4,7 +4,7 @@
             <h1>Job Manager</h1>
         </div>
 
-        <b-card>
+        <b-card data-v-step="job-manager">
             <b-row class="mb-2">
                 <b-col cols="12"
                        sm="5"

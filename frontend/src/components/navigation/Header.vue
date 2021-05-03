@@ -2,19 +2,20 @@
     <b-container class="header">
         <b-alert variant="primary"
                  class="tour-banner"
-                 dismissible
                  :show="showTourBanner">
             <p class="mb-2">
                 {{ this.$t('tour.banner.message') }}
             </p>
-            <b-button variant="link"
-                      @click="ignoreTour">
-                {{ this.$t('tour.banner.ignore') }}
-            </b-button>
-            <b-button variant="primary"
-                      @click="startTour">
-                {{ this.$t('tour.banner.start') }}
-            </b-button>
+            <div>
+                <button class="tour-banner__ignore-button"
+                        @click="ignoreTour">
+                    {{ this.$t('tour.banner.ignore') }}
+                </button>
+                <button class="tour-banner__start-button"
+                        @click="startTour">
+                    {{ this.$t('tour.banner.start') }}
+                </button>
+            </div>
         </b-alert>
         <b-row>
             <TopNavBar />
@@ -80,22 +81,56 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .logo-container {
-  align-items: center;
+    align-items: center;
 }
 
 .logo-link {
-  width: 100%;
+    width: 100%;
 
-  img {
-    height: auto;
-    width: 180px;
-  }
+    img {
+        height: auto;
+        width: 180px;
+    }
 }
 
 .tour-banner {
-  @include media-breakpoint-down(md) {
-    display: none;
-  }
+    display: flex;
+    background-color: $tk-green;
+    justify-content: space-between;
+    align-items: baseline;
+    @include media-breakpoint-down(md) {
+        display: none;
+    }
+
+    p {
+        color: $white;
+    }
+
 }
+
+.tour-banner__ignore-button {
+    color: $white;
+    background-color: transparent;
+    padding: 0.625em 3.125em;
+    border-radius: $global-radius;
+    border: 0;
+    font-size: 1em;
+    margin: 0;
+}
+
+.tour-banner__start-button {
+    color: $white;
+    background-color: $tk-dark-green;
+    padding: 0.625em 3.125em;
+    border-radius: $global-radius;
+    border: 0;
+    font-size: 1em;
+    margin: 0;
+}
+
+.tour-banner__start-button:hover {
+    background-color: $tk-darker-green;
+}
+
 
 </style>

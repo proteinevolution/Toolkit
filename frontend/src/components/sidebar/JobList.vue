@@ -9,7 +9,7 @@
                 {{ $t('jobList.sortColumns.' + sortCol.name) }}
             </div>
             <div class="open-job-manager"
-                 data-v-step="job-manager"
+                 data-v-step="job-list"
                  @click="$emit('click')">
                 <router-link to="/jobmanager">
                     <i class="fas fa-list-ul"></i>
