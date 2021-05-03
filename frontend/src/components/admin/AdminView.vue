@@ -56,8 +56,14 @@
         </div>
       </div>
 
-      <highcharts :options="chartOptions"
-                  class="high-chart"/>
+      <div v-if="showCharts">
+        <highcharts :options="BarChartOptions"
+                    class="high-chart"/>
+        <highcharts :options="WeeklyChartOptions"
+                    class="high-chart"/>
+        <highcharts :options="MonthlyChartOptions"
+                    class="high-chart"/>
+      </div>
     </b-card>
   </div>
   <div v-else></div>
@@ -86,13 +92,14 @@ export default hasHTMLTitle.extend({
         submitBlocked: this.$store.state.maintenance.submitBlocked,
       },
       maintenanceStateLoading: false,
+      showCharts: false,
       fromDate: '',
       toDate: '',
-      statistics: {} as Statistics
+      statistics: {} as Statistics,
     };
   },
   computed: {
-    chartOptions(): any {
+    BarChartOptions(): any {
       return {
         title: {
           text: 'Tool Stats',
@@ -101,7 +108,7 @@ export default hasHTMLTitle.extend({
           title: {
             text: 'Tools',
           },
-          categories: this.chartLabels,
+          categories: this.totalChartLabels,
         },
         yAxis: {
           title: {
@@ -109,20 +116,86 @@ export default hasHTMLTitle.extend({
           },
         },
         tooltip: {
-          formatter: function () {
+          formatter: function (): string {
             return `${this.x}: ${this.y}`;
-          }
+          },
         },
         series: [{
-          name: 'Total Tool Count',
-          data: this.chartData,
+          name: 'Total Total Tool Count',
+          data: this.totalChartData,
         }],
         chart: {
           type: 'column',
         },
         credits: {
           enabled: false,
+        }
+      };
+    },
+    WeeklyChartOptions(): any {
+      return {
+        title: {
+          text: 'Weekly Total Tool Stats',
         },
+        xAxis: {
+          title: {
+            text: 'Tools',
+          },
+          categories: this.weeklyChartLabels,
+        },
+        yAxis: {
+          title: {
+            text: 'Tool count',
+          },
+        },
+        tooltip: {
+          formatter: function (): string {
+            return `${this.x}: ${this.y}`;
+          },
+        },
+        series: [{
+          name: 'Total Tool Count',
+          data: this.weeklyChartData,
+        }],
+        chart: {
+          type: 'line',
+        },
+        credits: {
+          enabled: false,
+        }
+      };
+    },
+    MonthlyChartOptions(): any {
+      return {
+        title: {
+          text: 'Monthly Tool Stats',
+        },
+        xAxis: {
+          title: {
+            text: 'Tools',
+          },
+          categories: this.monthlyChartLabels,
+        },
+        yAxis: {
+          title: {
+            text: 'Tool count',
+          },
+        },
+        tooltip: {
+          formatter: function (): string {
+            return `${this.x}: ${this.y}`;
+          },
+        },
+        series: [{
+          name: 'Total Tool Count',
+          data: this.monthlyChartData,
+        }],
+        chart: {
+          type: 'line',
+        },
+        credits: {
+          enabled: false,
+        }
       };
     },
     htmlTitle() {
@@ -137,20 +210,48 @@ export default hasHTMLTitle.extend({
     isAdmin(): boolean {
       return this.user !== null && this.user.isAdmin;
     },
-    chartLabels(): string[] {
+    totalChartLabels(): string[] {
       if (this.statistics.totalToolStats) {
         return this.statistics.totalToolStats.singleToolStats.sort((a,b) => b.count - a.count).map(stats => stats.toolName);
       } else {
         return [];
       }
     },
-    chartData(): number[] {
+    totalChartData(): number[] {
       if (this.statistics.totalToolStats) {
         return this.statistics.totalToolStats.singleToolStats.sort((a,b) => b.count - a.count).map(stats => stats.count);
       } else {
         return [];
       }
-    }
+    },
+    weeklyChartLabels(): string[] {
+      if (this.statistics.weeklyToolStats) {
+        return this.statistics.weeklyToolStats.map(stats => `${stats.year} - ${stats.week}`);
+      } else {
+        return [];
+      }
+    },
+    weeklyChartData(): number[] {
+      if (this.statistics.weeklyToolStats) {
+        return this.statistics.weeklyToolStats.map(stats => stats.toolStats.summary.count)
+      } else {
+        return [];
+      }
+    },
+    monthlyChartLabels(): string[] {
+      if (this.statistics.monthlyToolStats) {
+        return this.statistics.monthlyToolStats.map(stats => `${stats.year} - ${stats.month}`);
+      } else {
+        return [];
+      }
+    },
+    monthlyChartData(): number[] {
+      if (this.statistics.monthlyToolStats) {
+        return this.statistics.monthlyToolStats.map(stats => stats.toolStats.summary.count)
+      } else {
+        return [];
+      }
+    },
   },
   methods: {
     setMaintenanceState(): void {
@@ -160,11 +261,12 @@ export default hasHTMLTitle.extend({
       });
     },
     loadStatistics(): void {
-      const fromDate = this.fromDate === '' ? '1970-01-01' : this.fromDate
-      const toDate = this.toDate === '' ? moment().format("YYYY-MM-DD") : this.toDate
+      const fromDate = this.fromDate === '' ? '1990-01-01' : this.fromDate;
+      const toDate = this.toDate === '' ? moment().format('YYYY-MM-DD') : this.toDate;
       backendService.fetchStatistics(fromDate, toDate).then((statistics) => {
         console.log(statistics);
         this.statistics = statistics;
+        this.showCharts = true;
       });
     },
     resetMaintenanceState(): void {

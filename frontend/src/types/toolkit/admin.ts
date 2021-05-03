@@ -7,9 +7,24 @@ interface singleToolStats {
 }
 
 interface toolStatsCollection {
-    singleToolStats: singleToolStats[]
+    summary: singleToolStats,
+    singleToolStats: singleToolStats[],
+}
+
+interface weeklyToolStats {
+    week: number,
+    year: number,
+    toolStats: toolStatsCollection
+}
+
+interface monthlyToolStats {
+    month: number,
+    year: number,
+    toolStats: toolStatsCollection
 }
 
 export interface Statistics {
-    totalToolStats: toolStatsCollection;
+    totalToolStats: toolStatsCollection,
+    weeklyToolStats: weeklyToolStats[],
+    monthlyToolStats: monthlyToolStats[]
 }
