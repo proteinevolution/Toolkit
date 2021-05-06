@@ -35,6 +35,7 @@ import play.api.Logging
 import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
+import cats.effect.unsafe.implicits.global
 
 @Singleton
 final class BackendController @Inject() (
@@ -50,10 +51,14 @@ final class BackendController @Inject() (
     extends ToolkitController(cc)
     with Logging {
 
-  private var maintenanceMode: Boolean = false
+  private var maintenanceSubmitBlocked: Boolean = false
+  private var maintenanceMessage: String        = ""
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
-    logger.info("Statistics called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "Statistics called. Access " + (if (request.user.isSuperuser) "granted."
+                                      else "denied.")
+    )
     if (request.user.isSuperuser) {
       // Get the first moment of the last month as a DateTime object
       val firstOfLastMonth: ZonedDateTime =
@@ -65,7 +70,7 @@ final class BackendController @Inject() (
 
       // Ensure all tools are in the statistics, even if they have not been used yet
       logger.info("Statistics loaded.... checking for new tools")
-      val statsUpdated = stats.map(_.updateTools(toolConfig.values.values.map(_.toolNameShort).toList))
+      val statsUpdated = stats.map(_.updateTools(toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList))
 
       // Collect the job events up until the first of the last month
       statsUpdated.flatMap { statistics =>
@@ -125,7 +130,11 @@ final class BackendController @Inject() (
   }
 
   def runUserSweep: Action[AnyContent] = userAction { implicit request =>
-    logger.info("User deletion called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "User deletion called. Access " + (if (request.user.isSuperuser)
+                                           "granted."
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldUsers
       NoContent
@@ -135,7 +144,11 @@ final class BackendController @Inject() (
   }
 
   def runJobSweep: Action[AnyContent] = userAction { implicit request =>
-    logger.info("User deletion called. Access " + (if (request.user.isSuperuser) "granted." else "denied."))
+    logger.info(
+      "User deletion called. Access " + (if (request.user.isSuperuser)
+                                           "granted."
+                                         else "denied.")
+    )
     if (request.user.isSuperuser) {
       databaseMonitor ! DeleteOldJobs
       NoContent
@@ -154,18 +167,31 @@ final class BackendController @Inject() (
     }
   }
 
-  def getMaintenanceMode: Action[AnyContent] = Action {
-      Ok(maintenanceMode.toString)
-    }
+  def getMaintenanceState: Action[AnyContent] = Action {
+    NoCache(
+      Ok(
+        Json.obj(
+          "message"       -> Json.fromString(maintenanceMessage),
+          "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
+        )
+      )
+    )
+  }
 
-  def sendMaintenanceAlert(mode: Boolean): Action[AnyContent] = userAction { implicit request =>
+  def setMaintenanceState(): Action[Json] = userAction(circe.json) { implicit request =>
     if (request.user.isSuperuser) {
-      maintenanceMode = mode
-      actorSystem.eventStream.publish(MaintenanceAlert(mode))
-      Ok
+      request.body.asObject match {
+        case None => BadRequest
+        case Some(value) =>
+          maintenanceMessage = value("message").get.asString.orElse(Some("")).get
+          maintenanceSubmitBlocked = value("submitBlocked").get.asBoolean.orElse(Some(false)).get
+          actorSystem.eventStream.publish(MaintenanceAlert(maintenanceMessage, maintenanceSubmitBlocked))
+          Ok
+      }
     } else {
       Unauthorized
     }
+
   }
 
 }

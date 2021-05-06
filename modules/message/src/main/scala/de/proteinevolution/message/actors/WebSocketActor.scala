@@ -44,7 +44,7 @@ import play.api.cache.{ NamedCache, SyncCacheApi }
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-final class WebSocketActor @Inject()(
+final class WebSocketActor @Inject() (
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessionService,
@@ -208,21 +208,22 @@ final class WebSocketActor @Inject()(
     case LogOut() =>
       out ! JsonObject("mutation" -> Json.fromString("SOCKET_Logout")).asJson
 
-    case MaintenanceAlert(maintenanceMode) =>
+    case MaintenanceAlert(message, submitBlocked) =>
       out ! JsonObject(
-        "mutation"        -> Json.fromString("SOCKET_MaintenanceAlert"),
-        "maintenanceMode" -> Json.fromBoolean(maintenanceMode)
+        "mutation"      -> Json.fromString("SOCKET_MaintenanceAlert"),
+        "message"       -> Json.fromString(message),
+        "submitBlocked" -> Json.fromBoolean(submitBlocked)
       ).asJson
   }
 
-  override def receive = LoggingReceive {
+  override def receive: Actor.Receive = LoggingReceive {
     active(sessionID)
   }
 }
 
 object WebSocketActor {
 
-  case class MaintenanceAlert(maintenanceMode: Boolean)
+  case class MaintenanceAlert(message: String, submitBlocked: Boolean)
 
   trait Factory {
     def apply(@Assisted("sessionID") sessionID: String, @Assisted("out") out: ActorRef): Actor

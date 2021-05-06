@@ -24,6 +24,8 @@ import io.circe.syntax._
 import javax.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 
+import cats.effect.unsafe.implicits.global
+
 @Singleton
 class UiController @Inject()(
     cc: ControllerComponents,
@@ -31,14 +33,16 @@ class UiController @Inject()(
 ) extends ToolkitController(cc) {
 
   def getToolParameters(toolname: String): Action[AnyContent] = Action {
-    toolConfig.values.get(toolname) match {
+    toolConfig.values.unsafeRunSync().get(toolname) match {
       case Some(tool) => Ok(tool.toolParameterForm.asJson)
       case None       => NotFound
     }
   }
 
   def getTools: Action[AnyContent] = Action {
-    val sorted = toolConfig.values.toSeq
+    val sorted = toolConfig.values
+      .unsafeRunSync()
+      .toSeq
       .sortWith((l, r) => {
         val lTool = l._2
         val rTool = r._2

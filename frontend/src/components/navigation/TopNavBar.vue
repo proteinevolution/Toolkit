@@ -1,79 +1,98 @@
 <template>
-    <b-col cols="12"
-           class="top-navbar navbar-light">
-        <div class="top-navbar-right">
-            <div class="social-nav">
-                <b-dropdown v-if="false"
-                            no-caret
-                            class="lang-dropdown">
-                    <template slot="button-content">
-                        <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
-                             alt="">
-                        <span class="sr-only"
-                              v-text="$t('language.lang')"></span>
-                    </template>
-                    <b-dropdown-item @click="changeLanguage('en')">
-                        <img :src="require('../../assets/images/flag-en.png')"
-                             class="mr-2"
-                             alt="">
-                        <span v-text="$t('language.en')"></span>
-                    </b-dropdown-item>
-                    <b-dropdown-item @click="changeLanguage('de')">
-                        <img :src="require('../../assets/images/flag-de.png')"
-                             class="mr-2"
-                             alt="">
-                        <span v-text="$t('language.de')"></span>
-                    </b-dropdown-item>
-                </b-dropdown>
-                <b-button variant="href"
-                          href="https://github.com/proteinevolution/Toolkit"
-                          target="_blank"
-                          rel="noopener"
-                          class="social-link">
-                    <i class="fab fa-github"></i>
-                </b-button>
-                <b-button variant="href"
-                          href="https://www.facebook.com/mpitoolkit"
-                          target="_blank"
-                          rel="noopener"
-                          class="social-link">
-                    <i class="fab fa-facebook-f"></i>
-                </b-button>
-                <b-button variant="href"
-                          href="https://twitter.com/mpitoolkit"
-                          target="_blank"
-                          rel="noopener"
-                          class="social-link">
-                    <i class="fab fa-twitter"></i>
-                </b-button>
-                <b-button v-if="!loggedIn"
-                          variant="href"
-                          size="sm"
-                          class="top-navbar-link"
-                          @click="openAuthModal"
-                          v-text="$t('auth.signIn')" />
-                <b-button v-else
-                          variant="href"
-                          size="sm"
-                          class="top-navbar-link"
-                          @click="openAuthModal"
-                          v-text="user.nameLogin" />
-                <b-button v-if="loggedIn"
-                          variant="href"
-                          size="sm"
-                          @click="signOut">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
-                </b-button>
-            </div>
+    <b-container>
+        <b-row>
+            <b-col cols="12"
+                   class="top-navbar navbar-light">
+                <div class="top-navbar-right">
+                    <div class="social-nav">
+                        <b-dropdown v-if="false"
+                                    no-caret
+                                    class="lang-dropdown">
+                            <template slot="button-content">
+                                <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
+                                     alt="">
+                                <span class="sr-only"
+                                      v-text="$t('language.lang')"></span>
+                            </template>
+                            <b-dropdown-item @click="changeLanguage('en')">
+                                <img :src="require('../../assets/images/flag-en.png')"
+                                     class="mr-2"
+                                     alt="">
+                                <span v-text="$t('language.en')"></span>
+                            </b-dropdown-item>
+                            <b-dropdown-item @click="changeLanguage('de')">
+                                <img :src="require('../../assets/images/flag-de.png')"
+                                     class="mr-2"
+                                     alt="">
+                                <span v-text="$t('language.de')"></span>
+                            </b-dropdown-item>
+                        </b-dropdown>
+                        <b-button variant="href"
+                                  href="https://github.com/proteinevolution/Toolkit"
+                                  target="_blank"
+                                  rel="noopener"
+                                  class="social-link">
+                            <i class="fab fa-github"></i>
+                        </b-button>
+                        <b-button variant="href"
+                                  href="https://www.facebook.com/mpitoolkit"
+                                  target="_blank"
+                                  rel="noopener"
+                                  class="social-link">
+                            <i class="fab fa-facebook-f"></i>
+                        </b-button>
+                        <b-button variant="href"
+                                  href="https://twitter.com/mpitoolkit"
+                                  target="_blank"
+                                  rel="noopener"
+                                  class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </b-button>
+                        <b-button v-if="!loggedIn"
+                                  variant="href"
+                                  size="sm"
+                                  class="top-navbar-link"
+                                  @click="openAuthModal"
+                                  v-text="$t('auth.signIn')" />
+                        <b-button v-else
+                                  variant="href"
+                                  size="sm"
+                                  class="top-navbar-link"
+                                  @click="openAuthModal"
+                                  v-text="user.nameLogin" />
+                        <b-button v-if="loggedIn"
+                                  variant="href"
+                                  size="sm"
+                                  @click="signOut">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                        </b-button>
+                    </div>
 
-            <div class="warnings-container">
-                <b-alert variant="warning"
-                         class="maintenance-alert mb-0"
-                         fade
-                         :show="maintenanceMode">
-                    <i class="fa fa-wrench"></i>
-                    <b v-text="$t('maintenance.headerWarning')"></b>
-                </b-alert>
+                    <div class="warnings-container d-none d-lg-flex">
+                        <MaintenanceMessage />
+                        <div v-if="reconnecting"
+                             class="offline-alert"
+                             @click="reloadApp">
+                            <i class="fas fa-retweet"></i>
+                            <b v-text="$t('reconnecting')"></b>
+                        </div>
+                    </div>
+                </div>
+
+                <router-link to="/"
+                             class="small-logo-link d-md-none mx-auto">
+                    <img :src="require('../../assets/images/minlogo.svg')"
+                         alt="MPI Bioinformatics Toolkit">
+                </router-link>
+
+                <b-navbar-toggle class="d-lg-none mr-auto"
+                                 target="offscreenMenu"
+                                 @click="toggleOffscreenMenu" />
+            </b-col>
+        </b-row>
+        <div class="d-flex d-lg-none justify-content-center">
+            <div class="warnings-container mt-4 mt-md-2">
+                <MaintenanceMessage />
                 <div v-if="reconnecting"
                      class="offline-alert"
                      @click="reloadApp">
@@ -81,27 +100,8 @@
                     <b v-text="$t('reconnecting')"></b>
                 </div>
             </div>
-
-            <div v-if="isAdmin"
-                 class="admin-actions">
-                <b-button variant="href"
-                          size="sm"
-                          class="top-navbar-link mr-2"
-                          @click="toggleMaintenanceMode"
-                          v-text="$t('maintenance.' + (maintenanceMode ? 'end' : 'start'))" />
-            </div>
         </div>
-
-        <router-link to="/"
-                     class="small-logo-link d-md-none mx-auto">
-            <img :src="require('../../assets/images/minlogo.svg')"
-                 alt="MPI Bioinformatics Toolkit">
-        </router-link>
-
-        <b-navbar-toggle class="d-lg-none mr-auto"
-                         target="offscreenMenu"
-                         @click="toggleOffscreenMenu" />
-    </b-col>
+    </b-container>
 </template>
 
 <script lang="ts">
@@ -111,16 +111,14 @@ import {AuthMessage, User} from '@/types/toolkit/auth';
 import {authService} from '@/services/AuthService';
 import Logger from 'js-logger';
 import {loadLanguageAsync, possibleLanguages} from '@/i18n';
-import {backendService} from '@/services/BackendService';
+import MaintenanceMessage from '@/components/navigation/MaintenanceMessage.vue';
 
 const logger = Logger.get('TopNavBar');
 
 export default Vue.extend({
     name: 'TopNavBar',
+    components: { MaintenanceMessage },
     computed: {
-        maintenanceMode(): boolean {
-            return this.$store.state.maintenanceMode;
-        },
         reconnecting(): boolean {
             return this.$store.state.reconnecting;
         },
@@ -130,20 +128,10 @@ export default Vue.extend({
         user(): User | null {
             return this.$store.getters['auth/user'];
         },
-        isAdmin(): boolean {
-            return this.user !== null && this.user.isAdmin;
-        },
     },
     methods: {
         reloadApp(): void {
             window.location.reload();
-        },
-        toggleMaintenanceMode(): void {
-            if (this.maintenanceMode) {
-                backendService.endMaintenance();
-            } else {
-                backendService.startMaintenance();
-            }
         },
         openAuthModal(): void {
             EventBus.$emit('show-modal', {id: 'auth'});
@@ -246,7 +234,7 @@ export default Vue.extend({
   display: flex;
   align-items: center;
 
-  .maintenance-alert, .offline-alert {
+  .offline-alert {
     font-size: 0.8em;
     padding: 0.5rem 1rem;
 
