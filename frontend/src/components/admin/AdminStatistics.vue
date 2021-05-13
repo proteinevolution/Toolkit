@@ -209,6 +209,7 @@ export default Vue.extend({
                 this.statistics = statistics;
                 this.showCharts = true;
 
+                // sort tools by usage
                 this.statistics.totalToolStats.singleToolStats.sort((a, b) => b.count - a.count);
             });
         },
