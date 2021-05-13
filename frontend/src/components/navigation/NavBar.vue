@@ -84,9 +84,6 @@ export default Vue.extend({
             return this.user !== null && this.user.isAdmin;
         },
     },
-    mounted() {
-        EventBus.$on('select-nav-bar-section', this.selectSection);
-    },
     watch: {
         '$route.params': {
             immediate: true,
@@ -114,6 +111,9 @@ export default Vue.extend({
                 }
             },
         },
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     methods: {
         selectSection(section: string): void {
