@@ -9,7 +9,6 @@ import axios from 'axios';
 import './bootstrap.ts';
 import '@/util/LoggerConfig';
 import Logger from 'js-logger';
-import HighchartsVue from 'highcharts-vue'
 
 const devMode: boolean = process.env.NODE_ENV === 'development';
 Vue.config.productionTip = false;
@@ -31,8 +30,6 @@ Vue.use(VueNativeSock, websocketUrl, {
     reconnectionAttempts: 5,
     reconnectionDelay: 2000,
 });
-
-Vue.use(HighchartsVue, {tagName: 'highcharts'});
 
 (window as any).vm = new Vue({
     router,

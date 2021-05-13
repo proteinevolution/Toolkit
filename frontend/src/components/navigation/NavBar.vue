@@ -109,6 +109,9 @@ export default Vue.extend({
             },
         },
     },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
+    },
     methods: {
         selectSection(section: string): void {
             this.userSelectedSection = section;
