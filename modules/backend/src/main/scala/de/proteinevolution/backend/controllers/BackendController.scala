@@ -94,7 +94,7 @@ final class BackendController @Inject() (
     NoCache(
       Ok(
         Json.obj(
-          "message"       -> Json.fromString(maintenanceMessage),
+          "message" -> Json.fromString(maintenanceMessage),
           "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
         )
       )
@@ -118,27 +118,16 @@ final class BackendController @Inject() (
   }
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
-
-
     val fromDateString = request.getQueryString("fromDate").getOrElse("")
     val fromDate = LocalDate.parse(fromDateString, DateTimeFormatter.ISO_DATE)
     val toDateString = request.getQueryString("toDate").getOrElse("")
     val toDate = LocalDate.parse(toDateString, DateTimeFormatter.ISO_DATE)
-    logger.info(fromDate.toString)
-
 
     val statisticsObject: StatisticsObject = StatisticsObject(fromDate, toDate)
-
-    logger.info(
-      request.toString()
-    )
 
     jobDao
       .findAllJobEventLogs()
       .flatMap { jobEventLogs =>
-        logger.info(
-          "Collected " + jobEventLogs.length + " elements from the job event logs."
-        )
         jobEventLogs.foreach(jobEventLog => {
           statisticsObject.addJobEventLog(jobEventLog)
         })
@@ -146,8 +135,6 @@ final class BackendController @Inject() (
           Ok(statisticsObject.asJson),
         )
       }
-
-
   }
 
 }

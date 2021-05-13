@@ -19,7 +19,7 @@ package de.proteinevolution.statistics
 import io.circe.syntax._
 import io.circe.{Encoder, Json}
 
-case class ToolCollectionStatistic(
+case class ToolStatisticCollection(
     var summaryStatistics: ToolStatistic = ToolStatistic("summary"),
     var toolStatistics: Map[String, ToolStatistic] = Map()
 ) {
@@ -38,12 +38,12 @@ case class ToolCollectionStatistic(
   }
 }
 
-  object ToolCollectionStatistic {
+  object ToolStatisticCollection {
 
   val SUMMARY = "summary"
   val TOOLSTATISTICS = "singleToolStats"
 
-  implicit val toolCollectionEncoder : Encoder[ToolCollectionStatistic] = (obj: ToolCollectionStatistic) =>
+  implicit val toolCollectionEncoder : Encoder[ToolStatisticCollection] = (obj: ToolStatisticCollection) =>
     Json.obj(
       (SUMMARY, obj.summaryStatistics.asJson),
       (TOOLSTATISTICS, obj.asList().asJson)

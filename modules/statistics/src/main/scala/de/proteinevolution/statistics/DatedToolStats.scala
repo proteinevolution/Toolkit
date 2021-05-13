@@ -22,7 +22,7 @@ import io.circe.generic.semiauto.deriveEncoder
 case class WeeklyToolStats(
     year: Int,
     week: Int,
-    toolStats: ToolCollectionStatistic
+    toolStats: ToolStatisticCollection
 ) {}
 
 object WeeklyToolStats {
@@ -33,7 +33,7 @@ object WeeklyToolStats {
 case class MonthlyToolStats(
     year: Int,
     month: Int,
-    toolStats: ToolCollectionStatistic
+    toolStats: ToolStatisticCollection
 ) {}
 
 object MonthlyToolStats {

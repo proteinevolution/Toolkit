@@ -24,13 +24,13 @@ import io.circe.syntax.EncoderOps
 import io.circe.{Encoder, Json}
 
 case class StatisticsObject(
-    fromTime: LocalDate,
-    toTime: LocalDate,
-) {
+                             fromTime: LocalDate,
+                             toTime: LocalDate,
+                           ) {
 
-  val totalToolCollection: ToolCollectionStatistic = ToolCollectionStatistic()
-  var monthlyToolCollection: Map[(Int, Int), ToolCollectionStatistic] = Map()
-  var weeklyToolCollection: Map[(Int, Int), ToolCollectionStatistic] = Map()
+  val totalToolCollection: ToolStatisticCollection = ToolStatisticCollection()
+  var monthlyToolCollection: Map[(Int, Int), ToolStatisticCollection] = Map()
+  var weeklyToolCollection: Map[(Int, Int), ToolStatisticCollection] = Map()
 
   // fill monthlyToolCollection with empty ToolCollectionStatistics
   var year: Int = fromTime.getYear
@@ -38,7 +38,7 @@ case class StatisticsObject(
   var toYear: Int = toTime.getYear
   var toMonth: Int = toTime.getMonthValue
   while (year < toYear || (year == toYear && month <= toMonth)) {
-    monthlyToolCollection += (year, month) -> ToolCollectionStatistic()
+    monthlyToolCollection += (year, month) -> ToolStatisticCollection()
     if (month == 12) {
       month = 1
       year += 1
@@ -52,7 +52,7 @@ case class StatisticsObject(
   toYear = toTime.get(IsoFields.WEEK_BASED_YEAR)
   var toWeek: Int = toTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
   while (year < toYear || (year == toYear && week <= toWeek)) {
-    weeklyToolCollection += (year, week) -> ToolCollectionStatistic()
+    weeklyToolCollection += (year, week) -> ToolStatisticCollection()
     val weekOfDecember31: Int = LocalDate.of(year, 12, 31).get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
     val weeksInYear: Int = if (weekOfDecember31 == 1) 52 else weekOfDecember31
     if (week == weeksInYear) {
@@ -68,30 +68,29 @@ case class StatisticsObject(
     val submitEvent: Option[JobEvent] = jobEventLog.events.find(jobEvent => jobEvent.jobState == Submitted)
     // check if submit event with timestamp exists
     submitEvent match {
-      case Some(event) => {
+      case Some(event) =>
         event.timestamp match {
-              case Some(timestamp) =>
-                // check if jobEventLog falls into the min max time range
-                val submitDate: LocalDate = timestamp.toLocalDate
-                if (!submitDate.isBefore(fromTime) && !submitDate.isAfter(toTime)) {
-                  totalToolCollection.addJobEventLog(jobEventLog)
-                }
+          case Some(timestamp) =>
+            // check if jobEventLog falls into the min max time range
+            val submitDate: LocalDate = timestamp.toLocalDate
+            if (!submitDate.isBefore(fromTime) && !submitDate.isAfter(toTime)) {
+              totalToolCollection.addJobEventLog(jobEventLog)
+            }
 
-                val week          = timestamp.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
-                val weekBasedYear = timestamp.get(IsoFields.WEEK_BASED_YEAR)
-                val year          = timestamp.getYear
-                val month         = timestamp.getMonthValue
+            // check if jobEventLog falls into weekly or monthly statistic
+            val week = timestamp.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+            val weekBasedYear = timestamp.get(IsoFields.WEEK_BASED_YEAR)
+            val year = timestamp.getYear
+            val month = timestamp.getMonthValue
 
-                if (monthlyToolCollection.contains((year, month))) {
-                  monthlyToolCollection((year, month)).addJobEventLog(jobEventLog)
-                }
-                if (weeklyToolCollection.contains((weekBasedYear, week))) {
-                  weeklyToolCollection((weekBasedYear, week)).addJobEventLog(jobEventLog)
-                }
-
-              case None =>
+            if (monthlyToolCollection.contains((year, month))) {
+              monthlyToolCollection((year, month)).addJobEventLog(jobEventLog)
+            }
+            if (weeklyToolCollection.contains((weekBasedYear, week))) {
+              weeklyToolCollection((weekBasedYear, week)).addJobEventLog(jobEventLog)
+            }
+          case None =>
         }
-      }
       case None =>
     }
   }
@@ -101,16 +100,17 @@ case class StatisticsObject(
       MonthlyToolStats(
         year = entry._1._1,
         month = entry._1._2,
-        entry._2
+        toolStats = entry._2
       )
     ).sortBy(weeklyToolStats => weeklyToolStats.month).sortBy(weeklyToolStats => weeklyToolStats.year)
   }
+
   def weeklyToolCollectionList(): List[WeeklyToolStats] = {
     weeklyToolCollection.toList.map(entry =>
       WeeklyToolStats(
         year = entry._1._1,
         week = entry._1._2,
-        entry._2
+        toolStats = entry._2
       )
     ).sortBy(weeklyToolStats => weeklyToolStats.week).sortBy(weeklyToolStats => weeklyToolStats.year)
   }
@@ -119,9 +119,9 @@ case class StatisticsObject(
 
 object StatisticsObject {
 
-  val TOTALTOOLSTATISTICS   = "totalToolStats"
+  val TOTALTOOLSTATISTICS = "totalToolStats"
   val MONTHLYTOOLSTATISTICS = "monthlyToolStats"
-  val WEEKLYTOOLSTATISTICS  = "weeklyToolStats"
+  val WEEKLYTOOLSTATISTICS = "weeklyToolStats"
 
   implicit val toolCollectionEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) =>
     Json.obj(
