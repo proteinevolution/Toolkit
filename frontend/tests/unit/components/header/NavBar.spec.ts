@@ -24,6 +24,8 @@ function initNavBar(toolNameRouteParam: string | undefined) {
         computed: {
             tools: () => tools1,
             jobs: () => [],
+            user: () => null,
+            isAdmin: () => false,
         },
     });
 }

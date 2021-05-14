@@ -27,4 +27,5 @@ export interface JobState {
 
 export interface AuthState {
     user: User | null;
+    isAdmin: boolean;
 }
