@@ -49,7 +49,9 @@ const TourMixin = Vue.extend({
                     },
                     before: () => new Promise<void>((resolve) => {
                         EventBus.$emit('select-nav-bar-section', 'search');
-                        resolve();
+                        // Give the navBar a moment to switch tabs before the message
+                        // can be displayed
+                        setTimeout(resolve, 20);
                     }),
                 },
                 {
