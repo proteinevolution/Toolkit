@@ -43,7 +43,7 @@ lazy val jobs = (project in file("modules/jobs"))
   .enablePlugins(PlayScala)
   .dependsOn(common, auth, base, clusterApi, tel, tools, ui, util, user, statistics)
   .settings(scalacOptions += "-Ymacro-annotations")
-  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.11.3").cross(CrossVersion.full)))
+  .settings(addCompilerPlugin(("org.typelevel" %% "kind-projector" % "0.13.0").cross(CrossVersion.full)))
   .disablePlugins(PlayLayoutPlugin)
 
 lazy val user = (project in file("modules/user"))
