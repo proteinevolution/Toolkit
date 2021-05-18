@@ -79,7 +79,6 @@ final class DatabaseMonitor @Inject() (
     userDao.findOldUsers().foreach { users =>
       // Get the userIDs for all found users
       val userIDs = users.map(_.userID)
-      // Store the deleted users in the user statistics
 
       // Finally remove the users with their userID
       userDao.removeUsers(userIDs).onComplete {

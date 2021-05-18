@@ -66,7 +66,7 @@ object JobState {
     override def toInt = 9
   }
 
-  case object UndefinedState extends JobState {
+  case object Undefined extends JobState {
     override def toInt = 10
   }
 
@@ -85,7 +85,7 @@ object JobState {
     ]].values
 
   implicit val jobStateDecoder: Decoder[JobState] = (c: HCursor) =>
-    c.downField("status").as[Int].map(n => states.find(_.toInt == n).getOrElse(UndefinedState))
+    c.downField("status").as[Int].map(n => states.find(_.toInt == n).getOrElse(Undefined))
 
   implicit val jobStateEncoder: Encoder[JobState] = Encoder[Int].contramap(_.toInt)
 

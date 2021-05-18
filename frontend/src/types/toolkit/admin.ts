@@ -1,4 +1,4 @@
-interface singleToolStats {
+interface SingleToolStats {
     toolName: string,
     count: number,
     failedCount: number,
@@ -6,25 +6,25 @@ interface singleToolStats {
     deletedCount: number
 }
 
-interface toolStatsCollection {
-    summary: singleToolStats,
-    singleToolStats: singleToolStats[],
+interface ToolStatsCollection {
+    summary: SingleToolStats,
+    singleToolStats: SingleToolStats[],
 }
 
-interface weeklyToolStats {
+interface WeeklyToolStats {
     week: number,
     year: number,
-    toolStats: toolStatsCollection
+    toolStats: ToolStatsCollection
 }
 
-interface monthlyToolStats {
+interface MonthlyToolStats {
     month: number,
     year: number,
-    toolStats: toolStatsCollection
+    toolStats: ToolStatsCollection
 }
 
 export interface Statistics {
-    totalToolStats: toolStatsCollection,
-    weeklyToolStats: weeklyToolStats[],
-    monthlyToolStats: monthlyToolStats[]
+    totalToolStats: ToolStatsCollection,
+    weeklyToolStats: WeeklyToolStats[],
+    monthlyToolStats: MonthlyToolStats[]
 }

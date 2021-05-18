@@ -16,31 +16,28 @@
 
 package de.proteinevolution.backend.controllers
 
-import java.time.{LocalDate}
-import java.time.format.DateTimeFormatter
-
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.{ ActorRef, ActorSystem }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserAction
-import de.proteinevolution.backend.actors.DatabaseMonitor.{DeleteOldJobs, DeleteOldUsers}
+import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
-import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.statistics.StatisticsObject
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{Inject, Named, Singleton}
 import play.api.Logging
 import play.api.mvc._
 
-import scala.concurrent.{ExecutionContext, Future}
-import de.proteinevolution.statistics.StatisticsObject
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.{ Inject, Named, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class BackendController @Inject() (
     userDao: UserDao,
     jobDao: JobDao,
-    toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
     actorSystem: ActorSystem,
     cc: ControllerComponents,
@@ -94,7 +91,7 @@ final class BackendController @Inject() (
     NoCache(
       Ok(
         Json.obj(
-          "message" -> Json.fromString(maintenanceMessage),
+          "message"       -> Json.fromString(maintenanceMessage),
           "submitBlocked" -> Json.fromBoolean(maintenanceSubmitBlocked)
         )
       )
@@ -119,22 +116,19 @@ final class BackendController @Inject() (
 
   def statistics: Action[AnyContent] = userAction.async { implicit request =>
     val fromDateString = request.getQueryString("fromDate").getOrElse("")
-    val fromDate = LocalDate.parse(fromDateString, DateTimeFormatter.ISO_DATE)
-    val toDateString = request.getQueryString("toDate").getOrElse("")
-    val toDate = LocalDate.parse(toDateString, DateTimeFormatter.ISO_DATE)
+    val fromDate       = LocalDate.parse(fromDateString, DateTimeFormatter.ISO_DATE)
+    val toDateString   = request.getQueryString("toDate").getOrElse("")
+    val toDate         = LocalDate.parse(toDateString, DateTimeFormatter.ISO_DATE)
 
     val statisticsObject: StatisticsObject = StatisticsObject(fromDate, toDate)
 
-    jobDao
-      .findAllJobEventLogs()
-      .flatMap { jobEventLogs =>
-        jobEventLogs.foreach(jobEventLog => {
-          statisticsObject.addJobEventLog(jobEventLog)
-        })
-        Future.successful(
-          Ok(statisticsObject.asJson),
-        )
-      }
+    jobDao.findAllJobEventLogs().flatMap { jobEventLogs =>
+      jobEventLogs.foreach(jobEventLog => {
+        statisticsObject.addJobEventLog(jobEventLog)
+      })
+      Future.successful(
+        Ok(statisticsObject.asJson)
+      )
+    }
   }
-
 }

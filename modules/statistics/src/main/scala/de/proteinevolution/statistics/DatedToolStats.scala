@@ -23,10 +23,9 @@ case class WeeklyToolStats(
     year: Int,
     week: Int,
     toolStats: ToolStatisticCollection
-) {}
+)
 
 object WeeklyToolStats {
-
   implicit val toolStatsEncoder: Encoder[WeeklyToolStats] = deriveEncoder[WeeklyToolStats]
 }
 
@@ -34,9 +33,8 @@ case class MonthlyToolStats(
     year: Int,
     month: Int,
     toolStats: ToolStatisticCollection
-) {}
+)
 
 object MonthlyToolStats {
-
   implicit val toolStatsEncoder: Encoder[MonthlyToolStats] = deriveEncoder[MonthlyToolStats]
 }

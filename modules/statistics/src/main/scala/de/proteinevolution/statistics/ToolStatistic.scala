@@ -17,22 +17,20 @@
 package de.proteinevolution.statistics
 
 import de.proteinevolution.common.models.database.jobs.JobState
+import de.proteinevolution.common.models.database.jobs.JobState._
 import io.circe.Encoder
 import io.circe.generic.semiauto._
-import de.proteinevolution.common.models.database.jobs.JobState._
 
 case class ToolStatistic(
     toolName: String,
     var count: Int = 0,
     var failedCount: Int = 0,
     var deletedCount: Int = 0,
-    var internalCount: Int = 0,
+    var internalCount: Int = 0
 ) {
 
   def addJobEventLog(jobEventLog: JobEventLog): Unit = {
-    val jobStates: List[JobState] = jobEventLog.events.map(jobEvent =>
-      jobEvent.jobState
-    )
+    val jobStates: List[JobState] = jobEventLog.events.map(jobEvent => jobEvent.jobState)
     count += 1
     if (jobStates.contains(Error)) {
       failedCount += 1
@@ -44,10 +42,8 @@ case class ToolStatistic(
       internalCount += 1
     }
   }
-
 }
 
 object ToolStatistic {
-
   implicit val toolStatsEncoder: Encoder[ToolStatistic] = deriveEncoder[ToolStatistic]
 }
