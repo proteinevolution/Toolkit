@@ -77,7 +77,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';

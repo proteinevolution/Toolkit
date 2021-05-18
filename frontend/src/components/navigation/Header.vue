@@ -4,16 +4,16 @@
                  class="tour-banner"
                  :show="showTourBanner">
             <p class="mb-2">
-                {{ this.$t('tour.banner.message') }}
+                {{ $t('tour.banner.message') }}
             </p>
             <div>
                 <button class="tour-banner__ignore-button"
                         @click="ignoreTour">
-                    {{ this.$t('tour.banner.ignore') }}
+                    {{ $t('tour.banner.ignore') }}
                 </button>
                 <button class="tour-banner__start-button"
                         @click="startTour">
-                    {{ this.$t('tour.banner.start') }}
+                    {{ $t('tour.banner.start') }}
                 </button>
             </div>
         </b-alert>

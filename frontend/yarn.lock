@@ -7314,6 +7314,11 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
+jump.js@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/jump.js/-/jump.js-1.0.2.tgz#e0641b47f40a38f2139c25fda0500bf28e43015a"
+  integrity sha1-4GQbR/QKOPITnCX9oFAL8o5DAVo=
+
 junk@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/junk/-/junk-3.1.0.tgz#31499098d902b7e98c5d9b9c80f43457a88abfa1"
@@ -9426,7 +9431,7 @@ pnp-webpack-plugin@^1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
-popper.js@^1.16.1:
+popper.js@^1.16.0, popper.js@^1.16.1:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
   integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
@@ -12353,6 +12358,16 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
+vue-tour@^1.5.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/vue-tour/-/vue-tour-1.6.0.tgz#862e9b271bfcc0b59a962e3e7c4a4eee85f0dc59"
+  integrity sha512-INVkuv3kIqulM3R90W1EF4XzFzOt34y6F0BEOunH+DcIwRVrWvBT/HXBu+Dq0RDJswxYbak2JQto58ep3rULRw==
+  dependencies:
+    hash-sum "^2.0.0"
+    jump.js "^1.0.2"
+    popper.js "^1.16.0"
+    vue "^2.6.10"
+
 vue2-scrollbar@^0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/vue2-scrollbar/-/vue2-scrollbar-0.0.3.tgz#2db07eea49f1330e483c2b1312862f37711c1d57"
@@ -12361,7 +12376,7 @@ vue2-scrollbar@^0.0.3:
     vue "^2.4.2"
     vue-template-compiler "^2.4.2"
 
-vue@^2.2.6, vue@^2.4.2, vue@^2.6.12:
+vue@^2.2.6, vue@^2.4.2, vue@^2.6.10, vue@^2.6.12:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
