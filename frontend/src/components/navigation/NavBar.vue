@@ -89,9 +89,6 @@ export default Vue.extend({
         },
         ...mapStores(useAuthStore, useToolsStore, useJobsStore),
     },
-    mounted() {
-        EventBus.$on('select-nav-bar-section', this.selectSection);
-    },
     watch: {
         '$route.params': {
             immediate: true,
@@ -119,6 +116,9 @@ export default Vue.extend({
                 }
             },
         },
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     methods: {
         selectSection(section: string): void {
