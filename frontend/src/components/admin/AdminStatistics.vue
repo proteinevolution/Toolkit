@@ -43,6 +43,7 @@ import {Chart} from 'highcharts-vue';
 import {Statistics} from '@/types/toolkit/admin';
 import moment from 'moment';
 import {backendService} from '@/services/BackendService';
+import {Options, SeriesBarOptions} from 'highcharts';
 
 export default Vue.extend({
     name: "AdminStatistics",
@@ -58,7 +59,7 @@ export default Vue.extend({
         };
     },
     computed: {
-        BarChartOptions(): any {
+        BarChartOptions(): Options {
             return {
                 title: {
                     text: 'Tool Stats',
@@ -82,7 +83,7 @@ export default Vue.extend({
                 series: [{
                     name: 'Total Total Tool Count',
                     data: this.totalChartData,
-                }],
+                }] as SeriesBarOptions[],
                 chart: {
                     type: 'column',
                 },
@@ -91,7 +92,7 @@ export default Vue.extend({
                 }
             };
         },
-        WeeklyChartOptions(): any {
+        WeeklyChartOptions(): Options {
             return {
                 title: {
                     text: 'Weekly Total Tool Stats',
@@ -115,7 +116,7 @@ export default Vue.extend({
                 series: [{
                     name: 'Total Tool Count',
                     data: this.weeklyChartData,
-                }],
+                }] as SeriesBarOptions[],
                 chart: {
                     type: 'line',
                 },
@@ -124,7 +125,7 @@ export default Vue.extend({
                 }
             };
         },
-        MonthlyChartOptions(): any {
+        MonthlyChartOptions(): Options {
             return {
                 title: {
                     text: 'Monthly Tool Stats',
@@ -148,7 +149,7 @@ export default Vue.extend({
                 series: [{
                     name: 'Total Tool Count',
                     data: this.monthlyChartData,
-                }],
+                }] as SeriesBarOptions[],
                 chart: {
                     type: 'line',
                 },
