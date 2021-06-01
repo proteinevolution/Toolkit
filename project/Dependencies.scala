@@ -4,7 +4,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.6.14"
-  val circeV      = "0.13.0"
+  val circeV      = "0.14.1"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
@@ -23,17 +23,17 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"          % "8.0.1",
     "com.github.pathikrit" %% "better-files"               % "3.9.1",
     "org.mindrot"           % "jbcrypt"                    % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.3-play28")
+    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.4-play28")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.3")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.4")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    "org.typelevel"       %% "cats-core"            % "2.6.0",
-    "org.typelevel"       %% "cats-effect"          % "3.1.0",
-    "co.fs2"              %% "fs2-core"             % "3.0.2",
-    "co.fs2"              %% "fs2-io"               % "3.0.2",
-    "com.chuusai"         %% "shapeless"            % "2.3.6",
+    "org.typelevel"       %% "cats-core"            % "2.6.1",
+    "org.typelevel"       %% "cats-effect"          % "3.1.1",
+    "co.fs2"              %% "fs2-core"             % "3.0.4",
+    "co.fs2"              %% "fs2-io"               % "3.0.4",
+    "com.chuusai"         %% "shapeless"            % "2.3.7",
     "com.dripower"        %% "play-circe"           % "2812.0",
     "io.circe"            %% "circe-generic"        % circeV,
     "io.circe"            %% "circe-generic-extras" % circeV,
@@ -47,7 +47,7 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.9.0"     % Test,
+    "org.mockito"               % "mockito-core"        % "3.10.0"    % Test,
     "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
     "org.awaitility"            % "awaitility"          % "4.1.0"     % Test
   )
