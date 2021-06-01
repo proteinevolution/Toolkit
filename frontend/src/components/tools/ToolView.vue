@@ -48,7 +48,7 @@
                                            class="submit-button"
                                            :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
-                                           data-v-step="submit"
+                                           :data-v-step="isJobView ? '' : 'submit'"
                                            variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
