@@ -82,7 +82,10 @@ export default Vue.extend({
                 },
                 series: [{
                     name: 'Total Tool Count',
-                    data: this.totalChartData,
+                    data: this.totalChartData('count'),
+                }, {
+                    name: 'Internal Tool Count',
+                    data: this.totalChartData('internalCount'),
                 }] as SeriesBarOptions[],
                 chart: {
                     type: 'column',
@@ -115,7 +118,10 @@ export default Vue.extend({
                 },
                 series: [{
                     name: 'Total Tool Count',
-                    data: this.weeklyChartData,
+                    data: this.weeklyChartData('count'),
+                }, {
+                    name: 'Internal Tool Count',
+                    data: this.weeklyChartData('internalCount'),
                 }] as SeriesBarOptions[],
                 chart: {
                     type: 'line',
@@ -148,7 +154,10 @@ export default Vue.extend({
                 },
                 series: [{
                     name: 'Total Tool Count',
-                    data: this.monthlyChartData,
+                    data: this.monthlyChartData('count'),
+                }, {
+                    name: 'Internal Tool Count',
+                    data: this.monthlyChartData('internalCount'),
                 }] as SeriesBarOptions[],
                 chart: {
                     type: 'line',
@@ -165,13 +174,6 @@ export default Vue.extend({
                 return [];
             }
         },
-        totalChartData(): number[] {
-            if (this.statistics.totalToolStats) {
-                return this.statistics.totalToolStats.singleToolStats.map(stats => stats.count);
-            } else {
-                return [];
-            }
-        },
         weeklyChartLabels(): string[] {
             if (this.statistics.weeklyToolStats) {
                 return this.statistics.weeklyToolStats.map(stats => `${stats.year} - ${stats.week}`);
@@ -179,23 +181,9 @@ export default Vue.extend({
                 return [];
             }
         },
-        weeklyChartData(): number[] {
-            if (this.statistics.weeklyToolStats) {
-                return this.statistics.weeklyToolStats.map(stats => stats.toolStats.summary.count)
-            } else {
-                return [];
-            }
-        },
         monthlyChartLabels(): string[] {
             if (this.statistics.monthlyToolStats) {
                 return this.statistics.monthlyToolStats.map(stats => `${stats.year} - ${stats.month}`);
-            } else {
-                return [];
-            }
-        },
-        monthlyChartData(): number[] {
-            if (this.statistics.monthlyToolStats) {
-                return this.statistics.monthlyToolStats.map(stats => stats.toolStats.summary.count)
             } else {
                 return [];
             }
@@ -211,6 +199,27 @@ export default Vue.extend({
                 // sort tools by usage
                 this.statistics.totalToolStats.singleToolStats.sort((a, b) => b.count - a.count);
             });
+        },
+        totalChartData(dataType: string): number[] {
+            if (this.statistics.totalToolStats) {
+                return this.statistics.totalToolStats.singleToolStats.map(stats => stats[dataType]);
+            } else {
+                return [];
+            }
+        },
+        weeklyChartData(dataType: string): number[] {
+            if (this.statistics.weeklyToolStats) {
+                return this.statistics.weeklyToolStats.map(stats => stats.toolStats.summary[dataType])
+            } else {
+                return [];
+            }
+        },
+        monthlyChartData(dataType: string): number[] {
+            if (this.statistics.monthlyToolStats) {
+                return this.statistics.monthlyToolStats.map(stats => stats.toolStats.summary[dataType])
+            } else {
+                return [];
+            }
         },
     }
 });
