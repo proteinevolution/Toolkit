@@ -149,8 +149,16 @@ const TourMixin = Vue.extend({
                     target: '[data-v-step="job-list"]',
                     content: this.$t('tour.content.jobList'),
                     params: {
-                        placement: 'right'
-                    }
+                        placement: 'top'
+                    },
+                    before: (type: string) => new Promise<void>((resolve) => {
+                        const poll = setInterval(() => {
+                            if (document.querySelector('[data-v-step="job-list"]')) {
+                                clearInterval(poll);
+                                resolve();
+                            }
+                        }, 100);
+                    })
                 },
                 {
                     target: '[data-v-step="job-manager"]',
@@ -191,6 +199,8 @@ const TourMixin = Vue.extend({
             if (this.tour.currentStep === 2 && path === '/tools/hhpred') {
                 this.tour.nextStep();
             } else if (this.tour.currentStep === 10 && path === '/jobmanager') {
+                this.tour.nextStep();
+            } else if (this.tour.currentStep === 9 && path.includes('/jobs')) {
                 this.tour.nextStep();
             }else {
                 this.tour.stop();
