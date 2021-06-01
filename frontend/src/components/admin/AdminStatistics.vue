@@ -53,8 +53,8 @@ export default Vue.extend({
     data() {
         return {
             showCharts: false,
-            fromDate: '',
-            toDate: '',
+            fromDate: moment().subtract(1, "years").format('YYYY-MM-DD'),
+            toDate: moment().format('YYYY-MM-DD'),
             statistics: {} as Statistics
         };
     },
@@ -81,7 +81,7 @@ export default Vue.extend({
                     },
                 },
                 series: [{
-                    name: 'Total Total Tool Count',
+                    name: 'Total Tool Count',
                     data: this.totalChartData,
                 }] as SeriesBarOptions[],
                 chart: {
@@ -95,7 +95,7 @@ export default Vue.extend({
         WeeklyChartOptions(): Options {
             return {
                 title: {
-                    text: 'Weekly Total Tool Stats',
+                    text: 'Weekly Tool Stats',
                 },
                 xAxis: {
                     title: {
@@ -203,9 +203,7 @@ export default Vue.extend({
     },
     methods: {
         loadStatistics(): void {
-            const fromDate = this.fromDate === '' ? '2000-01-01' : this.fromDate;
-            const toDate = this.toDate === '' ? moment().format('YYYY-MM-DD') : this.toDate;
-            backendService.fetchStatistics(fromDate, toDate).then((statistics) => {
+            backendService.fetchStatistics(this.fromDate, this.toDate).then((statistics) => {
                 console.log(statistics);
                 this.statistics = statistics;
                 this.showCharts = true;
