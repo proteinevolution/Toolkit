@@ -7,7 +7,8 @@
         sequences and unzip it.
         <br><br>
         Download the CLANS application here: <a
-            href="/clans/clans.jar" download><b>clans.jar</b></a>
+            href="/clans/clans.jar"
+            download><b>clans.jar</b></a>
         and visualize your unzipped CLANS file (<b>{{ job.jobID + '.clans' }}</b>) using the 'Load Run' option in the
         'File' menu. Please refer to the
         <a href="/clans/clans_userguide.pdf"

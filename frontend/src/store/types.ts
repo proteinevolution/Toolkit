@@ -9,6 +9,7 @@ export interface LoadingState {
 export interface RootState {
     loading: LoadingState;
     offscreenMenuShow: boolean;
+    tourFinished: boolean;
     maintenance: MaintenanceState;
     reconnecting: boolean;
     clusterWorkload: number;
