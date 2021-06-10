@@ -18,7 +18,7 @@
 
         <Loading v-if="loading"
                  :message="$t('loading')"
-                 class="float-right"
+                 class="float-right mb-3"
                  :size="24" />
 
         <b-form-textarea :value="displayData"
