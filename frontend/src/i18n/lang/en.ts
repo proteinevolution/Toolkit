@@ -8,6 +8,7 @@ export default {
         back: 'Back',
         cancel: 'Cancel',
         submit: 'Submit',
+        download: 'Download',
         loading: 'Loading...',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',

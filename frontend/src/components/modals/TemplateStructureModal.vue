@@ -13,6 +13,12 @@
         <div ref="viewport"
              class="stage"
              style="width: 100%; height: 500px"></div>
+
+        <b-btn v-if="!loading"
+               variant="primary"
+               class="mt-3"
+               @click="download"
+               v-text="$t('download')" />
     </BaseModal>
 </template>
 
@@ -41,6 +47,7 @@ export default Vue.extend({
         return {
             loading: true,
             stage: undefined as any,
+            file: '',
         };
     },
     beforeDestroy() {
@@ -68,6 +75,9 @@ export default Vue.extend({
         resetView(): void {
             (this.$refs.viewport as HTMLElement).innerHTML = '';
         },
+        download(): void {
+            resultsService.downloadAsFile(this.file, `${this.accession}.pdb`);
+        },
         async loadData() {
             this.loading = true;
             try {
@@ -77,6 +87,7 @@ export default Vue.extend({
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
                     return;
                 }
+                this.file = response.data;
                 const ext: string = this.getExtension(response.filename);
                 if (this.stage) {
                     this.stage.dispose();
@@ -86,7 +97,7 @@ export default Vue.extend({
                 this.stage = new ngl.Stage(this.$refs.viewport, {
                     backgroundColor: 'white',
                 });
-                this.stage.loadFile(new Blob([response.data]),
+                this.stage.loadFile(new Blob([this.file]),
                     {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
                 window.addEventListener('resize', this.resize);
                 this.resize();
