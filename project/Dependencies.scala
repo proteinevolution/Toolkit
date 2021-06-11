@@ -34,7 +34,7 @@ object Dependencies {
     "co.fs2"              %% "fs2-core"             % "3.0.4",
     "co.fs2"              %% "fs2-io"               % "3.0.4",
     "com.chuusai"         %% "shapeless"            % "2.3.7",
-    "com.dripower"        %% "play-circe"           % "2814.1",
+    "com.dripower"        %% "play-circe"           % "2814.2",
     "io.circe"            %% "circe-generic"        % circeV,
     "io.circe"            %% "circe-generic-extras" % circeV,
     ("io.circe"           %% "circe-bson"           % "0.5.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
