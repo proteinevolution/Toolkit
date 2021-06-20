@@ -32,12 +32,13 @@ object LinkUtil {
   private val ncbiReg    = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
   private val ecodReg    = """(ECOD_[0-9]+)_.*""".r
 
-  private val envNrNameReg   = """(env.*|nr.*)""".r
-  private val pdbNameReg     = """(pdb.*)""".r
-  private val uniprotNameReg = """(uniprot.*)""".r
-  private val unirefNameReg  = """(uniref.*)""".r
-  private val pfamNameReg    = """(Pfam.*)""".r
-  private val keggocNameReg  = """(.*_OC.[0-9]+)""".r
+  private val nrNameReg                    = """(nr.*)""".r
+  private val prokaryoticProteasomeNameReg = """(prokaryotic_proteasome.*)""".r
+  private val pdbNameReg                   = """(pdb.*)""".r
+  private val uniprotNameReg               = """(uniprot.*)""".r
+  private val unirefNameReg                = """(uniref.*)""".r
+  private val pfamNameReg                  = """(Pfam.*)""".r
+  private val keggocNameReg                = """(.*_OC.[0-9]+)""".r
 
   private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
@@ -83,12 +84,13 @@ object LinkUtil {
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
     db match {
-      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
-      case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
-      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id, id)
-      case unirefNameReg(_)  => generateLink(unirefBaseLink, id, id)
-      case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-      case _                 => id
+      case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, id, id)
+      case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, id, id)
+      case pdbNameReg(_)                   => generateLink(pdbBaseLink, idPdb, id)
+      case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id, id)
+      case unirefNameReg(_)                => generateLink(unirefBaseLink, id, id)
+      case pfamNameReg(_)                  => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case _                               => id
     }
   }
 
@@ -97,11 +99,12 @@ object LinkUtil {
     val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
     db match {
-      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
-      case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
-      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
-      case unirefNameReg(_)  => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
+      case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case pdbNameReg(_)                   => generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case pfamNameReg(_)                  => generateLink(cddBaseLink, idCDD, "CDD")
+      case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
+      case unirefNameReg(_)                => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
     }
   }
 
