@@ -21,15 +21,15 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.results.LinkUtil
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.http.ContentTypes
-import play.api.mvc.{AbstractController, Action, AnyContent}
+import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class FileController @Inject()(
+class FileController @Inject() (
     ctx: HHContext,
     config: Configuration,
     constants: ConstantsV2,
@@ -42,9 +42,10 @@ class FileController @Inject()(
   def getStructureFile(accession: String): Action[AnyContent] = Action { implicit request =>
     val db = LinkUtil.identifyDatabase(accession)
     val ending = db match {
-      case "scop"  => "pdb"
-      case "ecod"  => "pdb"
-      case "mmcif" => "cif"
+      case "scop"   => "pdb"
+      case "ecod"   => "pdb"
+      case "mmcif"  => "cif"
+      case "keggoc" => "pdb"
     }
     val filepath = db match {
       case "scop" =>
@@ -53,6 +54,8 @@ class FileController @Inject()(
         config.get[String]("tel.env.ECOD")
       case "mmcif" =>
         config.get[String]("tel.env.CIF")
+      case "keggoc" =>
+        config.get[String]("tel.env.KEGGOC")
     }
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$accession.$ending")).as(BINARY)
   }
