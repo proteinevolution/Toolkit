@@ -183,7 +183,14 @@ export default {
                     <p><a href = http://www.jcvi.org/cgi-bin/tigrfams/index.cgi target="_blank" rel="noopener">
                         PRotein K(c)lusters (PRK)</a> is an NCBI collection of related protein sequences (clusters)
                         consisting of Reference Sequence proteins encoded by complete prokaryotic and chloroplast
-                        plasmids and genomes.</p>`,
+                        plasmids and genomes.</p>
+                        
+                    <em>UniProt-SwissProt-viral70</em>
+                    <p>This database comprises profile HMMs for expert curated viral protein sequences from the UniProt database,
+                    filtered for a maximum pairwise sequence identity of 70%.</p>    
+
+                    <em>Prokaryotic_proteasome_homologs</em>
+                    <p>This database comprises profile HMMs for several newly discovered prokaryotic proteasome homologs.</p>`,
                     },
                     {
                         title: 'Select proteomes',

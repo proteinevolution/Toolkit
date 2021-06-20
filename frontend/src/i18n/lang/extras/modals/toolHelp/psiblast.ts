@@ -37,6 +37,8 @@ export default {
                         <a href="https://www.uniprot.org/help/uniref" target="_blank" rel="noopener">UniRef database</a>
                         offers clustered sets of sequences from the UniProtKB and selected UniParc records. UniRef90 is
                         a filtered down version of UniRef100.</li>
+                        <li><b>prokaryotic_proteasome_homologs:</b> this database comprises protein sequences of several
+                        newly discovered prokaryotic proteasome homologs.</li>
                     </ul>`,
                     },
                     {
