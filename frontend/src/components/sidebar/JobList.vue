@@ -119,7 +119,7 @@ export default Vue.extend({
             if (name === 'jobs') {
                 const jobID: string = params.jobID;
                 const index: number = this.sortedJobs.findIndex((job: Job) => job.jobID === jobID);
-                console.log(`looking for job ${jobID} at index ${index}`);
+                //console.log(`looking for job ${jobID} at index ${index}`);
                 this.startIndex = Math.max(0, Math.floor(index / this.itemsPerPage));
             }
         },

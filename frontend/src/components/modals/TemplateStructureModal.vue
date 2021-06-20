@@ -59,7 +59,7 @@ export default Vue.extend({
             this.loadData();
         },
         getExtension(filename: string): string {
-            return filename.split('.')[1];
+            return filename.split('.').reverse()[0];
         },
         resize(): void {
             const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);

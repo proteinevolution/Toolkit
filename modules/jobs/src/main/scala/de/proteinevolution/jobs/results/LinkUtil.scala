@@ -20,23 +20,24 @@ import scala.collection.mutable.ArrayBuffer
 
 object LinkUtil {
 
-  private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
-  private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
-  private val smartReg      = """(^SM0[0-9]{4})""".r
-  private val ncbiCDReg     = """(^[cs]d[0-9]{5})""".r
-  private val cogkogReg     = """(^[CK]OG[0-9]{4})""".r
-  private val tigrReg       = """(^TIGR[0-9]{5})""".r
-  private val prkReg        = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
-  private val mmcifReg      = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
-  private val pfamReg       = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
-  private val ncbiReg       = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-  private val ecodReg       = """(ECOD_[0-9]+)_.*""".r
+  private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
+  private val scopReg    = """([defgh][0-9a-zA-Z\.\_]+)""".r
+  private val smartReg   = """(^SM0[0-9]{4})""".r
+  private val ncbiCDReg  = """(^[cs]d[0-9]{5})""".r
+  private val cogkogReg  = """(^[CK]OG[0-9]{4})""".r
+  private val tigrReg    = """(^TIGR[0-9]{5})""".r
+  private val prkReg     = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
+  private val mmcifReg   = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
+  private val pfamReg    = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
+  private val ncbiReg    = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
+  private val ecodReg    = """(ECOD_[0-9]+)_.*""".r
 
   private val envNrNameReg   = """(env.*|nr.*)""".r
   private val pdbNameReg     = """(pdb.*)""".r
   private val uniprotNameReg = """(uniprot.*)""".r
   private val unirefNameReg  = """(uniref.*)""".r
   private val pfamNameReg    = """(Pfam.*)""".r
+  private val keggocNameReg  = """(.*_OC.[0-9]+)""".r
 
   private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
@@ -51,6 +52,7 @@ object LinkUtil {
   private val unirefBaseLink      = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val keggocBaseLink      = "https://www.genome.jp/tools-bin/ocv?entry=OC."
 
   /* GENERATING LINKS FOR HHPRED */
 
@@ -70,7 +72,10 @@ object LinkUtil {
       case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
       case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
-      case _         => id
+      case "keggoc" =>
+        val idKeggoc = id.split("OC.").last; generateLink(keggocBaseLink, idKeggoc, id)
+
+      case _ => id
     }
   }
 
@@ -107,10 +112,11 @@ object LinkUtil {
   def displayStructLink(id: String): Boolean = {
     val db = identifyDatabase(id)
     db match {
-      case "scop"  => true
-      case "mmcif" => true
-      case "ecod"  => true
-      case _       => false
+      case "scop"   => true
+      case "mmcif"  => true
+      case "ecod"   => true
+      case "keggoc" => true
+      case _        => false
     }
   }
 
@@ -161,6 +167,7 @@ object LinkUtil {
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
     case ncbiReg(_)       => "ncbi"
+    case keggocNameReg(_) => "keggoc"
     case _: String        => ""
   }
 }
