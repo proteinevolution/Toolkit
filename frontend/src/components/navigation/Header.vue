@@ -1,5 +1,21 @@
 <template>
     <b-container class="header">
+        <b-alert variant="primary"
+                 class="tour-banner"
+                 dismissible
+                 :show="showTourBanner">
+            <p class="mb-2">
+                {{ this.$t('tour.banner.message') }}
+            </p>
+            <b-button variant="link"
+                      @click="ignoreTour">
+                {{ this.$t('tour.banner.ignore') }}
+            </b-button>
+            <b-button variant="primary"
+                      @click="startTour">
+                {{ this.$t('tour.banner.start') }}
+            </b-button>
+        </b-alert>
         <b-row>
             <TopNavBar />
         </b-row>
@@ -35,6 +51,27 @@ export default Vue.extend({
         NavBar,
         TopNavBar,
     },
+    data() {
+        return {
+            showingTour: false,
+        };
+    },
+    computed: {
+        showTourBanner(): boolean {
+            return !this.showingTour && !this.$store.state.tourFinished;
+        },
+    },
+    methods: {
+        ignoreTour(): void {
+            this.$store.commit('setTourFinished');
+        },
+        startTour(): void {
+            this.showingTour = true;
+            setTimeout(() => {
+                this.$tours['toolkitTour'].start();
+            }, 300);
+        },
+    },
 });
 </script>
 
@@ -51,4 +88,11 @@ export default Vue.extend({
     width: 180px;
   }
 }
+
+.tour-banner {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}
+
 </style>

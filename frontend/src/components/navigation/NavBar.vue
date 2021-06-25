@@ -20,14 +20,16 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <transition-group name="list-complete"
+                        <transition-group data-v-step="tool-bar"
+                                          name="list-complete"
                                           tag="ul"
                                           class="navbar-nav lower-nav"
                                           :style="{borderTopColor: sectionColor}">
-                            <b-nav-item v-for="tool in displayedTools"
+                            <b-nav-item v-for="(tool, index) in displayedTools"
                                         :key="tool.name"
                                         v-b-tooltip.hover.bottom
                                         class="list-complete-item"
+                                        :data-v-step="index === 1 ? 'tool' : ''"
                                         :to="'/tools/' + tool.name"
                                         :title="tool.description">
                                 {{ tool.longname }}
@@ -46,6 +48,7 @@ import {Tool} from '@/types/toolkit/tools';
 import {Job} from '@/types/toolkit/jobs';
 import {sectionColors, sections} from '@/conf/ToolSections';
 import {User} from '@/types/toolkit/auth';
+import EventBus from '@/util/EventBus';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -108,6 +111,9 @@ export default Vue.extend({
                 }
             },
         },
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     methods: {
         selectSection(section: string): void {

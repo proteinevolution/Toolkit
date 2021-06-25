@@ -23,6 +23,7 @@ const store: StoreOptions<RootState> = {
             login: false,
             logout: false,
         },
+        tourFinished: localStorage.getItem('tourFinished') === '1',
         offscreenMenuShow: false,
         maintenance: {
             message: '',
@@ -47,6 +48,10 @@ const store: StoreOptions<RootState> = {
         },
         setOffscreenMenuShow(state, value: boolean) {
             state.offscreenMenuShow = value;
+        },
+        setTourFinished(state) {
+            state.tourFinished = true;
+            localStorage.setItem('tourFinished', '1');
         },
         updateNow(state) {
             state.now = Date.now();

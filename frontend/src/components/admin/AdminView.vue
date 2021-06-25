@@ -4,7 +4,6 @@
         <div class="admin-header">
             <h1>Admin Page</h1>
         </div>
-
         <b-card>
             <h4>Maintenance</h4>
             <b-form-group>
@@ -35,6 +34,8 @@
                     <span v-else>Reset</span>
                 </b-button>
             </b-form-group>
+            <h4>Statistics</h4>
+            <admin-statistics />
         </b-card>
     </div>
     <div v-else></div>
@@ -46,18 +47,20 @@ import {backendService} from '@/services/BackendService';
 import {User} from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
+import AdminStatistics from './AdminStatistics.vue';
 
 export default hasHTMLTitle.extend({
     name: 'AdminView',
     components: {
         Loading,
         Switches,
+        AdminStatistics,
     },
     data() {
         return {
             maintenance: {
-              message: this.$store.state.maintenance.message,
-              submitBlocked: this.$store.state.maintenance.submitBlocked,
+                message: this.$store.state.maintenance.message,
+                submitBlocked: this.$store.state.maintenance.submitBlocked,
             },
             maintenanceStateLoading: false,
         };
@@ -94,13 +97,13 @@ export default hasHTMLTitle.extend({
 
 <style lang="scss" scoped>
 .admin-header {
-  height: 2.75rem;
+    height: 2.75rem;
 
-  h1 {
-    color: $primary;
-    font-weight: bold;
-    font-size: 1.25em;
-    line-height: 1.6;
-  }
+    h1 {
+        color: $primary;
+        font-weight: bold;
+        font-size: 1.25em;
+        line-height: 1.6;
+    }
 }
 </style>
