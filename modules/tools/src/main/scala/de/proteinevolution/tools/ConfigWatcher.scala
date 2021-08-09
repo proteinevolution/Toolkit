@@ -22,10 +22,10 @@ import better.files._
 import cats.effect.{IO, Resource}
 import fs2.Stream
 import fs2.io.file.Files
-import fs2.io.Watcher
+import fs2.io.file.{Path => FS2Path}
+import fs2.io.file.Watcher
 import cats.effect.unsafe.implicits.global
 
-import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{Inject, Singleton}
 
@@ -44,7 +44,7 @@ final private[tools] class ConfigWatcher @Inject()(
       new IllegalArgumentException(s"configured file $REFRESH_FILE is missing"))
     path = refreshFile.toFile.path
     _ <- IO(logger.info(s"using $path as trigger for param reload"))
-  } yield path)
+  } yield FS2Path.fromNioPath(path))
     .flatMap { p =>
       watch(p, toolConfig.ref).repeat.compile.drain
     }
@@ -52,7 +52,7 @@ final private[tools] class ConfigWatcher @Inject()(
 
   // fs2 file watcher
   private[this] def watch(
-      path: Path,
+      path: FS2Path,
       ref: AtomicReference[Map[String, Tool]]
   ): Stream[IO, Unit] =
     Stream
