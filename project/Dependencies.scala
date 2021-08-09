@@ -23,14 +23,14 @@ object Dependencies {
     "com.typesafe.play"    %% "play-mailer-guice"          % "8.0.1",
     "com.github.pathikrit" %% "better-files"               % "3.9.1",
     "org.mindrot"           % "jbcrypt"                    % "0.4",
-    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.4-play28")
+    ("org.reactivemongo"   %% "play2-reactivemongo"        % "1.0.6-play28")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.4")
+    ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.6")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % "2.6.1",
-    "org.typelevel"       %% "cats-effect"          % "3.1.1",
+    "org.typelevel"       %% "cats-effect"          % "3.2.2",
     "co.fs2"              %% "fs2-core"             % "3.1.0",
     "co.fs2"              %% "fs2-io"               % "3.1.0",
     "com.chuusai"         %% "shapeless"            % "2.3.7",
@@ -47,8 +47,8 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "3.11.1"    % Test,
-    "com.softwaremill.macwire" %% "macros"              % "2.3.7"     % Test,
+    "org.mockito"               % "mockito-core"        % "3.11.2"    % Test,
+    "com.softwaremill.macwire" %% "macros"              % "2.4.0"     % Test,
     "org.awaitility"            % "awaitility"          % "4.1.0"     % Test
   )
 

@@ -246,7 +246,7 @@ export default {
             resultsForType: 'Results for repeats type {type}:',
             numResults: 'No. of repeats: {num}',
             pValue: 'P-value: {pval}',
-            length: 'Length: {pval}',
+            length: 'Length: {len}',
         },
         templateAlignment: {
             title: 'Template Alignment (~100 most distinct sequences)',
