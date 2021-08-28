@@ -30,7 +30,7 @@ object Dependencies {
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel"       %% "cats-core"            % "2.6.1",
-    "org.typelevel"       %% "cats-effect"          % "3.2.3",
+    "org.typelevel"       %% "cats-effect"          % "3.2.4",
     "co.fs2"              %% "fs2-core"             % "3.1.1",
     "co.fs2"              %% "fs2-io"               % "3.1.1",
     "com.chuusai"         %% "shapeless"            % "2.3.7",
