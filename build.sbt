@@ -7,9 +7,9 @@ val appProperties = settingKey[Properties]("The application properties")
 
 inThisBuild(
   Seq(
-    organization := "de.proteinevolution",
+    organization     := "de.proteinevolution",
     organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
-    startYear := Some(2018),
+    startYear        := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
     scalaVersion := "2.13.6"
   )
@@ -147,7 +147,7 @@ resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapsh
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
-Test / fork := true
+Test / fork     := true
 Test / logLevel := Level.Info
 
 Test / scalacOptions ++= Seq("-Yrangepos")

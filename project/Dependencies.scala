@@ -29,18 +29,18 @@ object Dependencies {
     ("org.reactivemongo" %% "reactivemongo-akkastream" % "1.0.6")
       .exclude("com.typesafe.akka", "*")  // provided
       .exclude("com.typesafe.play", "*"), // provided
-    "org.typelevel"       %% "cats-core"            % "2.6.1",
-    "org.typelevel"       %% "cats-effect"          % "3.2.5",
-    "co.fs2"              %% "fs2-core"             % "3.1.1",
-    "co.fs2"              %% "fs2-io"               % "3.1.1",
-    "com.chuusai"         %% "shapeless"            % "2.3.7",
-    "com.dripower"        %% "play-circe"           % "2814.2",
-    "io.circe"            %% "circe-generic"        % circeV,
-    "io.circe"            %% "circe-generic-extras" % circeV,
-    ("io.circe"           %% "circe-bson"           % "0.5.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
-    "org.typelevel"       %% "simulacrum"           % "1.0.0",
-    "com.github.dalet-oss" % "mongobee"             % "1.0.4",
-    "com.maxmind.geoip2"   % "geoip2"               % "2.13.0"
+    "org.typelevel" %% "cats-core"            % "2.6.1",
+    "org.typelevel" %% "cats-effect"          % "3.2.5",
+    "co.fs2"        %% "fs2-core"             % "3.1.1",
+    "co.fs2"        %% "fs2-io"               % "3.1.1",
+    "com.chuusai"   %% "shapeless"            % "2.3.7",
+    "com.dripower"  %% "play-circe"           % "2814.2",
+    "io.circe"      %% "circe-generic"        % circeV,
+    "io.circe"      %% "circe-generic-extras" % circeV,
+    ("io.circe"     %% "circe-bson" % "0.5.0").exclude("org.reactivemongo", "*"), // provided by play2-reactivemongo
+    "org.typelevel" %% "simulacrum" % "1.0.0",
+    "com.github.dalet-oss" % "mongobee" % "1.0.4",
+    "com.maxmind.geoip2"   % "geoip2"   % "2.13.0"
   )
 
   lazy val testDeps: Seq[ModuleID] = Seq(
