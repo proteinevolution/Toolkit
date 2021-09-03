@@ -69,7 +69,8 @@ final class DatabaseMonitor @Inject() (
   /**
    * Function removes old users and eMails registered users who may be deleted soon
    *
-   * @param verbose when true, the log will show the current action
+   * @param verbose
+   *   when true, the log will show the current action
    */
   private def deleteOldUsers(verbose: Boolean): Unit = {
     if (verbose)

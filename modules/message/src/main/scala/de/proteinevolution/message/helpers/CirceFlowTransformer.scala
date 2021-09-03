@@ -38,16 +38,15 @@ object CirceFlowTransformer {
         case NonFatal(_) => Right(CloseMessage(Some(CloseCodes.Unacceptable), "Unable to parse json message"))
       }
 
-    flow: Flow[Json, Json, _] =>
-      {
-        AkkaStreams.bypassWith[Message, Json, Message](Flow[Message].collect {
-          case BinaryMessage(data) =>
-            Right(CloseMessage(Some(CloseCodes.Unacceptable), "does not deal with binary messages"))
-          case TextMessage(text) => closeOnException(parse(text).toOption.getOrElse(Json.Null))
-        })(flow.map { json =>
-          TextMessage(json.noSpaces)
-        })
-      }
+    flow: Flow[Json, Json, _] => {
+      AkkaStreams.bypassWith[Message, Json, Message](Flow[Message].collect {
+        case BinaryMessage(data) =>
+          Right(CloseMessage(Some(CloseCodes.Unacceptable), "does not deal with binary messages"))
+        case TextMessage(text) => closeOnException(parse(text).toOption.getOrElse(Json.Null))
+      })(flow.map { json =>
+        TextMessage(json.noSpaces)
+      })
+    }
   }
 
 }

@@ -44,8 +44,7 @@ object ToolkitTypes extends ToolkitTypes {
         def values: Nil.type = Nil
       }
 
-    implicit def coproductSingletons[A, H <: A, T <: Coproduct](
-        implicit
+    implicit def coproductSingletons[A, H <: A, T <: Coproduct](implicit
         tsc: AllSingletons[A, T],
         witness: Witness.Aux[H]
     ): AllSingletons[A, H :+: T] =
@@ -59,8 +58,7 @@ object ToolkitTypes extends ToolkitTypes {
   }
 
   object EnumerableAdt {
-    implicit def fromAllSingletons[A, C <: Coproduct](
-        implicit
+    implicit def fromAllSingletons[A, C <: Coproduct](implicit
         gen: Generic.Aux[A, C],
         singletons: AllSingletons[A, C]
     ): EnumerableAdt[A] =

@@ -29,7 +29,7 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class VerificationController @Inject()(
+final class VerificationController @Inject() (
     userDao: UserDao,
     userSessionService: UserSessionService,
     cc: ControllerComponents,
@@ -40,37 +40,38 @@ final class VerificationController @Inject()(
 
   /**
    * Verifies a token which was sent to the users Email address.
-   * @param username username for which verification was requested
-   * @param token token which was sent via mail
+   * @param username
+   *   username for which verification was requested
+   * @param token
+   *   token which was sent via mail
    * @return
    */
-  def verifyEmailAddress(username: String, token: String): Action[AnyContent] = userAction.async {
-    implicit request =>
-      // Grab the user from the database in case that the logged in user is not the user to verify
-      userDao.findUserByUsername(username).flatMap {
-        case Some(userToVerify) =>
-          userToVerify.userToken match {
-            case Some(userToken) =>
-              if (userToken.token == token && userToken.tokenType == UserToken.EMAIL_VERIFICATION_TOKEN) {
-                if (userToken.eMail.get == userToVerify.userData.get.eMail) {
-                  userDao.updateAccountType(userToVerify.userID, AccountType.REGISTEREDUSER, resetUserToken = true).map {
-                    case Some(updatedUser) =>
-                      userSessionService.updateUserInCache(updatedUser)
-                      Ok(verificationSuccessful(userToVerify))
-                    case None => // Could not save the modified user to the DB
-                      Ok(databaseError)
-                  }
-                } else {
-                  Future.successful(Ok(verificationMailMismatch()))
+  def verifyEmailAddress(username: String, token: String): Action[AnyContent] = userAction.async { implicit request =>
+    // Grab the user from the database in case that the logged in user is not the user to verify
+    userDao.findUserByUsername(username).flatMap {
+      case Some(userToVerify) =>
+        userToVerify.userToken match {
+          case Some(userToken) =>
+            if (userToken.token == token && userToken.tokenType == UserToken.EMAIL_VERIFICATION_TOKEN) {
+              if (userToken.eMail.get == userToVerify.userData.get.eMail) {
+                userDao.updateAccountType(userToVerify.userID, AccountType.REGISTEREDUSER, resetUserToken = true).map {
+                  case Some(updatedUser) =>
+                    userSessionService.updateUserInCache(updatedUser)
+                    Ok(verificationSuccessful(userToVerify))
+                  case None => // Could not save the modified user to the DB
+                    Ok(databaseError)
                 }
               } else {
-                // No Token in DB
-                Future.successful(Ok(tokenMismatch()))
+                Future.successful(Ok(verificationMailMismatch()))
               }
-            case None => Future.successful(Ok(tokenNotFound()))
-          }
-        case None => Future.successful(Ok(accountError()))
-      }
+            } else {
+              // No Token in DB
+              Future.successful(Ok(tokenMismatch()))
+            }
+          case None => Future.successful(Ok(tokenNotFound()))
+        }
+      case None => Future.successful(Ok(accountError()))
+    }
   }
 
 }

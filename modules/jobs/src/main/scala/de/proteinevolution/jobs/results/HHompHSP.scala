@@ -90,13 +90,12 @@ object HHompHSP {
       )
 
   def hhompHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHompHSP] = {
-    alignments.zip(hits).flatMap {
-      case (a, h) =>
-        (for {
-          struct   <- h.hcursor.downField("struc").as[String]
-          ss_score <- h.hcursor.downField("ss").as[Double]
-          hsp      <- a.hcursor.as[HHompHSP](hhompHSPDecoder(struct, ss_score))
-        } yield hsp).toOption
+    alignments.zip(hits).flatMap { case (a, h) =>
+      (for {
+        struct   <- h.hcursor.downField("struc").as[String]
+        ss_score <- h.hcursor.downField("ss").as[Double]
+        hsp      <- a.hcursor.as[HHompHSP](hhompHSPDecoder(struct, ss_score))
+      } yield hsp).toOption
     }
   }
 

@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe.generic.semiauto.deriveEncoder
-import io.circe.{Decoder, Encoder, HCursor}
+import io.circe.{ Decoder, Encoder, HCursor }
 
 case class HHompTemplate(
     consensus: String,

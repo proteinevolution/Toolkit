@@ -28,7 +28,7 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobHashCheckService @Inject()(
+class JobHashCheckService @Inject() (
     jobDao: JobDao,
     constants: ConstantsV2,
     hashService: JobHasher

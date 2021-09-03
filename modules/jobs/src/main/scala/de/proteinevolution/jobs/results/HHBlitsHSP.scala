@@ -58,7 +58,7 @@ case class HHBlitsHSP(
     ).asJson
   }
 
-  override val eValue: Double = info.eval
+  override val eValue: Double    = info.eval
   override val accession: String = template.accession
 
 }
@@ -85,12 +85,11 @@ object HHBlitsHSP {
       )
 
   def hhblitsHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHBlitsHSP] = {
-    alignments.zip(hits).flatMap {
-      case (a, h) =>
-        (for {
-          struct <- h.hcursor.downField("struc").as[String]
-          hsp    <- a.hcursor.as[HHBlitsHSP](hhblitsHSPDecoder(struct))
-        } yield hsp).toOption
+    alignments.zip(hits).flatMap { case (a, h) =>
+      (for {
+        struct <- h.hcursor.downField("struc").as[String]
+        hsp    <- a.hcursor.as[HHBlitsHSP](hhblitsHSPDecoder(struct))
+      } yield hsp).toOption
     }
   }
 

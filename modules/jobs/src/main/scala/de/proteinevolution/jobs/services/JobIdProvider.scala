@@ -16,16 +16,16 @@
 
 package de.proteinevolution.jobs.services
 
-import cats.effect.{IO, Resource, Ref}
+import cats.effect.{ IO, Ref, Resource }
 import de.proteinevolution.jobs.dao.JobDao
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 import scala.collection.immutable.HashSet
 import scala.concurrent.ExecutionContext
 import scala.util.Random
 
 @Singleton
-final class JobIdProvider @Inject()(jobDao: JobDao)(implicit ec: ExecutionContext) {
+final class JobIdProvider @Inject() (jobDao: JobDao)(implicit ec: ExecutionContext) {
 
   private[this] val generateSafe: HashSet[String] => IO[String] = { x =>
     IO(Iterator.continually[String](Random.nextInt(9999999).toString.padTo(7, '0')).filterNot(x.contains).next())
@@ -48,26 +48,25 @@ final class JobIdProvider @Inject()(jobDao: JobDao)(implicit ec: ExecutionContex
   }
 
   /**
-   * recursively tries to generate a job id which is not already in the database
-   * while trying, don't use the same id again for the next cycle
+   * recursively tries to generate a job id which is not already in the database while trying, don't use the same id
+   * again for the next cycle
    */
   def runSafe: IO[String] = {
     Ref.of[IO, HashSet[String]](HashSet.empty[String]).flatMap { ref =>
       (for {
         jobId <- Resource.eval(ref.get).use(generateSafe)
         set   <- ref.get
-      } yield (jobId, set)).flatMap {
-        case (jobId, set) =>
-          (for {
-            b <- validate(jobId)
-            _ <- ref.set(set.+(jobId))
-          } yield b).flatMap { b =>
-            if (b) {
-              IO.pure(jobId)
-            } else {
-              runSafe
-            }
+      } yield (jobId, set)).flatMap { case (jobId, set) =>
+        (for {
+          b <- validate(jobId)
+          _ <- ref.set(set.+(jobId))
+        } yield b).flatMap { b =>
+          if (b) {
+            IO.pure(jobId)
+          } else {
+            runSafe
           }
+        }
       }
     }
   }

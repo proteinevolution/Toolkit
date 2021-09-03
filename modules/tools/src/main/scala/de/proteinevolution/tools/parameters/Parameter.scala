@@ -66,17 +66,17 @@ object Parameter {
 
   case class ModellerParameter(
       name: String,
-      label: String,
+      label: String
   ) extends Parameter
 
   case class HHpredSelectsParameter(
-    name: String,
-    options: Seq[SelectOption],
-    nameProteomes: String,
-    optionsProteomes: Seq[SelectOption],
-    maxSelectedOptions: Int,
-    default: Option[String] = None,
-    defaultProteomes: Option[String] = None,
+      name: String,
+      options: Seq[SelectOption],
+      nameProteomes: String,
+      optionsProteomes: Seq[SelectOption],
+      maxSelectedOptions: Int,
+      default: Option[String] = None,
+      defaultProteomes: Option[String] = None
   ) extends Parameter
 
   implicit val ep: Encoder[Parameter] = {

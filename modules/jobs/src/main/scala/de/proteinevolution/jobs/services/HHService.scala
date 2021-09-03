@@ -29,7 +29,7 @@ import play.api.Logging
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class HHService @Inject()(
+class HHService @Inject() (
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext)

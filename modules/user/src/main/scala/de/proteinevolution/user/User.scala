@@ -35,8 +35,8 @@ case class User(
     userData: Option[UserData] = None,                 // Personal Data of the User //TODO possibly encrypt?
     userConfig: UserConfig = UserConfig(),             // Configurable parts for the user
     userToken: Option[UserToken] = None,
-    jobs: List[String] = List.empty,                  // List of Jobs the User is watching (counterpart to job.watchList)
-    deletionWarningSent: Boolean = false,             // keep track if the mail was sent already
+    jobs: List[String] = List.empty,      // List of Jobs the User is watching (counterpart to job.watchList)
+    deletionWarningSent: Boolean = false, // keep track if the mail was sent already
     dateLastLogin: ZonedDateTime = ZonedDateTime.now, // Last seen on
     dateCreated: ZonedDateTime = ZonedDateTime.now,   // Account creation date
     dateUpdated: ZonedDateTime = ZonedDateTime.now

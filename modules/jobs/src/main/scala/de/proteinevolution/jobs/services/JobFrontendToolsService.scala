@@ -27,7 +27,7 @@ import reactivemongo.api.commands.WriteResult
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobFrontendToolsService @Inject()(
+class JobFrontendToolsService @Inject() (
     jobIdProvider: JobIdProvider,
     jobDao: JobDao
 )(implicit ec: ExecutionContext) {

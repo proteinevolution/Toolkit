@@ -126,8 +126,10 @@ class UserDao @Inject() (
   /**
    * modify the user internally. Do not expose any db logic to the outside.
    *
-   * @param userID   identifier of the user
-   * @param modifier operations to perform on the user
+   * @param userID
+   *   identifier of the user
+   * @param modifier
+   *   operations to perform on the user
    * @return
    */
   private def modifyUser(userID: String, modifier: BSONDocument): Future[Option[User]] = {

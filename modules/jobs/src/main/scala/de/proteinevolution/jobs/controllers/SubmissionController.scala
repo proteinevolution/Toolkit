@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SubmissionController @Inject()(
+class SubmissionController @Inject() (
     jobActorAccess: JobActorAccess,
     userSessions: UserSessionService,
     jobDispatcher: JobDispatcher,
@@ -63,7 +63,8 @@ class SubmissionController @Inject()(
             case None => BadRequest
             case Some(obj) =>
               if (obj.contains("isPublic")) {
-                jobActorAccess.sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
+                jobActorAccess
+                  .sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
               }
               Ok
           }

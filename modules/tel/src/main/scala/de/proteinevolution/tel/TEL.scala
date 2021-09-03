@@ -22,10 +22,9 @@ import play.api.Configuration
 
 /**
  * TEL is the access point to get ExecutionContexts in which runscripts can be executed
- *
  */
 @Singleton
-class TEL @Inject()(params: Params, config: Configuration) extends TELRegex with TELConstants {
+class TEL @Inject() (params: Params, config: Configuration) extends TELRegex with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Seq("jobID", "newSubmission", "start", "edit")

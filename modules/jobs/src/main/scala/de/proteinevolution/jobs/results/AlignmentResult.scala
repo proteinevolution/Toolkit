@@ -24,8 +24,8 @@ object AlignmentResult {
 
   implicit val alignmentResultDecoder: Decoder[AlignmentResult] = (c: HCursor) => {
     c.as[List[Json]]
-      .map(_.zipWithIndex.map {
-        case (j, i) => AlignmentItem.alignmentItemDecoder(j, i)
+      .map(_.zipWithIndex.map { case (j, i) =>
+        AlignmentItem.alignmentItemDecoder(j, i)
       })
       .map(items => new AlignmentResult(items.flatMap(_.toOption)))
   }

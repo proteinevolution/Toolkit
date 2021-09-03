@@ -70,13 +70,17 @@ class JobDao @Inject() (
 
   /**
    * This method gets all the jobs which satisfy one of the following criteria:
-   * 1. their tool matches the query string (only for owned jobs)
-   * 2. their id matches the query string (public and owned jobs)
+   *   1. their tool matches the query string (only for owned jobs) 2. their id matches the query string (public and
+   *      owned jobs)
    *
-   * @param userID     requesting user
-   * @param jobs       jobs which are watched by the user
-   * @param jobIDQuery query string for job id
-   * @param toolNames  possible matches with tools
+   * @param userID
+   *   requesting user
+   * @param jobs
+   *   jobs which are watched by the user
+   * @param jobIDQuery
+   *   query string for job id
+   * @param toolNames
+   *   possible matches with tools
    * @return
    */
   def findJobsByAutocomplete(
@@ -150,7 +154,7 @@ class JobDao @Inject() (
         BSONDocument(JobEventLog.JOBID -> BSONDocument("$in" -> jobIDs)),
         BSONDocument(
           "$push" ->
-            BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
+          BSONDocument(JobEventLog.EVENTS -> JobEvent(JobState.Deleted, Some(ZonedDateTime.now), Some(0L)))
         ),
         fetchNewObject = true,
         // the following values are default values that are used to distinguish findAndUpdate from deprecated version

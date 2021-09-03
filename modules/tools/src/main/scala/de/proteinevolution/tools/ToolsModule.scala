@@ -16,8 +16,8 @@
 
 package de.proteinevolution.tools
 
-import play.api.{Configuration, Environment}
-import play.api.inject.{Binding, Module}
+import play.api.{ Configuration, Environment }
+import play.api.inject.{ Binding, Module }
 
 class ToolsModule extends Module {
 
