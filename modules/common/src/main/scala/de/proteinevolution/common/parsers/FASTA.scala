@@ -51,31 +51,33 @@ object FASTA {
       val validChars: List[Char]
     }
     object AMINOACID extends EntryType with SEQUENCE {
-      override val validChars = List('A',
-                                     'C',
-                                     'D',
-                                     'E',
-                                     'F',
-                                     'G',
-                                     'H',
-                                     'I',
-                                     'K',
-                                     'L',
-                                     'M',
-                                     'N',
-                                     'O',
-                                     'P',
-                                     'Q',
-                                     'R',
-                                     'S',
-                                     'T',
-                                     'U',
-                                     'V',
-                                     'W',
-                                     'Y',
-                                     '-',
-                                     '.',
-                                     '*')
+      override val validChars = List(
+        'A',
+        'C',
+        'D',
+        'E',
+        'F',
+        'G',
+        'H',
+        'I',
+        'K',
+        'L',
+        'M',
+        'N',
+        'O',
+        'P',
+        'Q',
+        'R',
+        'S',
+        'T',
+        'U',
+        'V',
+        'W',
+        'Y',
+        '-',
+        '.',
+        '*'
+      )
     }
     object DNA extends EntryType with SEQUENCE {
       override val validChars = List('A', 'C', 'G', 'T', '-', '.', '*')
@@ -101,7 +103,8 @@ object FASTA {
 
   /**
    * Creates a FASTA alignment from a file
-   * @param fileName path to the file
+   * @param fileName
+   *   path to the file
    * @return
    */
   def fromFile(fileName: String): Option[FASTA] = {
@@ -128,8 +131,8 @@ object FASTA {
 
     lazy val sequence: FASTA.Parser.Parser[String] = rep1(seqLine) ^^ { _.mkString }
 
-    lazy val entry: FASTA.Parser.Parser[FASTA.Entry] = header ~ sequence ^^ {
-      case h ~ s => Entry(h, s)
+    lazy val entry: FASTA.Parser.Parser[FASTA.Entry] = header ~ sequence ^^ { case h ~ s =>
+      Entry(h, s)
     }
 
     lazy val entries: FASTA.Parser.Parser[scala.List[FASTA.Entry]] = rep1(entry)

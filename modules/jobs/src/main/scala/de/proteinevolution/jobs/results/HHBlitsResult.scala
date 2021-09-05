@@ -18,7 +18,7 @@ package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
 import io.circe.syntax._
-import io.circe.{Decoder, HCursor, Json}
+import io.circe.{ Decoder, HCursor, Json }
 
 case class HHBlitsResult(
     HSPS: List[HHBlitsHSP],

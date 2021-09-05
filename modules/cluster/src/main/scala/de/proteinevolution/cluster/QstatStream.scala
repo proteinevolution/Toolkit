@@ -31,8 +31,8 @@ import scala.concurrent.duration._
 import scala.sys.process._
 
 @Singleton
-final private[cluster] class QstatStream @Inject()(constants: ConstantsV2)(
-    implicit ec: ExecutionContext,
+final private[cluster] class QstatStream @Inject() (constants: ConstantsV2)(implicit
+    ec: ExecutionContext,
     mat: Materializer,
     system: ActorSystem
 ) extends Logging {

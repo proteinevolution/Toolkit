@@ -17,7 +17,7 @@
 package de.proteinevolution.jobs.results
 
 import io.circe.generic.semiauto._
-import io.circe.{DecodingFailure, Encoder, Json}
+import io.circe.{ DecodingFailure, Encoder, Json }
 
 case class AlignmentItem(accession: String, seq: String, num: Int)
 

@@ -17,20 +17,20 @@
 package de.proteinevolution.tools
 
 import de.proteinevolution.tel.param.ParamCollector
-import play.api.{Configuration, Logging}
+import play.api.{ Configuration, Logging }
 import better.files._
-import cats.effect.{IO, Resource}
+import cats.effect.{ IO, Resource }
 import fs2.Stream
 import fs2.io.file.Files
-import fs2.io.file.{Path => FS2Path}
+import fs2.io.file.{ Path => FS2Path }
 import fs2.io.file.Watcher
 import cats.effect.unsafe.implicits.global
 
 import java.util.concurrent.atomic.AtomicReference
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-final private[tools] class ConfigWatcher @Inject()(
+final private[tools] class ConfigWatcher @Inject() (
     pc: ParamCollector,
     config: Configuration,
     toolConfig: ToolConfig
@@ -41,7 +41,8 @@ final private[tools] class ConfigWatcher @Inject()(
   // start the file watcher
   (for {
     refreshFile <- IO.fromOption(config.get[Option[String]](REFRESH_FILE))(
-      new IllegalArgumentException(s"configured file $REFRESH_FILE is missing"))
+      new IllegalArgumentException(s"configured file $REFRESH_FILE is missing")
+    )
     path = refreshFile.toFile.path
     _ <- IO(logger.info(s"using $path as trigger for param reload"))
   } yield FS2Path.fromNioPath(path))
@@ -55,27 +56,22 @@ final private[tools] class ConfigWatcher @Inject()(
       path: FS2Path,
       ref: AtomicReference[Map[String, Tool]]
   ): Stream[IO, Unit] =
-    Stream
-      .resource(Resource.eval(IO(path)))
-      .flatMap { f =>
-        Files[IO]
-          .watch(f)
-          .evalMap {
-            case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
-              for {
-                _ <- IO(
-                  logger.info(s"file $path changed, reloading parameters ..."))
-                _ <- IO(ref.set(toolConfig.readFromFile()))
-                _ <- IO(logger.info(s"updated tool config"))
-                _ <- IO(pc.reloadValues())
-              } yield ()
-            case Watcher.Event.Deleted(_, _) =>
-              IO(logger.warn(s"file $path was deleted"))
-            case Watcher.Event.Overflow(_) =>
-              IO(logger.warn(s"file $path overflow"))
-            case Watcher.Event.NonStandard(_, _) =>
-              IO(logger.warn(s"file $path changed unexpectedly"))
-          }
+    Stream.resource(Resource.eval(IO(path))).flatMap { f =>
+      Files[IO].watch(f).evalMap {
+        case Watcher.Event.Modified(_, _) | Watcher.Event.Created(_, _) =>
+          for {
+            _ <- IO(logger.info(s"file $path changed, reloading parameters ..."))
+            _ <- IO(ref.set(toolConfig.readFromFile()))
+            _ <- IO(logger.info(s"updated tool config"))
+            _ <- IO(pc.reloadValues())
+          } yield ()
+        case Watcher.Event.Deleted(_, _) =>
+          IO(logger.warn(s"file $path was deleted"))
+        case Watcher.Event.Overflow(_) =>
+          IO(logger.warn(s"file $path overflow"))
+        case Watcher.Event.NonStandard(_, _) =>
+          IO(logger.warn(s"file $path changed unexpectedly"))
       }
+    }
 
 }

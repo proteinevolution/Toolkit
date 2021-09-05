@@ -18,7 +18,7 @@ package de.proteinevolution.jobs.results
 
 import de.proteinevolution.jobs.results.General.SingleSeq
 import de.proteinevolution.jobs.results.Quick2DResult._
-import io.circe.{Decoder, HCursor}
+import io.circe.{ Decoder, HCursor }
 
 case class Quick2DResult(
     jobID: String,

@@ -28,14 +28,14 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ValidationController @Inject()(
+class ValidationController @Inject() (
     userSessions: UserSessionService,
     userDao: UserDao,
     constants: ConstantsV2,
     cc: ControllerComponents,
     userAction: UserAction
-)(
-    implicit ec: ExecutionContext
+)(implicit
+    ec: ExecutionContext
 ) extends ToolkitController(cc) {
 
   final private[this] def isValid(v: Boolean): Json = JsonObject("isValid" -> Json.fromBoolean(v)).asJson

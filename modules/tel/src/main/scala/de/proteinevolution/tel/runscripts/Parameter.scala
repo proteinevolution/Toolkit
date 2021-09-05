@@ -37,15 +37,13 @@ class Parameter(val name: String) {
 
 /**
  * Encompasses the value representation of a runscript parameter.
- *
  */
 abstract class Representation {
   def represent: String
 }
 
 /**
- * Represents Parameter values which can be literally represented by the String value of an arbitrary
- * type 'A'.
+ * Represents Parameter values which can be literally represented by the String value of an arbitrary type 'A'.
  *
  * @param value
  */

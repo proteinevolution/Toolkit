@@ -67,7 +67,7 @@ case class HHPredHSP(
     ).asJson
   }
 
-  override val eValue: Double = info.eval
+  override val eValue: Double    = info.eval
   override val accession: String = template.accession
 
 }
@@ -97,13 +97,12 @@ object HHPredHSP {
       )
 
   def hhpredHSPListDecoder(hits: List[Json], alignments: List[Json]): List[HHPredHSP] = {
-    alignments.zip(hits).flatMap {
-      case (a, h) =>
-        (for {
-          struct   <- h.hcursor.downField("struc").as[Option[String]]
-          ss_score <- h.hcursor.downField("ss").as[Option[Double]]
-          hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1d)))
-        } yield hsp).toOption
+    alignments.zip(hits).flatMap { case (a, h) =>
+      (for {
+        struct   <- h.hcursor.downField("struc").as[Option[String]]
+        ss_score <- h.hcursor.downField("ss").as[Option[Double]]
+        hsp      <- a.hcursor.as[HHPredHSP](hhpredHSPDecoder(struct.getOrElse(""), ss_score.getOrElse(-1d)))
+      } yield hsp).toOption
     }
   }
 

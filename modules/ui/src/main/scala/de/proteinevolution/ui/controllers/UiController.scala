@@ -21,13 +21,13 @@ import de.proteinevolution.tools.ToolConfig
 import io.circe.Printer
 import io.circe.generic.auto._
 import io.circe.syntax._
-import javax.inject.{Inject, Singleton}
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import javax.inject.{ Inject, Singleton }
+import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-class UiController @Inject()(
+class UiController @Inject() (
     cc: ControllerComponents,
     toolConfig: ToolConfig
 ) extends ToolkitController(cc) {
@@ -48,9 +48,8 @@ class UiController @Inject()(
         val rTool = r._2
         lTool.order < rTool.order
       })
-      .map {
-        case (_, v) =>
-          v.toolFormSimple
+      .map { case (_, v) =>
+        v.toolFormSimple
       }
     Ok(sorted.asJson.printWith(Printer.noSpaces.copy(dropNullValues = true)))
   }

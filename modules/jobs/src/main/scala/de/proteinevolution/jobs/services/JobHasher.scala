@@ -28,7 +28,7 @@ import play.api.Configuration
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class JobHasher @Inject()(
+final class JobHasher @Inject() (
     runscriptPathProvider: RunscriptPathProvider,
     config: Configuration
 ) {
@@ -44,8 +44,8 @@ final class JobHasher @Inject()(
     MurmurHash3.stringHash(config.get[Config](s"Tools.$name").toString, 0).toString
 
   /**
-   * params which won't get hashed
-   * TODO: we write all params into job descriptor files but we should model them, issue #705
+   * params which won't get hashed TODO: we write all params into job descriptor files but we should model them, issue
+   * #705
    */
   private[this] final val EXCLUDED =
     Set(Job.ID, Job.EMAIL_UPDATE, "public", "jobID", Job.IP_HASH, "parentID", "htb_length", "alignment", "file")
@@ -62,17 +62,26 @@ final class JobHasher @Inject()(
       case p if p.isDefinedAt("standarddb") =>
         (
           "standarddb",
-          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("standarddb", "")).toFile.lastModifiedTime.toString
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse(
+            "standarddb",
+            ""
+          )).toFile.lastModifiedTime.toString
         )
       case p if p.isDefinedAt("hmmerdb") =>
         (
           "hmmerdb",
-          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("hmmerdb", "")).toFile.lastModifiedTime.toString
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse(
+            "hmmerdb",
+            ""
+          )).toFile.lastModifiedTime.toString
         )
       case p if p.isDefinedAt("patsearchdb") =>
         (
           "patsearchdb",
-          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse("patsearchdb", "")).toFile.lastModifiedTime.toString
+          (config.get[String]("tel.env.STANDARD") + "/" + params.getOrElse(
+            "patsearchdb",
+            ""
+          )).toFile.lastModifiedTime.toString
         )
       case p if p.isDefinedAt("hhsuitedb") =>
         ("hhsuitedb", config.get[String]("tel.env.HHSUITE").toFile.lastModifiedTime.toString)

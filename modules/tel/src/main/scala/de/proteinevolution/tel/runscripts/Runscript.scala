@@ -26,9 +26,8 @@ import scala.collection.mutable
 import scala.util.matching.Regex
 
 /**
- * Represents one particular runscript, specified by the path of the corresponding file.
- * Instances should be created via the companion object.
- *
+ * Represents one particular runscript, specified by the path of the corresponding file. Instances should be created via
+ * the companion object.
  */
 class Runscript(files: Seq[File]) extends TELRegex with Logging {
 
@@ -50,15 +49,17 @@ class Runscript(files: Seq[File]) extends TELRegex with Logging {
   // Implications with names for the parameters // TODO Currently not supported
   type Condition = (String, RType => Boolean, String, RType => Boolean)
 
-  final val parameterNames
-    : Seq[String] = parameters.map(_._1).distinct // Names of the parameters that need to be supplied
+  final val parameterNames: Seq[String] =
+    parameters.map(_._1).distinct // Names of the parameters that need to be supplied
 
   // Special fields to put the runscript into a larger context
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
     private var counter = -1
     def apply(m: Regex.Match): String = {
-      m.groupNames.foreach(s => logger.debug(s)) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
+      m.groupNames.foreach(s =>
+        logger.debug(s)
+      ) // just use m because of https://stackoverflow.com/questions/43964571/scala-2-12-2-emits-a-ton-of-useless-warning-parameter-value-in-method
       counter += 1
       arguments(counter)._2.representation.represent
     }
@@ -96,7 +97,6 @@ object Runscript extends TELRegex {
 
   /**
    * Reads the lines of a runscript file and returns a new runscript instance
-   *
    */
   def apply(files: Seq[File]): Runscript = new Runscript(files)
 

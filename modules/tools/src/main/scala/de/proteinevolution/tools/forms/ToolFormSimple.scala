@@ -16,7 +16,6 @@
 
 package de.proteinevolution.tools.forms
 
-
 case class ToolFormSimple(
     name: String,
     longname: String,
@@ -25,4 +24,3 @@ case class ToolFormSimple(
     version: String,
     validationParams: ValidationParamsForm
 )
-

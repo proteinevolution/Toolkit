@@ -42,7 +42,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class ResultFileAccessor @Inject()(
+final class ResultFileAccessor @Inject() (
     constants: ConstantsV2,
     @NamedCache("resultCache") resultCache: AsyncCacheApi
 )(implicit ec: ExecutionContext)

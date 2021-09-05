@@ -94,9 +94,8 @@ class UserSessionService @Inject() (
   }
 
   /**
-   * Grabs the user with the matching sessionID from the cache, or if there is
-   * none, it will try to find it in the database and put it in the cache.
-   * Only used for the websocket where no request object is available.
+   * Grabs the user with the matching sessionID from the cache, or if there is none, it will try to find it in the
+   * database and put it in the cache. Only used for the websocket where no request object is available.
    *
    * @return
    */

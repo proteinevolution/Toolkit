@@ -16,6 +16,6 @@
 
 package de.proteinevolution.auth.util
 import de.proteinevolution.user.User
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.mvc.{ Request, WrappedRequest }
 
 class UserRequest[A](val user: User, request: Request[A]) extends WrappedRequest[A](request)

@@ -30,8 +30,8 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 @Singleton
-final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
-    implicit ec: ExecutionContext,
+final class ClusterSubscriber @Inject() (constants: ConstantsV2)(implicit
+    ec: ExecutionContext,
     mat: Materializer
 ) extends Actor
     with ActorLogging {
@@ -78,10 +78,9 @@ final class ClusterSubscriber @Inject()(constants: ConstantsV2)(
   }
 
   override def supervisorStrategy: SupervisorStrategy = {
-    OneForOneStrategy() {
-      case t =>
-        log.error(s"clusterSubscriber crashed", t)
-        Restart
+    OneForOneStrategy() { case t =>
+      log.error(s"clusterSubscriber crashed", t)
+      Restart
     }
   }
 

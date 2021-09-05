@@ -26,7 +26,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 @Singleton
-class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
+class ClusterApiController @Inject() (constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
     extends ToolkitController(cc) {
 
   def setJobStatus(status: String, jobID: String, key: String): Action[AnyContent] = Action {

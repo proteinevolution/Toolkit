@@ -25,13 +25,12 @@ import play.api.Logging
 // * Runscript Manager should watch the runscript Path for changes
 
 /**
- * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once
- * the file changes and keeps a map of all Runscripts for quick access.
- * Allows to provide a runscript to an interested instance, like a JobActor
- *
+ * Class watches the directory of runscripts and monitors changes. Reloads information about runscripts once the file
+ * changes and keeps a map of all Runscripts for quick access. Allows to provide a runscript to an interested instance,
+ * like a JobActor
  */
 @Singleton
-class RunscriptManager @Inject()(@Named("runscriptPath") runscriptPath: String) extends Logging {
+class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath: String) extends Logging {
 
   // Constants for the RunscriptManager
   final val SUFFIX = "SUFFIX"

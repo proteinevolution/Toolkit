@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class ResultsController @Inject()(
+final class ResultsController @Inject() (
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
     cc: ControllerComponents,
@@ -58,7 +58,12 @@ final class ResultsController @Inject()(
       }
     }
 
-  def loadAlignmentHits(jobID: String, start: Option[Int], end: Option[Int], resultField: Option[String]): Action[AnyContent] =
+  def loadAlignmentHits(
+      jobID: String,
+      start: Option[Int],
+      end: Option[Int],
+      resultField: Option[String]
+  ): Action[AnyContent] =
     userAction.async { implicit request =>
       jobDao.findJob(jobID).flatMap {
         case Some(job) =>
@@ -66,7 +71,8 @@ final class ResultsController @Inject()(
             // access allowed to job
             (for {
               json <- EitherT.liftF(resultFiles.getResults(jobID))
-              r    <- EitherT.fromEither[Future](json.hcursor.downField(resultField.getOrElse("alignment")).as[AlignmentResult])
+              r <- EitherT
+                .fromEither[Future](json.hcursor.downField(resultField.getOrElse("alignment")).as[AlignmentResult])
             } yield r).value.map {
               case Right(r) =>
                 val l = r.alignment.length
