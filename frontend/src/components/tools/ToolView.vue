@@ -76,8 +76,7 @@
 
                             <!-- hack to show the alignment viewer tool results -->
                             <b-tab v-if="alignmentViewerSequences"
-                                   :title="$t('tools.alignmentViewer.visualization')"
-                                   active>
+                                   :title="$t('tools.alignmentViewer.visualization')">
                                 <alignment-viewer :sequences="alignmentViewerSequences"
                                                   :format="alignmentViewerFormat" />
                             </b-tab>
@@ -290,7 +289,10 @@ export default hasHTMLTitle.extend({
         openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
             this.alignmentViewerSequences = sequences;
             this.alignmentViewerFormat = format;
-            this.tabIndex = 1;
+            setTimeout(() => {
+              this.tabIndex = 1;
+              EventBus.$emit('alignment-viewer-resize', this.fullScreen);
+            }, 100);
         },
         resubmitSectionReceive(section: string): void {
             Vue.set(this.submission, 'alignment', section);
