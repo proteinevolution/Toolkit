@@ -11,7 +11,7 @@ inThisBuild(
     organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
     startYear        := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
-    scalaVersion := "2.13.6"
+    scalaVersion := "2.13.7"
   )
 )
 
