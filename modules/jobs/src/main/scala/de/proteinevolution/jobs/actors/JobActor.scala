@@ -434,10 +434,10 @@ class JobActor @Inject() (
 
               val h_rt = config.get[Int](s"Tools.${job.tool}.hardruntime")
 
-              //Set soft runtime to 30s less than hard runtime
+              // Set soft runtime to 30s less than hard runtime
               val s_rt   = h_rt - 30
               val h_vmem = (config.get[Int](s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
-              //Set soft memory limit to 95% of hard memory limit
+              // Set soft memory limit to 95% of hard memory limit
               val s_vmem  = h_vmem * 0.95
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
@@ -565,7 +565,7 @@ class JobActor @Inject() (
           if (job.isFinished) {
             // Now we can update the JobState and remove it, once the update has completed
             updateJobState(job).map { job =>
-              //Remove the job from the jobActor
+              // Remove the job from the jobActor
               updateJobLogAndExecution(job.jobID)
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)

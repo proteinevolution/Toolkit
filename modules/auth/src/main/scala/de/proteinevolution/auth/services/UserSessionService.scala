@@ -127,7 +127,7 @@ class UserSessionService @Inject() (
    * updates a user in the cache
    */
   def updateUserInCache(user: User): User = {
-    //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
+    // logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID.foreach { sessionID =>
       userCache.set(sessionID, user, 10.minutes)
     }

@@ -120,7 +120,7 @@ final class WebSocketActor @Inject() (
             // Received a ping, so we return a pong
             case "Ping" =>
               json.hcursor.get[Long]("date").map { msTime =>
-                //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                // log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
                 out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
               }
 
