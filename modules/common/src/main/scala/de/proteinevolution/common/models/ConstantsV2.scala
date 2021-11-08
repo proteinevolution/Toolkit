@@ -79,13 +79,13 @@ class ConstantsV2 @Inject() (config: Configuration) {
   final val userDeletionInterval: FiniteDuration = 3 hours
 
   /** Sending an eMail to the user this many days before the deletion */
-  final val userDeletionWarning: Int = 14 //days
+  final val userDeletionWarning: Int = 14 // days
   /** Deletes regular accounts after this time frame */
-  final val userDeleting: Int = 1 //months
+  final val userDeleting: Int = 1 // months
   /** Deletes users awaiting registration after this time frame */
-  final val userDeletingRegisterEmail: Int = 3 //days
+  final val userDeletingRegisterEmail: Int = 3 // days
   /** Deletes registered accounts after this time frame */
-  final val userDeletingRegistered: Int = 24 //months
+  final val userDeletingRegistered: Int = 24 // months
 
   // qstat long polling in order to detect zombie jobs, not used for cluster load calc anymore
   /** Interval of the qstat requests */

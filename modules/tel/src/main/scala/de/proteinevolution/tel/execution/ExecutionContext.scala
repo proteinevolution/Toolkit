@@ -96,7 +96,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
   def executeNext: RegisteredExecution = {
     executionQueue.dequeue()
-    //RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
+    // RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
   }
   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
 }
