@@ -16,7 +16,7 @@
 
 package de.proteinevolution.tel.execution
 
-import javax.inject.{ Inject, Named, Singleton }
+import javax.inject.{Inject, Named, Singleton}
 import better.files._
 import de.proteinevolution.tel.TELRegex
 import java.nio.file.attribute.PosixFilePermission
@@ -30,7 +30,9 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
 import scala.sys.process.Process
 
 @Singleton
-class WrapperExecutionFactory @Inject() (@Named("wrapperPath") wrapperPath: String) extends TELRegex {
+class WrapperExecutionFactory @Inject()(
+    @Named("wrapperPath") wrapperPath: String)
+    extends TELRegex {
 
   private final val filePermissions = Set(
     PosixFilePermission.OWNER_EXECUTE,
@@ -44,7 +46,8 @@ class WrapperExecutionFactory @Inject() (@Named("wrapperPath") wrapperPath: Stri
   // Accept the content of a runscript and used the Wrapper script to produce the Registered Execution
   // One might offer different Methods to create a Pending Execution to avoid the need to pass the content
   // of the Runscript directly as String
-  def getInstance(content: String, env: Map[String, String]): PendingExecution = {
+  def getInstance(content: String,
+                  env: Map[String, String]): PendingExecution = {
 
     val register = { file: File =>
       val runscript = (file / "runscript.sh").write(content)
@@ -56,7 +59,8 @@ class WrapperExecutionFactory @Inject() (@Named("wrapperPath") wrapperPath: Stri
 
         wrapper.write(
           envString.replaceAllIn(
-            runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString, runscript.pathAsString),
+            runscriptString.replaceAllIn(wrapperPath.toFile.contentAsString,
+                                         runscript.pathAsString),
             m => env.getOrElse(m.group("constant"), "")
           )
         )
@@ -84,8 +88,9 @@ class WrapperExecutionFactory @Inject() (@Named("wrapperPath") wrapperPath: Stri
 object WrapperExecutionFactory {
 
   sealed trait Execution
-  case class PendingExecution(register: File => RegisteredExecution) extends Execution
-  case class RegisteredExecution(run: () => RunningExecution)        extends Execution
-  case class RunningExecution(terminate: () => Boolean)              extends Execution
+  case class PendingExecution(register: File => RegisteredExecution)
+      extends Execution
+  case class RegisteredExecution(run: () => RunningExecution) extends Execution
+  case class RunningExecution(terminate: () => Boolean) extends Execution
 
 }
