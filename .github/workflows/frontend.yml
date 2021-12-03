@@ -13,14 +13,15 @@ on:
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
-    name: Build with Node ${{ matrix.node }}
-    strategy:
-      matrix:
-        node: [12, 14]
+    name: Build with Node 14
 
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
+        
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -34,11 +35,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Setup Node
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: ${{ matrix.node }}
 
       - name: Install frontend dependencies
         working-directory: ./frontend
@@ -55,6 +51,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
+        
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -68,11 +68,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
 
       - name: Install frontend dependencies
         working-directory: ./frontend
