@@ -63,7 +63,7 @@
     "eslint": "^7.17.0",
     "eslint-plugin-vue": "^7.4.1",
     "image-webpack-loader": "^7.0.1",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.0",
     "npm-check-updates": "^10.2.5",
     "sass-loader": "^10.1.1",
     "sass-resources-loader": "^2.1.1",
