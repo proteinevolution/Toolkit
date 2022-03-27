@@ -33,7 +33,7 @@ object Dependencies {
     "org.typelevel" %% "cats-effect"          % "3.3.8",
     "co.fs2"        %% "fs2-core"             % "3.2.5",
     "co.fs2"        %% "fs2-io"               % "3.2.5",
-    "com.chuusai"   %% "shapeless"            % "2.3.8",
+    "com.chuusai"   %% "shapeless"            % "2.3.9",
     "com.dripower"  %% "play-circe"           % "2814.2",
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
