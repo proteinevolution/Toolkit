@@ -586,7 +586,7 @@ class JobActor @Inject() (
         val jobInCluster  = clusterJobIDs.contains(clusterData.sgeID)
         log.info(
           s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
-          else "inactive"}"
+            else "inactive"}"
         )
         if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
           self ! JobStateChanged(job.jobID, Error)
