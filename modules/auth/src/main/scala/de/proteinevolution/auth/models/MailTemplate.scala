@@ -556,8 +556,8 @@ object MailTemplate {
     val bodyText: String = {
       s"""Dear ${userName()},
          |we have noticed, that you have not logged in since ${user.dateLastLogin.format(
-        ZonedDateTimeHelper.dateTimeFormatter
-      )}.
+          ZonedDateTimeHelper.dateTimeFormatter
+        )}.
          |To keep our system running smoothly and to keep the data we collect from our users to a minimum,
          |we delete old user accounts.
          |This is why your account will be deleted in $daysUntilDeletion days.
