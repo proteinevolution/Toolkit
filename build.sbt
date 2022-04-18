@@ -8,7 +8,7 @@ val appProperties = settingKey[Properties]("The application properties")
 inThisBuild(
   Seq(
     organization     := "de.proteinevolution",
-    organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
+    organizationName := "Dept. of Protein Evolution, Max Planck Institute for Biology",
     startYear        := Some(2018),
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
     scalaVersion := "2.13.6"

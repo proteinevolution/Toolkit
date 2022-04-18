@@ -355,7 +355,7 @@ export default [
             Dear Toolkit Users,<br>
             <br>
             welcome to the new version of the MPI Bioinformatics Toolkit hosted at the Department of Protein Evolution,
-            Max Planck Institute for Developmental Biology, Germany.
+            Max Planck Institute for Biology, Germany.
             The first version of the Toolkit was released in 2005
             and has serviced over 2.5 million external queries to date.
             We had to rework the Toolkit entirely because of mounting software incompatibility with our

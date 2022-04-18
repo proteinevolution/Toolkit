@@ -20,7 +20,7 @@ export default {
         auth,
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
-            welcomeBody: 'of the Max Planck Institute for Developmental Biology, Tübingen, Germany.',
+            welcomeBody: 'of the Max Planck Institute for Biology, Tübingen, Germany.',
             loadBarLabel: 'Cluster workload: {load}%',
             searchPlaceholder: 'Enter a job ID or a tool name',
         },
@@ -87,7 +87,7 @@ export default {
             accept: 'Got it!',
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
-            'Max Planck Institute for Developmental Biology, Tübingen',
+            'Max Planck Institute for Biology, Tübingen',
         citation: `A Completely Reimplemented MPI Bioinformatics Toolkit
             with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
             Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.
