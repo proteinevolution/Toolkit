@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2022-04-18',
+        html: `<p>
+        We have included the <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold protein
+         sequence database</a> as a target database for PSI-BLAST.
+        </p>`,
+    },
+    {
         date: '2020-12-15',
         html: `<p>
         Our new paper on the Toolkit is out:
