@@ -39,6 +39,9 @@ export default {
                         a filtered down version of UniRef100.</li>
                         <li><b>prokaryotic_proteasome_homologs:</b> this database comprises protein sequences of several
                         newly discovered prokaryotic proteasome homologs.</li>
+                        <li><b>alphafolddb:</b> this protein sequence database is based on the
+                        <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold DB</a>
+                        developed by DeepMind and EMBL-EBI.</li>
                     </ul>`,
                     },
                     {

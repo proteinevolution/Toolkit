@@ -39,6 +39,7 @@ object LinkUtil {
   private val unirefNameReg                = """(uniref.*)""".r
   private val pfamNameReg                  = """(Pfam.*)""".r
   private val keggocNameReg                = """(.*_OC.[0-9]+)""".r
+  private val alphafolddbNameReg           = """(alphafolddb.*)""".r
 
   private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
@@ -54,6 +55,7 @@ object LinkUtil {
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
   private val keggocBaseLink      = "https://www.genome.jp/tools-bin/ocv?entry=OC."
+  private val alphafoldBaseLink   = "https://alphafold.ebi.ac.uk/entry/"
 
   /* GENERATING LINKS FOR HHPRED */
 
@@ -90,14 +92,16 @@ object LinkUtil {
       case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id, id)
       case unirefNameReg(_)                => generateLink(unirefBaseLink, id, id)
       case pfamNameReg(_)                  => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case alphafolddbNameReg(_)           => generateLink(alphafoldBaseLink, id, id)
       case _                               => id
     }
   }
 
   def getLinksDB(db: String, id: String): String = {
-    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
-    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val idNcbi      = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb       = id.replaceAll("_.*$", "").toLowerCase
+    val idCDD       = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val idAlphaFold = id.replaceAll("AF-", "")
     db match {
       case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
@@ -105,6 +109,7 @@ object LinkUtil {
       case pfamNameReg(_)                  => generateLink(cddBaseLink, idCDD, "CDD")
       case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
       case unirefNameReg(_)                => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
+      case alphafolddbNameReg(_)           => generateLink(uniprotBaseLink, idAlphaFold + ".fasta", "UniProt")
     }
   }
 
