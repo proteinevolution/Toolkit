@@ -25,7 +25,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.Random
 
 @Singleton
-final class JobIdProvider @Inject() (jobDao: JobDao)(implicit ec: ExecutionContext) {
+final class JobIdProvider @Inject(jobDao: JobDao)(implicit ec: ExecutionContext) {
 
   private[this] val generateSafe: HashSet[String] => IO[String] = { x =>
     IO(Iterator.continually[String](Random.nextInt(9999999).toString.padTo(7, '0')).filterNot(x.contains).next())

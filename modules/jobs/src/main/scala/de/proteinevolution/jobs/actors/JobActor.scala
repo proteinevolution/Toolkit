@@ -53,7 +53,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class JobActor @Inject() (
+class JobActor @Inject(
     runscriptManager: RunscriptManager,
     hashService: JobHasher,
     jobDao: JobDao,
@@ -588,7 +588,7 @@ class JobActor @Inject() (
           s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
             else "inactive"}"
         )
-        if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
+        if (!job.isFinished && !jobInCluster || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
           self ! JobStateChanged(job.jobID, Error)
       }
 

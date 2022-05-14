@@ -34,7 +34,7 @@ sealed trait LocationProvider {
 }
 
 @Singleton
-class LocationProviderImpl @Inject() (config: Configuration)(implicit ec: ExecutionContext) extends LocationProvider {
+class LocationProviderImpl @Inject(config: Configuration)(implicit ec: ExecutionContext) extends LocationProvider {
 
   private[this] val geoIp = GeoIPInfo(config.get[String]("maxmind_db"))
 

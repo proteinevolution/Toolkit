@@ -28,7 +28,7 @@ import play.api.mvc.{ Action, AnyContent }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class HHController @Inject() (
+class HHController @Inject(
     ctx: HHContext,
     service: HHService,
     jobDao: JobDao,

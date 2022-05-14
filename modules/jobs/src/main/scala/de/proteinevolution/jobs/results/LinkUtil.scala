@@ -132,7 +132,7 @@ object LinkUtil {
 
   def getLinksHHpred(jobID: String, id: String): String = {
     val db    = identifyDatabase(id)
-    val links = new ArrayBuffer[String]()
+    val links = new ArrayBuffer[String]
     val idPdb = id.replaceAll("_.*$", "").toLowerCase
     val idTrimmed = if (id.length > 4) {
       id.slice(1, 5)

@@ -36,7 +36,7 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class AuthController @Inject() (
+class AuthController @Inject(
     userSessionService: UserSessionService,
     userDao: UserDao,
     cc: ControllerComponents,

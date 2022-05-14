@@ -29,7 +29,7 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class VerificationController @Inject() (
+final class VerificationController @Inject(
     userDao: UserDao,
     userSessionService: UserSessionService,
     cc: ControllerComponents,

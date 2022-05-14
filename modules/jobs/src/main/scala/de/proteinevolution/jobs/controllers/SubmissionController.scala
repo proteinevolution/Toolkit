@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SubmissionController @Inject() (
+class SubmissionController @Inject(
     jobActorAccess: JobActorAccess,
     userSessions: UserSessionService,
     jobDispatcher: JobDispatcher,

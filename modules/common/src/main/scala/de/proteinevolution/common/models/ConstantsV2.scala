@@ -26,7 +26,7 @@ import scala.language.postfixOps
 import scala.util.matching.Regex
 
 @Singleton
-class ConstantsV2 @Inject() (config: Configuration) {
+class ConstantsV2 @Inject(config: Configuration) {
 
   /** Number of jobActors */
   final val nJobActors: Int = 100

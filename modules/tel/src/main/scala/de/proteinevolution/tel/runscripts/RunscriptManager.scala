@@ -30,7 +30,7 @@ import play.api.Logging
  * like a JobActor
  */
 @Singleton
-class RunscriptManager @Inject() (@Named("runscriptPath") runscriptPath: String) extends Logging {
+class RunscriptManager @Inject(@Named("runscriptPath") runscriptPath: String) extends Logging {
 
   // Constants for the RunscriptManager
   final val SUFFIX = "SUFFIX"

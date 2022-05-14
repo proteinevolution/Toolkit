@@ -22,7 +22,7 @@ import de.proteinevolution.common.models.ConstantsV2
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-final class JobActorAccess @Inject() (
+final class JobActorAccess @Inject(
     actorSystem: ActorSystem,
     jobActorFactory: JobActor.Factory,
     constants: ConstantsV2

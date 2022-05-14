@@ -34,7 +34,7 @@ case class UserToken(
 
 object UserToken {
 
-  private val random = new SecureRandom()
+  private val random = new SecureRandom
 
   def nextToken(nrChars: Int = 24): String = {
     new BigInteger(nrChars * 5, random).toString(32)

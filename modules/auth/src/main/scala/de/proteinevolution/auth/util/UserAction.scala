@@ -23,7 +23,7 @@ import play.api.mvc._
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserAction @Inject() (val parser: BodyParsers.Default, userSessions: UserSessionService)(implicit
+class UserAction @Inject(val parser: BodyParsers.Default, userSessions: UserSessionService)(implicit
     val executionContext: ExecutionContext
 ) extends ActionBuilder[UserRequest, AnyContent]
     with ActionTransformer[Request, UserRequest]

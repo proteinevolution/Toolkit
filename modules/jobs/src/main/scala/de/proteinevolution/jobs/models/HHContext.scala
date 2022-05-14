@@ -21,7 +21,7 @@ import de.proteinevolution.jobs.db.ResultFileAccessor
 import javax.inject.Inject
 import play.api.mvc.ControllerComponents
 
-case class HHContext @Inject() (
+case class HHContext @Inject(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
     controllerComponents: ControllerComponents

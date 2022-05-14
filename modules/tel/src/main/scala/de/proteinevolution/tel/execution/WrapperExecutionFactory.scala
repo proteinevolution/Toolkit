@@ -30,7 +30,7 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.{
 import scala.sys.process.Process
 
 @Singleton
-class WrapperExecutionFactory @Inject() (@Named("wrapperPath") wrapperPath: String) extends TELRegex {
+class WrapperExecutionFactory @Inject(@Named("wrapperPath") wrapperPath: String) extends TELRegex {
 
   private final val filePermissions = Set(
     PosixFilePermission.OWNER_EXECUTE,

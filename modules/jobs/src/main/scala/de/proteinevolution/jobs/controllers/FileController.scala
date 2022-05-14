@@ -29,7 +29,7 @@ import play.api.mvc.{ AbstractController, Action, AnyContent }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class FileController @Inject() (
+class FileController @Inject(
     ctx: HHContext,
     config: Configuration,
     constants: ConstantsV2,

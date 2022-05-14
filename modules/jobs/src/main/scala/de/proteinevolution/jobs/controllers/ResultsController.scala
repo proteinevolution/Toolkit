@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class ResultsController @Inject() (
+final class ResultsController @Inject(
     resultFiles: ResultFileAccessor,
     constants: ConstantsV2,
     cc: ControllerComponents,

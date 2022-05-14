@@ -23,7 +23,7 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class JobsRouter @Inject() (
+class JobsRouter @Inject(
     submissionController: SubmissionController,
     clusterApiController: ClusterApiController,
     jobGetController: JobGetController,

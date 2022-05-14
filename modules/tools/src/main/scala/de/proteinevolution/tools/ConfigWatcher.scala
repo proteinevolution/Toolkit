@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference
 import javax.inject.{ Inject, Singleton }
 
 @Singleton
-final private[tools] class ConfigWatcher @Inject() (
+final private[tools] class ConfigWatcher @Inject(
     pc: ParamCollector,
     config: Configuration,
     toolConfig: ToolConfig

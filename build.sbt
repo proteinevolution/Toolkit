@@ -138,7 +138,7 @@ lazy val root = (project in file("."))
   .settings(
     coreSettings,
     name := "mpi-toolkit",
-    libraryDependencies ++= (Dependencies.commonDeps ++ Dependencies.testDeps),
+    libraryDependencies ++= Dependencies.commonDeps ++ Dependencies.testDeps,
     pipelineStages := Seq(digest, gzip)
   )
 

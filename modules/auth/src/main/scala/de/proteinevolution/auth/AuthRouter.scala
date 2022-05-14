@@ -23,7 +23,7 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class AuthRouter @Inject() (
+class AuthRouter @Inject(
     authController: AuthController,
     validationController: ValidationController,
     verificationController: VerificationController

@@ -44,7 +44,7 @@ import play.api.cache.{ NamedCache, SyncCacheApi }
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
-final class WebSocketActor @Inject() (
+final class WebSocketActor @Inject(
     @Assisted("out") out: ActorRef,
     jobActorAccess: JobActorAccess,
     userSessions: UserSessionService,

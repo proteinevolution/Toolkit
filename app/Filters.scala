@@ -19,7 +19,7 @@ import play.api.http.HttpFilters
 import play.api.mvc.EssentialFilter
 import play.filters.cors.CORSFilter
 
-final class Filters @Inject() (
+final class Filters @Inject(
     corsFilter: CORSFilter
 ) extends HttpFilters {
 

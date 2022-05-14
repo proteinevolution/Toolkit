@@ -33,7 +33,7 @@ import javax.inject.{ Inject, Singleton }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-final class JobDispatcher @Inject() (
+final class JobDispatcher @Inject(
     jobDao: JobDao,
     constants: ConstantsV2,
     jobIdProvider: JobIdProvider,

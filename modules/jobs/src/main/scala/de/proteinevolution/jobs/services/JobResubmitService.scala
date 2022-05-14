@@ -26,7 +26,7 @@ import play.api.Logging
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobResubmitService @Inject() (constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext)
+class JobResubmitService @Inject(constants: ConstantsV2, jobDao: JobDao)(implicit ec: ExecutionContext)
     extends ToolkitTypes
     with Logging {
 

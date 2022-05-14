@@ -28,7 +28,7 @@ import play.api.Configuration
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-final class JobHasher @Inject() (
+final class JobHasher @Inject(
     runscriptPathProvider: RunscriptPathProvider,
     config: Configuration
 ) {

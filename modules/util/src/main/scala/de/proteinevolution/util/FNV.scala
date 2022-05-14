@@ -31,9 +31,9 @@ object FNV {
   private val MASK    = 0xff
 
   @inline private final def calc(prime: BigInt, mod: BigInt)(hash: BigInt, b: Byte): BigInt =
-    ((hash * prime) % mod) ^ (b & MASK)
+    hash * prime % mod ^ b & MASK
   @inline private final def calcA(prime: BigInt, mod: BigInt)(hash: BigInt, b: Byte): BigInt =
-    ((hash ^ (b & MASK)) * prime) % mod
+    (hash ^ b & MASK) * prime % mod
 
   /**
    * Calculates 32bit FNV-1 hash

@@ -27,7 +27,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-class UiController @Inject() (
+class UiController @Inject(
     cc: ControllerComponents,
     toolConfig: ToolConfig
 ) extends ToolkitController(cc) {

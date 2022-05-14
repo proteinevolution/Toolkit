@@ -28,7 +28,7 @@ import play.api.mvc.{ Action, AnyContent }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ProcessController @Inject() (
+class ProcessController @Inject(
     ctx: HHContext,
     jobDao: JobDao,
     service: ProcessService,
@@ -52,7 +52,7 @@ class ProcessController @Inject() (
   }
 
   def forwardAlignment(jobID: String): Action[ForwardingData] =
-    userAction((circe.json[ForwardingData])).async { implicit request =>
+    userAction(circe.json[ForwardingData]).async { implicit request =>
       jobDao.findJob(jobID).flatMap {
         case Some(job) =>
           if (job.isPublic || job.ownerID.equals(request.user.userID)) {

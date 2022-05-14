@@ -33,7 +33,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.sys.process.Process
 
 @Singleton
-final class ProcessService @Inject() (
+final class ProcessService @Inject(
     config: Configuration,
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor,

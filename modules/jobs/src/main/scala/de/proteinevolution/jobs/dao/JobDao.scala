@@ -32,7 +32,7 @@ import reactivemongo.api.{ Cursor, ReadConcern, WriteConcern }
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class JobDao @Inject() (
+class JobDao @Inject(
     private val reactiveMongoApi: ReactiveMongoApi,
     constants: ConstantsV2
 )(implicit ec: ExecutionContext) {

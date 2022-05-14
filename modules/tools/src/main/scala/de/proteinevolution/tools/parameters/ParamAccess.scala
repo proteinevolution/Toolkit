@@ -33,7 +33,7 @@ import javax.inject.{ Inject, Singleton }
  * Provides the specification of the Parameters as they appear in the individual tools
  */
 @Singleton
-class ParamAccess @Inject() (tel: TEL) {
+class ParamAccess @Inject(tel: TEL) {
 
   def select(
       name: String,

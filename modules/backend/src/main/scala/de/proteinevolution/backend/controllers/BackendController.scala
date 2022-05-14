@@ -38,7 +38,7 @@ import scala.concurrent.ExecutionContext
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-final class BackendController @Inject() (
+final class BackendController @Inject(
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,

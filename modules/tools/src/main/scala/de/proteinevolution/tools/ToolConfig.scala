@@ -37,7 +37,7 @@ import scala.util.Try
 import java.util.concurrent.atomic._
 
 @Singleton
-class ToolConfig @Inject() (
+class ToolConfig @Inject(
     config: Configuration,
     paramAccess: ParamAccess
 ) {

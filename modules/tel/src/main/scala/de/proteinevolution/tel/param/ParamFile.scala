@@ -29,7 +29,7 @@ import scala.collection.immutable.ListMap
  * Provides methods to read Generative Params from a file
  */
 @Singleton
-class GenerativeParamFileParser @Inject() (config: Configuration) {
+class GenerativeParamFileParser @Inject(config: Configuration) {
 
   private final val genKeyword = "GEN" // Denotes the parameter in the descriptor file as generative
 

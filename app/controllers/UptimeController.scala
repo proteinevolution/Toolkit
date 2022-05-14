@@ -22,7 +22,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.mvc._
 
 @Singleton
-class UptimeController @Inject() (cc: ControllerComponents) extends ToolkitController(cc) {
+class UptimeController @Inject(cc: ControllerComponents) extends ToolkitController(cc) {
 
   private val startTime: Long = System.currentTimeMillis()
 

@@ -26,7 +26,7 @@ import reactivemongo.api.bson.collection.BSONCollection
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class BackendDao @Inject() (private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
+class BackendDao @Inject(private val reactiveMongoApi: ReactiveMongoApi)(implicit ec: ExecutionContext) {
 
   private[backend] lazy val statisticsCol: Future[BSONCollection] =
     reactiveMongoApi.database.map(_.collection[BSONCollection]("statistics"))

@@ -33,7 +33,7 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.hashing.MurmurHash3
 
 @Singleton
-class UserSessionService @Inject() (
+class UserSessionService @Inject(
     userDao: UserDao,
     @NamedCache("userCache") userCache: SyncCacheApi,
     locationProvider: LocationProvider,

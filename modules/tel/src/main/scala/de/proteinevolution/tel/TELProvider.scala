@@ -23,7 +23,7 @@ import play.api.{ Configuration, Logging }
 sealed trait TELProvider      extends Provider[String]
 sealed trait TELParamProvider extends Provider[ParamCollector]
 
-class WrapperPathProvider @Inject() (configuration: Configuration) extends TELProvider with Logging {
+class WrapperPathProvider @Inject(configuration: Configuration) extends TELProvider with Logging {
 
   override def get(): String = {
 
@@ -35,7 +35,7 @@ class WrapperPathProvider @Inject() (configuration: Configuration) extends TELPr
   }
 }
 
-class RunscriptPathProvider @Inject() (configuration: Configuration) extends TELProvider with Logging {
+class RunscriptPathProvider @Inject(configuration: Configuration) extends TELProvider with Logging {
 
   override def get(): String = {
 
@@ -48,7 +48,7 @@ class RunscriptPathProvider @Inject() (configuration: Configuration) extends TEL
   }
 }
 
-class ParamCollectorProvider @Inject() (
+class ParamCollectorProvider @Inject(
     pc: ParamCollector,
     configuration: Configuration,
     generativeParamFileParser: GenerativeParamFileParser

@@ -36,7 +36,7 @@ import scala.concurrent.ExecutionContext
 import cats.effect.unsafe.implicits.global
 
 @Singleton
-class JobGetController @Inject() (
+class JobGetController @Inject(
     jobHashService: JobHashCheckService,
     userSessions: UserSessionService,
     jobDao: JobDao,
@@ -95,7 +95,7 @@ class JobGetController @Inject() (
     } yield {
       (job.jobID, job.dateCreated.toInstant.toEpochMilli)
     }).value.map {
-      case Some((latestJobId, dateCreated)) =>
+      case Some(latestJobId, dateCreated) =>
         Ok(JsonObject("jobID" -> Json.fromString(latestJobId), "dateCreated" -> Json.fromLong(dateCreated)).asJson)
       case None => NotFound(errors(JobHashError.JobNotFound.msg))
     }

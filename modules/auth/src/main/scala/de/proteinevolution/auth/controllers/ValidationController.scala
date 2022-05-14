@@ -28,7 +28,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ValidationController @Inject() (
+class ValidationController @Inject(
     userSessions: UserSessionService,
     userDao: UserDao,
     constants: ConstantsV2,

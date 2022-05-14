@@ -31,7 +31,7 @@ import play.api.{ Configuration, Environment, Logging }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MessageController @Inject() (
+class MessageController @Inject(
     cc: ControllerComponents,
     userSessions: UserSessionService,
     environment: Environment,

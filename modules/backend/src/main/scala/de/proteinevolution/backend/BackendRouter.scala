@@ -23,7 +23,7 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class BackendRouter @Inject() (ctrl: BackendController) extends SimpleRouter {
+class BackendRouter @Inject(ctrl: BackendController) extends SimpleRouter {
 
   private lazy val backendRoutes: Routes = {
     case GET(p"/statistics")   => ctrl.statistics

@@ -30,7 +30,7 @@ import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 @Singleton
-final class ClusterSubscriber @Inject() (constants: ConstantsV2)(implicit
+final class ClusterSubscriber @Inject(constants: ConstantsV2)(implicit
     ec: ExecutionContext,
     mat: Materializer
 ) extends Actor

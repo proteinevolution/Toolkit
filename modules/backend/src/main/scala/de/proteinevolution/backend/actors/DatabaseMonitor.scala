@@ -32,7 +32,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.{ Failure, Success }
 
 @Singleton
-final class DatabaseMonitor @Inject() (
+final class DatabaseMonitor @Inject(
     backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
