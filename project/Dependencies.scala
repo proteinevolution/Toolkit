@@ -4,7 +4,7 @@ import sbt._
 object Dependencies {
 
   val akkaVersion = "2.6.19"
-  val circeV      = "0.14.1"
+  val circeV      = "0.14.2"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
