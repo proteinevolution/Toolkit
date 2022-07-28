@@ -45,9 +45,7 @@
         <br>
 
         <div class="text-center mb-5">
-            SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span
-                class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span
-                class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
+            SS = <span class="ss_h_b">&nbsp;&alpha;-helix&nbsp;</span><span class="ss_e_b">&nbsp;&beta;-strand&nbsp;</span><span class="ss_pihelix">&nbsp;&pi;-helix&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CC
             = <span class="CC_b">Coiled Coils</span>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TM = <span class="CC_m">Transmembrane</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DO
             = <span class="CC_do">Disorder</span>

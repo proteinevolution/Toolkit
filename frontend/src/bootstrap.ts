@@ -4,7 +4,6 @@ import TitleManager from '@/modules/title_manager';
 import moment from 'moment';
 import VueClipboard from 'vue-clipboard2';
 import Vue from 'vue';
-import 'es6-promise/auto';
 
 Vue.use(BootstrapVue);
 Vue.use(Notifications, {

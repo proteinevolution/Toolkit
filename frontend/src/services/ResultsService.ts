@@ -10,102 +10,69 @@ import {
 } from '@/types/toolkit/results';
 
 class ResultsService {
-
-    public fetchResults(jobId: string): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            axios.get(`/api/jobs/${jobId}/results/`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async fetchResults(jobId: string): Promise<any> {
+        const res = await axios.get<any>(`/api/jobs/${jobId}/results/`);
+        return res.data;
     }
 
-    public fetchAlignmentResults(jobId: string, start?: number, end?: number, resultField?: string):
+    public async fetchAlignmentResults(jobId: string, start?: number, end?: number, resultField?: string):
         Promise<AlignmentResultResponse> {
-        return new Promise<AlignmentResultResponse>((resolve, reject) => {
-            const url: string = `/api/jobs/${jobId}/results/alignments/`;
-            axios.get(url, {
-                params: {
-                    start,
-                    end,
-                    resultField,
-                },
-            })
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
+        const res = await axios.get<AlignmentResultResponse>(`/api/jobs/${jobId}/results/alignments/`, {
+            params: {
+                start,
+                end,
+                resultField,
+            },
         });
+        return res.data;
     }
 
-    public fetchHHAlignmentResults<T extends SearchAlignmentItem, S extends HHInfoResult>(jobId: string,
-                                                                                          start?: number, end?: number):
-        Promise<SearchAlignmentsResponse<T, S>> {
-        return new Promise<SearchAlignmentsResponse<T, S>>((resolve, reject) => {
-            const url: string = `/api/jobs/${jobId}/results/hh-alignments/`;
-            axios.get(url, {
-                params: {
-                    start,
-                    end,
-                },
-            })
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
+    public async fetchHHAlignmentResults<T extends SearchAlignmentItem, S extends HHInfoResult>(
+        jobId: string,
+        start?: number,
+        end?: number
+    ): Promise<SearchAlignmentsResponse<T, S>> {
+        const res = await axios.get<SearchAlignmentsResponse<T, S>>(`/api/jobs/${jobId}/results/hh-alignments/`, {
+            params: {
+                start,
+                end,
+            },
         });
+        return res.data;
     }
 
-    public fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
+    public async fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
         Promise<SearchHitsResponse> {
-        return new Promise<SearchHitsResponse>((resolve, reject) => {
-            const url: string = `/api/jobs/${jobId}/results/hits/`;
-            axios.get(url, {
-                params: {
-                    start,
-                    end,
-                    filter,
-                    sortBy,
-                    desc,
-                },
-            })
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
+        const res = await axios.get<SearchHitsResponse>(`/api/jobs/${jobId}/results/hits/`, {
+            params: {
+                start,
+                end,
+                filter,
+                sortBy,
+                desc,
+            },
         });
+        return res.data;
     }
 
     public getDownloadFilePath(jobId: string, file: string): string {
         return `/api/jobs/${jobId}/results/files/${file}`;
     }
 
-    public getFile(jobId: string, file: string): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            axios.get(this.getDownloadFilePath(jobId, file))
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async getFile(jobId: string, file: string): Promise<any> {
+        const res = await axios.get<any>(this.getDownloadFilePath(jobId, file));
+        return res.data;
     }
 
-    public downloadFile(jobId: string, file: string, downloadFilename: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            axios.get(this.getDownloadFilePath(jobId, file))
-                .then((response) => {
-                    this.downloadAsFile(response.data, downloadFilename);
-                    resolve();
-                })
-                .catch(reject);
-        });
+    public async downloadFile(jobId: string, file: string, downloadFilename: string): Promise<void> {
+        const res = await axios.get<string>(this.getDownloadFilePath(jobId, file));
+        this.downloadAsFile(res.data, downloadFilename);
     }
 
     public downloadAsFile(file: string, downloadFilename: string): void {
         const blob = new Blob([file], {type: 'application/octet-stream'});
         if ((window as any).navigator.msSaveOrOpenBlob) {
-            window.navigator.msSaveBlob(blob, downloadFilename);
+            (window as any).navigator.msSaveBlob(blob, downloadFilename);
         } else {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -117,32 +84,18 @@ class ResultsService {
         }
     }
 
-    public generateTemplateAlignment(jobId: string, accession: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            axios.get(`/api/jobs/${jobId}/results/template-alignment/${accession}`)
-                .then(() => resolve())
-                .catch(reject);
-        });
+    public async generateTemplateAlignment(jobId: string, accession: string): Promise<void> {
+        await axios.get(`/api/jobs/${jobId}/results/template-alignment/${accession}`);
     }
 
-    public generateForwardingData(jobId: string, submission: ForwardingSubmission): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            axios.post(`/api/jobs/${jobId}/results/forward-data/`, submission)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async generateForwardingData(jobId: string, submission: ForwardingSubmission): Promise<string> {
+        const res = await axios.post<string>(`/api/jobs/${jobId}/results/forward-data/`, submission);
+        return res.data;
     }
 
-    public getStructureFile(accession: string): Promise<StructureFileResponse> {
-        return new Promise<StructureFileResponse>((resolve, reject) => {
-            axios.get(`/api/jobs/structure-file/${accession}`)
-                .then((response) => {
-                    resolve({data: response.data, filename: ResultsService.getResponseFilename(response)});
-                })
-                .catch(reject);
-        });
+    public async getStructureFile(accession: string): Promise<StructureFileResponse> {
+        const res = await axios.get<StructureFileResponse>(`/api/jobs/structure-file/${accession}`);
+        return {data: res.data, filename: ResultsService.getResponseFilename(res)};
     }
 
     private static getResponseFilename(response: AxiosResponse): string | undefined {
