@@ -9,6 +9,9 @@
 import Switches from 'vue-switches';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 import {Job} from '@/types/toolkit/jobs';
+import {mapStores} from 'pinia';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 export default ToolParameterMixin.extend({
     name: 'JobPublicToggle',
@@ -27,7 +30,7 @@ export default ToolParameterMixin.extend({
         },
         defaultSubmissionValue(): boolean {
             // if logged in then default is private, else public
-            return !this.$store.getters['auth/loggedIn'];
+            return !this.authStore.loggedIn;
         },
         isPublic(): boolean {
             if (this.job) {
@@ -36,11 +39,12 @@ export default ToolParameterMixin.extend({
                 return this.submissionValue;
             }
         },
+        ...mapStores(useAuthStore, useJobsStore),
     },
     methods: {
         togglePublic(): void {
             if (this.job) {
-                this.$store.dispatch('jobs/setJobPublic', {jobID: this.job.jobID, isPublic: !this.isPublic});
+                this.jobsStore.setJobPublic(this.job.jobID, !this.isPublic);
             } else {
                 this.submissionValue = !this.isPublic;
             }

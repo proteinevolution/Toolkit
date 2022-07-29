@@ -50,6 +50,9 @@ import Vue from 'vue';
 import SearchField from './SearchField.vue';
 import {JobState} from '@/types/toolkit/enums';
 import {Job} from '@/types/toolkit/jobs';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useJobsStore} from '@/stores/jobs';
 
 export default Vue.extend({
     name: 'ToolFinder',
@@ -63,7 +66,7 @@ export default Vue.extend({
     },
     computed: {
         recentJob(): Job | undefined {
-            return this.$store.getters['jobs/recentJob'];
+            return this.jobsStore.recentJob;
         },
         currentJobStatus(): JobState {
             if (this.recentJob) {
@@ -73,8 +76,9 @@ export default Vue.extend({
             }
         },
         storeClusterWorkload(): number {
-            return this.$store.state.clusterWorkload;
+            return this.rootStore.clusterWorkload;
         },
+        ...mapStores(useRootStore, useJobsStore),
     },
     watch: {
         storeClusterWorkload: {

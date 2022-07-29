@@ -100,6 +100,11 @@ import {Job} from '@/types/toolkit/jobs';
 import moment from 'moment';
 import {Tool} from '@/types/toolkit/tools';
 import {jobService} from '@/services/JobService';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
+import {useRootStore} from '@/stores/root';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 export default hasHTMLTitle.extend({
     name: 'JobManagerView',
@@ -147,10 +152,10 @@ export default hasHTMLTitle.extend({
             return 'Jobmanager';
         },
         jobs(): Job[] {
-            return this.$store.getters['jobs/ownedJobs'].slice(0);
+            return this.jobsStore.ownedJobs.slice(0);
         },
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         start(): number {
             if (this.totalRows === 0) {
@@ -162,8 +167,9 @@ export default hasHTMLTitle.extend({
             return Math.min(this.currentPage * this.perPage, this.totalRows);
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     mounted() {
         // Set the initial number of items
@@ -173,7 +179,7 @@ export default hasHTMLTitle.extend({
         deleteJob(jobID: string): void {
             jobService.deleteJob(jobID)
                 .then(() => {
-                    this.$store.commit('jobs/removeJob', {jobID});
+                  this.jobsStore.removeJob(jobID);
                     this.totalRows = this.jobs.length;
                 })
                 .catch(() => {
@@ -181,17 +187,17 @@ export default hasHTMLTitle.extend({
                 });
         },
         setPublic(jobID: string, isPublic: boolean): void {
-            this.$store.dispatch('jobs/setJobPublic', {jobID, isPublic});
+          this.jobsStore.setJobPublic(jobID, isPublic);
         },
         toggleJobListStatus(jobID: string, watched: boolean): void {
-            this.$store.dispatch('jobs/setJobWatched', {jobID, watched});
+          this.jobsStore.setJobWatched(jobID, watched);
         },
         translateToolName(toolName: string): string {
             const tool: Tool | undefined = this.tools.find((t: Tool) => t.name === toolName);
             return tool ? tool.longname : toolName;
         },
         fromNow(date: string): string {
-            return moment(date).from(moment.utc(this.$store.state.now));
+            return moment(date).from(moment.utc(this.rootStore.now));
         },
         onFiltered(filteredItems: any) {
             // Trigger pagination to update the number of buttons/pages due to filtering

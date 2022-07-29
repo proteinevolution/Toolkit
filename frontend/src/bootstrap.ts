@@ -4,6 +4,7 @@ import TitleManager from '@/modules/title_manager';
 import moment from 'moment';
 import VueClipboard from 'vue-clipboard2';
 import Vue from 'vue';
+import {PiniaVuePlugin} from 'pinia';
 
 Vue.use(BootstrapVue);
 Vue.use(Notifications, {
@@ -16,3 +17,4 @@ Vue.use(Notifications, {
 Vue.use(TitleManager);
 Vue.prototype.moment = moment;
 Vue.use(VueClipboard);
+Vue.use(PiniaVuePlugin);

@@ -30,6 +30,8 @@ import Accordion from '@/components/utils/Accordion.vue';
 import {AccordionItem} from '@/types/toolkit/utils';
 import {Tool} from '@/types/toolkit/tools';
 import {loadExtraTranslations} from '@/i18n';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
 
 export default Vue.extend({
     name: 'HelpModal',
@@ -50,7 +52,7 @@ export default Vue.extend({
     },
     computed: {
         tool(): Tool {
-            return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.toolName);
+            return this.toolsStore.tools.find((tool: Tool) => tool.name === this.toolName) as Tool;
         },
         accordionItemsLength(): number {
             return (this.$t(`toolHelpModals.${this.toolName}.parameters`) as any).length;
@@ -65,6 +67,7 @@ export default Vue.extend({
                     content: (this.$t(`toolHelpModals.${this.toolName}.parameters[${index}].content`) as string),
                 }));
         },
+        ...mapStores(useToolsStore),
     },
     watch: {
         toolName(name) {

@@ -55,6 +55,10 @@ import {authService} from '@/services/AuthService';
 import EventBus from '@/util/EventBus';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import {TranslateResult} from 'vue-i18n';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 export default Vue.extend({
     name: 'LoginForm',
@@ -78,6 +82,7 @@ export default Vue.extend({
         eMailOrUsernameInvalid(): boolean {
             return this.forgot.eMailOrUsername === '';
         },
+      ...mapStores(useRootStore, useAuthStore, useJobsStore),
     },
     methods: {
         async login() {
@@ -85,23 +90,23 @@ export default Vue.extend({
                 nameLogin: this.username,
                 password: this.password,
             };
-            this.$store.commit('startLoading', 'login');
+            this.rootStore.loading.login = true;
             try {
                 const msg: AuthMessage = await authService.login(data);
                 const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 if (msg.successful) {
-                    this.$store.commit('auth/setUser', msg.user);
-                    // get jobs of user
-                    this.$store.dispatch('jobs/fetchAllJobs');
+                    this.authStore.user = msg.user;
                     EventBus.$emit('hide-modal', 'auth');
                     this.$alert(message);
+                    // get jobs of user
+                    await this.jobsStore.fetchAllJobs();
                 }
                 this.message = message;
             } catch (error) {
                 this.message = '';
                 this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
             }
-            this.$store.commit('stopLoading', 'login');
+            this.rootStore.loading.login = false;
         },
         async forgotPasswordSubmit() {
             if (this.eMailOrUsernameInvalid) {

@@ -10,7 +10,7 @@
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
-                <loading v-if="$store.state.loading.alignmentTextarea"
+                <loading v-if="rootStore.loading.alignmentTextarea"
                          :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
@@ -82,6 +82,9 @@ import Logger from 'js-logger';
 import {sampleSeqService} from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
 import {jobService} from '@/services/JobService';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
 
 const logger = Logger.get('ReformatView');
 
@@ -113,7 +116,7 @@ export default Vue.extend({
     },
     computed: {
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         reformat(): Reformat {
             return new Reformat(this.input);
@@ -121,6 +124,7 @@ export default Vue.extend({
         detectedFormat(): string {
             return this.reformat.getFormat();
         },
+        ...mapStores(useRootStore, useToolsStore)
     },
     mounted() {
         EventBus.$on('forward-data', this.acceptForwardData);
@@ -134,7 +138,7 @@ export default Vue.extend({
             this.input = data;
         },
         handlePasteExample(): void {
-            this.$store.commit('startLoading', 'alignmentTextarea');
+            this.rootStore.loading.alignmentTextarea = true;
             sampleSeqService.fetchSampleSequence(this.parameter.sampleInput)
                 .then((res: string) => {
                     this.input = res;
@@ -144,7 +148,7 @@ export default Vue.extend({
                     this.input = 'Error!';
                 })
                 .finally(() => {
-                    this.$store.commit('stopLoading', 'alignmentTextarea');
+                    this.rootStore.loading.alignmentTextarea = false;
                 });
         },
         computeOutput(selectedFormat: SelectOption): void {

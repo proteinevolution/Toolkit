@@ -21,6 +21,8 @@ import moment from 'moment';
 import {jobService} from '@/services/JobService';
 import {SimilarJobResult} from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
+import {mapStores} from 'pinia';
+import {useJobsStore} from '@/stores/jobs';
 
 const logger = Logger.get('JobPendingTab');
 
@@ -39,6 +41,9 @@ export default Vue.extend({
                 dateCreated: 0,
             },
         };
+    },
+    computed: {
+        ...mapStores(useJobsStore),
     },
     created(): void {
         jobService.getSimilarJob(this.job.jobID)
@@ -64,7 +69,7 @@ export default Vue.extend({
             this.$router.push(`/jobs/${this.similarJob.jobID}`);
             jobService.deleteJob(oldJobID)
                 .then(() => {
-                    this.$store.commit('jobs/removeJob', {jobID: oldJobID});
+                    this.jobsStore.removeJob(oldJobID);
                 })
                 .catch(() => {
                     logger.error('Could not delete old job!');

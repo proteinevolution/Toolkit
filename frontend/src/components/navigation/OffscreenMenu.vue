@@ -69,6 +69,10 @@ import JobList from '@/components/sidebar/JobList.vue';
 import {sectionColors, sections} from '@/conf/ToolSections';
 import {Tool} from '@/types/toolkit/tools';
 import {User} from '@/types/toolkit/auth';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
+import {useRootStore} from '@/stores/root';
+import {useAuthStore} from '@/stores/auth';
 
 export default Vue.extend({
     name: 'OffscreenMenu',
@@ -84,24 +88,25 @@ export default Vue.extend({
     },
     computed: {
         isOpen(): boolean {
-            return this.$store.state.offscreenMenuShow;
+            return this.rootStore.offscreenMenuShow;
         },
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         displayedTools(): Tool[] {
             return this.tools.filter((tool: Tool) => tool.section === this.selectedSection);
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
         isAdmin(): boolean {
             return this.user !== null && this.user.isAdmin;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore),
     },
     methods: {
         close(): void {
-            this.$store.commit('setOffscreenMenuShow', false);
+            this.rootStore.offscreenMenuShow = false;
             this.selectedSection = '';
         },
         switchToAdminView(): void {

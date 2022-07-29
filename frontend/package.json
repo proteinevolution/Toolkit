@@ -11,6 +11,8 @@
     "test:e2e": "vue-cli-service test:e2e"
   },
   "dependencies": {
+    "@vue/composition-api": "^1.7.0",
+    "@vueuse/core": "^9.0.0",
     "axios": "^0.27.2",
     "bootstrap": "^4.6.2",
     "bootstrap-vue": "^2.22.0",
@@ -24,6 +26,7 @@
     "lodash-es": "^4.17.21",
     "moment": "^2.29.4",
     "ngl": "^0.10.4",
+    "pinia": "^2.0.17",
     "velocity-animate": "^1.5.2",
     "vue": "^2.6.14",
     "vue-clipboard2": "^0.3.3",
@@ -36,8 +39,7 @@
     "vue-simple-spinner": "^1.2.10",
     "vue-slider-component": "^3.2.20",
     "vue-switches": "^2.0.1",
-    "vue2-scrollbar": "^0.0.3",
-    "vuex": "^3.6.2"
+    "vue2-scrollbar": "^0.0.3"
   },
   "devDependencies": {
     "@types/chai": "^4.3.1",
@@ -52,7 +54,6 @@
     "@vue/cli-plugin-router": "^5.0.8",
     "@vue/cli-plugin-typescript": "^5.0.8",
     "@vue/cli-plugin-unit-mocha": "^5.0.8",
-    "@vue/cli-plugin-vuex": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^1.1.2",

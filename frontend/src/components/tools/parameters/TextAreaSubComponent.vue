@@ -20,7 +20,7 @@
                         class="mt-1 mb-3">
             <b-btn variant="link"
                    @click="handlePasteExample">
-                <loading v-if="$store.state.loading.alignmentTextarea"
+                <loading v-if="rootStore.loading.alignmentTextarea"
                          :size="20" />
                 <span v-else
                       v-text="$t('tools.parameters.textArea.pasteExample')"></span>
@@ -60,6 +60,8 @@ import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import {sampleSeqService} from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
 
 const logger = Logger.get('TextAreaSubComponent');
 
@@ -100,6 +102,9 @@ export default Vue.extend({
             autoTransformMessageTimeout: 2500,
             validation: {} as ValidationResult,
         };
+    },
+    computed: {
+      ...mapStores(useRootStore),
     },
     watch: {
         value: {
@@ -199,7 +204,7 @@ export default Vue.extend({
         },
         handlePasteExample(): void {
             EventBus.$emit('paste-example');
-            this.$store.commit('startLoading', 'alignmentTextarea');
+            this.rootStore.loading.alignmentTextarea = true;
             const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
             sampleSeqService.fetchSampleSequence(sampleSeqKey)
                 .then((res: string) => {
@@ -210,7 +215,7 @@ export default Vue.extend({
                     this.handleInput('Error!');
                 })
                 .finally(() => {
-                    this.$store.commit('stopLoading', 'alignmentTextarea');
+                    this.rootStore.loading.alignmentTextarea = false;
                 });
         },
         handleInput(value: string): void {

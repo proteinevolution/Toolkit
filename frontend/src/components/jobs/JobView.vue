@@ -92,6 +92,11 @@ import Logger from 'js-logger';
 import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
 import {lazyLoadView} from '@/router/routes';
 import EventBus from '@/util/EventBus';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 const logger = Logger.get('JobView');
 
@@ -160,17 +165,18 @@ export default Vue.extend({
             return this.$route.params.jobID;
         },
         dateCreated(): string {
-            return moment(this.job.dateCreated).from(moment.utc(this.$store.state.now));
+            return moment(this.job.dateCreated).from(moment.utc(this.rootStore.now));
         },
         job(): Job {
-            return this.$store.getters['jobs/jobs'].find((job: Job) => job.jobID === this.jobID);
+            return this.jobsStore.jobs.find((job: Job) => job.jobID === this.jobID) as Job;
         },
         tool(): Tool {
-            return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.job.tool);
+            return this.toolsStore.tools.find((tool: Tool) => tool.name === this.job.tool) as Tool;
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     watch: {
         // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
@@ -182,7 +188,7 @@ export default Vue.extend({
                 this.loadJobDetails(this.jobID);
             } else {
                 // need to handle error separately
-                this.$store.dispatch('jobs/loadJobDetails', this.jobID)
+                this.jobsStore.loadJobDetails(this.jobID)
                     .catch((err) => {
                         logger.info('Error when getting jobs!', err);
                         if (err.request.status === 401) {
@@ -203,14 +209,14 @@ export default Vue.extend({
             jobService.deleteJob(oldJobID)
                 .then(() => {
                     this.$router.replace('/jobmanager');
-                    this.$store.commit('jobs/removeJob', {jobID: oldJobID});
+                    this.jobsStore.removeJob(oldJobID);
                 })
                 .catch(() => {
                     this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
-        loadJobDetails(jobID: string): Promise<Job> {
-            return this.$store.dispatch('jobs/loadJobDetails', jobID)
+        loadJobDetails(jobID: string): Promise<void> {
+            return this.jobsStore.loadJobDetails(jobID)
                 .catch((err) => {
                     logger.warn('Error when getting jobs', err);
                     if (err.request.status === 401) {

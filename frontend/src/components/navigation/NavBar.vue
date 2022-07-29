@@ -46,6 +46,10 @@ import {Tool} from '@/types/toolkit/tools';
 import {Job} from '@/types/toolkit/jobs';
 import {sectionColors, sections} from '@/conf/ToolSections';
 import {User} from '@/types/toolkit/auth';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -62,10 +66,10 @@ export default Vue.extend({
             return this.tools.filter((tool: Tool) => tool.section === this.selectedSection);
         },
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         jobs(): Job[] {
-            return this.$store.getters['jobs/jobs'];
+            return this.jobsStore.jobs;
         },
         sectionColor(): string {
             const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
@@ -75,11 +79,12 @@ export default Vue.extend({
             return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
         isAdmin(): boolean {
             return this.user !== null && this.user.isAdmin;
         },
+        ...mapStores(useAuthStore, useToolsStore, useJobsStore),
     },
     watch: {
         '$route.params': {

@@ -10,16 +10,19 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
 
 export default Vue.extend({
     name: 'MaintenanceMessage',
     computed: {
         maintenanceMessage(): string {
-          return this.$store.state.maintenance.message;
+          return this.rootStore.maintenance.message;
         },
         showMaintenance(): boolean {
             return this.maintenanceMessage.length > 0;
         },
+        ...mapStores(useRootStore),
     },
 });
 </script>
