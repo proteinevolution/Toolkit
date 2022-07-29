@@ -39,7 +39,6 @@ object LinkUtil {
   private val unirefNameReg                = """(uniref.*)""".r
   private val pfamNameReg                  = """(Pfam.*)""".r
   private val keggocNameReg                = """(.*_OC.[0-9]+)""".r
-  private val alphafolddbNameReg           = """(alphafolddb.*)""".r
 
   private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
@@ -92,25 +91,27 @@ object LinkUtil {
       case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id, id)
       case unirefNameReg(_)                => generateLink(unirefBaseLink, id, id)
       case pfamNameReg(_)                  => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-      case alphafolddbNameReg(_)           => generateLink(alphafoldBaseLink, id, id)
       case _                               => id
     }
   }
 
   def getLinksDB(db: String, id: String): String = {
-    val idNcbi      = id.replaceAll("#", ".") + "?report=fasta"
-    val idPdb       = id.replaceAll("_.*$", "").toLowerCase
-    val idCDD       = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
-    val idAlphaFold = id.replaceAll("AF-", "")
+    val links  = new ArrayBuffer[String]()
+    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
+    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+
     db match {
-      case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case pdbNameReg(_)                   => generateLink(pdbeBaseLink, idPdb, "PDBe")
-      case pfamNameReg(_)                  => generateLink(cddBaseLink, idCDD, "CDD")
-      case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
-      case unirefNameReg(_)                => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
-      case alphafolddbNameReg(_)           => generateLink(uniprotBaseLink, idAlphaFold + ".fasta", "UniProt")
+      case nrNameReg(_)                    => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case prokaryoticProteasomeNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case pdbNameReg(_)                   => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case pfamNameReg(_)                  => links += generateLink(cddBaseLink, idCDD, "CDD")
+      case uniprotNameReg(_) =>
+        links += generateLink(uniprotBaseLink, id + ".fasta", "UniProt FASTA")
+        links += generateLink(alphafoldBaseLink, id, "AlphaFoldDB")
+      case unirefNameReg(_) => links += generateLink(unirefBaseLink, id + ".fasta", "UniRef")
     }
+    links.mkString(" | ")
   }
 
   def displayModellerLink(db: String, proteome: String): Boolean = {
