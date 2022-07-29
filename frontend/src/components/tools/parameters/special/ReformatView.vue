@@ -85,6 +85,7 @@ import {jobService} from '@/services/JobService';
 import {mapStores} from 'pinia';
 import {useRootStore} from '@/stores/root';
 import {useToolsStore} from '@/stores/tools';
+import {useClipboard} from '@vueuse/core';
 
 const logger = Logger.get('ReformatView');
 
@@ -191,12 +192,14 @@ export default Vue.extend({
         forward(selectedTool: SelectOption): void {
             this.$router.push({name: 'tools', params: {toolName: selectedTool.value, input: this.output}});
         },
-        copyToClipboard() {
-            (this as any).$copyText(this.output).then(() => {
+        async copyToClipboard() {
+            try {
+                const {copy} = useClipboard();
+                await copy(this.output);
                 this.$alert(this.$t('tools.reformat.copySuccess'));
-            }, () => {
+            } catch (e) {
                 this.$alert(this.$t('tools.reformat.copyFailure'));
-            });
+            }
         },
     },
 });

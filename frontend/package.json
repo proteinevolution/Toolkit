@@ -29,7 +29,6 @@
     "pinia": "^2.0.17",
     "velocity-animate": "^1.5.2",
     "vue": "^2.6.14",
-    "vue-clipboard2": "^0.3.3",
     "vue-cookie-law": "^1.13.3",
     "vue-i18n": "^8.27.2",
     "vue-multiselect": "^2.1.6",
