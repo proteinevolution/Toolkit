@@ -17,12 +17,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import {jobService} from '@/services/JobService';
 import {SimilarJobResult} from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
 import {mapStores} from 'pinia';
 import {useJobsStore} from '@/stores/jobs';
+import {DateTime} from 'luxon';
+import {useRootStore} from '@/stores/root';
 
 const logger = Logger.get('JobPendingTab');
 
@@ -43,7 +44,7 @@ export default Vue.extend({
         };
     },
     computed: {
-        ...mapStores(useJobsStore),
+        ...mapStores(useRootStore, useJobsStore),
     },
     created(): void {
         jobService.getSimilarJob(this.job.jobID)
@@ -76,8 +77,8 @@ export default Vue.extend({
                     this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
-        fromNow(date: string): string {
-            return moment(date).fromNow();
+        fromNow(date: number): string {
+            return DateTime.fromMillis(date).toRelative({ base: DateTime.fromMillis(this.rootStore.now) }) ?? '';
         },
     },
 });

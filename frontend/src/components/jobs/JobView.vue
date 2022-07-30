@@ -83,7 +83,6 @@ import JobPendingTab from './state-tabs/JobPendingTab.vue';
 import JobLimitReachedTab from '@/components/jobs/state-tabs/JobLimitReachedTab.vue';
 import ToolView from '../tools/ToolView.vue';
 import {Job} from '@/types/toolkit/jobs';
-import moment from 'moment';
 import {JobState} from '@/types/toolkit/enums';
 import {Tool} from '@/types/toolkit/tools';
 import {jobService} from '@/services/JobService';
@@ -97,6 +96,7 @@ import {useRootStore} from '@/stores/root';
 import {useToolsStore} from '@/stores/tools';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
+import {DateTime} from 'luxon';
 
 const logger = Logger.get('JobView');
 
@@ -113,46 +113,26 @@ export default Vue.extend({
         JobLimitReachedTab,
         NotFoundView,
         ToolCitationInfo,
-        clustalAlignment: () => lazyLoadView(import(
-            './result-tabs/ClustalAlignmentTab.vue')),
-        fastaAlignment: () => lazyLoadView(import(
-            './result-tabs/FastaAlignmentTab.vue')),
-        alignmentViewer: () => lazyLoadView(import(
-            './result-tabs/AlignmentViewerTab.vue')),
-        ngl3dStructureView: () => lazyLoadView(import(
-            './result-tabs/NGL3DStructureView.vue')),
-        hhompResults: () => lazyLoadView(import(
-            './result-tabs/HHompResultsTab.vue')),
-        hhblitsResults: () => lazyLoadView(import(
-            './result-tabs/HHblitsResultsTab.vue')),
-        hhpredResults: () => lazyLoadView(import(
-            './result-tabs/HHpredResultsTab.vue')),
-        psiblastResults: () => lazyLoadView(import(
-            './result-tabs/PsiblastResultsTab.vue')),
-        hmmerResults: () => lazyLoadView(import(
-            './result-tabs/HmmerResultsTab.vue')),
-        clansResults: () => lazyLoadView(import(
-            './result-tabs/ClansResultsTab.vue')),
-        patsearchResults: () => lazyLoadView(import(
-            './result-tabs/PatsearchResultsTab.vue')),
-        plotView: () => lazyLoadView(import(
-            './result-tabs/PlotTab.vue')),
-        tprpredResults: () => lazyLoadView(import(
-            './result-tabs/TprpredResultsTab.vue')),
-        quick2dResults: () => lazyLoadView(import(
-            './result-tabs/Quick2DResultsTab.vue')),
-        hhrepidResults: () => lazyLoadView(import(
-            './result-tabs/HhrepidResultsTab.vue')),
-        imagesView: () => lazyLoadView(import(
-            './result-tabs/ImagesViewTab.vue')),
-        seq2IDResults: () => lazyLoadView(import(
-            './result-tabs/Seq2IDResultsTab.vue')),
-        treeView: () => lazyLoadView(import(
-            './result-tabs/TreeTab.vue')),
-        dataView: () => lazyLoadView(import(
-            './result-tabs/DataTab.vue')),
-        templateSelection: () => lazyLoadView(import(
-            './result-tabs/TemplateSelectionViewTab.vue')),
+        clustalAlignment: () => lazyLoadView(import('./result-tabs/ClustalAlignmentTab.vue')),
+        fastaAlignment: () => lazyLoadView(import('./result-tabs/FastaAlignmentTab.vue')),
+        alignmentViewer: () => lazyLoadView(import('./result-tabs/AlignmentViewerTab.vue')),
+        ngl3dStructureView: () => lazyLoadView(import('./result-tabs/NGL3DStructureView.vue')),
+        hhompResults: () => lazyLoadView(import('./result-tabs/HHompResultsTab.vue')),
+        hhblitsResults: () => lazyLoadView(import('./result-tabs/HHblitsResultsTab.vue')),
+        hhpredResults: () => lazyLoadView(import('./result-tabs/HHpredResultsTab.vue')),
+        psiblastResults: () => lazyLoadView(import('./result-tabs/PsiblastResultsTab.vue')),
+        hmmerResults: () => lazyLoadView(import('./result-tabs/HmmerResultsTab.vue')),
+        clansResults: () => lazyLoadView(import('./result-tabs/ClansResultsTab.vue')),
+        patsearchResults: () => lazyLoadView(import('./result-tabs/PatsearchResultsTab.vue')),
+        plotView: () => lazyLoadView(import('./result-tabs/PlotTab.vue')),
+        tprpredResults: () => lazyLoadView(import('./result-tabs/TprpredResultsTab.vue')),
+        quick2dResults: () => lazyLoadView(import('./result-tabs/Quick2DResultsTab.vue')),
+        hhrepidResults: () => lazyLoadView(import('./result-tabs/HhrepidResultsTab.vue')),
+        imagesView: () => lazyLoadView(import('./result-tabs/ImagesViewTab.vue')),
+        seq2IDResults: () => lazyLoadView(import('./result-tabs/Seq2IDResultsTab.vue')),
+        treeView: () => lazyLoadView(import('./result-tabs/TreeTab.vue')),
+        dataView: () => lazyLoadView(import('./result-tabs/DataTab.vue')),
+        templateSelection: () => lazyLoadView(import('./result-tabs/TemplateSelectionViewTab.vue')),
     },
     data() {
         return {
@@ -165,7 +145,7 @@ export default Vue.extend({
             return this.$route.params.jobID;
         },
         dateCreated(): string {
-            return moment(this.job.dateCreated).from(moment.utc(this.rootStore.now));
+            return DateTime.fromMillis(this.job.dateCreated ?? 0).toRelative({ base: DateTime.fromMillis(this.rootStore.now) }) ?? '';
         },
         job(): Job {
             return this.jobsStore.jobs.find((job: Job) => job.jobID === this.jobID) as Job;

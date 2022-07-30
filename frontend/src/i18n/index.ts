@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import messages from './lang/en';
-import moment from 'moment';
 import mergeWith from 'lodash-es/mergeWith';
 import Logger from 'js-logger';
+import {Settings} from 'luxon';
 
 export const defaultLanguage = 'en';
+Settings.defaultLocale = defaultLanguage;
 Vue.use(VueI18n);
 
 const logger = Logger.get('i18n');
@@ -24,7 +25,7 @@ const loadedExtraTranslations: string[] = [];
 function setI18nLanguage(lang: string) {
     i18n.locale = lang;
     localStorage.setItem('tk-locale', lang);
-    moment.locale(lang);
+    Settings.defaultLocale = lang;
     const html = document.querySelector('html');
     if (html != null) {
         html.setAttribute('lang', lang);

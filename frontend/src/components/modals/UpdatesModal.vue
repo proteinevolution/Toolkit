@@ -4,7 +4,7 @@
         <div v-for="(update, index) in updates"
              :key="update.date"
              class="update-item">
-            <h6 v-text="moment(update.date).format('LL')"></h6>
+            <h6 v-text="formatDate(update.date)"></h6>
             <div v-html="update.html"></div>
             <hr v-if="index < (updates.length - 1)">
         </div>
@@ -15,6 +15,7 @@
 import Vue from 'vue';
 import BaseModal from './BaseModal.vue';
 import updates from '@/i18n/lang/updates';
+import {DateTime} from 'luxon';
 
 export default Vue.extend({
     name: 'UpdatesModal',
@@ -25,6 +26,11 @@ export default Vue.extend({
         return {
             updates,
         };
+    },
+    methods: {
+        formatDate(dateString: string): string {
+            return DateTime.fromISO(dateString).toLocaleString(DateTime.DATE_FULL);
+        }
     },
 });
 </script>

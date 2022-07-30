@@ -4,21 +4,16 @@ import {authService} from '@/services/AuthService';
 
 export interface AuthState {
     user: User | null;
-    isAdmin: boolean;
 }
 
 export const useAuthStore = defineStore('auth', {
     state: (): AuthState => ({
         user: null,
-        isAdmin: false,
     }),
     getters: {
         loggedIn(state): boolean {
             return state.user !== null;
         },
-        isAdmin(state): boolean {
-            return state.user !== null && state.user.isAdmin;
-        }
     },
     actions: {
         async fetchUserData() {

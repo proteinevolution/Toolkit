@@ -1,7 +1,6 @@
 import BootstrapVue from 'bootstrap-vue';
 import Notifications from '@/modules/notifications';
 import TitleManager from '@/modules/title_manager';
-import moment from 'moment';
 import Vue from 'vue';
 import {PiniaVuePlugin} from 'pinia';
 
@@ -14,5 +13,4 @@ Vue.use(Notifications, {
     },
 });
 Vue.use(TitleManager);
-Vue.prototype.moment = moment;
 Vue.use(PiniaVuePlugin);

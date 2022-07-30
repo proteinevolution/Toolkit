@@ -10,7 +10,7 @@
                          :key="update.date"
                          class="update-item"
                          @click="launchUpdatesModal">
-                        <h6 v-text="moment(update.date).format('LL')"></h6>
+                        <h6 v-text="formatDate(update.date)"></h6>
                         <p v-html="update.html"></p>
                     </div>
                 </b-col>
@@ -36,6 +36,7 @@
 import Vue from 'vue';
 import updates from '@/i18n/lang/updates';
 import EventBus from '@/util/EventBus';
+import {DateTime} from 'luxon';
 
 export default Vue.extend({
     name: 'UpdatesSection',
@@ -79,6 +80,9 @@ export default Vue.extend({
     methods: {
         launchUpdatesModal() {
             EventBus.$emit('show-modal', {id: 'updates'});
+        },
+        formatDate(dateString: string): string {
+            return DateTime.fromISO(dateString).toLocaleString(DateTime.DATE_FULL);
         },
     },
 });

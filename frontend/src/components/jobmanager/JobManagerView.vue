@@ -97,7 +97,6 @@
 <script lang="ts">
 import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 import {Job} from '@/types/toolkit/jobs';
-import moment from 'moment';
 import {Tool} from '@/types/toolkit/tools';
 import {jobService} from '@/services/JobService';
 import {mapStores} from 'pinia';
@@ -105,6 +104,7 @@ import {useToolsStore} from '@/stores/tools';
 import {useRootStore} from '@/stores/root';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
+import {DateTime} from 'luxon';
 
 export default hasHTMLTitle.extend({
     name: 'JobManagerView',
@@ -196,8 +196,8 @@ export default hasHTMLTitle.extend({
             const tool: Tool | undefined = this.tools.find((t: Tool) => t.name === toolName);
             return tool ? tool.longname : toolName;
         },
-        fromNow(date: string): string {
-            return moment(date).from(moment.utc(this.rootStore.now));
+        fromNow(date: number): string {
+            return DateTime.fromMillis(date).toRelative({ base: DateTime.fromMillis(this.rootStore.now) }) ?? '';
         },
         onFiltered(filteredItems: any) {
             // Trigger pagination to update the number of buttons/pages due to filtering
