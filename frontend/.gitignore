@@ -6,7 +6,7 @@ node_modules
 selenium-debug.log
 
 # local env files
-.env.local
+.env.development.local
 .env.*.local
 
 # Log files

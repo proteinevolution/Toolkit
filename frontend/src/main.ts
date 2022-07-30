@@ -10,12 +10,11 @@ import Logger from 'js-logger';
 import {pinia} from '@/stores';
 import {useRootStoreWithout} from '@/stores/root';
 
-const devMode: boolean = process.env.NODE_ENV === 'development';
 Vue.config.productionTip = false;
-Vue.config.silent = !devMode;
-Vue.config.devtools = devMode;
+Vue.config.silent = import.meta.env.PROD;
+Vue.config.devtools = import.meta.env.DEV;
 
-if (devMode) {
+if (import.meta.env.DEV) {
     Logger.get('Main').log('Running in Development Mode');
     axios.defaults.withCredentials = true;
 }

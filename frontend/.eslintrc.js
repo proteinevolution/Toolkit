@@ -2,8 +2,7 @@ module.exports = {
     root: true,
     env: {
         browser: true,
-        es6: true,
-        node: true,
+        es2021: true,
     },
     extends: [
         'plugin:vue/recommended',

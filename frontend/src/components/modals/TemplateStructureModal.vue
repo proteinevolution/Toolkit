@@ -93,7 +93,7 @@ export default Vue.extend({
                     this.stage.dispose();
                     (this.$refs.viewport as HTMLElement).innerHTML = '';
                 }
-                const ngl: any = await import(/* webpackChunkName: "ngl" */ 'ngl');
+                const ngl: any = await import('ngl');
                 this.stage = new ngl.Stage(this.$refs.viewport, {
                     backgroundColor: 'white',
                 });

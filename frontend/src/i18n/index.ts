@@ -35,12 +35,7 @@ function setI18nLanguage(lang: string) {
 export function loadLanguageAsync(lang: string): Promise<string> {
     if (i18n.locale !== lang) {
         if (!loadedLanguages.includes(lang)) {
-            return import(
-                /* webpackChunkName: "lang-[request]",
-                 webpackMode: "lazy",
-                 webpackPrefetch: 0,
-                 webpackPreload: 0 */
-                `./lang/${lang}`)
+            return import(`./lang/${lang}.ts`)
                 .then((msgs) => {
                     i18n.setLocaleMessage(lang, msgs.default[lang]);
                     loadedLanguages.push(lang);
@@ -55,12 +50,7 @@ export function loadLanguageAsync(lang: string): Promise<string> {
 export function loadExtraTranslations(path: string): Promise<void> {
     if (!loadedExtraTranslations.includes(path)) {
         logger.info('loading extra translations for ' + path);
-        return import(
-            /* webpackChunkName: "lang-extra-[request]",
-             webpackMode: "lazy",
-             webpackPrefetch: 0,
-             webpackPreload: 0 */
-            `./lang/extras/${path}.ts`)
+        return import(`./lang/extras/${path}.ts`)
             .then((msgs) => {
                 for (const itemLang in msgs.default) {
                     if (itemLang in msgs.default) {

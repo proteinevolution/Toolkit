@@ -45,8 +45,7 @@ export default ResultTabMixin.extend({
     methods: {
         async init() {
             this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
-            import(/* webpackChunkName: "ngl" */
-                'ngl')
+            import('ngl')
                 .then(({Stage}) => {
                     this.stage = new Stage(this.$refs.viewport, {
                         backgroundColor: 'white',

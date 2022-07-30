@@ -142,7 +142,7 @@ export default hasHTMLTitle.extend({
         EmailNotificationSwitch,
         JobPublicToggle,
         Loading,
-        AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
+        AlignmentViewer: () => import(
             '@/components/tools/AlignmentViewer.vue'),
     },
     props: {

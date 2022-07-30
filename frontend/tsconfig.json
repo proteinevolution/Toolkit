@@ -14,7 +14,8 @@
     "types": [
       "node",
       "mocha",
-      "chai"
+      "chai",
+      "vite/client"
     ],
     "paths": {
       "@/*": [

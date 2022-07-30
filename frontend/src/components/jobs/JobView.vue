@@ -113,45 +113,45 @@ export default Vue.extend({
         JobLimitReachedTab,
         NotFoundView,
         ToolCitationInfo,
-        clustalAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
+        clustalAlignment: () => lazyLoadView(import(
             './result-tabs/ClustalAlignmentTab.vue')),
-        fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
+        fastaAlignment: () => lazyLoadView(import(
             './result-tabs/FastaAlignmentTab.vue')),
-        alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer-tab" */
+        alignmentViewer: () => lazyLoadView(import(
             './result-tabs/AlignmentViewerTab.vue')),
-        ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */
+        ngl3dStructureView: () => lazyLoadView(import(
             './result-tabs/NGL3DStructureView.vue')),
-        hhompResults: () => lazyLoadView(import(/* webpackChunkName: "hhomp-results" */
+        hhompResults: () => lazyLoadView(import(
             './result-tabs/HHompResultsTab.vue')),
-        hhblitsResults: () => lazyLoadView(import(/* webpackChunkName: "hhblits-results" */
+        hhblitsResults: () => lazyLoadView(import(
             './result-tabs/HHblitsResultsTab.vue')),
-        hhpredResults: () => lazyLoadView(import(/* webpackChunkName: "hhpred-results" */
+        hhpredResults: () => lazyLoadView(import(
             './result-tabs/HHpredResultsTab.vue')),
-        psiblastResults: () => lazyLoadView(import(/* webpackChunkName: "psiblast-results" */
+        psiblastResults: () => lazyLoadView(import(
             './result-tabs/PsiblastResultsTab.vue')),
-        hmmerResults: () => lazyLoadView(import(/* webpackChunkName: "hmmer-results" */
+        hmmerResults: () => lazyLoadView(import(
             './result-tabs/HmmerResultsTab.vue')),
-        clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
+        clansResults: () => lazyLoadView(import(
             './result-tabs/ClansResultsTab.vue')),
-        patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
+        patsearchResults: () => lazyLoadView(import(
             './result-tabs/PatsearchResultsTab.vue')),
-        plotView: () => lazyLoadView(import(/* webpackChunkName: "probability-plot" */
+        plotView: () => lazyLoadView(import(
             './result-tabs/PlotTab.vue')),
-        tprpredResults: () => lazyLoadView(import(/* webpackChunkName: "tprpred-results" */
+        tprpredResults: () => lazyLoadView(import(
             './result-tabs/TprpredResultsTab.vue')),
-        quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
+        quick2dResults: () => lazyLoadView(import(
             './result-tabs/Quick2DResultsTab.vue')),
-        hhrepidResults: () => lazyLoadView(import(/* webpackChunkName: "hhrepid-results" */
+        hhrepidResults: () => lazyLoadView(import(
             './result-tabs/HhrepidResultsTab.vue')),
-        imagesView: () => lazyLoadView(import(/* webpackChunkName: "images-view" */
+        imagesView: () => lazyLoadView(import(
             './result-tabs/ImagesViewTab.vue')),
-        seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */
+        seq2IDResults: () => lazyLoadView(import(
             './result-tabs/Seq2IDResultsTab.vue')),
-        treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */
+        treeView: () => lazyLoadView(import(
             './result-tabs/TreeTab.vue')),
-        dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
+        dataView: () => lazyLoadView(import(
             './result-tabs/DataTab.vue')),
-        templateSelection: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
+        templateSelection: () => lazyLoadView(import(
             './result-tabs/TemplateSelectionViewTab.vue')),
     },
     data() {

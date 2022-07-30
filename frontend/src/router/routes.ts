@@ -5,11 +5,11 @@ import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
 import {Location, NavigationGuardNext, Route, RouteConfig} from 'vue-router';
 import {authService} from '@/services/AuthService';
 
-const ToolView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "tool" */ '../components/tools/ToolView.vue'));
-const JobView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "job" */ '../components/jobs/JobView.vue'));
-const JobManagerView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "jobmanager" */ '../components/jobmanager/JobManagerView.vue'));
-const AdminView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "admin" */ '../components/admin/AdminView.vue'));
-const NotFoundView = (): Promise<Component> => lazyLoadView(import(/* webpackChunkName: "404" */ '../components/utils/NotFoundView.vue'));
+const ToolView = (): Promise<Component> => lazyLoadView(import('../components/tools/ToolView.vue'));
+const JobView = (): Promise<Component> => lazyLoadView(import('../components/jobs/JobView.vue'));
+const JobManagerView = (): Promise<Component> => lazyLoadView(import('../components/jobmanager/JobManagerView.vue'));
+const AdminView = (): Promise<Component> => lazyLoadView(import('../components/admin/AdminView.vue'));
+const NotFoundView = (): Promise<Component> => lazyLoadView(import('../components/utils/NotFoundView.vue'));
 
 const routes: RouteConfig[] = [
     {

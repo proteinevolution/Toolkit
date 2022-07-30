@@ -18,7 +18,7 @@ node_modules
 package-lock.json
 main.log
 conf/.env
-frontend/.env*
+frontend/.env.development.local
 frontend/.yarn/cache
 .bsp
 *.iml
