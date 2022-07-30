@@ -52,7 +52,7 @@
                                value-field="name"
                                text-field="longname"
                                :disabled="!hasData">
-                    <template slot="first">
+                    <template #first>
                         <option :value="null"
                                 v-text="$t('jobs.forwarding.' + (hasData ? 'selectPlaceholder' : 'noData'))"></option>
                     </template>

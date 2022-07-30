@@ -10,7 +10,7 @@
                        class="select"
                        :disabled="!data || loading"
                        @change="forward">
-            <template slot="first">
+            <template #first>
                 <option :value="null"
                         v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
             </template>

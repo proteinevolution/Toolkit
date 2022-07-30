@@ -53,7 +53,7 @@
         <notifications animation-type="velocity" />
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
-            <template slot-scope="props">
+            <template #default="props">
                 <i18n path="cookieLaw.message"
                       tag="div"
                       class="Cookie__content">

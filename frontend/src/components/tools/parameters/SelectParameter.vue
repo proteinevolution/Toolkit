@@ -6,6 +6,7 @@
                      :allow-empty="isMulti"
                      :options="parameter.options"
                      :options-limit="optionsLimit"
+                     :custom-label="labelWithDefault"
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
@@ -18,11 +19,6 @@
                      :class="{nonDefault: !disabled && isNonDefaultValue}">
             <template #maxElements>
                 {{ $t(maxElementTextKey) }}
-            </template>
-            <template v-if="parameter.default === option.value"
-                      slot="option"
-                      slot-scope="{ option }">
-                {{ option.text }} (default)
             </template>
         </multiselect>
     </b-form-group>
@@ -119,6 +115,12 @@ export default ParameterRememberMixin.extend({
                     }
                 }
             }
+        },
+        labelWithDefault(option: SelectOption): string {
+          if (this.parameter.default === option.value) {
+            return option.text + ' (default)';
+          }
+          return option.text;
         },
     },
     watch: {

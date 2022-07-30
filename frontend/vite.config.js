@@ -30,7 +30,8 @@ export default defineConfig(({mode}) => {
                 gifsicle: {
                     interlaced: true,
                 },
-                // the webp option will enable WEBP, this breaks at the moment
+                svgo: {},
+                // TODO use webp version of images after update to Vue 3 (and dropping IE)
                 // webp: {
                 //     quality: 75
                 // }

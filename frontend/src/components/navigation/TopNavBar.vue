@@ -8,7 +8,7 @@
                         <b-dropdown v-if="false"
                                     no-caret
                                     class="lang-dropdown">
-                            <template slot="button-content">
+                            <template #button-content>
                                 <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
                                      alt="">
                                 <span class="sr-only"

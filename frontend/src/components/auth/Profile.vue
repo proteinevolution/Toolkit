@@ -26,7 +26,7 @@
         <b-form-group :label="$t('auth.country')">
             <b-form-select v-model="country"
                            :options="countries">
-                <template slot="first">
+                <template #first>
                     <option :value="''"
                             v-text="$t('auth.countrySelect')"></option>
                 </template>
