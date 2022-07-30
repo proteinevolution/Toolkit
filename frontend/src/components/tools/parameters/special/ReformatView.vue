@@ -55,7 +55,8 @@
                             {{ option.text }}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <b-button variant="primary"
+                    <b-button v-if="canCopy"
+                              variant="primary"
                               @click="copyToClipboard">
                         {{ $t('tools.reformat.copyToClipboard') }}
                     </b-button>
@@ -85,7 +86,6 @@ import {jobService} from '@/services/JobService';
 import {mapStores} from 'pinia';
 import {useRootStore} from '@/stores/root';
 import {useToolsStore} from '@/stores/tools';
-import {useClipboard} from '@vueuse/core';
 
 const logger = Logger.get('ReformatView');
 
@@ -124,6 +124,9 @@ export default Vue.extend({
         },
         detectedFormat(): string {
             return this.reformat.getFormat();
+        },
+        canCopy(): boolean {
+            return navigator && "clipboard" in navigator;
         },
         ...mapStores(useRootStore, useToolsStore)
     },
@@ -194,8 +197,7 @@ export default Vue.extend({
         },
         async copyToClipboard() {
             try {
-                const {copy} = useClipboard();
-                await copy(this.output);
+                await navigator.clipboard.writeText(this.output);
                 this.$alert(this.$t('tools.reformat.copySuccess'));
             } catch (e) {
                 this.$alert(this.$t('tools.reformat.copyFailure'));
