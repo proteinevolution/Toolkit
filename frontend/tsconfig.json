@@ -15,7 +15,8 @@
       "node",
       "mocha",
       "chai",
-      "vite/client"
+      "vite/client",
+      "@types/jest"
     ],
     "paths": {
       "@/*": [
