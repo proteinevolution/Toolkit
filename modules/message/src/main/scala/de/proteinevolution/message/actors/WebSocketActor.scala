@@ -74,7 +74,7 @@ final class WebSocketActor @Inject() (
         val loadFuture = clusterSubscriber ? SGELoad.Ask
         loadFuture.mapTo[UpdateLoad].map { response =>
           out ! JsonObject(
-            "type" -> Json.fromString("UpdateLoad"),
+            "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
             "load" -> Json.fromDoubleOrNull(response.load)
           ).asJson
         }
