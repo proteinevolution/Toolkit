@@ -1,7 +1,7 @@
 import IndexView from '../components/index/IndexView.vue';
 import Loading from '../components/utils/Loading.vue';
 import TimeoutView from '../components/utils/TimeoutView.vue';
-import {Component, CreateElement, VNode, VNodeChildren, VNodeData} from 'vue';
+import {Component, CreateElement, defineAsyncComponent, VNode, VNodeChildren, VNodeData} from 'vue';
 import {Location, NavigationGuardNext, Route, RouteConfig} from 'vue-router';
 import {authService} from '@/services/AuthService';
 
@@ -91,6 +91,8 @@ export default routes;
 /*
 REMARK: This function is taken from
 https://github.com/chrisvfritz/vue-enterprise-boilerplate/blob/master/src/router/routes.js
+and updated with
+https://github.com/boydaihungst/vue-enterprise-boilerplate/blob/main/src/router/routes.ts
 and just live tested. No guarantee on the functionality - replace with direct lazy-loading if something goes wrong.
 
 ---------------------- Original comments: ----------------------------
@@ -110,18 +112,39 @@ route-level guards instead or lazy-load the component directly:
 component: () => import('@views/my-view')
 */
 export function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>): Promise<Component> {
-    const AsyncHandler = () => ({
-        component: AsyncView,
+    const AsyncHandler = defineAsyncComponent({
+        loader: () => AsyncView,
         // A component to use while the component is loading.
-        loading: Loading,
-        // A fallback component in case the timeout is exceeded when loading the component.
-        error: TimeoutView,
+        loadingComponent: Loading,
         // Delay before showing the loading component.
+        // Default: 200 (milliseconds).
         delay: 400,
+        // A fallback component in case the timeout is exceeded
+        // when loading the component.
+        errorComponent: TimeoutView,
         // Time before giving up trying to load the component.
+        // Default: Infinity (milliseconds).
         timeout: 10000,
-    } as Component);
+        /**
+         *
+         * @param {*} error Error message object
+         * @param {*} retry A function that indicating whether the async component should retry when the loader promise rejects
+         * @param {*} fail  End of failure
+         * @param {*} attempts Maximum allowed retries number
+         */
+        onError(error, retry, fail, attempts) {
+            if (error.message.match(/fetch/) && attempts <= 3) {
+                // retry on fetch errors, 3 max attempts
+                retry();
+            } else {
+                // Note that retry/fail are like resolve/reject of a promise:
+                // one of them must be called for the error handling to continue.
+                fail();
+            }
+        },
+    });
 
+    // TODO: with Vue3 replace this with what the template has
     return Promise.resolve({
         functional: true,
         render(h: CreateElement, {data, children}: { data: VNodeData, children: VNodeChildren }): VNode {

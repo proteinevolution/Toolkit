@@ -1,5 +1,5 @@
 <template>
-    <NotFoundView :error-message="'Connection Timeout!'" />
+    <NotFoundView error-message="connectionTimeout" />
 </template>
 
 <script lang="ts">
