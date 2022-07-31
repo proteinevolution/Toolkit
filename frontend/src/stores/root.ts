@@ -4,6 +4,8 @@ import {backendService} from '@/services/BackendService';
 import Vue from 'vue';
 import Logger from 'js-logger';
 import {pinia} from '@/stores/index';
+import {Job} from '@/types/toolkit/jobs';
+import {useJobsStore} from '@/stores/jobs';
 
 const logger = Logger.get('Store');
 
@@ -91,6 +93,23 @@ export const useRootStore = defineStore('root', {
         },
         SOCKET_WatchLogFile() {
             // handled in JobRunningTab.vue
+        },
+        SOCKET_ClearJob({jobID}: { jobID: string }) {
+            const jobsStore = useJobsStore();
+            jobsStore.jobs = jobsStore.jobs.filter((job: Job) => job.jobID !== jobID);
+        },
+        SOCKET_UpdateJob({job}: { job: Job }) {
+            const jobsStore = useJobsStore();
+            const index: number = jobsStore.jobs.findIndex((j) => j.jobID === job.jobID);
+            if (index < 0) {
+                jobsStore.jobs.push(job);
+            } else {
+                // the websocket does not push paramValues
+                if (!job.paramValues && jobsStore.jobs[index].paramValues) {
+                    job.paramValues = jobsStore.jobs[index].paramValues;
+                }
+                Vue.set(jobsStore.jobs, index, job);
+            }
         },
     }
 });

@@ -75,20 +75,5 @@ export const useJobsStore = defineStore('jobs', {
         removeJob(jobID: string) {
             this.jobs = this.jobs.filter((job: Job) => job.jobID !== jobID);
         },
-        SOCKET_ClearJob(jobID: string) {
-            this.jobs = this.jobs.filter((job: Job) => job.jobID !== jobID);
-        },
-        SOCKET_UpdateJob(job: Job) {
-            const index: number = this.jobs.findIndex((j) => j.jobID === job.jobID);
-            if (index < 0) {
-                this.jobs.push(job);
-            } else {
-                // the websocket does not push paramValues
-                if (!job.paramValues && this.jobs[index].paramValues) {
-                    job.paramValues = this.jobs[index].paramValues;
-                }
-                Vue.set(this.jobs, index, job);
-            }
-        },
     }
 });
