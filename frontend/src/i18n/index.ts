@@ -48,23 +48,33 @@ export function loadLanguageAsync(lang: string): Promise<string> {
     return Promise.resolve(lang);
 }
 
-export function loadExtraTranslations(path: string): Promise<void> {
+export async function loadExtraTranslations(path: string): Promise<void> {
     if (!loadedExtraTranslations.includes(path)) {
         logger.info('loading extra translations for ' + path);
-        return import(`./lang/extras/${path}.ts`)
-            .then((msgs) => {
-                for (const itemLang in msgs.default) {
-                    if (itemLang in msgs.default) {
-                        const itemMsgs = msgs.default[itemLang];
-                        const curMsgs = i18n.getLocaleMessage(itemLang);
-                        const newMsgs = mergeWith(curMsgs, itemMsgs);
-                        i18n.setLocaleMessage(itemLang, newMsgs);
-                    }
-                }
-                loadedExtraTranslations.push(path);
-            });
+        const splitPath = path.split('/');
+        let msgs;
+        if (splitPath.length === 1) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}.ts`)).default;
+        }
+        if (splitPath.length === 2) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}.ts`)).default;
+        }
+        if (splitPath.length === 3) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}.ts`)).default;
+        }
+        if (splitPath.length === 4) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}.ts`)).default;
+        }
+        for (const itemLang in msgs) {
+            if (itemLang in msgs) {
+                const itemMsgs = msgs[itemLang];
+                const curMsgs = i18n.getLocaleMessage(itemLang);
+                const newMsgs = mergeWith(curMsgs, itemMsgs);
+                i18n.setLocaleMessage(itemLang, newMsgs);
+            }
+        }
+        loadedExtraTranslations.push(path);
     }
-    return Promise.resolve();
 }
 
 export default i18n;
