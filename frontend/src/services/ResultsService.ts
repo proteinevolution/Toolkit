@@ -59,8 +59,8 @@ class ResultsService {
         return `/api/jobs/${jobId}/results/files/${file}`;
     }
 
-    public async getFile(jobId: string, file: string): Promise<any> {
-        const res = await axios.get<any>(this.getDownloadFilePath(jobId, file));
+    public async getFile<T>(jobId: string, file: string): Promise<T> {
+        const res = await axios.get<T>(this.getDownloadFilePath(jobId, file));
         return res.data;
     }
 

@@ -3,16 +3,18 @@
              :message="$t('loading')" />
     <div v-else>
         <div class="result-options d-flex align-items-center">
-            <b-form-select v-model="treeOpts.tree.layoutInput"
+            <b-form-select v-model="radial"
                            :options="layoutOptions"
                            size="sm"
                            class="w-auto"
-                           @input="updateTree" />
+                           @input="handleRadialChanged" />
             <a class="ml-auto"
                @click="download">{{ $t('jobs.results.actions.downloadTree') }}</a>
         </div>
 
-        <div ref="treeContainer"></div>
+        <div id="treeContainer"
+             ref="treeContainer"
+             class="tree-widget"></div>
     </div>
 </template>
 
@@ -20,8 +22,10 @@
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
 import {resultsService} from '@/services/ResultsService';
-import {createTree, updateTree} from 'exelixis';
 import Logger from 'js-logger';
+import {phylotree as Phylotree} from 'phylotree/dist/phylotree.js';
+
+import "phylotree/dist/phylotree.css";
 
 const logger = Logger.get('TreeTab');
 
@@ -32,23 +36,11 @@ export default ResultTabMixin.extend({
     },
     data() {
         return {
-            data: undefined as string | undefined,
             tree: undefined as any,
-            treeOpts: {
-                tree: {
-                    width: 600,
-                    heigth: 20,
-                    layoutInput: 'radial',
-                },
-                nodes: {
-                    size: 5,
-                    fill: '#2E8C81',
-                    stroke: 'black',
-                },
-            },
+            radial: true,
             layoutOptions: [
-                {value: 'radial', text: 'Radial'},
-                {value: 'vertical', text: 'Vertical'},
+                {value: true, text: 'Radial'},
+                {value: false, text: 'Vertical'},
             ],
         };
     },
@@ -61,33 +53,42 @@ export default ResultTabMixin.extend({
         },
     },
     beforeDestroy() {
-        window.removeEventListener('resize', this.updateTree);
+        window.removeEventListener('resize', this.handleWindowResize);
     },
     methods: {
         async init() {
-            const data: string = await resultsService.getFile(this.job.jobID, this.filename);
+            const data = await resultsService.getFile<string>(this.job.jobID, this.filename);
             this.loading = false;
             this.$nextTick(() => {
-                const opts = {
-                    el: this.$refs.treeContainer,
-                    tree: {
-                        data,
-                    },
-                };
-                this.tree = createTree(opts);
-                this.updateTree();
-                window.addEventListener('resize', this.updateTree);
+                this.tree = new Phylotree(data);
+                this.tree.render({
+                  container: '#treeContainer',
+                  'is-radial': this.radial,
+                  'left-right-spacing': 'fit-to-size',
+                  node_circle_size: () => 4,
+                  'node-styler': (element: any) => element.selectAll('circle').style('fill','#2E8C81').style('stroke', 'black'),
+                  logger,
+                });
+                const containerRef = this.$refs.treeContainer as HTMLDivElement;
+                containerRef.innerHTML = '';
+                containerRef.appendChild(this.tree.display.show());
+                this.handleWindowResize();
+                window.addEventListener('resize', this.handleWindowResize);
             });
         },
-        updateTree(): void {
-            if (this.tree) {
-                this.treeOpts.tree.width = (this.$refs.treeContainer as HTMLElement).clientWidth * 0.75;
-                updateTree(this.tree, this.treeOpts);
-                this.tree.on_click((node: any) => {
-                    node.toggle();
-                    this.tree.update();
-                });
-            }
+        handleWindowResize(): void {
+            this.tree?.display
+                .set_size(this.getTreeSize())
+                .update(false);
+        },
+        handleRadialChanged(): void {
+            this.tree?.display
+                .radial(this.radial)
+                .set_size(this.getTreeSize())
+                .update(false);
+        },
+        getTreeSize(): number[] {
+            return [1, (this.$refs.treeContainer as HTMLElement).clientWidth];
         },
         download(): void {
             const downloadFilename = `${this.tool.name}_${this.job.jobID}.tree`;
@@ -97,12 +98,17 @@ export default ResultTabMixin.extend({
                 });
         },
     },
+    watch: {
+        fullScreen() {
+            this.handleWindowResize();
+        },
+    },
 });
 </script>
 
 <style lang="scss">
-.tnt_groupDiv {
-  margin-right: auto;
-  margin-left: auto;
+.tree-widget {
+  margin-bottom: 2rem;
+  margin-top: 1.5rem;
 }
 </style>
