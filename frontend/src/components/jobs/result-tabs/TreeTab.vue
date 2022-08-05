@@ -57,6 +57,10 @@ import {debounce} from 'lodash-es';
 
 const logger = Logger.get('TreeTab');
 
+const hStretchDefault = 0.8;
+const vStretchCircularDefault = 0.8;
+const vStretchHorizontalDefault = 1;
+
 export default ResultTabMixin.extend({
     name: 'TreeTab',
     components: {
@@ -66,8 +70,8 @@ export default ResultTabMixin.extend({
     data() {
         return {
             tree: undefined as any,
-            hStretch: 0.8,
-            vStretch: 0.8,
+            hStretch: hStretchDefault,
+            vStretch: vStretchCircularDefault,
             layout: 'circular',
             layoutOptions: [
                 {value: 'circular', text: this.$t('jobs.results.tree.circular')},
@@ -112,8 +116,15 @@ export default ResultTabMixin.extend({
             this.tree?.redraw().recenter();
         }, 200),
         handleRadialChanged(): void {
-            this.vStretch = this.layout == 'circular' ? 0.8 : 1;
-            this.handleVStretchChanged();
+            const defaultVStretch = this.layout == 'circular' ? vStretchCircularDefault : vStretchHorizontalDefault;
+            if (this.vStretch != defaultVStretch) {
+                this.vStretch = defaultVStretch;
+                this.handleVStretchChanged();
+            }
+            if (this.hStretch != hStretchDefault) {
+                this.hStretch = hStretchDefault;
+                this.handleHStretchChanged();
+            }
             this.tree?.setLayout(this.layout).recenter();
         },
         handleHStretchChanged(): void {
