@@ -3,18 +3,45 @@
              :message="$t('loading')" />
     <div v-else>
         <div class="result-options d-flex align-items-center">
-            <b-form-select v-model="radial"
-                           :options="layoutOptions"
-                           size="sm"
-                           class="w-auto"
-                           @input="handleRadialChanged" />
+            <b-form inline>
+                <label class="mr-sm-2"
+                       for="layoutSelect">{{ $t('jobs.results.tree.layout') }}</label>
+                <b-form-select id="layoutSelect"
+                               v-model="layout"
+                               :options="layoutOptions"
+                               size="sm"
+                               class="w-auto"
+                               @input="handleRadialChanged" />
+
+                <label class="mr-sm-2 ml-sm-3"
+                       for="hStretchSlider">{{ $t('jobs.results.tree.horizontalStretch') }}</label>
+                <vue-slider id="hStretchSlider"
+                            v-model="hStretch"
+                            :min="0.1"
+                            :max="3"
+                            :interval="0.1"
+                            :height="6"
+                            :width="100"
+                            @change="handleHStretchChanged" />
+
+                <label class="mr-sm-2 ml-sm-3"
+                       for="vStretchSlider">{{ $t('jobs.results.tree.verticalStretch') }}</label>
+                <vue-slider id="vStretchSlider"
+                            v-model="vStretch"
+                            :min="0.1"
+                            :max="3"
+                            :interval="0.1"
+                            :height="6"
+                            :width="100"
+                            @change="handleVStretchChanged" />
+            </b-form>
+
             <a class="ml-auto"
                @click="download">{{ $t('jobs.results.actions.downloadTree') }}</a>
         </div>
 
         <div id="treeContainer"
-             ref="treeContainer"
-             class="tree-widget"></div>
+             ref="treeContainer"></div>
     </div>
 </template>
 
@@ -23,9 +50,10 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
 import {resultsService} from '@/services/ResultsService';
 import Logger from 'js-logger';
-import {phylotree as Phylotree} from 'phylotree/dist/phylotree.js';
-
-import "phylotree/dist/phylotree.css";
+import {TidyTree} from 'tidytree';
+import {select} from 'd3-selection';
+import VueSlider from 'vue-slider-component';
+import {debounce} from 'lodash-es';
 
 const logger = Logger.get('TreeTab');
 
@@ -33,14 +61,17 @@ export default ResultTabMixin.extend({
     name: 'TreeTab',
     components: {
         Loading,
+        VueSlider,
     },
     data() {
         return {
             tree: undefined as any,
-            radial: true,
+            hStretch: 0.8,
+            vStretch: 0.8,
+            layout: 'circular',
             layoutOptions: [
-                {value: true, text: 'Radial'},
-                {value: false, text: 'Vertical'},
+                {value: 'circular', text: this.$t('jobs.results.tree.circular')},
+                {value: 'horizontal', text: this.$t('jobs.results.tree.horizontal')},
             ],
         };
     },
@@ -60,35 +91,36 @@ export default ResultTabMixin.extend({
             const data = await resultsService.getFile<string>(this.job.jobID, this.filename);
             this.loading = false;
             this.$nextTick(() => {
-                this.tree = new Phylotree(data);
-                this.tree.render({
-                  container: '#treeContainer',
-                  'is-radial': this.radial,
-                  'left-right-spacing': 'fit-to-size',
-                  node_circle_size: () => 4,
-                  'node-styler': (element: any) => element.selectAll('circle').style('fill','#2E8C81').style('stroke', 'black'),
-                  logger,
+                this.tree = new TidyTree(data, {
+                    parent: '#treeContainer',
+                    type: 'dendrogram',
+                    mode: 'square',
+                    leafLabels: true,
+                    branchNodes: true,
+                    hStretch: this.hStretch,
+                    vStretch: this.vStretch,
+                    layout: this.layout,
+                    margin: [20, 20, 0, 0]
                 });
-                const containerRef = this.$refs.treeContainer as HTMLDivElement;
-                containerRef.innerHTML = '';
-                containerRef.appendChild(this.tree.display.show());
-                this.handleWindowResize();
+                const nodeStyler = (node: any) => select(node).attr('r', 4).style('fill', '#2E8C81');
+                this.tree.eachLeafNode(nodeStyler);
+                this.tree.eachBranchNode(nodeStyler);
                 window.addEventListener('resize', this.handleWindowResize);
             });
         },
-        handleWindowResize(): void {
-            this.tree?.display
-                .set_size(this.getTreeSize())
-                .update(false);
-        },
+        handleWindowResize: debounce(function (this: any) {
+            this.tree?.redraw().recenter();
+        }, 200),
         handleRadialChanged(): void {
-            this.tree?.display
-                .radial(this.radial)
-                .set_size(this.getTreeSize())
-                .update(false);
+            this.vStretch = this.layout == 'circular' ? 0.8 : 1;
+            this.handleVStretchChanged();
+            this.tree?.setLayout(this.layout).recenter();
         },
-        getTreeSize(): number[] {
-            return [1, (this.$refs.treeContainer as HTMLElement).clientWidth];
+        handleHStretchChanged(): void {
+            this.tree?.setHStretch(this.hStretch);
+        },
+        handleVStretchChanged(): void {
+            this.tree?.setVStretch(this.vStretch);
         },
         download(): void {
             const downloadFilename = `${this.tool.name}_${this.job.jobID}.tree`;
@@ -107,8 +139,8 @@ export default ResultTabMixin.extend({
 </script>
 
 <style lang="scss">
-.tree-widget {
-  margin-bottom: 2rem;
-  margin-top: 1.5rem;
+#treeContainer {
+  height: calc(90vh - 100px);
+  min-height: 400px;
 }
 </style>

@@ -6,7 +6,7 @@ declare module 'vue-native-websocket';
 declare module 'vue-cookie-law';
 declare module 'intersection-observer-polyfill';
 declare module 'handy-scroll';
-declare module 'phylotree/dist/phylotree.js';
+declare module 'tidytree';
 declare module 'ngl';
 // declare module 'msa' {
 //     interface MSA {

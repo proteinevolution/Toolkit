@@ -80,6 +80,13 @@ export default {
             numSeqsReduced: 'Number of Sequences (up to {reduced} most diverse sequences): <b>{num}</b>',
             loadingHits: 'Loading hits...',
         },
+        tree: {
+            layout: 'Layout',
+            circular: 'Circular',
+            horizontal: 'Horizontal',
+            horizontalStretch: 'Horizontal stretch',
+            verticalStretch: 'Vertical stretch',
+        },
         seq2ID: {
             numRetrieved: 'Retrieved {num} IDs',
         },
