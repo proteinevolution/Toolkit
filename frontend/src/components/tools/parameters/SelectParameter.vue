@@ -20,6 +20,9 @@
             <template #maxElements>
                 {{ $t(maxElementTextKey) }}
             </template>
+            <template #option="{option}">
+                {{ option.text + (parameter.default === option.value ? ' (default)' : '') }}
+            </template>
         </multiselect>
     </b-form-group>
 </template>
@@ -115,12 +118,6 @@ export default ParameterRememberMixin.extend({
                     }
                 }
             }
-        },
-        labelWithDefault(option: SelectOption): string {
-          if (this.parameter.default === option.value) {
-            return option.text + ' (default)';
-          }
-          return option.text;
         },
     },
     watch: {
