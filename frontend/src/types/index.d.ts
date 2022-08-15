@@ -7,7 +7,6 @@ declare module 'vue-cookie-law';
 declare module 'intersection-observer-polyfill';
 declare module 'handy-scroll';
 declare module 'tidytree';
-declare module 'vue-tour';
 declare module 'ngl';
 // declare module 'msa' {
 //     interface MSA {

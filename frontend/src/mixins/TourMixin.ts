@@ -151,7 +151,7 @@ const TourMixin = Vue.extend({
                     params: {
                         placement: 'top'
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
+                    before: () => new Promise<void>((resolve) => {
                         const poll = setInterval(() => {
                             if (document.querySelector('[data-v-step="job-list"]')) {
                                 clearInterval(poll);
