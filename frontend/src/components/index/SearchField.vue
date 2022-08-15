@@ -71,6 +71,8 @@ import {Tool} from '@/types/toolkit/tools';
 import {Job} from '@/types/toolkit/jobs';
 import {sections} from '@/conf/ToolSections';
 import {jobService} from '@/services/JobService';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
 
 export default Vue.extend({
     name: 'SearchField',
@@ -97,8 +99,9 @@ export default Vue.extend({
     },
     computed: {
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'].filter((t: Tool) => sections.includes(t.section));
+            return this.toolsStore.tools.filter((t: Tool) => sections.includes(t.section));
         },
+        ...mapStores(useToolsStore),
     },
     mounted() {
         document.addEventListener('click', this.handleClickOutside);

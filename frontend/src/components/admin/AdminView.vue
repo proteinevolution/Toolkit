@@ -46,6 +46,9 @@ import {backendService} from '@/services/BackendService';
 import {User} from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
+import {useRootStore} from '@/stores/root';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 export default hasHTMLTitle.extend({
     name: 'AdminView',
@@ -56,8 +59,8 @@ export default hasHTMLTitle.extend({
     data() {
         return {
             maintenance: {
-              message: this.$store.state.maintenance.message,
-              submitBlocked: this.$store.state.maintenance.submitBlocked,
+              message: this.rootStore.maintenance.message,
+              submitBlocked: this.rootStore.maintenance.submitBlocked,
             },
             maintenanceStateLoading: false,
         };
@@ -67,14 +70,15 @@ export default hasHTMLTitle.extend({
             return 'Admin Page';
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
         isAdmin(): boolean {
             return this.user !== null && this.user.isAdmin;
         },
+        ...mapStores(useRootStore, useAuthStore),
     },
     methods: {
         setMaintenanceState(): void {

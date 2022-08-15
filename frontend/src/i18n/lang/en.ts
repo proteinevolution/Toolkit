@@ -12,6 +12,7 @@ export default {
         loading: 'Loading...',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
+        connectionTimeout: 'Connection Timeout!',
         language: {
             lang: 'Language',
             de: 'Deutsch',

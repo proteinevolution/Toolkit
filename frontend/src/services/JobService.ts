@@ -2,99 +2,49 @@ import axios from 'axios';
 import {Job, SimilarJobResult, SubmissionResponse} from '@/types/toolkit/jobs';
 
 class JobService {
-
-    public fetchJobs(): Promise<Job[]> {
-        return new Promise<Job[]>((resolve, reject) => {
-            axios.get('/api/jobs/')
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async fetchJobs(): Promise<Job[]> {
+        const res = await axios.get<Job[]>('/api/jobs/');
+        return res.data;
     }
 
-    public fetchJob(jobID: string): Promise<Job> {
-        return new Promise<Job>(((resolve, reject) => {
-            axios.get(`/api/jobs/${jobID}`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        }));
+    public async fetchJob(jobID: string): Promise<Job> {
+        const res = await axios.get<Job>(`/api/jobs/${jobID}`);
+        return res.data;
     }
 
-    public submitJob(toolName: string, submission: any): Promise<SubmissionResponse> {
-        return new Promise<SubmissionResponse>((resolve, reject) => {
-            axios.post(`/api/jobs/?toolName=${toolName}`, submission)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async submitJob(toolName: string, submission: any): Promise<SubmissionResponse> {
+        const res = await axios.post<SubmissionResponse>(`/api/jobs/?toolName=${toolName}`, submission);
+        return res.data;
     }
 
-    public logFrontendJob(toolName: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            axios.get(`/api/jobs/?toolName=${toolName}`)
-                .then(() => {
-                    resolve();
-                })
-                .catch(reject);
-        });
+    public async logFrontendJob(toolName: string): Promise<void> {
+        await axios.get(`/api/jobs/?toolName=${toolName}`);
     }
 
     /**
      * Ask for delete of job. Job will get cleared over websockets as well.
      * @param jobID
      */
-    public deleteJob(jobID: string): Promise<void> {
-        return new Promise<void>(((resolve, reject) => {
-            axios.delete(`/api/jobs/${jobID}`)
-                .then(() => {
-                    resolve();
-                })
-                .catch(reject);
-        }));
+    public async deleteJob(jobID: string): Promise<void> {
+        await axios.delete(`/api/jobs/${jobID}`);
     }
 
-    public getSimilarJob(jobID: string): Promise<SimilarJobResult> {
-        return new Promise<SimilarJobResult>(((resolve, reject) => {
-            axios.get(`/api/jobs/check/hash/${jobID}`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        }));
+    public async getSimilarJob(jobID: string): Promise<SimilarJobResult> {
+        const res = await axios.get<SimilarJobResult>(`/api/jobs/check/hash/${jobID}`);
+        return res.data;
     }
 
-    public startJob(jobID: string): Promise<void> {
-        return new Promise<void>(((resolve, reject) => {
-            axios.get(`/api/jobs/${jobID}/start`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        }));
+    public async startJob(jobID: string): Promise<void> {
+        await axios.get(`/api/jobs/${jobID}/start`);
     }
 
-    public setJobPublic(jobID: string, isPublic: boolean): Promise<void> {
-        return new Promise<void>(((resolve, reject) => {
-            axios.put(`/api/jobs/${jobID}/`, {isPublic})
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        }));
+    public async setJobPublic(jobID: string, isPublic: boolean): Promise<void> {
+        await axios.put(`/api/jobs/${jobID}/`, {isPublic});
     }
 
-    public suggestJobsForJobId(query: string): Promise<Job[]> {
-        return new Promise<Job[]>(((resolve, reject) => {
-            axios.get(`/api/jobs/suggest/${query}`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        }));
+    public async suggestJobsForJobId(query: string): Promise<Job[]> {
+        const res = await axios.get<Job[]>(`/api/jobs/suggest/${query}`);
+        return res.data;
     }
 }
 

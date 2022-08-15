@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-        
+
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 16
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -51,10 +51,10 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-        
+
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 16
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -74,7 +74,7 @@ jobs:
         run: yarn install
 
       - name: Run linters
-        uses: wearerequired/lint-action@v1
+        uses: wearerequired/lint-action@v2
         with:
           # auto_fix: true
           eslint: true

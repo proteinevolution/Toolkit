@@ -1,7 +1,7 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools || $store.state.loading.maintenanceState" />
+            <LoadingView v-if="rootStore.loading.tools || rootStore.loading.maintenanceState" />
             <b-container v-else
                          class="main-container">
                 <OffscreenMenu />
@@ -53,7 +53,7 @@
         <notifications animation-type="velocity" />
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
-            <template slot-scope="props">
+            <template #default="props">
                 <i18n path="cookieLaw.message"
                       tag="div"
                       class="Cookie__content">
@@ -96,6 +96,11 @@ import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
 import CookieLaw from 'vue-cookie-law';
 import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
 import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 const logger = Logger.get('App');
 
@@ -150,6 +155,7 @@ export default Vue.extend({
         openJobId(): string {
             return this.$route.params.jobID;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     created() {
         // remove title star on focus
@@ -159,11 +165,11 @@ export default Vue.extend({
             }
         });
 
-        this.$store.dispatch('fetchMaintenance');
-        this.$store.dispatch('tools/fetchAllTools');
-        this.$store.dispatch('jobs/fetchAllJobs');
+        this.rootStore.fetchMaintenance();
+        this.toolsStore.fetchAllTools();
+        this.jobsStore.fetchAllJobs();
         // this also makes sure the session id is set
-        this.$store.dispatch('auth/fetchUserData');
+        this.authStore.fetchUserData();
 
         // handle websocket messages which depend on the ui
         (this.$options as any).sockets.onmessage = (response: any) => {
@@ -185,17 +191,17 @@ export default Vue.extend({
                     this.showJobNotification(json.jobID, json.title, json.body);
                     break;
                 case 'SOCKET_Logout':
-                    if (!this.$store.state.loading.logout) {
+                    if (!this.rootStore.loading.logout) {
                         this.$alert(this.$t('auth.loggedOutByWS'));
-                        this.$store.dispatch('jobs/fetchAllJobs');
-                        this.$store.commit('auth/setUser', null);
+                        this.jobsStore.fetchAllJobs();
+                        this.authStore.user = null;
                     }
                     break;
                 case 'SOCKET_Login':
-                    if (!this.$store.state.loading.login) {
+                    if (!this.rootStore.loading.login) {
                         this.$alert(this.$t('auth.loggedInByWS'));
-                        this.$store.dispatch('jobs/fetchAllJobs');
-                        this.$store.dispatch('auth/fetchUserData');
+                        this.jobsStore.fetchAllJobs();
+                        this.authStore.fetchUserData();
                     }
                     break;
                 default:
@@ -204,7 +210,7 @@ export default Vue.extend({
         };
 
         this.refreshInterval = setInterval(() => {
-            this.$store.commit('updateNow');
+            this.rootStore.now = Date.now();
         }, 10000);
     },
     mounted() {
@@ -226,9 +232,9 @@ export default Vue.extend({
     methods: {
         showJobNotification(jobID: string, title: string, body: string): void {
             if (jobID === this.openJobId) {
-                const job: Job = this.$store.getters['jobs/jobs'].find((j: Job) => j.jobID === jobID);
-                const tool: Tool = this.$store.getters['tools/tools'].find((t: Tool) => t.name === job.tool);
-                this.showNotification(title, body, {tool: tool.longname});
+                const job = this.jobsStore.jobs.find((j: Job) => j.jobID === jobID) as Job;
+                const tool = this.toolsStore.tools.find((t: Tool) => t.name === job.tool) as Tool;
+                  this.showNotification(title, body, {tool: tool.longname});
                 this.$title.alert(true);
             }
         },
@@ -261,17 +267,17 @@ export default Vue.extend({
 <!-- This should generally be the only global CSS in the app. -->
 <style lang="scss">
 @import './assets/scss/reset';
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-vue/dist/bootstrap-vue.css';
-@import '~vue-multiselect/dist/vue-multiselect.min.css';
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-vue/dist/bootstrap-vue.css';
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
 @import './assets/scss/form-elements';
 @import './assets/scss/modals';
 @import './assets/scss/sequence-coloring';
 @import url('https://use.fontawesome.com/releases/v5.2.0/css/all.css');
 
 $themeColor: $primary;
-@import '~vue-slider-component/lib/theme/default.scss';
-@import '~handy-scroll/dist/handy-scroll.css';
+@import 'vue-slider-component/lib/theme/default.scss';
+@import 'handy-scroll/dist/handy-scroll.css';
 
 body {
   overflow-y: scroll;

@@ -1,22 +1,16 @@
 import axios from 'axios';
 
 class SampleSeqService {
-
     private sampleSeqs: { [key: string]: string } = {};
 
-    public fetchSampleSequence(sampleSequenceKey: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            if (sampleSequenceKey in this.sampleSeqs) {
-                resolve(this.sampleSeqs[sampleSequenceKey]);
-            } else {
-                axios.get(`/sample-seqs/${sampleSequenceKey}`, {headers: {'Content-Type': 'text/plain'}})
-                    .then((response) => {
-                        this.sampleSeqs[sampleSequenceKey] = response.data.trim();
-                        resolve(this.sampleSeqs[sampleSequenceKey]);
-                    })
-                    .catch(reject);
-            }
-        });
+    public async fetchSampleSequence(sampleSequenceKey: string): Promise<string> {
+        if (sampleSequenceKey in this.sampleSeqs) {
+            return this.sampleSeqs[sampleSequenceKey];
+        } else {
+            const res = await axios.get<string>(`/sample-seqs/${sampleSequenceKey}`, {headers: {'Content-Type': 'text/plain'}});
+            this.sampleSeqs[sampleSequenceKey] = res.data.trim();
+            return this.sampleSeqs[sampleSequenceKey];
+        }
     }
 }
 

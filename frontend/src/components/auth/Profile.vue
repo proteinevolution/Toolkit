@@ -26,7 +26,7 @@
         <b-form-group :label="$t('auth.country')">
             <b-form-select v-model="country"
                            :options="countries">
-                <template slot="first">
+                <template #first>
                     <option :value="''"
                             v-text="$t('auth.countrySelect')"></option>
                 </template>
@@ -70,6 +70,8 @@ import countries from '@/i18n/lang/countries';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import {authService} from '@/services/AuthService';
 import {TranslateResult} from 'vue-i18n';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
 
@@ -95,7 +97,7 @@ export default Vue.extend({
     },
     computed: {
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
         editButtonEnabled(): boolean {
             if (this.user) {
@@ -124,6 +126,7 @@ export default Vue.extend({
                 && this.eMailValid
                 && this.passwordValid;
         },
+        ...mapStores(useAuthStore),
     },
     watch: {
         user: {
@@ -178,7 +181,7 @@ export default Vue.extend({
                 const msg: AuthMessage = await authService.editProfile(data);
                 if (msg.successful) {
                     if (msg.user !== null) {
-                        this.$store.commit('auth/setUser', msg.user);
+                        this.authStore.user = msg.user;
                     }
                     this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
                 } else {

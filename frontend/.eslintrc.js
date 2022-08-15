@@ -2,8 +2,7 @@ module.exports = {
     root: true,
     env: {
         browser: true,
-        es6: true,
-        node: true,
+        es2021: true,
     },
     extends: [
         'plugin:vue/recommended',
@@ -17,16 +16,10 @@ module.exports = {
     rules: {
         'vue/html-indent': ['warn', 4],
         'vue/no-v-html': 'off',
-        'vue/max-attributes-per-line': [
-            'warn',
-            {
-                singleline: 1,
-                multiline: {
-                    max: 1,
-                    allowFirstLine: true,
-                },
-            },
-        ],
+        'vue/first-attribute-linebreak': ['warn', {
+            'singleline': 'beside',
+            'multiline': 'beside',
+        }],
         'vue/html-self-closing': [
             'warn',
             {
@@ -45,6 +38,9 @@ module.exports = {
         ],
         // TODO get rid of these rules for better code style
         'vue/require-default-prop': 'off',
+        'vue/no-v-text-v-html-on-component': 'off',
+        'vue/no-reserved-component-names': 'off',
+        'vue/multi-word-component-names': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-inferrable-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',

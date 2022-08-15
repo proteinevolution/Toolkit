@@ -10,7 +10,7 @@
                        class="select"
                        :disabled="!data || loading"
                        @change="forward">
-            <template slot="first">
+            <template #first>
                 <option :value="null"
                         v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
             </template>
@@ -35,6 +35,8 @@ import Logger from 'js-logger';
 import {resultsService} from '@/services/ResultsService';
 import {ForwardingMode, Tool} from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
 
 const logger = Logger.get('TemplateAlignmentModal');
 
@@ -67,7 +69,7 @@ export default Vue.extend({
     },
     computed: {
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         forwardingEnabled(): boolean {
             return Boolean(this.forwardingMode.templateAlignment);
@@ -98,6 +100,7 @@ export default Vue.extend({
                 return this.data;
             }
         },
+        ...mapStores(useToolsStore),
     },
     watch: {
         jobID: {

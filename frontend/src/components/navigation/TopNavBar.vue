@@ -8,7 +8,7 @@
                         <b-dropdown v-if="false"
                                     no-caret
                                     class="lang-dropdown">
-                            <template slot="button-content">
+                            <template #button-content>
                                 <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')"
                                      alt="">
                                 <span class="sr-only"
@@ -112,6 +112,10 @@ import {authService} from '@/services/AuthService';
 import Logger from 'js-logger';
 import {loadLanguageAsync, possibleLanguages} from '@/i18n';
 import MaintenanceMessage from '@/components/navigation/MaintenanceMessage.vue';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 
 const logger = Logger.get('TopNavBar');
 
@@ -120,14 +124,15 @@ export default Vue.extend({
     components: { MaintenanceMessage },
     computed: {
         reconnecting(): boolean {
-            return this.$store.state.reconnecting;
+            return this.rootStore.reconnecting;
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
+        ...mapStores(useRootStore, useAuthStore, useJobsStore),
     },
     methods: {
         reloadApp(): void {
@@ -137,7 +142,7 @@ export default Vue.extend({
             EventBus.$emit('show-modal', {id: 'auth'});
         },
         toggleOffscreenMenu(): void {
-            this.$store.commit('setOffscreenMenuShow', true);
+            this.rootStore.offscreenMenuShow = true;
         },
         changeLanguage(lang: string): void {
             if (possibleLanguages.includes(lang)) {
@@ -148,19 +153,19 @@ export default Vue.extend({
             }
         },
         async signOut() {
-            this.$store.commit('startLoading', 'logout');
+            this.rootStore.loading.logout = true;
             try {
                 const msg: AuthMessage = await authService.logout();
                 if (msg.successful) {
-                    this.$store.commit('auth/setUser', null);
-                    // sync jobs
-                    this.$store.dispatch('jobs/fetchAllJobs');
+                    this.authStore.user = null;
                     this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
+                    // sync jobs
+                    await this.jobsStore.fetchAllJobs();
                 }
             } catch (error) {
                 this.$alert(error.message, 'danger');
             }
-            this.$store.commit('stopLoading', 'logout');
+            this.rootStore.loading.logout = false;
         },
     },
 });

@@ -6,6 +6,7 @@ export default {
         loading: 'Lädt...',
         fetching: 'Fetching...',
         reconnecting: 'Verbindungsaufbau...',
+        connectionTimeout: 'Verbindung fehlgeschlagen!',
         language: {
             lang: 'Sprache',
             de: 'Deutsch',

@@ -55,8 +55,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import {Job} from '@/types/toolkit/jobs';
-import moment from 'moment';
 import {Route} from 'vue-router';
+import {mapStores} from 'pinia';
+import {useJobsStore} from '@/stores/jobs';
+import {DateTime} from 'luxon';
 
 export default Vue.extend({
     name: 'JobList',
@@ -70,7 +72,8 @@ export default Vue.extend({
             }, {
                 name: 'dateCreated',
                 sort: (a: Job, b: Job) => {
-                    return moment.utc(b.dateCreated).diff(moment.utc(a.dateCreated));
+                    return DateTime.fromMillis(b.dateCreated ?? 0).toUTC()
+                        .diff(DateTime.fromMillis(a.dateCreated ?? 0).toUTC()).milliseconds;
                 },
             }, {
                 name: 'tool',
@@ -89,7 +92,7 @@ export default Vue.extend({
             return this.$route.params.jobID;
         },
         jobs(): Job[] {
-            return this.$store.getters['jobs/watchedJobs'].slice(0);
+            return this.jobsStore.watchedJobs.slice(0);
         },
         sortedJobs(): Job[] {
             let sorted: Job[] = [...this.jobs].sort(this.sortColumns[this.selectedSort].sort);
@@ -113,6 +116,7 @@ export default Vue.extend({
         scrollUpPossible(): boolean {
             return (this.startIndex + 1) * this.itemsPerPage < this.jobs.length;
         },
+        ...mapStores(useJobsStore),
     },
     watch: {
         $route({name, params}: Route): void {
@@ -130,7 +134,7 @@ export default Vue.extend({
             this.$emit('click');
         },
         hideJob(jobID: string): void {
-            this.$store.dispatch('jobs/setJobWatched', {jobID, watched: false});
+          this.jobsStore.setJobWatched(jobID, false);
         },
         scrollDown(): void {
             if (this.scrollDownPossible) {
