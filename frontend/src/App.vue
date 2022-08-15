@@ -160,7 +160,8 @@ export default TourMixin.extend({
         openJobId(): string {
             return this.$route.params.jobID;
         },
-    ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),},
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
+    },
     created() {
         // remove title star on focus
         document.addEventListener('visibilitychange', () => {
@@ -265,7 +266,7 @@ export default TourMixin.extend({
             this.modalProps.forwardingData = '';
         },
         setTourFinished(): void {
-            this.$store.commit('setTourFinished');
+            this.rootStore.tourFinished = true;
         },
     },
 });

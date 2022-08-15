@@ -138,8 +138,6 @@ export default Vue.extend({
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
-        // for the tour
-        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);

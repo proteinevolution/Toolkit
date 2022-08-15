@@ -81,56 +81,54 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .logo-container {
-    align-items: center;
+  align-items: center;
 }
 
 .logo-link {
-    width: 100%;
+  width: 100%;
 
-    img {
-        height: auto;
-        width: 180px;
-    }
+  img {
+    height: auto;
+    width: 180px;
+  }
 }
 
 .tour-banner {
-    display: flex;
-    background-color: $tk-green;
-    justify-content: space-between;
-    align-items: baseline;
-    @include media-breakpoint-down(md) {
-        display: none;
-    }
+  display: flex;
+  background-color: $tk-green;
+  justify-content: space-between;
+  align-items: baseline;
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
 
-    p {
-        color: $white;
-    }
+  p {
+    color: $white;
+  }
 
 }
 
 .tour-banner__ignore-button {
-    color: $white;
-    background-color: transparent;
-    padding: 0.625em 3.125em;
-    border-radius: $global-radius;
-    border: 0;
-    font-size: 1em;
-    margin: 0;
+  color: $white;
+  background-color: transparent;
+  padding: 0.625em 3.125em;
+  border-radius: $global-radius;
+  border: 0;
+  font-size: 1em;
+  margin: 0;
 }
 
 .tour-banner__start-button {
-    color: $white;
-    background-color: $tk-dark-green;
-    padding: 0.625em 3.125em;
-    border-radius: $global-radius;
-    border: 0;
-    font-size: 1em;
-    margin: 0;
+  color: $white;
+  background-color: $tk-dark-green;
+  padding: 0.625em 3.125em;
+  border-radius: $global-radius;
+  border: 0;
+  font-size: 1em;
+  margin: 0;
 }
 
 .tour-banner__start-button:hover {
-    background-color: $tk-darker-green;
+  background-color: $tk-darker-green;
 }
-
-
 </style>

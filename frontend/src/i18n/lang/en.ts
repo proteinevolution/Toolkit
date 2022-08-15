@@ -90,10 +90,10 @@ export default {
         tour: {
             content: {
                 toolBar: 'These are the different tools you can use',
-                searchBar: 'search for jobs or tools',
-                tool: 'Let\'s checkout this tool.',
-                input: 'Here you can input a protein sequence.',
-                paste: 'Paste an example.',
+                searchBar: 'Search for jobs or tools',
+                tool: 'Let\'s checkout this tool',
+                input: 'Here you can input a protein sequence',
+                paste: 'Paste an example',
                 structuralDomainDatabase: 'Select structural/domain databases',
                 proteomes: 'Select proteomes',
                 parametersTab: 'Change tool parameters',
