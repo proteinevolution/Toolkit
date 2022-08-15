@@ -618,6 +618,11 @@
     consola "^2.15.0"
     node-fetch "^2.6.7"
 
+"@popperjs/core@^2.9.1":
+  version "2.11.6"
+  resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
+  integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
+
 "@sinclair/typebox@^0.24.1":
   version "0.24.27"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.27.tgz#d55643516a1546174e10da681a8aaa81e757452d"
@@ -4827,7 +4832,7 @@ pngquant-bin@^6.0.0:
     bin-wrapper "^4.0.1"
     execa "^4.0.0"
 
-popper.js@^1.16.0, popper.js@^1.16.1:
+popper.js@^1.16.1:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
   integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
@@ -5896,22 +5901,22 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-tour@^1.5.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/vue-tour/-/vue-tour-1.6.0.tgz#862e9b271bfcc0b59a962e3e7c4a4eee85f0dc59"
-  integrity sha512-INVkuv3kIqulM3R90W1EF4XzFzOt34y6F0BEOunH+DcIwRVrWvBT/HXBu+Dq0RDJswxYbak2JQto58ep3rULRw==
+vue-tour@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/vue-tour/-/vue-tour-2.0.0.tgz#aa4489cfc9f9090ca57d3208a074010f3be8ec05"
+  integrity sha512-vhKzqdhunQ3EoO1733UxhOB389u3EKv2X8JqYhX4tIq4ilqlZtnY3azPFBYPFmnAqHn5RyZBrP2CpqSaxTs8og==
   dependencies:
+    "@popperjs/core" "^2.9.1"
     hash-sum "^2.0.0"
     jump.js "^1.0.2"
-    popper.js "^1.16.0"
-    vue "^2.6.10"
+    vue "^2.6.12"
 
-vue@^2.2.6, vue@^2.6.10:
+vue@^2.2.6:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vue@^2.6.14:
+vue@^2.6.12, vue@^2.6.14:
   version "2.7.8"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.7.8.tgz#34e06553137611d8cecc4b0cd78b7a59f80b1299"
   integrity sha512-ncwlZx5qOcn754bCu5/tS/IWPhXHopfit79cx+uIlLMyt3vCMGcXai5yCG5y+I6cDmEj4ukRYyZail9FTQh7lQ==
