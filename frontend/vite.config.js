@@ -60,5 +60,14 @@ export default defineConfig(({mode}) => {
                 },
             },
         },
+        build: {
+            commonjsOptions: {
+                /**
+                 * Setting to make prod-build working with vue-slider-component
+                 * https://github.com/NightCatSama/vue-slider-component/issues/642
+                 **/
+                requireReturnsDefault: true,
+            },
+        },
     };
 });
