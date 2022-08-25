@@ -4,6 +4,7 @@ import TimeoutView from '../components/utils/TimeoutView.vue';
 import {Component, CreateElement, defineAsyncComponent, VNode, VNodeChildren, VNodeData} from 'vue';
 import {Location, NavigationGuardNext, Route, RouteConfig} from 'vue-router';
 import {authService} from '@/services/AuthService';
+import Logger from 'js-logger';
 
 const ToolView = (): Promise<Component> => lazyLoadView(import('../components/tools/ToolView.vue'));
 const JobView = (): Promise<Component> => lazyLoadView(import('../components/jobs/JobView.vue'));
@@ -88,6 +89,8 @@ const routes: RouteConfig[] = [
 
 export default routes;
 
+const logger = Logger.get('RouteImport');
+
 /*
 REMARK: This function is taken from
 https://github.com/chrisvfritz/vue-enterprise-boilerplate/blob/master/src/router/routes.js
@@ -133,6 +136,7 @@ export function lazyLoadView(AsyncView: Promise<typeof import ('*.vue')>): Promi
          * @param {*} attempts Maximum allowed retries number
          */
         onError(error, retry, fail, attempts) {
+            logger.error(error, attempts);
             if (error.message.match(/fetch/) && attempts <= 3) {
                 // retry on fetch errors, 3 max attempts
                 retry();
