@@ -32,6 +32,9 @@ export default {
                                 <a href="http://www.expasy.org/sprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
                             <li><b>Uniprot_trembl:</b> automatically annotated and not reviewed sequences from the
                                 <a href="http://www.ebi.ac.uk/swissprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
+                            <li><b>alphafold_uniprot, alphafold_uniprot50:</b> these protein sequence databases are based on
+                            the <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold DB</a>
+                                developed by DeepMind and EMBL-EBI.</li>
                         </ul>`,
                     },
                     {
