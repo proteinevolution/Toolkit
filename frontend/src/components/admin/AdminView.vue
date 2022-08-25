@@ -59,8 +59,8 @@ export default hasHTMLTitle.extend({
     data() {
         return {
             maintenance: {
-              message: this.rootStore.maintenance.message,
-              submitBlocked: this.rootStore.maintenance.submitBlocked,
+              message: '',
+              submitBlocked: false,
             },
             maintenanceStateLoading: false,
         };
@@ -79,6 +79,10 @@ export default hasHTMLTitle.extend({
             return this.user !== null && this.user.isAdmin;
         },
         ...mapStores(useRootStore, useAuthStore),
+    },
+    mounted() {
+        this.maintenance.message = this.rootStore.maintenance.message;
+        this.maintenance.submitBlocked = this.rootStore.maintenance.submitBlocked;
     },
     methods: {
         setMaintenanceState(): void {
