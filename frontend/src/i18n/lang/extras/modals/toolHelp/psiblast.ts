@@ -69,14 +69,25 @@ export default {
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],
-                references: `<p>Altschul S., Madden T., Schaffer A., Zhang J., Miller W., Lipman D. (1997) Gapped BLAST and PSI-BLAST: a new
-            generation of protein database search programs. Nucl Acids Res 25(17):3389-3402.
-            <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC146917 target="_blank" rel="noopener">PMCID: PMC146917</a></p>
-        <p>Altschul SF., Gish W., Miller W., Myers EW., Lipman DJ. (1990) Basic local alignment search tool.
-            J Mol Biol. 215:403-410. <a href = https://www.ncbi.nlm.nih.gov/pubmed/2231712 target="_blank" rel="noopener">PMID: 2231712</a></p>
-        <p>Camacho C., Coulouris G., Avagyan V., Ma N., Papadopoulos J., Bealer K., Madden TL. (2008) BLAST+:
-            architecture and applications. BMC Bioinformatics 10:421. <a href = https://www.ncbi.nlm.nih.gov/pubmed/20003500
-        target="_blank" rel="noopener">PMID: 20003500</a></p>`,
+                references: `BLAST+: architecture and applications.<br> Camacho C, Coulouris G, Avagyan V, Ma N, 
+                Papadopoulos J, Bealer K, Madden TL.
+                <a href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" target="_blank" rel="noopener">
+                BMC Bioinformatics. 2009 Dec 15;10:421</a>.<br><br>
+                Database resources of the national center for biotechnology information.<br>Sayers EW, Bolton EE, Brister JR, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>
+                UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium.
+                <a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>
+                RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for 
+                basic and applied research and education in fundamental biology, biomedicine, biotechnology, 
+                bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.
+                <a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>
+                AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence 
+                space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D439-D444.`,
             },
         },
     },

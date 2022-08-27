@@ -50,9 +50,24 @@ export default {
                         content: `This parameter controls how many matches will be displayed in the results.`,
                     },
                 ],
-                references: `<p>Finn RD., Clements J., Eddy SR. (2011) HMMER web server: interactive sequence similarity searching.
-            Nucleic Acids Res. 39(Web Server issue): W29–W37.
-            <a href = https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3125773 target="_blank" rel="noopener">PMCID: PMC3125773</a></p>`,
+                references: `<p>HMMER web server: interactive sequence similarity searching.<br>Finn RD., Clements J., Eddy SR.
+                <a href = https://doi.org/10.1093/nar/gkr367 target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2011;39(Web Server issue):W29-W37.</a></p>
+                Database resources of the national center for biotechnology information.<br>Sayers EW, Bolton EE, Brister JR, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>
+                UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium.
+                <a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>
+                RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for 
+                basic and applied research and education in fundamental biology, biomedicine, biotechnology, 
+                bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.
+                <a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>
+                AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence 
+                space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D439-D444.`,
             },
         },
     },
