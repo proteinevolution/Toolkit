@@ -3,8 +3,8 @@ export default [
         date: '2022-08-27',
         html: `<p>
         We have included the full <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold protein
-         sequence database</a>, alphafold_uniprot, and a filtered version ot if, alphafold_uniprot50, as a target 
-         database for PSI-BLAST, HMMER, and PatternSearch.
+         sequence database</a>, alphafold_uniprot, and a filtered version of it, alphafold_uniprot50, as target 
+         databases for PSI-BLAST, HMMER, and PatternSearch.
         </p>`,
     },
     {
