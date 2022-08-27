@@ -39,8 +39,8 @@ object LinkUtil {
   private val unirefNameReg                = """(uniref.*)""".r
   private val pfamNameReg                  = """(Pfam.*)""".r
   private val keggocNameReg                = """(.*_OC.[0-9]+)""".r
-
-  private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+  private val alphafolddbNameReg           = """(alphafold_uniprot.*)""".r
+  private val pdbBaseLink                  = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
@@ -82,8 +82,10 @@ object LinkUtil {
   }
 
   def getSingleLinkDB(db: String, id: String): String = {
-    val idPfam = id.replaceAll("am.*$||..*", "")
-    val idPdb  = id.replaceAll("_.*$", "")
+    val idPfam      = id.replaceAll("am.*$||..*", "")
+    val idPdb       = id.replaceAll("_.*$", "")
+    val idAlphaFold = id.replaceAll("-.*$", "")
+    println(idAlphaFold)
     db match {
       case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, id, id)
       case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, id, id)
@@ -91,21 +93,26 @@ object LinkUtil {
       case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id, id)
       case unirefNameReg(_)                => generateLink(unirefBaseLink, id, id)
       case pfamNameReg(_)                  => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case alphafolddbNameReg(_)           => generateLink(alphafoldBaseLink, idAlphaFold, id)
       case _                               => id
     }
   }
 
   def getLinksDB(db: String, id: String): String = {
-    val links  = new ArrayBuffer[String]()
-    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
-    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val links       = new ArrayBuffer[String]()
+    val idNcbi      = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb       = id.replaceAll("_.*$", "").toLowerCase
+    val idCDD       = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val idAlphaFold = id.replaceAll("-.*$", "")
 
     db match {
       case nrNameReg(_)                    => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case prokaryoticProteasomeNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case pdbNameReg(_)                   => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case pfamNameReg(_)                  => links += generateLink(cddBaseLink, idCDD, "CDD")
+      case alphafolddbNameReg(_) =>
+        links += generateLink(uniprotBaseLink, idAlphaFold, "UniProt")
+        links += generateLink(uniprotBaseLink, idAlphaFold + ".fasta", "UniProt FASTA")
       case uniprotNameReg(_) =>
         links += generateLink(uniprotBaseLink, id + ".fasta", "UniProt FASTA")
         links += generateLink(alphafoldBaseLink, id, "AlphaFoldDB")
