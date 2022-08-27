@@ -6,7 +6,6 @@
                      :allow-empty="isMulti"
                      :options="parameter.options"
                      :options-limit="optionsLimit"
-                     :custom-label="labelWithDefault"
                      track-by="value"
                      label="text"
                      :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
