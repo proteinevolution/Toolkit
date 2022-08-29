@@ -1,5 +1,13 @@
 export default [
     {
+        date: '2022-08-29',
+        html: `<p>
+        HHpred web server: profile HMM database for a new version of the
+        <a href="http://prodata.swmed.edu/ecod/" target="_blank" rel="noopener"> ECOD_F70 database</a>, version 
+        20220613 (develop285), from the Grishin Lab is now online.
+        </p>`,
+    },
+    {
         date: '2022-08-27',
         html: `<p>
         We have included the full <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold protein
