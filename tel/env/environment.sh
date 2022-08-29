@@ -24,6 +24,7 @@ export JRE_HOME="${BIOPROGS}/dependencies/jdk1.8.0/jre"
 export PERL5LIB="${BIOPROGS}/lib"
 # COILS/PCOILS
 export COILSDIR="${BIOPROGS}/pcoils"
+export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
 # ALI2D
 export ALI2DPATH="${BIOPROGS}/tools/ali2d"
 # HHpred
@@ -86,7 +87,6 @@ fi
 # PATH variable
 export PATH="${BIOPROGS}/dependencies/anaconda3/bin:${PATH}"
 export PATH="${BIOPROGS}/dependencies/Python-3.5.2/bin:${PATH}" #Python binary
-export PATH="${BIOPROGS}/pcoils:${PATH}" #PCOILS
 export PATH="${BIOPROGS}/dependencies/hh-suite_misc_scripts:${PATH}" # helper scripts from the old Toolkit
 export PATH="${BIOPROGS}/dependencies/psipred:${BIOPROGS}/dependencies/psipred/bin:${PATH}" #PSIPRED
 export PATH="${BIOPROGS}/tools/mmseqs2/build/bin:${PATH}" #MMSEQS
