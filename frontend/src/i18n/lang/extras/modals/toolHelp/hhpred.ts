@@ -190,7 +190,11 @@ export default {
                     filtered for a maximum pairwise sequence identity of 70%.</p>    
 
                     <em>Prokaryotic_proteasome_homologs</em>
-                    <p>This database comprises profile HMMs for several newly discovered prokaryotic proteasome homologs.</p>`,
+                    <p>This database comprises profile HMMs for several newly discovered prokaryotic proteasome homologs.</p>
+                    
+                    <em>PHROGs</em>
+                    <p> This database is based on the <a href = https://phrogs.lmge.uca.fr/ target="_blank" rel="noopener">
+                        Prokaryotic Virus Remote Homologous Groups (PHROGs) database</a>.</p>`,
                     },
                     {
                         title: 'Select proteomes',

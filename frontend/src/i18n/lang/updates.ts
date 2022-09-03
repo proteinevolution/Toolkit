@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2022-09-03',
+        html: `<p>
+        HHpred web server: profile HMM database for the <a href = https://phrogs.lmge.uca.fr/ target="_blank" rel="noopener">
+        Prokaryotic Virus Remote Homologous Groups (PHROGs) database</a> is now online.
+        </p>`,
+    },
+    {
         date: '2022-08-29',
         html: `<p>
         HHpred web server: profile HMM database for a new version of the

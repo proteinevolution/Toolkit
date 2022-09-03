@@ -31,6 +31,7 @@ object LinkUtil {
   private val pfamReg    = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
   private val ncbiReg    = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
   private val ecodReg    = """(ECOD_[0-9]+)_.*""".r
+  private val phrogReg   = """(phrog_[0-9]+)""".r
 
   private val nrNameReg                    = """(nr.*)""".r
   private val prokaryoticProteasomeNameReg = """(prokaryotic_proteasome.*)""".r
@@ -53,6 +54,7 @@ object LinkUtil {
   private val unirefBaseLink      = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val phrogBaseLink       = "https://phrogs.lmge.uca.fr/cgi-bin/script_mega_2018.py?mega="
   private val keggocBaseLink      = "https://www.genome.jp/tools-bin/ocv?entry=OC."
   private val alphafoldBaseLink   = "https://alphafold.ebi.ac.uk/entry/"
 
@@ -74,6 +76,7 @@ object LinkUtil {
       case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
       case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
+      case "phrog"   => val idPhrog = id.replaceAll("phrog_", ""); generateLink(phrogBaseLink, idPhrog, id)
       case "keggoc" =>
         val idKeggoc = id.split("OC.").last; generateLink(keggocBaseLink, idKeggoc, id)
 
@@ -131,6 +134,7 @@ object LinkUtil {
       case "scop"   => true
       case "mmcif"  => true
       case "ecod"   => true
+      case "phrog"  => true
       case "keggoc" => true
       case _        => false
     }
@@ -156,6 +160,9 @@ object LinkUtil {
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
+      case "phrog" =>
+        val idPhrog = id.replaceAll("phrog_", "")
+        links += generateLink(phrogBaseLink, idPhrog, "PDB")
       case "mmcif" =>
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam" =>
@@ -182,6 +189,7 @@ object LinkUtil {
     case pfamReg(_, _)    => "pfam"
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
+    case phrogReg(_)      => "phrog"
     case ncbiReg(_)       => "ncbi"
     case keggocNameReg(_) => "keggoc"
     case _: String        => ""
