@@ -134,7 +134,6 @@ object LinkUtil {
       case "scop"   => true
       case "mmcif"  => true
       case "ecod"   => true
-      case "phrog"  => true
       case "keggoc" => true
       case _        => false
     }
@@ -160,9 +159,6 @@ object LinkUtil {
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
-      case "phrog" =>
-        val idPhrog = id.replaceAll("phrog_", "")
-        links += generateLink(phrogBaseLink, idPhrog, "PDB")
       case "mmcif" =>
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam" =>
