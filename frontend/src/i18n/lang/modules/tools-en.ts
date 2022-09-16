@@ -428,7 +428,11 @@ export default {
             'PHROG: families of prokaryotic virus proteins clustered using remote homology.<br>' +
             'Terzian P, Olo Ndela E, Galiez C, et al. ' +
             '<a href="https://doi.org/10.1093/nargab/lqab067" target="_blank" rel="noopener">' +
-            'NAR Genom Bioinform. 2021;3(3):lqab067</a>.<br><br>',
+            'NAR Genom Bioinform. 2021;3(3):lqab067</a>.<br><br>' +
+            'CATH: increased structural coverage of functional space.<br>' +
+            'Sillitoe I, Bordin N, Dawson N, et al. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1079" target="_blank" rel="noopener">' +
+            'Nucleic Acids Res. 2021;49(D1):D266-D273</a>.<br><br>',
         hhpred_manual: '',
     },
 };

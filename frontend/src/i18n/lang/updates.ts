@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2022-09-16',
+        html: `<p>
+        HHpred web server: profile HMM database for the <a href = https://www.cathdb.info/ target="_blank" rel="noopener">
+        CATH database (v4.3)</a> is now online.
+        </p>`,
+    },
+    {
         date: '2022-09-03',
         html: `<p>
         HHpred web server: profile HMM database for the <a href = https://phrogs.lmge.uca.fr/ target="_blank" rel="noopener">
