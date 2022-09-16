@@ -32,6 +32,7 @@ object LinkUtil {
   private val ncbiReg    = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
   private val ecodReg    = """(ECOD_[0-9]+)_.*""".r
   private val phrogReg   = """(phrog_[0-9]+)""".r
+  private val cathReg    = """(CATH)_.*""".r
 
   private val nrNameReg                    = """(nr.*)""".r
   private val prokaryoticProteasomeNameReg = """(prokaryotic_proteasome.*)""".r
@@ -54,6 +55,7 @@ object LinkUtil {
   private val unirefBaseLink      = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val cathBaseLink        = "https://www.cathdb.info/version/latest/domain/"
   private val phrogBaseLink       = "https://phrogs.lmge.uca.fr/cgi-bin/script_mega_2018.py?mega="
   private val keggocBaseLink      = "https://www.genome.jp/tools-bin/ocv?entry=OC."
   private val alphafoldBaseLink   = "https://alphafold.ebi.ac.uk/entry/"
@@ -75,7 +77,8 @@ object LinkUtil {
       case "ncbi"    => generateLink(ncbiProteinBaseLink, id, id)
       case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
-      case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
+      case "ecod"    => val idEcod = id.slice(5, 14); println(idEcod); generateLink(ecodBaseLink, idEcod, id)
+      case "cath"    => val idCath = id.slice(5, 12); generateLink(cathBaseLink, idCath, id)
       case "phrog"   => val idPhrog = id.replaceAll("phrog_", ""); generateLink(phrogBaseLink, idPhrog, id)
       case "keggoc" =>
         val idKeggoc = id.split("OC.").last; generateLink(keggocBaseLink, idKeggoc, id)
@@ -88,7 +91,7 @@ object LinkUtil {
     val idPfam      = id.replaceAll("am.*$||..*", "")
     val idPdb       = id.replaceAll("_.*$", "")
     val idAlphaFold = id.replaceAll("-.*$", "")
-    println(idAlphaFold)
+
     db match {
       case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, id, id)
       case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, id, id)
@@ -134,6 +137,7 @@ object LinkUtil {
       case "scop"   => true
       case "mmcif"  => true
       case "ecod"   => true
+      case "cath"   => true
       case "keggoc" => true
       case _        => false
     }
@@ -159,6 +163,10 @@ object LinkUtil {
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
+      case "cath" =>
+        val idPdbEcod = id.slice(5, 9)
+        links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
+
       case "mmcif" =>
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam" =>
@@ -185,6 +193,7 @@ object LinkUtil {
     case pfamReg(_, _)    => "pfam"
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
+    case cathReg(_)       => "cath"
     case phrogReg(_)      => "phrog"
     case ncbiReg(_)       => "ncbi"
     case keggocNameReg(_) => "keggoc"
