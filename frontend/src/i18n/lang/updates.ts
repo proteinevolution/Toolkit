@@ -1,5 +1,12 @@
 export default [
     {
+        date: '2022-09-21',
+        html: `<p>
+        HHpred  web server: a new version of the <a href="https://scop.berkeley.edu/" target="_blank" rel="noopener">
+         SCOPe database</a>, version 2.08, is now online.
+        </p>`,
+    },
+    {
         date: '2022-09-16',
         html: `<p>
         HHpred web server: profile HMM database for the <a href = https://www.cathdb.info/ target="_blank" rel="noopener">
