@@ -1,39 +1,41 @@
 <template>
     <b-row class="mt-2">
-        <b-col cols="12"
-               sm="6">
-            <select-parameter-component :parameter="hhsuiteDBParameter"
-                                        :validation-params="validationParams"
-                                        :validation-errors="validationErrors"
-                                        :submission="submission"
-                                        :remember-params="rememberParams"
-                                        max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
-                                        :disabled="disabled"
-                                        :force-select-none="disabled"
-                                        class="parameter-component size-12" />
+        <b-col cols="12" sm="6">
+            <select-parameter-component
+                :parameter="hhsuiteDBParameter"
+                :validation-params="validationParams"
+                :validation-errors="validationErrors"
+                :submission="submission"
+                :remember-params="rememberParams"
+                data-v-step="structural-domain-database"
+                max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                :disabled="disabled"
+                :force-select-none="disabled"
+                class="parameter-component size-12" />
         </b-col>
 
-        <b-col cols="12"
-               sm="6">
-            <select-parameter-component :parameter="proteomesParameter"
-                                        :validation-params="validationParams"
-                                        :validation-errors="validationErrors"
-                                        :submission="submission"
-                                        :remember-params="rememberParams"
-                                        max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
-                                        :disabled="disabled"
-                                        :force-select-none="disabled"
-                                        class="parameter-component size-12" />
+        <b-col cols="12" sm="6">
+            <select-parameter-component
+                :parameter="proteomesParameter"
+                :validation-params="validationParams"
+                :validation-errors="validationErrors"
+                :submission="submission"
+                :remember-params="rememberParams"
+                data-v-step="proteomes"
+                max-element-text-key="tools.parameters.select.maxElementsSelectedHHpred"
+                :disabled="disabled"
+                :force-select-none="disabled"
+                class="parameter-component size-12" />
         </b-col>
     </b-row>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {HHpredSelectsParameter, SelectParameter, ValidationParams} from '@/types/toolkit/tools';
+import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
-import {ParameterType} from '@/types/toolkit/enums';
-import {ConstraintError} from '@/types/toolkit/validation';
+import { ParameterType } from '@/types/toolkit/enums';
+import { ConstraintError } from '@/types/toolkit/validation';
 import EventBus from '@/util/EventBus';
 
 export default Vue.extend({

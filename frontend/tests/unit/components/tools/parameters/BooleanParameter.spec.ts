@@ -1,16 +1,13 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import BootstrapVue from 'bootstrap-vue';
-import {createLocalVue, shallowMount} from '@vue/test-utils';
-import {ParameterType} from '@/types/toolkit/enums';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { ParameterType } from '@/types/toolkit/enums';
 import BooleanParameter from '@/components/tools/parameters/BooleanParameter.vue';
-
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
-
 function initBooleanParameter(defaultValue: boolean, enabledOverride: boolean) {
-
     return shallowMount(BooleanParameter, {
         localVue,
         mocks: {
@@ -31,7 +28,6 @@ function initBooleanParameter(defaultValue: boolean, enabledOverride: boolean) {
     });
 }
 
-
 describe('BooleanParameter', () => {
     it('sets correct default submission value', () => {
         const wrapper1 = initBooleanParameter(true, false);
@@ -42,4 +38,3 @@ describe('BooleanParameter', () => {
         expect((wrapper3.vm as any).submissionValue).to.equal(true);
     });
 });
-

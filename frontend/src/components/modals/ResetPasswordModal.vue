@@ -1,30 +1,24 @@
 <template>
-    <BaseModal id="resetPassword"
-               :title="$t('auth.resetPassword')"
-               size="sm">
+    <BaseModal id="resetPassword" :title="$t('auth.resetPassword')" size="sm">
         <b-form @submit.prevent="resetPassword">
-            <b-form-group :label="$t('auth.enterNewPassword')"
-                          :invalid-feedback="$t('constraints.password')">
-                <b-form-input v-model="newPassword"
-                              type="password"
-                              :state="newPasswordState"
-                              :placeholder="$t('auth.newPassword')"
-                              @change="validateNewPassword" />
+            <b-form-group :label="$t('auth.enterNewPassword')" :invalid-feedback="$t('constraints.password')">
+                <b-form-input
+                    v-model="newPassword"
+                    type="password"
+                    :state="newPasswordState"
+                    :placeholder="$t('auth.newPassword')"
+                    @change="validateNewPassword" />
             </b-form-group>
             <b-form-group :invalid-feedback="$t('constraints.passwordsMatch')">
-                <b-form-input v-model="confirmPassword"
-                              type="password"
-                              :state="confirmPasswordState"
-                              :placeholder="$t('auth.confirmPassword')"
-                              @change="validateConfirmPassword" />
+                <b-form-input
+                    v-model="confirmPassword"
+                    type="password"
+                    :state="confirmPasswordState"
+                    :placeholder="$t('auth.confirmPassword')"
+                    @change="validateConfirmPassword" />
             </b-form-group>
-            <b-alert variant="danger"
-                     :show="message !== ''"
-                     v-text="message" />
-            <b-btn :disabled="!valid"
-                   variant="primary"
-                   type="submit"
-                   v-text="$t('auth.resetPassword')" />
+            <b-alert variant="danger" :show="message !== ''" v-text="message" />
+            <b-btn :disabled="!valid" variant="primary" type="submit" v-text="$t('auth.resetPassword')" />
         </b-form>
     </BaseModal>
 </template>
@@ -32,12 +26,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import BaseModal from './BaseModal.vue';
-import {AuthMessage, PasswordResetData} from '@/types/toolkit/auth';
-import {authService} from '@/services/AuthService';
+import { AuthMessage, PasswordResetData } from '@/types/toolkit/auth';
+import { authService } from '@/services/AuthService';
 import EventBus from '@/util/EventBus';
-import {TranslateResult} from 'vue-i18n';
-import {mapStores} from 'pinia';
-import {useAuthStore} from '@/stores/auth';
+import { TranslateResult } from 'vue-i18n';
+import { mapStores } from 'pinia';
+import { useAuthStore } from '@/stores/auth';
 
 export default Vue.extend({
     name: 'ResetPasswordModal',
@@ -67,9 +61,7 @@ export default Vue.extend({
             return this.confirmPassword === this.newPassword;
         },
         valid(): boolean {
-            return this.nameLogin !== '' && this.token !== '' &&
-                this.newPasswordValid
-                && this.confirmPasswordValid;
+            return this.nameLogin !== '' && this.token !== '' && this.newPasswordValid && this.confirmPasswordValid;
         },
         ...mapStores(useAuthStore),
     },

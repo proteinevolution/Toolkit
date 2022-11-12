@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {PIR} from '@/modules/reformat/formats/PIR';
+import { expect } from 'chai';
+import { PIR } from '@/modules/reformat/formats/PIR';
 
 const valid = `
 >XY;ABC
@@ -30,7 +30,6 @@ Description
 ABCDEF@*
 `;
 
-
 // tslint:disable:max-line-length
 const example1: string = `>P1;UKNP
 sequence:UKNP:1    :A:132  :A::::
@@ -44,7 +43,6 @@ structure:4CAY:2   :A:91  :A::HOMO SAPIENS:1.48:
 >P1;5B0Z
 structure:5B0Z:15  :C:122 :C::Homo sapiens:1.987:
 ------------RAKAKTRSSRAGLQFPVGRVHRLLRKGNY-SERVGAGAPVYLAAVLEYLTAEILELAGNAARDNKKTRIIPRHLQLAIRNDEELNKLLGRVTIAQGGVLPNIQAVLLPK-----------*`;
-
 
 describe('PIR validation', () => {
     it('should detect invalid headers, sequences and descriptions', () => {
@@ -65,4 +63,3 @@ describe('PIR reading', () => {
         expect(PIR.read(valid)[0].seq).to.equal('ABCDEF.-');
     });
 });
-

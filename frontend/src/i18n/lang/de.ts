@@ -21,6 +21,6 @@ export default {
         maintenance: {
             headerWarning: 'Wartungsarbeiten stehen bevor!',
             blockSubmit: 'Starten eines Jobs während Wartungsarbeiten nicht möglich.',
-        }
+        },
     },
 };

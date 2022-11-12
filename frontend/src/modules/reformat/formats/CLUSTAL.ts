@@ -1,4 +1,4 @@
-import {Format, Sequence} from '@/modules/reformat/types';
+import { Format, Sequence } from '@/modules/reformat/types';
 
 export const CLUSTAL: Format = {
     name: 'CLUSTAL',
@@ -13,10 +13,12 @@ export const CLUSTAL: Format = {
 
         const blocks = parseBlocks(lines.slice(1));
 
-        return blocks !== undefined
-            && validateSameLengthBlocks(blocks)
-            && validateHeaders(blocks)
-            && validateSequences(blocks);
+        return (
+            blocks !== undefined &&
+            validateSameLengthBlocks(blocks) &&
+            validateHeaders(blocks) &&
+            validateSequences(blocks)
+        );
     },
 
     read(value: string): Sequence[] {
@@ -28,7 +30,7 @@ export const CLUSTAL: Format = {
 
         const sequences: Sequence[] = [];
         for (const line of blocks[0]) {
-            sequences.push({identifier: line[0], seq: line[1], description: ''});
+            sequences.push({ identifier: line[0], seq: line[1], description: '' });
         }
 
         for (const block of blocks.slice(1)) {
@@ -59,12 +61,10 @@ export const CLUSTAL: Format = {
     },
 };
 
-
 /** A sequence data line is a pair consisting of the identifier and the sequence string. */
 type Line = [string, string];
 
 type Block = Line[];
-
 
 /**
  * Checks whether all blocks contain the same number of data lines
@@ -77,16 +77,14 @@ function validateSameLengthBlocks(blocks: Block[]): boolean {
  * Checks whether all data line headers match
  */
 function validateHeaders(blocks: Block[]): boolean {
-    return blocks.every((block: Block) => block.every((line: Line, i: number) =>
-        line[0] === blocks[0][i][0]));
+    return blocks.every((block: Block) => block.every((line: Line, i: number) => line[0] === blocks[0][i][0]));
 }
 
 /**
  * Checks whether all sequences in a block are of the same length (though the length can differ between blocks)
  */
 function validateSequences(blocks: Block[]): boolean {
-    return blocks.every((block: Block) => block.every((line: Line) =>
-        line[1].length === block[0][1].length));
+    return blocks.every((block: Block) => block.every((line: Line) => line[1].length === block[0][1].length));
 }
 
 /**

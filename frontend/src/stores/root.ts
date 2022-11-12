@@ -1,11 +1,12 @@
-import {MaintenanceState} from '@/types/toolkit/auth';
-import {defineStore} from 'pinia';
-import {backendService} from '@/services/BackendService';
+import { MaintenanceState } from '@/types/toolkit/auth';
+import { defineStore } from 'pinia';
+import { backendService } from '@/services/BackendService';
 import Vue from 'vue';
 import Logger from 'js-logger';
-import {pinia} from '@/stores/index';
-import {Job} from '@/types/toolkit/jobs';
-import {useJobsStore} from '@/stores/jobs';
+import { pinia } from '@/stores/index';
+import { Job } from '@/types/toolkit/jobs';
+import { useJobsStore } from '@/stores/jobs';
+import { useStorage } from '@vueuse/core';
 
 const logger = Logger.get('Store');
 
@@ -16,6 +17,7 @@ export interface LoadingState {
 export interface RootState {
     loading: LoadingState;
     offscreenMenuShow: boolean;
+    tourFinished: boolean;
     maintenance: MaintenanceState;
     reconnecting: boolean;
     clusterWorkload: number;
@@ -35,6 +37,7 @@ export const useRootStore = defineStore('root', {
             logout: false,
         },
         offscreenMenuShow: false,
+        tourFinished: useStorage<boolean>('tourFinished', false),
         maintenance: {
             message: '',
             submitBlocked: false,
@@ -94,11 +97,11 @@ export const useRootStore = defineStore('root', {
         SOCKET_WatchLogFile() {
             // handled in JobRunningTab.vue
         },
-        SOCKET_ClearJob({jobID}: { jobID: string }) {
+        SOCKET_ClearJob({ jobID }: { jobID: string }) {
             const jobsStore = useJobsStore();
             jobsStore.jobs = jobsStore.jobs.filter((job: Job) => job.jobID !== jobID);
         },
-        SOCKET_UpdateJob({job}: { job: Job }) {
+        SOCKET_UpdateJob({ job }: { job: Job }) {
             const jobsStore = useJobsStore();
             const index: number = jobsStore.jobs.findIndex((j) => j.jobID === job.jobID);
             if (index < 0) {
@@ -111,7 +114,7 @@ export const useRootStore = defineStore('root', {
                 Vue.set(jobsStore.jobs, index, job);
             }
         },
-    }
+    },
 });
 
 // Need to be used outside the setup

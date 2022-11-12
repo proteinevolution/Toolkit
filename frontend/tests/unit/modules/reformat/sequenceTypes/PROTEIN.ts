@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {isProteinSequence} from '@/modules/reformat/sequenceTypes/PROTEIN';
+import { expect } from 'chai';
+import { isProteinSequence } from '@/modules/reformat/sequenceTypes/PROTEIN';
 
 describe('PROTEIN validation', () => {
     it('should detect invalid characters', () => {

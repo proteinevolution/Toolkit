@@ -665,7 +665,7 @@ export default {
                         content: `Specify the scoring matrix that is used for PSI-BLAST.`,
                     },
                     {
-                        title: 'Extract BLAST HSP\'s up to E-values of',
+                        title: "Extract BLAST HSP's up to E-values of",
                         content: `Specifies the cut-off value for BLAST E-values. HSPs with E-value larger than this are not being
                     extracted.`,
                     },

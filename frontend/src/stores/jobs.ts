@@ -1,12 +1,12 @@
-import {Job} from '@/types/toolkit/jobs';
-import {defineStore} from 'pinia';
-import {useStorage} from '@vueuse/core';
-import {useRootStore} from '@/stores/root';
+import { Job } from '@/types/toolkit/jobs';
+import { defineStore } from 'pinia';
+import { useStorage } from '@vueuse/core';
+import { useRootStore } from '@/stores/root';
 import Vue from 'vue';
-import {jobService} from '@/services/JobService';
-import {WebSocketActions} from '@/types/toolkit/enums';
+import { jobService } from '@/services/JobService';
+import { WebSocketActions } from '@/types/toolkit/enums';
 import Logger from 'js-logger';
-import {maxBy} from 'lodash-es';
+import { maxBy } from 'lodash-es';
 
 const logger = Logger.get('JobStore');
 
@@ -75,5 +75,5 @@ export const useJobsStore = defineStore('jobs', {
         removeJob(jobID: string) {
             this.jobs = this.jobs.filter((job: Job) => job.jobID !== jobID);
         },
-    }
+    },
 });

@@ -1,8 +1,5 @@
 <template>
-    <transition name="expand"
-                @enter="enter"
-                @after-enter="afterEnter"
-                @leave="leave">
+    <transition name="expand" @enter="enter" @after-enter="afterEnter" @leave="leave">
         <slot></slot>
     </transition>
 </template>
@@ -52,19 +49,19 @@ export default Vue.extend({
 <style lang="scss" scoped>
 .expand-enter-active,
 .expand-leave-active {
-  transition: height 0.4s ease-in-out;
-  overflow: hidden;
+    transition: height 0.4s ease-in-out;
+    overflow: hidden;
 }
 
 .expand-enter,
 .expand-leave-to {
-  height: 0;
+    height: 0;
 }
 
 * {
-  will-change: height;
-  transform: translateZ(0);
-  backface-visibility: hidden;
-  perspective: 1000px;
+    will-change: height;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
 }
 </style>

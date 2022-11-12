@@ -6,8 +6,8 @@
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
 import EventBus from '@/util/EventBus';
-import {AlignmentItem} from '@/types/toolkit/results';
-import {resultsService} from '@/services/ResultsService';
+import { AlignmentItem } from '@/types/toolkit/results';
+import { resultsService } from '@/services/ResultsService';
 
 export default ResultTabMixin.extend({
     name: 'AlignmentViewerTab',

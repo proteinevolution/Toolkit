@@ -21,7 +21,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .side-bar {
-  position: sticky;
-  top: 1rem;
+    position: sticky;
+    top: 1rem;
 }
 </style>

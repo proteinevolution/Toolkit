@@ -3,6 +3,9 @@ export function formatLongSeq(seq: string): string {
     if (split === null) {
         return '';
     }
-    return split.reduce((prev: string, currentValue: string, currentIndex: number) =>
-        prev + currentValue + (currentIndex < split.length - 1 ? '\n' : ''), '');
+    return split.reduce(
+        (prev: string, currentValue: string, currentIndex: number) =>
+            prev + currentValue + (currentIndex < split.length - 1 ? '\n' : ''),
+        ''
+    );
 }

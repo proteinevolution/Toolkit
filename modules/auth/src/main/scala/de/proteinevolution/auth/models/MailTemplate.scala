@@ -371,7 +371,7 @@ object MailTemplate {
            |      <tr>
            |        <td align="center" bgcolor="#3c8e85" role="presentation" style="border:none;border-radius:3px;color:white;cursor:auto;padding:10px 25px;" valign="middle">
            |           <a href="$verificationLink" style="background:#3c8e85;color:white;font-family:Noto Sans;font-size:13px;font-weight:normal;line-height:120%;Margin:0;text-decoration:none;text-transform:none;" target="_blank">
-           |              Verify E-Mail address
+           |              Verify email address
            |            </a>
            |        </td>
            |      </tr>

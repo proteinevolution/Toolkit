@@ -1,7 +1,6 @@
 <template>
     <div class="loading-view">
-        <img :src="require('../../assets/images/minlogo.svg')"
-             alt="MPI Bioinformatics Toolkit">
+        <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit" />
     </div>
 </template>
 
@@ -15,9 +14,9 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .loading-view {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translateX(-50%) translateY(-50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
 }
 </style>

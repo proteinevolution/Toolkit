@@ -1,8 +1,7 @@
 <template>
     <div ref="container">
         <div ref="menu"></div>
-        <div ref="root"
-             v-text="$t('loading')"></div>
+        <div ref="root" v-text="$t('loading')"></div>
     </div>
 </template>
 
@@ -10,9 +9,9 @@
 /*global msa*/
 
 import Vue from 'vue';
-import {MSAViewerSeq} from '@/types/toolkit/tools';
+import { MSAViewerSeq } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
-import {AlignmentItem} from '@/types/toolkit/results';
+import { AlignmentItem } from '@/types/toolkit/results';
 import EventBus from '@/util/EventBus';
 import '@/modules/msa/msa.min';
 
@@ -143,7 +142,7 @@ export default Vue.extend({
             this.autoResize();
         },
         autoResize() {
-            const parent: HTMLElement = (this.$refs.container as HTMLElement);
+            const parent: HTMLElement = this.$refs.container as HTMLElement;
             if (this.msaViewer && parent) {
                 this.msaViewer.g.zoomer.set('alignmentHeight', this.fullScreen ? window.innerHeight - 500 : 300);
                 this.msaViewer.g.zoomer.set('alignmentWidth', parent.offsetWidth - 180);
@@ -155,52 +154,52 @@ export default Vue.extend({
 
 <style lang="scss">
 .biojs_msa_div {
-  .smenubar {
-    height: 40px;
+    .smenubar {
+        height: 40px;
 
-    a.smenubar_alink {
-      color: #737373;
-      padding: 4px 12px 4px 0 !important;
-      font-weight: 700;
-      background: none;
-      cursor: pointer;
+        a.smenubar_alink {
+            color: #737373;
+            padding: 4px 12px 4px 0 !important;
+            font-weight: 700;
+            background: none;
+            cursor: pointer;
+        }
+
+        // hide Debug Menu Item
+        & > div:last-of-type {
+            display: none !important;
+        }
+
+        & > div {
+            position: relative;
+
+            .smenu-dropdown {
+                position: absolute;
+                left: 0 !important;
+                top: 1.5rem !important;
+            }
+        }
     }
 
-    // hide Debug Menu Item
-    & > div:last-of-type {
-      display: none !important;
+    .biojs_msa_labelblock .biojs_msa_labelrow {
+        font-weight: normal;
     }
 
-    & > div {
-      position: relative;
-
-      .smenu-dropdown {
-        position: absolute;
-        left: 0 !important;
-        top: 1.5rem !important;
-      }
+    .biojs_msa_searchresult_row > button {
+        margin-right: 0.65rem;
+        margin-left: 0.1rem;
+        font-size: 0.7em !important;
+        background-color: #7b7b7b;
+        border: none;
+        color: white;
+        padding: 5px 18px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
     }
-  }
 
-  .biojs_msa_labelblock .biojs_msa_labelrow {
-    font-weight: normal;
-  }
-
-  .biojs_msa_searchresult_row > button {
-    margin-right: 0.65rem;
-    margin-left: 0.1rem;
-    font-size: 0.7em !important;
-    background-color: #7b7b7b;
-    border: none;
-    color: white;
-    padding: 5px 18px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .biojs_msa_searchresult_ovbox {
-    display: none
-  }
+    .biojs_msa_searchresult_ovbox {
+        display: none;
+    }
 }
 </style>

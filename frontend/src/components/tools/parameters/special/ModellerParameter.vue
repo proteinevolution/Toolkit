@@ -1,27 +1,26 @@
 <template>
     <div>
-        <b-form-group v-if="!valid"
-                      :label="$t('tools.parameters.labels.' + parameter.name)">
-            <b-form-input v-model="submissionValue"
-                          type="text"
-                          size="sm"
-                          :state="submissionValue.length > 0 ? valid : null"
-                          required />
+        <b-form-group v-if="!valid" :label="$t('tools.parameters.labels.' + parameter.name)">
+            <b-form-input
+                v-model="submissionValue"
+                type="text"
+                size="sm"
+                :state="submissionValue.length > 0 ? valid : null"
+                required />
         </b-form-group>
-        <p v-else
-           v-text="$t('tools.parameters.modellerKey.stored')"></p>
+        <p v-else v-text="$t('tools.parameters.modellerKey.stored')"></p>
     </div>
 </template>
 
 <script lang="ts">
-import {authService} from '@/services/AuthService';
-import {debounce} from 'lodash-es';
-import {Parameter} from '@/types/toolkit/tools';
-import {ConstraintError} from '@/types/toolkit/validation';
-import {User} from '@/types/toolkit/auth';
+import { authService } from '@/services/AuthService';
+import { debounce } from 'lodash-es';
+import { Parameter } from '@/types/toolkit/tools';
+import { ConstraintError } from '@/types/toolkit/validation';
+import { User } from '@/types/toolkit/auth';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
-import {mapStores} from 'pinia';
-import {useAuthStore} from '@/stores/auth';
+import { mapStores } from 'pinia';
+import { useAuthStore } from '@/stores/auth';
 
 export default ToolParameterMixin.extend({
     name: 'ModellerParameter',
@@ -61,15 +60,16 @@ export default ToolParameterMixin.extend({
     },
     methods: {
         validateModellerKey: debounce(function (this: any, value: string) {
-            authService.validateModellerKey(value)
-                .then((result: boolean) => {
-                    const error: ConstraintError | undefined = result ? undefined : {
-                        textKey: 'constraints.invalidModellerKey',
-                    };
-                    this.setError(error);
+            authService.validateModellerKey(value).then((result: boolean) => {
+                const error: ConstraintError | undefined = result
+                    ? undefined
+                    : {
+                          textKey: 'constraints.invalidModellerKey',
+                      };
+                this.setError(error);
 
-                    this.valid = result;
-                });
+                this.valid = result;
+            });
         }, 500),
     },
 });

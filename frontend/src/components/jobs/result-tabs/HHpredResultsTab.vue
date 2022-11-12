@@ -1,132 +1,104 @@
 <template>
-    <Loading v-if="loading"
-             :message="$t('loading')" />
-    <div v-else
-         class="font-small">
-        <b v-if="total === 0"
-           v-text="$t('jobs.results.hhpred.noResults')"></b>
+    <Loading v-if="loading" :message="$t('loading')" />
+    <div v-else class="font-small">
+        <b v-if="total === 0" v-text="$t('jobs.results.hhpred.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
                 <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="mr-4"
-                   @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a class="mr-4" @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
-                <a :class="{active: allSelected}"
-                   @click="toggleAllSelected">
-                    {{ $t('jobs.results.actions.selectAll') }}</a>
+                <a :class="{ active: allSelected }" @click="toggleAllSelected">
+                    {{ $t('jobs.results.actions.selectAll') }}</a
+                >
                 <a @click="forward(true)">{{ $t('jobs.results.actions.forward') }}</a>
                 <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
-                <a v-if="info.modeller"
-                   @click="modelSelection"
-                   v-text="$t('jobs.results.actions.model')"></a>
-                <a @click="download"
-                   v-text="$t('jobs.results.actions.downloadHHR')"></a>
-                <a :class="{active: color}"
-                   @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-                <a :class="{active: wrap}"
-                   @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+                <a v-if="info.modeller" @click="modelSelection" v-text="$t('jobs.results.actions.model')"></a>
+                <a @click="download" v-text="$t('jobs.results.actions.downloadHHR')"></a>
+                <a :class="{ active: color }" @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{ active: wrap }" @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hhpred.numHits', {num: info.num_hits})"></div>
-            <div v-html="$t('jobs.results.hhpred.queryNeff', {num: info.query_neff})"></div>
+            <div v-html="$t('jobs.results.hhpred.numHits', { num: info.num_hits })"></div>
+            <div v-html="$t('jobs.results.hhpred.queryNeff', { num: info.query_neff })"></div>
 
-            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'"
-                 class="mt-2">
+            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'" class="mt-2">
                 {{ $t('jobs.results.sequenceFeatures.header') }}
-                <b v-if="info.coil === '0'"
-                   v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm > '0'"
-                   v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
-                <b v-if="info.signal === '1'"
-                   v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+                <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm > '0'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
-            <div v-if="info.qa3m_count < '10'"
-                 class="mt-2">
-                <b class="mt-2"
-                   v-html="$t('jobs.results.hhpred.qa3mWarning', {num: info.qa3m_count})"></b>
-                <b v-if="info.msa_gen === 'uniclust30'"
-                   v-html="$t('jobs.results.hhpred.uniclustWarning')"></b>
-                <b v-if="info.msa_gen === 'psiblast'"
-                   v-html="$t('jobs.results.hhpred.psiblastWarning')"></b>
-                <b v-if="info.msa_gen === 'custom'"
-                   v-html="$t('jobs.results.hhpred.customWarning')"></b>
+            <div v-if="info.qa3m_count < '10'" class="mt-2">
+                <b class="mt-2" v-html="$t('jobs.results.hhpred.qa3mWarning', { num: info.qa3m_count })"></b>
+                <b v-if="info.msa_gen === 'uniclust30'" v-html="$t('jobs.results.hhpred.uniclustWarning')"></b>
+                <b v-if="info.msa_gen === 'psiblast'" v-html="$t('jobs.results.hhpred.psiblastWarning')"></b>
+                <b v-if="info.msa_gen === 'custom'" v-html="$t('jobs.results.hhpred.customWarning')"></b>
             </div>
 
-
-            <div ref="visualization"
-                 class="result-section">
+            <div ref="visualization" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
-                <hit-map :job="job"
-                         @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection" />
+                <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
             </div>
 
-            <div ref="hits"
-                 class="result-section">
+            <div ref="hits" class="result-section">
                 <h4 class="mb-4">
                     {{ $t('jobs.results.hitlist.hits') }}
                 </h4>
-                <hit-list-table :job="job"
-                                :fields="hitListFields"
-                                :selected-items="selectedItems"
-                                @elem-clicked="scrollToElem" />
+                <hit-list-table
+                    :job="job"
+                    :fields="hitListFields"
+                    :selected-items="selectedItems"
+                    @elem-clicked="scrollToElem" />
             </div>
-            <div ref="alignments"
-                 class="result-section">
+            <div ref="alignments" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
 
-                <div ref="scrollElem"
-                     class="table-responsive">
+                <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
                             <template v-for="(al, i) in alignments">
-                                <tr :key="'alignment-' + al.num"
-                                    :ref="'alignment-' + al.num"
-                                    class="blank-row">
+                                <tr :key="'alignment-' + al.num" :ref="'alignment-' + al.num" class="blank-row">
                                     <td colspan="4">
-                                        <hr v-if="i !== 0">
+                                        <hr v-if="i !== 0" />
                                     </td>
                                 </tr>
                                 <tr :key="'alignment-acc-' + i">
                                     <td></td>
                                     <td colspan="3">
-                                        <a @click="displayTemplateAlignment(al.template.accession)"
-                                           v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
-                                        <a v-if="al.structLink"
-                                           class="db-list"
-                                           @click="displayTemplateStructure(al.template.accession)"
-                                           v-text="$t('jobs.results.hhpred.templateStructure')"></a>
-                                        <span v-if="al.dbLink"
-                                              class="db-list"
-                                              v-html="al.dbLink"></span>
+                                        <a
+                                            @click="displayTemplateAlignment(al.template.accession)"
+                                            v-text="$t('jobs.results.hhpred.templateAlignment')"></a>
+                                        <a
+                                            v-if="al.structLink"
+                                            class="db-list"
+                                            @click="displayTemplateStructure(al.template.accession)"
+                                            v-text="$t('jobs.results.hhpred.templateStructure')"></a>
+                                        <span v-if="al.dbLink" class="db-list" v-html="al.dbLink"></span>
                                     </td>
                                 </tr>
-                                <tr :key="'alignment-check-' + i"
-                                    class="font-weight-bold">
+                                <tr :key="'alignment-check-' + i" class="font-weight-bold">
                                     <td class="no-wrap">
-                                        <b-checkbox class="d-inline"
-                                                    :checked="selectedItems.includes(al.num)"
-                                                    @change="check($event, al.num)" />
+                                        <b-checkbox
+                                            class="d-inline"
+                                            :checked="selectedItems.includes(al.num)"
+                                            @change="check($event, al.num)" />
                                         <span v-text="al.num + '.'"></span>
                                     </td>
-                                    <td colspan="3"
-                                        v-html="al.acc + ' ' + al.name"></td>
+                                    <td colspan="3" v-html="al.acc + ' ' + al.name"></td>
                                 </tr>
 
                                 <tr :key="'alignment-alInf-' + i">
                                     <td></td>
-                                    <td colspan="3"
-                                        v-html="$t('jobs.results.hhpred.alignmentInfo', al)"></td>
+                                    <td colspan="3" v-html="$t('jobs.results.hhpred.alignmentInfo', al)"></td>
                                 </tr>
 
                                 <template v-for="(alPart, alIdx) in wrapAlignments(al)">
-                                    <tr :key="'alignment-blank-' + i + '-' + alIdx"
-                                        class="blank-row">
+                                    <tr :key="'alignment-blank-' + i + '-' + alIdx" class="blank-row">
                                         <td></td>
                                     </tr>
-                                    <tr v-if="alPart.query.ss_pred"
+                                    <tr
+                                        v-if="alPart.query.ss_pred"
                                         :key="'query-alignment-ss_pred-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -134,15 +106,17 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.seq"
+                                    <tr
+                                        v-if="alPart.query.seq"
                                         :key="'query-alignment-seq-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
-                                        <td v-text="'Q '+alPart.query.name"></td>
+                                        <td v-text="'Q ' + alPart.query.name"></td>
                                         <td v-text="alPart.query.start"></td>
                                         <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.consensus"
+                                    <tr
+                                        v-if="alPart.query.consensus"
                                         :key="'alignment-consensus-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -150,34 +124,35 @@
                                         <td v-text="alPart.query.start"></td>
                                         <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
                                     </tr>
-                                    <tr v-if="alPart.agree"
+                                    <tr
+                                        v-if="alPart.agree"
                                         :key="'alignment-agree-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td class="consensus-agree"
-                                            v-text="alPart.agree"></td>
+                                        <td class="consensus-agree" v-text="alPart.agree"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.consensus"
+                                    <tr
+                                        v-if="alPart.template.consensus"
                                         :key="'alignment-tplcons-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
-                                        <td>
-                                            T Consensus
-                                        </td>
+                                        <td>T Consensus</td>
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.seq"
+                                    <tr
+                                        v-if="alPart.template.seq"
                                         :key="'template-alignment-seq-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
-                                        <td v-text="'T '+alPart.template.accession"></td>
+                                        <td v-text="'T ' + alPart.template.accession"></td>
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.ss_dssp"
+                                    <tr
+                                        v-if="alPart.template.ss_dssp"
                                         :key="'alignment-ss_dssp-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -185,7 +160,8 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.ss_pred"
+                                    <tr
+                                        v-if="alPart.template.ss_pred"
                                         :key="'template-alignment-ss_pred-' + i + '-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -193,8 +169,7 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                     </tr>
-                                    <tr :key="'alignment-br-' + i + '-' + alIdx"
-                                        class="blank-row">
+                                    <tr :key="'alignment-br-' + i + '-' + alIdx" class="blank-row">
                                         <td></td>
                                     </tr>
                                 </template>
@@ -202,10 +177,11 @@
 
                             <tr v-if="alignments.length !== total">
                                 <td colspan="4">
-                                    <Loading v-if="loadingMore"
-                                             :message="$t('jobs.results.alignment.loadingHits')"
-                                             justify="center"
-                                             class="mt-4" />
+                                    <Loading
+                                        v-if="loadingMore"
+                                        :message="$t('jobs.results.alignment.loadingHits')"
+                                        justify="center"
+                                        class="mt-4" />
                                     <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
@@ -223,11 +199,11 @@ import Logger from 'js-logger';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import {HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import { HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
 import EventBus from '@/util/EventBus';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
-import {jobService} from '@/services/JobService';
-import {resultsService} from '@/services/ResultsService';
+import { jobService } from '@/services/JobService';
+import { resultsService } from '@/services/ResultsService';
 
 const logger = Logger.get('HHpredResultsTab');
 
@@ -245,44 +221,54 @@ export default SearchResultTabMixin.extend({
             info: undefined as HHpredHHInfoResult | undefined,
             color: true,
             breakAfter: 80,
-            hitListFields: [{
-                key: 'numCheck',
-                label: this.$t('jobs.results.hhpred.table.num'),
-                sortable: true,
-            }, {
-                key: 'acc',
-                label: this.$t('jobs.results.hhpred.table.hit'),
-                sortable: true,
-            }, {
-                key: 'name',
-                label: this.$t('jobs.results.hhpred.table.name'),
-                sortable: true,
-            }, {
-                key: 'probab',
-                label: this.$t('jobs.results.hhpred.table.probHits'),
-                sortable: true,
-            }, {
-                key: 'eval',
-                label: this.$t('jobs.results.hhpred.table.eVal'),
-                class: 'no-wrap',
-                sortable: true,
-            }, {
-                key: 'score',
-                label: this.$t('jobs.results.hhpred.table.score'),
-                sortable: true,
-            }, {
-                key: 'ssScore',
-                label: this.$t('jobs.results.hhpred.table.ssScore'),
-                sortable: true,
-            }, {
-                key: 'alignedCols',
-                label: this.$t('jobs.results.hhpred.table.cols'),
-                sortable: true,
-            }, {
-                key: 'templateRef',
-                label: this.$t('jobs.results.hhpred.table.targetLength'),
-                sortable: true,
-            }],
+            hitListFields: [
+                {
+                    key: 'numCheck',
+                    label: this.$t('jobs.results.hhpred.table.num'),
+                    sortable: true,
+                },
+                {
+                    key: 'acc',
+                    label: this.$t('jobs.results.hhpred.table.hit'),
+                    sortable: true,
+                },
+                {
+                    key: 'name',
+                    label: this.$t('jobs.results.hhpred.table.name'),
+                    sortable: true,
+                },
+                {
+                    key: 'probab',
+                    label: this.$t('jobs.results.hhpred.table.probHits'),
+                    sortable: true,
+                },
+                {
+                    key: 'eval',
+                    label: this.$t('jobs.results.hhpred.table.eVal'),
+                    class: 'no-wrap',
+                    sortable: true,
+                },
+                {
+                    key: 'score',
+                    label: this.$t('jobs.results.hhpred.table.score'),
+                    sortable: true,
+                },
+                {
+                    key: 'ssScore',
+                    label: this.$t('jobs.results.hhpred.table.ssScore'),
+                    sortable: true,
+                },
+                {
+                    key: 'alignedCols',
+                    label: this.$t('jobs.results.hhpred.table.cols'),
+                    sortable: true,
+                },
+                {
+                    key: 'templateRef',
+                    label: this.$t('jobs.results.hhpred.table.targetLength'),
+                    sortable: true,
+                },
+            ],
         };
     },
     computed: {
@@ -292,21 +278,20 @@ export default SearchResultTabMixin.extend({
             }
             return this.viewOptions.filename.replace(':jobID', this.job.jobID);
         },
-
     },
     methods: {
         displayTemplateStructure(accession: string): void {
             EventBus.$emit('show-modal', {
-                id: 'templateStructureModal', props: {accessionStructure: accession},
+                id: 'templateStructureModal',
+                props: { accessionStructure: accession },
             });
         },
         download(): void {
             const toolName = this.tool.name;
             const downloadFilename = `${toolName}_${this.job.jobID}.hhr`;
-            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
-                .catch((e) => {
-                    logger.error(e);
-                });
+            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename).catch((e) => {
+                logger.error(e);
+            });
         },
         modelSelection(): void {
             if (!this.alignments) {
@@ -325,7 +310,8 @@ export default SearchResultTabMixin.extend({
                     templates: selected.join(' '),
                     alnHash: this.info.alignmentHash,
                 };
-                jobService.submitJob('hhpred_manual', submission)
+                jobService
+                    .submitJob('hhpred_manual', submission)
                     .then((response) => {
                         this.$router.push(`/jobs/${response.jobID}`);
                     })
@@ -383,52 +369,51 @@ export default SearchResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .result-section {
-  padding-top: 3.5rem;
+    padding-top: 3.5rem;
 }
 
 .result-options {
-  a {
-    @include media-breakpoint-up(lg) {
-      margin-right: 1.9rem;
+    a {
+        @include media-breakpoint-up(lg) {
+            margin-right: 1.9rem;
+        }
     }
-  }
 }
 
 .alignments-table {
-  font-size: 0.95em;
+    font-size: 0.95em;
 
-  .blank-row {
-    height: 0.8rem;
-  }
-
-  .sequence {
-    td {
-      word-break: keep-all;
-      white-space: nowrap;
-      font-family: $font-family-monospace;
-      padding: 0 1rem 0 0;
+    .blank-row {
+        height: 0.8rem;
     }
 
-    .consensus-agree {
-      white-space: pre-wrap;
+    .sequence {
+        td {
+            word-break: keep-all;
+            white-space: nowrap;
+            font-family: $font-family-monospace;
+            padding: 0 1rem 0 0;
+        }
+
+        .consensus-agree {
+            white-space: pre-wrap;
+        }
     }
-  }
 
-  a {
-    cursor: pointer;
-    color: $primary;
+    a {
+        cursor: pointer;
+        color: $primary;
 
-    &:hover {
-      color: $tk-dark-green;
+        &:hover {
+            color: $tk-dark-green;
+        }
     }
-  }
-
 }
 
 .db-list {
-  border-left: 1px solid;
-  border-left-color: $tk-gray;
-  margin-left: 0.5em;
-  padding-left: 0.5em;
+    border-left: 1px solid;
+    border-left-color: $tk-gray;
+    margin-left: 0.5em;
+    padding-left: 0.5em;
 }
 </style>

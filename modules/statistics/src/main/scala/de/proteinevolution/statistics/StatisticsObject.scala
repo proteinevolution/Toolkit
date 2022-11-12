@@ -16,160 +16,116 @@
 
 package de.proteinevolution.statistics
 
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
-import java.util.UUID
-
-import de.proteinevolution.common.models.util.{ ZonedDateTimeHelper => helper }
-import io.circe.syntax._
+import de.proteinevolution.common.models.database.jobs.JobState.Submitted
+import io.circe.syntax.EncoderOps
 import io.circe.{ Encoder, Json }
-import reactivemongo.api.bson._
+
+import java.time.LocalDate
+import java.time.temporal.IsoFields
 
 case class StatisticsObject(
-    statisticsID: String = UUID.randomUUID().toString,
-    userStatistics: UserStatistic = UserStatistic(),
-    toolStatistics: List[ToolStatistic] = List.empty[ToolStatistic],
-    datePushed: List[ZonedDateTime] = List.empty[ZonedDateTime]
+    fromTime: LocalDate,
+    toTime: LocalDate
 ) {
 
-  /**
-   * Returns the tool Statistic elements as a map
-   *
-   * @return
-   */
-  def getToolStatisticMap: Map[String, ToolStatistic] = {
-    toolStatistics.map(toolStatistic => (toolStatistic.toolName, toolStatistic)).toMap
-  }
+  val totalToolCollection: ToolStatisticCollection                    = ToolStatisticCollection()
+  var monthlyToolCollection: Map[(Int, Int), ToolStatisticCollection] = Map()
+  var weeklyToolCollection: Map[(Int, Int), ToolStatisticCollection]  = Map()
 
-  /**
-   * Creates new and empty tool statistic elements with the provided name list
-   * @return
-   */
-  def updateTools(toolNames: List[String]): StatisticsObject = {
-    this.copy(
-      toolStatistics = toolNames.map(toolName =>
-        this.toolStatistics
-          .find(_.toolName == toolName)
-          .getOrElse(
-            ToolStatistic(
-              toolName,
-              List.fill[Int](this.datePushed.length)(0),
-              List.fill[Int](this.datePushed.length)(0),
-              List.fill[Int](this.datePushed.length)(0),
-              List.fill[Int](this.datePushed.length)(0)
-            )
-          )
-      )
-    )
-  }
-
-  /**
-   * Adds the job events within the begin and end date to the tool statistics
-   * @return
-   */
-  def addMonthsToTools(
-      jobEventLogs: List[JobEventLog],
-      beginDate: ZonedDateTime,
-      endDate: ZonedDateTime
-  ): StatisticsObject = {
-    // Get the total amount of months in between the two given dates (expecting the first moment of the months here)
-    val totalMonths: Int = beginDate.until(endDate, ChronoUnit.MONTHS).toInt
-
-    // Get all months in between the two dates
-    val monthsInInterval =
-      for (extraMonths <- 0 to totalMonths)
-        yield beginDate.plusMonths(extraMonths.toLong).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
-
-    // Group the job events by tool
-    val jobEventsGroupedByTool = jobEventLogs.groupBy(_.toolName)
-
-    // Return a new instance of this object with the updated data
-    this.copy(
-      toolStatistics = {
-        // map over all tool statistics
-        this.toolStatistics.map { toolStatistic =>
-          // check if there are any elements available for this tool
-          jobEventsGroupedByTool.get(toolStatistic.toolName) match {
-            case Some(jobEventLogsForMonths) =>
-              // since there are elements from this tool, group them by month
-              val jobEventsInMonths =
-                jobEventLogsForMonths.groupBy(_.dateCreated.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1))
-              // iterate over all months
-              val counts = monthsInInterval.map { startOfMonth =>
-                // check if the month is in the group
-                jobEventsInMonths.get(startOfMonth) match {
-                  case Some(jobEventLogsForMonth) =>
-                    // Found events within this month.
-                    (
-                      jobEventLogsForMonth.length,
-                      jobEventLogsForMonth.count(_.hasFailed),
-                      jobEventLogsForMonth.count(_.isDeleted),
-                      jobEventLogsForMonth.count(_.internalJob)
-                    )
-                  case None =>
-                    // Found nothing for this month.
-                    (0, 0, 0, 0)
-                }
-              }.toList
-              // add the months to the old tool statistics
-              toolStatistic.addMonths(counts.map(_._1), counts.map(_._2), counts.map(_._3), counts.map(_._4))
-            case None =>
-              // add the empty months to the old tool statistics
-              toolStatistic.addEmptyMonths(totalMonths)
-          }
-        }
-      },
-      // add the months which have been added to the list
-      datePushed = this.datePushed ::: monthsInInterval.toList
-    )
-  }
-
-  /**
-   * Returns the date when the last push happened
-   *
-   * @return
-   */
-  def lastPushed: ZonedDateTime = {
-    datePushed.headOption match {
-      case Some(_) => datePushed.max[ZonedDateTime](Ordering.fromLessThan(_.isBefore(_))).truncatedTo(ChronoUnit.DAYS)
-      case None    => ZonedDateTime.parse("2017-02-01T00:00:00.000+02:00")
+  // fill monthlyToolCollection with empty ToolCollectionStatistics
+  var year: Int    = fromTime.getYear
+  var month: Int   = fromTime.getMonthValue
+  var toYear: Int  = toTime.getYear
+  var toMonth: Int = toTime.getMonthValue
+  while (year < toYear || (year == toYear && month <= toMonth)) {
+    monthlyToolCollection += (year, month) -> ToolStatisticCollection()
+    if (month == 12) {
+      month = 1
+      year += 1
+    } else {
+      month += 1
     }
   }
+  // fill weeklyToolCollection with empty ToolCollectionStatistics
+  year = fromTime.get(IsoFields.WEEK_BASED_YEAR)
+  var week: Int = fromTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+  toYear = toTime.get(IsoFields.WEEK_BASED_YEAR)
+  var toWeek: Int = toTime.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+  while (year < toYear || (year == toYear && week <= toWeek)) {
+    weeklyToolCollection += (year, week) -> ToolStatisticCollection()
+    val weekOfDecember31: Int = LocalDate.of(year, 12, 31).get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+    val weeksInYear: Int      = if (weekOfDecember31 == 1) 52 else weekOfDecember31
+    if (week == weeksInYear) {
+      week = 1
+      year += 1
+    } else {
+      week += 1
+    }
+  }
+
+  def addJobEventLog(jobEventLog: JobEventLog): Unit = {
+    val submitEvent: Option[JobEvent] = jobEventLog.events.find(jobEvent => jobEvent.jobState == Submitted)
+    // check if submit event with timestamp exists
+    submitEvent.flatMap(_.timestamp).foreach { timestamp =>
+      // check if jobEventLog falls into the min max time range
+      val submitDate: LocalDate = timestamp.toLocalDate
+      if (!submitDate.isBefore(fromTime) && !submitDate.isAfter(toTime)) {
+        totalToolCollection.addJobEventLog(jobEventLog)
+      }
+
+      // check if jobEventLog falls into weekly or monthly statistic
+      val week          = timestamp.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+      val weekBasedYear = timestamp.get(IsoFields.WEEK_BASED_YEAR)
+      val year          = timestamp.getYear
+      val month         = timestamp.getMonthValue
+
+      if (monthlyToolCollection.contains((year, month))) {
+        monthlyToolCollection((year, month)).addJobEventLog(jobEventLog)
+      }
+      if (weeklyToolCollection.contains((weekBasedYear, week))) {
+        weeklyToolCollection((weekBasedYear, week)).addJobEventLog(jobEventLog)
+      }
+    }
+  }
+
+  def monthlyToolCollectionList(): List[MonthlyToolStats] = {
+    monthlyToolCollection.toList
+      .map(entry =>
+        MonthlyToolStats(
+          year = entry._1._1,
+          month = entry._1._2,
+          toolStats = entry._2
+        )
+      )
+      .sortBy(weeklyToolStats => weeklyToolStats.month)
+      .sortBy(weeklyToolStats => weeklyToolStats.year)
+  }
+
+  def weeklyToolCollectionList(): List[WeeklyToolStats] = {
+    weeklyToolCollection.toList
+      .map(entry =>
+        WeeklyToolStats(
+          year = entry._1._1,
+          week = entry._1._2,
+          toolStats = entry._2
+        )
+      )
+      .sortBy(weeklyToolStats => weeklyToolStats.week)
+      .sortBy(weeklyToolStats => weeklyToolStats.year)
+  }
+
 }
 
 object StatisticsObject {
 
-  val ID             = "id"
-  val USERSTATISTICS = "userStat"
-  val TOOLSTATISTICS = "toolStat"
-  val DATEPUSHED     = "datePushed"
+  val TOTALTOOLSTATISTICS   = "totalToolStats"
+  val MONTHLYTOOLSTATISTICS = "monthlyToolStats"
+  val WEEKLYTOOLSTATISTICS  = "weeklyToolStats"
 
-  implicit val statObjEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) =>
+  implicit val toolCollectionEncoder: Encoder[StatisticsObject] = (obj: StatisticsObject) =>
     Json.obj(
-      (ID, Json.fromString(obj.statisticsID)),
-      (USERSTATISTICS, obj.userStatistics.asJson),
-      (TOOLSTATISTICS, obj.toolStatistics.asJson),
-      (DATEPUSHED, obj.datePushed.asJson)
+      (TOTALTOOLSTATISTICS, obj.totalToolCollection.asJson),
+      (MONTHLYTOOLSTATISTICS, obj.monthlyToolCollectionList().asJson),
+      (WEEKLYTOOLSTATISTICS, obj.weeklyToolCollectionList().asJson)
     )
-
-  implicit def reader: BSONDocumentReader[StatisticsObject] =
-    BSONDocumentReader[StatisticsObject] { bson =>
-      StatisticsObject(
-        statisticsID = bson.getAsTry[String](ID).getOrElse(UUID.randomUUID().toString),
-        userStatistics = bson.getAsTry[UserStatistic](USERSTATISTICS).getOrElse(UserStatistic()),
-        toolStatistics = bson.getAsTry[List[ToolStatistic]](TOOLSTATISTICS).getOrElse(List.empty),
-        datePushed =
-          bson.getAsTry[List[BSONDateTime]](DATEPUSHED).getOrElse(List.empty[BSONDateTime]).map(helper.getZDT)
-      )
-    }
-
-  implicit def writer: BSONDocumentWriter[StatisticsObject] =
-    BSONDocumentWriter[StatisticsObject] { statisticObject =>
-      BSONDocument(
-        ID             -> statisticObject.statisticsID,
-        USERSTATISTICS -> statisticObject.userStatistics,
-        TOOLSTATISTICS -> statisticObject.toolStatistics,
-        DATEPUSHED     -> statisticObject.datePushed.map(a => BSONDateTime(a.toInstant.toEpochMilli))
-      )
-    }
 }

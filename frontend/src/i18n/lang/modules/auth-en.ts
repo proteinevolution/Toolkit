@@ -4,7 +4,7 @@ export default {
     firstNameEnter: 'Enter your first name',
     lastName: 'Last Name',
     lastNameEnter: 'Enter your last name',
-    eMail: 'E-Mail',
+    eMail: 'Email address',
     country: 'Country',
     countrySelect: 'Select a country',
     signIn: 'Sign In',
@@ -22,9 +22,9 @@ export default {
     newPassword: 'New Password',
     confirmPassword: 'Confirm Password',
     forgotPassword: 'Forgot Password?',
-    forgotPasswordInstructions: 'Provide your account email address or username to receive an email to ' +
-        'reset your password.',
-    eMailOrUsername: 'E-Mail or Username',
+    forgotPasswordInstructions:
+        'Provide your account email address or username to receive an email to ' + 'reset your password.',
+    eMailOrUsername: 'Email address or username',
     privacyAccept: ' I accept the {0}',
     editProfile: 'Edit Profile',
     verification: {

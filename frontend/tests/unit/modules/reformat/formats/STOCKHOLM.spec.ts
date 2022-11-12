@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
+import { expect } from 'chai';
+import { STOCKHOLM } from '@/modules/reformat/formats/STOCKHOLM';
 
 const valid = `
 # STOCKHOLM 1.0

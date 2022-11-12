@@ -1,9 +1,7 @@
 <template>
     <footer>
         <b-nav class="modals-nav justify-content-center">
-            <b-nav-item v-for="simpleModal in simpleModals"
-                        :key="simpleModal"
-                        @click="launchHelpModal(simpleModal)">
+            <b-nav-item v-for="simpleModal in simpleModals" :key="simpleModal" @click="launchHelpModal(simpleModal)">
                 {{ $t('footerLinkModals.names.' + simpleModal) }}
             </b-nav-item>
             <b-nav-item @click="launchUpdatesModal">
@@ -11,9 +9,8 @@
             </b-nav-item>
         </b-nav>
         <b-row>
-            <b-col class="text-center"
-                   cols="auto">
-                {{ $t('copyright', {currentYear: new Date().getFullYear()}) }}
+            <b-col class="text-center" cols="auto">
+                {{ $t('copyright', { currentYear: new Date().getFullYear() }) }}
             </b-col>
         </b-row>
     </footer>
@@ -27,22 +24,15 @@ export default Vue.extend({
     name: 'Footer',
     data() {
         return {
-            simpleModals: [
-                'help',
-                'faq',
-                'privacy',
-                'imprint',
-                'contact',
-                'cite',
-            ],
+            simpleModals: ['help', 'faq', 'privacy', 'imprint', 'contact', 'cite'],
         };
     },
     methods: {
         launchHelpModal(modal: string): void {
-            EventBus.$emit('show-modal', {id: 'footerLink', props: {modal}});
+            EventBus.$emit('show-modal', { id: 'footerLink', props: { modal } });
         },
         launchUpdatesModal(): void {
-            EventBus.$emit('show-modal', {id: 'updates'});
+            EventBus.$emit('show-modal', { id: 'updates' });
         },
     },
 });
@@ -50,24 +40,24 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 footer {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 0.75em;
-  padding: 1rem;
-  color: $tk-gray;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.75em;
+    padding: 1rem;
+    color: $tk-gray;
 
-  .modals-nav {
-    margin-bottom: 0.5rem;
+    .modals-nav {
+        margin-bottom: 0.5rem;
 
-    .nav-item a {
-      color: $tk-gray;
+        .nav-item a {
+            color: $tk-gray;
+        }
+
+        .nav-item a:hover {
+            color: $primary;
+        }
     }
-
-    .nav-item a:hover {
-      color: $primary;
-    }
-  }
 }
 </style>
