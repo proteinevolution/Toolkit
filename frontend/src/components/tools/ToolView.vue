@@ -10,6 +10,7 @@
                         {{ tool.longname }}
                     </a>
                     <b-link class="help-icon"
+                            data-v-step="help-modal"
                             @click="launchHelpModal">
                         <i class="far fa-question-circle"
                            :title="$t('jobs.help')"></i>

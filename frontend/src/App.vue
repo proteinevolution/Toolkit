@@ -498,4 +498,14 @@ body {
     background-color: $primary;
   }
 }
+
+.v-tour {
+  .v-step, .v-step__arrow:before, .v-step[data-popper-placement='top'] .v-step__arrow--dark:before, .v-step[data-popper-placement='right'] .v-step__arrow--dark:before {
+    background: #888888e0;
+  }
+
+  .v-step__header, .v-step__arrow.v-step__arrow--dark:before {
+    background: #666666;
+  }
+}
 </style>

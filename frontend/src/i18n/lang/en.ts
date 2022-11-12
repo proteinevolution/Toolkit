@@ -89,28 +89,29 @@ export default {
         },
         tour: {
             content: {
-                toolBar: 'These are the different tools you can use',
-                searchBar: 'Search for jobs or tools',
-                tool: 'Let\'s checkout this tool',
-                input: 'Here you can input a protein sequence',
-                paste: 'Paste an example',
+                toolBar: 'The available tools are organized into different sections',
+                searchBar: 'Quick access to tools and jobs',
+                tool: 'Let\'s checkout HHpred',
+                help: 'Find details on using HHpred, including target databases and parameters',
+                input: 'Enter your query protein sequence here',
+                paste: 'Alternatively, click here to add an example sequence',
                 structuralDomainDatabase: 'Select structural/domain databases',
-                proteomes: 'Select proteomes',
-                parametersTab: 'Change tool parameters',
-                jobId: 'Create a custom Job ID',
+                proteomes: 'Select proteome databases',
+                parametersTab: 'Change search parameters',
+                jobId: 'Optionally, enter a custom Job ID',
                 submit: 'Submit your job',
-                jobList: 'Your running/completed jobs. Click here to open the job manager.',
-                jobManager: 'Here you can see a more detailed list of your jobs.',
+                jobList: 'Your running and completed jobs are listed below. Click here to access the job manager.',
+                jobManager: 'Here you can see a more detailed list of your jobs',
             },
             labels: {
                 buttonSkip: 'Skip tour',
                 buttonPrevious: 'Previous',
                 buttonNext: 'Next',
-                buttonStop: 'Finish'
+                buttonStop: 'Finish tour'
             },
             banner: {
-                message: 'We have a tour! Yay!',
-                ignore: 'Ignore',
+                message: 'Welcome to the MPI Bioinformatics Toolkit! Would you like a tour?',
+                ignore: 'Skip tour',
                 start: 'Start',
             }
         },

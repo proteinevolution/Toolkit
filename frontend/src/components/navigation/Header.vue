@@ -95,7 +95,7 @@ export default Vue.extend({
 
 .tour-banner {
   display: flex;
-  background-color: $tk-green;
+  background-color: #888888b5;
   justify-content: space-between;
   align-items: baseline;
   @include media-breakpoint-down(md) {
@@ -120,7 +120,7 @@ export default Vue.extend({
 
 .tour-banner__start-button {
   color: $white;
-  background-color: $tk-dark-green;
+  background-color: #666666;
   padding: 0.625em 3.125em;
   border-radius: $global-radius;
   border: 0;
@@ -129,6 +129,6 @@ export default Vue.extend({
 }
 
 .tour-banner__start-button:hover {
-  background-color: $tk-darker-green;
+  background-color: #555555;
 }
 </style>

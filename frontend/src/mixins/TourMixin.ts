@@ -10,7 +10,7 @@ const TourMixin = Vue.extend({
                 {
                     target: '[data-v-step="tool-bar"]',
                     header: {
-                        title: 'Toolbar',
+                        title: 'Tool Bar',
                     },
                     content: this.$t('tour.content.toolBar'),
                     params: {
@@ -25,6 +25,9 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '[data-v-step="search-bar"]',
+                    header: {
+                        title: 'Search Box',
+                    },
                     content: this.$t('tour.content.searchBar'),
                     params: {
                         enableScrolling: false,
@@ -55,11 +58,14 @@ const TourMixin = Vue.extend({
                     }),
                 },
                 {
-                    target: '[data-v-step="input"]',
-                    content: this.$t('tour.content.input'),
+                    target: '[data-v-step="help-modal"]',
+                    header: {
+                        title: 'Help Pages',
+                    },
+                    content: this.$t('tour.content.help'),
                     params: {
                         enableScrolling: false,
-                        placement: 'top'
+                        placement: 'right'
                     },
                     before: (type: string) => new Promise<void>((resolve) => {
                         if (this.$route.path !== '/tools/hhpred') {
@@ -75,6 +81,17 @@ const TourMixin = Vue.extend({
                             }
                         }, 100);
                     }),
+                },
+                {
+                    target: '[data-v-step="input"]',
+                    header: {
+                        title: 'Input Field',
+                    },
+                    content: this.$t('tour.content.input'),
+                    params: {
+                        enableScrolling: false,
+                        placement: 'top'
+                    },
                 },
                 {
                     target: '[data-v-step="paste"]',
@@ -111,6 +128,9 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '.tour-tab-Parameters',
+                    header: {
+                        title: 'Parameters Tab',
+                    },
                     content: this.$t('tour.content.parametersTab'),
                     params: {
                         placement: 'right',
@@ -147,6 +167,9 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '[data-v-step="job-list"]',
+                    header: {
+                        title: 'Job List',
+                    },
                     content: this.$t('tour.content.jobList'),
                     params: {
                         placement: 'top'
@@ -162,6 +185,9 @@ const TourMixin = Vue.extend({
                 },
                 {
                     target: '[data-v-step="job-manager"]',
+                    header: {
+                        title: 'Job Manager',
+                    },
                     content: this.$t('tour.content.jobManager'),
                     params: {
                         placement: 'top'
