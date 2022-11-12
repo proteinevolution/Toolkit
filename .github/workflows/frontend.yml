@@ -82,4 +82,3 @@ jobs:
           eslint_extensions: ts,vue
           prettier: true
           prettier_dir: ./frontend/src
-          prettier_extensions: ts,vue
