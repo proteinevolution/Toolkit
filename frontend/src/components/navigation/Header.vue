@@ -1,5 +1,22 @@
 <template>
     <b-container class="header">
+        <b-alert variant="primary"
+                 class="tour-banner"
+                 :show="showTourBanner">
+            <p class="mb-2">
+                {{ $t('tour.banner.message') }}
+            </p>
+            <div>
+                <button class="tour-banner__ignore-button"
+                        @click="ignoreTour">
+                    {{ $t('tour.banner.ignore') }}
+                </button>
+                <button class="tour-banner__start-button"
+                        @click="startTour">
+                    {{ $t('tour.banner.start') }}
+                </button>
+            </div>
+        </b-alert>
         <b-row>
             <TopNavBar />
         </b-row>
@@ -28,12 +45,36 @@
 import Vue from 'vue';
 import NavBar from '@/components/navigation/NavBar.vue';
 import TopNavBar from '@/components/navigation/TopNavBar.vue';
+import {useRootStore} from '@/stores/root';
+import {mapStores} from 'pinia';
 
 export default Vue.extend({
     name: 'Header',
     components: {
         NavBar,
         TopNavBar,
+    },
+    data() {
+        return {
+            showingTour: false,
+        };
+    },
+    computed: {
+        showTourBanner(): boolean {
+            return !this.showingTour && !this.rootStore.tourFinished;
+        },
+        ...mapStores(useRootStore),
+    },
+    methods: {
+        ignoreTour(): void {
+            this.rootStore.tourFinished = true;
+        },
+        startTour(): void {
+            this.showingTour = true;
+            setTimeout(() => {
+                this.$tours['toolkitTour'].start();
+            }, 300);
+        },
     },
 });
 </script>
@@ -50,5 +91,44 @@ export default Vue.extend({
     height: auto;
     width: 180px;
   }
+}
+
+.tour-banner {
+  display: flex;
+  background-color: #888888b5;
+  justify-content: space-between;
+  align-items: baseline;
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+
+  p {
+    color: $white;
+  }
+
+}
+
+.tour-banner__ignore-button {
+  color: $white;
+  background-color: transparent;
+  padding: 0.625em 3.125em;
+  border-radius: $global-radius;
+  border: 0;
+  font-size: 1em;
+  margin: 0;
+}
+
+.tour-banner__start-button {
+  color: $white;
+  background-color: #666666;
+  padding: 0.625em 3.125em;
+  border-radius: $global-radius;
+  border: 0;
+  font-size: 1em;
+  margin: 0;
+}
+
+.tour-banner__start-button:hover {
+  background-color: #555555;
 }
 </style>

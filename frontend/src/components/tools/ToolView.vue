@@ -10,6 +10,7 @@
                         {{ tool.longname }}
                     </a>
                     <b-link class="help-icon"
+                            data-v-step="help-modal"
                             @click="launchHelpModal">
                         <i class="far fa-question-circle"
                            :title="$t('jobs.help')"></i>
@@ -31,6 +32,7 @@
                                 no-fade>
                             <b-tab v-for="section in parameterSections"
                                    :key="toolName + section.name"
+                                   :title-item-class="'tour-tab-' + section.name"
                                    :title="section.name">
                                 <div class="tabs-panel">
                                     <Section :section="section"
@@ -47,6 +49,7 @@
                                            class="submit-button"
                                            :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
+                                           :data-v-step="isJobView ? '' : 'submit'"
                                            variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
@@ -55,7 +58,8 @@
                                         <span v-else
                                               v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
                                     </b-btn>
-                                    <custom-job-id-input :validation-errors="validationErrors"
+                                    <custom-job-id-input data-v-step="job-id"
+                                                         :validation-errors="validationErrors"
                                                          :submission="submission" />
                                     <b-btn v-if="hasRememberedParameters"
                                            class="reset-params-button"
@@ -235,10 +239,12 @@ export default hasHTMLTitle.extend({
         this.loadToolParameters(this.toolName);
         EventBus.$on('alignment-viewer-result-open', this.openAlignmentViewerResults);
         EventBus.$on('resubmit-section', this.resubmitSectionReceive);
+        EventBus.$on('change-tool-tab', this.changeTab);
     },
     beforeDestroy() {
         EventBus.$off('alignment-viewer-result-open', this.openAlignmentViewerResults);
         EventBus.$off('resubmit-section', this.resubmitSectionReceive);
+        EventBus.$off('change-tool-tab', this.changeTab);
     },
     methods: {
         async loadToolParameters(toolName: string): Promise<void> {
@@ -265,6 +271,9 @@ export default hasHTMLTitle.extend({
             parameterRememberService.reset(this.toolName);
             this.loadToolParameters(this.toolName);
             this.refresh();
+        },
+        changeTab(index: number): void {
+            this.tabIndex = index;
         },
         toggleFullScreen(): void {
             this.fullScreen = !this.fullScreen;

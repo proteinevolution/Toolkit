@@ -20,14 +20,16 @@
                             </b-nav-item>
                         </b-navbar-nav>
 
-                        <transition-group name="list-complete"
+                        <transition-group data-v-step="tool-bar"
+                                          name="list-complete"
                                           tag="ul"
                                           class="navbar-nav lower-nav"
                                           :style="{borderTopColor: sectionColor}">
-                            <b-nav-item v-for="tool in displayedTools"
+                            <b-nav-item v-for="(tool, index) in displayedTools"
                                         :key="tool.name"
                                         v-b-tooltip.hover.bottom
                                         class="list-complete-item"
+                                        :data-v-step="index === 1 ? 'tool' : ''"
                                         :to="'/tools/' + tool.name"
                                         :title="tool.description">
                                 {{ tool.longname }}
@@ -50,6 +52,7 @@ import {mapStores} from 'pinia';
 import {useToolsStore} from '@/stores/tools';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
+import EventBus from '@/util/EventBus';
 
 export default Vue.extend({
     name: 'NavBar',
@@ -113,6 +116,9 @@ export default Vue.extend({
                 }
             },
         },
+    },
+    mounted() {
+        EventBus.$on('select-nav-bar-section', this.selectSection);
     },
     methods: {
         selectSection(section: string): void {

@@ -48,6 +48,11 @@
             <ResetPasswordModal />
         </div>
 
+        <v-tour name="toolkitTour"
+                :steps="steps"
+                :options="options"
+                :callbacks="{onSkip: setTourFinished, onFinish: setTourFinished}" />
+
         <scroll-top-button />
 
         <notifications animation-type="velocity" />
@@ -72,7 +77,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -101,10 +105,11 @@ import {useRootStore} from '@/stores/root';
 import {useToolsStore} from '@/stores/tools';
 import {useJobsStore} from '@/stores/jobs';
 import {useAuthStore} from '@/stores/auth';
+import TourMixin from '@/mixins/TourMixin';
 
 const logger = Logger.get('App');
 
-export default Vue.extend({
+export default TourMixin.extend({
     name: 'App',
     components: {
         OffscreenMenu,
@@ -260,6 +265,9 @@ export default Vue.extend({
             this.modalProps.forwardingApiOptionsAlignment = undefined;
             this.modalProps.forwardingData = '';
         },
+        setTourFinished(): void {
+            this.rootStore.tourFinished = true;
+        },
     },
 });
 </script>
@@ -270,6 +278,7 @@ export default Vue.extend({
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-vue/dist/bootstrap-vue.css';
 @import 'vue-multiselect/dist/vue-multiselect.min.css';
+@import 'vue-tour/dist/vue-tour.css';
 @import './assets/scss/form-elements';
 @import './assets/scss/modals';
 @import './assets/scss/sequence-coloring';
@@ -487,6 +496,16 @@ body {
 
   div:after {
     background-color: $primary;
+  }
+}
+
+.v-tour {
+  .v-step, .v-step__arrow:before, .v-step[data-popper-placement='top'] .v-step__arrow--dark:before, .v-step[data-popper-placement='right'] .v-step__arrow--dark:before {
+    background: #888888e0;
+  }
+
+  .v-step__header, .v-step__arrow.v-step__arrow--dark:before {
+    background: #666666;
   }
 }
 </style>

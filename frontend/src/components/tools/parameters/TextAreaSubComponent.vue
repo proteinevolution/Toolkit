@@ -4,6 +4,7 @@
         <b-form-textarea class="textarea-alignment break-all"
                          :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
                          :value="value"
+                         data-v-step="input"
                          cols="70"
                          spellcheck="false"
                          @input="handleInput" />
@@ -18,7 +19,8 @@
                     :max="100" />
         <b-button-group size="sm"
                         class="mt-1 mb-3">
-            <b-btn variant="link"
+            <b-btn data-v-step="paste"
+                   variant="link"
                    @click="handlePasteExample">
                 <loading v-if="rootStore.loading.alignmentTextarea"
                          :size="20" />
@@ -130,12 +132,16 @@ export default Vue.extend({
             },
         },
     },
+    mounted() {
+        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
+    },
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
+        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
     },
     methods: {
         handleDragOver(e: Event): void {

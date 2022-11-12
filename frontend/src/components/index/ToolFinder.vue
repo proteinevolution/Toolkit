@@ -38,7 +38,8 @@
                        @click="goToCurrentJob" />
                 <b-col class="search-field-container"
                        cols="12">
-                    <SearchField :placeholder="$t('index.searchPlaceholder')" />
+                    <SearchField data-v-step="search-bar"
+                                 :placeholder="$t('index.searchPlaceholder')" />
                 </b-col>
             </b-row>
         </div>
