@@ -54,6 +54,9 @@ export default {
                                 <a href="http://www.expasy.org/sprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
                             <li><b>Uniprot_trembl:</b> automatically annotated and not reviewed sequences from the
                                 <a href="http://www.ebi.ac.uk/swissprot/" target="_blank" rel="noopener">UniProtKB.</a></li>
+                            <li><b>alphafold_uniprot, alphafold_uniprot50:</b> these protein sequence databases are based on
+                                the <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold DB</a>
+                                developed by DeepMind and EMBL-EBI.</li>    
                         </ul>
                 `,
                     },
@@ -66,7 +69,22 @@ export default {
                         content: `You can select the max. count of sequences that will be fetched by your Pattern Search.`,
                     },
                 ],
-                references: ``,
+                references: `Database resources of the national center for biotechnology information.<br>
+                Sayers EW, Bolton EE, Brister JR, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>
+                UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium.
+                <a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>
+                RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for 
+                basic and applied research and education in fundamental biology, biomedicine, biotechnology, 
+                bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.
+                <a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>
+                AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence 
+                space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al.
+                <a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> 
+                Nucleic Acids Res. 2022;50(D1):D439-D444.`,
             },
         },
     },

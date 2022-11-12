@@ -46,12 +46,15 @@ class FileController @Inject() (
       case "ecod"   => "pdb"
       case "mmcif"  => "cif"
       case "keggoc" => "pdb"
+      case "cath"   => "pdb"
     }
     val filepath = db match {
       case "scop" =>
         config.get[String]("tel.env.SCOPE")
       case "ecod" =>
         config.get[String]("tel.env.ECOD")
+      case "cath" =>
+        config.get[String]("tel.env.CATH")
       case "mmcif" =>
         config.get[String]("tel.env.CIF")
       case "keggoc" =>

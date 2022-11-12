@@ -19,6 +19,7 @@
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import {resultsService} from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
+import {Stage} from 'ngl';
 
 export default ResultTabMixin.extend({
     name: 'NGL3DStructureView',
@@ -45,16 +46,16 @@ export default ResultTabMixin.extend({
     methods: {
         async init() {
             this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
-            import('ngl')
-                .then(({Stage}) => {
-                    this.stage = new Stage(this.$refs.viewport, {
-                        backgroundColor: 'white',
-                    });
-                    this.stage.loadFile(new Blob([(this.file as string)], {type: 'text/plain'}),
-                        {defaultRepresentation: true, ext: 'pdb'});
-                    window.addEventListener('resize', this.windowResized);
-                    this.windowResized();
-                });
+            this.stage = new Stage(this.$refs.viewport, {
+                backgroundColor: 'white',
+            });
+            await this.stage.loadFile(
+                new Blob([(this.file as string)],
+                {type: 'text/plain'}),
+                {defaultRepresentation: true, ext: 'pdb'},
+            );
+            window.addEventListener('resize', this.windowResized);
+            this.windowResized();
         },
         windowResized(): void {
             this.resize(this.fullScreen);

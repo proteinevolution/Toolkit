@@ -239,9 +239,11 @@ export default Vue.extend({
     .autocomplete-result.is-active,
     .autocomplete-result:hover {
       background-color: $primary;
-      color: white;
+
+      .search-results {
+        color: white;
+      }
     }
   }
 }
-
 </style>

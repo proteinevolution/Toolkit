@@ -1,5 +1,42 @@
 export default [
     {
+        date: '2022-09-21',
+        html: `<p>
+        HHpred  web server: a new version of the <a href="https://scop.berkeley.edu/" target="_blank" rel="noopener">
+         SCOPe database</a>, version 2.08, is now online.
+        </p>`,
+    },
+    {
+        date: '2022-09-16',
+        html: `<p>
+        HHpred web server: profile HMM database for the <a href = https://www.cathdb.info/ target="_blank" rel="noopener">
+        CATH database (v4.3)</a> is now online.
+        </p>`,
+    },
+    {
+        date: '2022-09-03',
+        html: `<p>
+        HHpred web server: profile HMM database for the <a href = https://phrogs.lmge.uca.fr/ target="_blank" rel="noopener">
+        Prokaryotic Virus Remote Homologous Groups (PHROGs) database</a> is now online.
+        </p>`,
+    },
+    {
+        date: '2022-08-29',
+        html: `<p>
+        HHpred web server: profile HMM database for a new version of the
+        <a href="http://prodata.swmed.edu/ecod/" target="_blank" rel="noopener"> ECOD_F70 database</a>, version 
+        20220613 (develop285), from the Grishin Lab is now online.
+        </p>`,
+    },
+    {
+        date: '2022-08-27',
+        html: `<p>
+        We have included the full <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold protein
+         sequence database</a>, alphafold_uniprot, and a filtered version of it, alphafold_uniprot50, as target 
+         databases for PSI-BLAST, HMMER, and PatternSearch.
+        </p>`,
+    },
+    {
         date: '2022-04-18',
         html: `<p>
         We have included the <a href="https://alphafold.ebi.ac.uk/" target="_blank" rel="noopener">AlphaFold protein

@@ -297,7 +297,21 @@ export default {
             'rel="noopener">Nat Biotechnol. 2017 Nov;35(11):1026-1028</a>.',
         sixframe: '',
         backtrans: '',
-        patsearch: '',
+        patsearch: 'Database resources of the national center for biotechnology information.<br>Sayers EW, Bolton EE, ' +
+            'Brister JR, et al. <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>' +
+            'UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>' +
+            'RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for ' +
+            'basic and applied research and education in fundamental biology, biomedicine, biotechnology, ' +
+            'bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>' +
+            'AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence ' +
+            'space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al. ' +
+            '<a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D439-D444.',
         samcc: 'Measuring the conformational space of square four-helical bundles with the program samCC.<br>' +
             'Dunin-Horkawicz S, Lupas AN. <a href="http://www.sciencedirect.com/science/article/pii/S1047847710000353' +
             '" target="_blank" rel="noopener">J Struct Biol. 2010 May;170(2):226-35</a>.',
@@ -351,11 +365,41 @@ export default {
             'target="_blank" rel="noopener"> Nat Methods. 2011 Dec 25;9(2):173-5</a>.',
         hmmer: 'Accelerated Profile HMM Searches.<br>Eddy SR.<a ' +
             'href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1002195" target="_blank" ' +
-            'rel="noopener"> PLoS Comput Biol. 2011 Oct;7(10):e1002195</a>.',
+            'rel="noopener"> PLoS Comput Biol. 2011 Oct;7(10):e1002195</a>.<br><br>' +
+            'Database resources of the national center for biotechnology information.<br>Sayers EW, Bolton EE, ' +
+            'Brister JR, et al. <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>' +
+            'UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>' +
+            'RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for ' +
+            'basic and applied research and education in fundamental biology, biomedicine, biotechnology, ' +
+            'bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>' +
+            'AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence ' +
+            'space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al. ' +
+            '<a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D439-D444.',
         psiblast: 'BLAST+: architecture and applications.<br>Camacho C, Coulouris G, Avagyan V, Ma N, ' +
             'Papadopoulos J, Bealer K, Madden TL.<a ' +
             'href="https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-10-421" target="_blank" ' +
-            'rel="noopener"> BMC Bioinformatics. 2009 Dec 15;10:421</a>.',
+            'rel="noopener"> BMC Bioinformatics. 2009 Dec 15;10:421</a>.<br><br>' +
+            'Database resources of the national center for biotechnology information.<br>Sayers EW, Bolton EE, ' +
+            'Brister JR, et al. <a href="https://doi.org/10.1093/nar/gkab1112" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D20-D26.</a><br><br>' +
+            'UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>' +
+            'RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for ' +
+            'basic and applied research and education in fundamental biology, biomedicine, biotechnology, ' +
+            'bioengineering and energy sciences.<br> Burley SK, Bhikadiya C, Bi C, et al.' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D437-D451</a><br><br>' +
+            'AlphaFold Protein Structure Database: massively expanding the structural coverage of protein-sequence ' +
+            'space with high-accuracy models.<br> Varadi M, Anyango S, Deshpande M, et al. ' +
+            '<a href="https://doi.org/10.1093/nar/gkab1061" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2022;50(D1):D439-D444.',
         hhpred: 'Protein homology detection by HMM-HMM comparison.<br>Söding J.<a ' +
             'href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/bti125" ' +
             'target="_blank" rel="noopener"> Bioinformatics. 2005 Apr 1;21(7):951-60</a>.<br><br>' +
@@ -365,7 +409,30 @@ export default {
             'Automatic Prediction of Protein 3D Structures by Probabilistic Multi-template Homology Modeling.<br>' +
             'Meier A, Söding J.<a ' +
             'href="http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004343" target="_blank" ' +
-            'rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>.',
+            'rel="noopener"> PLoS Comput Biol. 2015 Oct 23;11(10):e1004343</a>. <br><br>'  +
+            'UniProt: the universal protein knowledgebase in 2021. <br>UniProt Consortium. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1100" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D480-D489. </a><br><br>' +
+            'RCSB Protein Data Bank: powerful new tools for exploring 3D structures of biological macromolecules for ' +
+            'basic and applied research and education in fundamental biology, biomedicine, biotechnology, ' +
+            'bioengineering and energy sciences.<br>Burley SK, Bhikadiya C, Bi C, et al.' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1038" target="_blank" rel="noopener"> ' +
+            'Nucleic Acids Res. 2021;49(D1):D437-D451</a>.<br><br>' +
+            'ECOD: an evolutionary classification of protein domains.<br>Cheng H, Schaeffer RD, Liao Y, et al. ' +
+            '<a href="https://doi.org/10.1371/journal.pcbi.1003926" target="_blank" rel="noopener">' +
+            'PLoS Comput Biol. 2014;10(12):e1003926</a>.<br><br>' +
+            'SCOPe: improvements to the structural classification of proteins - extended database to facilitate variant ' +
+            'interpretation and machine learning.<br>Chandonia JM, Guan L, Lin S, Yu C, Fox NK, Brenner SE. ' +
+            '<a href="https://doi.org/10.1093/nar/gkab1054" target="_blank" rel="noopener">' +
+            'Nucleic Acids Res. 2022;50(D1):D553-D559</a>.<br><br>' +
+            'PHROG: families of prokaryotic virus proteins clustered using remote homology.<br>' +
+            'Terzian P, Olo Ndela E, Galiez C, et al. ' +
+            '<a href="https://doi.org/10.1093/nargab/lqab067" target="_blank" rel="noopener">' +
+            'NAR Genom Bioinform. 2021;3(3):lqab067</a>.<br><br>' +
+            'CATH: increased structural coverage of functional space.<br>' +
+            'Sillitoe I, Bordin N, Dawson N, et al. ' +
+            '<a href="https://doi.org/10.1093/nar/gkaa1079" target="_blank" rel="noopener">' +
+            'Nucleic Acids Res. 2021;49(D1):D266-D273</a>.<br><br>',
         hhpred_manual: '',
     },
 };

@@ -3,8 +3,8 @@ import sbt._
 
 object Dependencies {
 
-  val akkaVersion = "2.6.19"
-  val circeV      = "0.14.2"
+  val akkaVersion = "2.6.20"
+  val circeV      = "0.14.3"
 
   lazy val commonDeps: Seq[ModuleID] = Seq(
     ws,
@@ -31,9 +31,9 @@ object Dependencies {
       .exclude("com.typesafe.play", "*"), // provided
     "org.typelevel" %% "cats-core"            % "2.8.0",
     "org.typelevel" %% "cats-effect"          % "3.3.14",
-    "co.fs2"        %% "fs2-core"             % "3.2.12",
-    "co.fs2"        %% "fs2-io"               % "3.2.12",
-    "com.chuusai"   %% "shapeless"            % "2.3.9",
+    "co.fs2"        %% "fs2-core"             % "3.3.0",
+    "co.fs2"        %% "fs2-io"               % "3.3.0",
+    "com.chuusai"   %% "shapeless"            % "2.3.10",
     "com.dripower"  %% "play-circe"           % "2814.2",
     "io.circe"      %% "circe-generic"        % circeV,
     "io.circe"      %% "circe-generic-extras" % circeV,
@@ -47,8 +47,8 @@ object Dependencies {
     "com.typesafe.akka"        %% "akka-testkit"        % akkaVersion % Test,
     "com.typesafe.akka"        %% "akka-stream-testkit" % akkaVersion % Test,
     "org.scalatestplus.play"   %% "scalatestplus-play"  % "5.1.0"     % Test,
-    "org.mockito"               % "mockito-core"        % "4.7.0"     % Test,
-    "com.softwaremill.macwire" %% "macros"              % "2.5.7"     % Test,
+    "org.mockito"               % "mockito-core"        % "4.8.1"     % Test,
+    "com.softwaremill.macwire" %% "macros"              % "2.5.8"     % Test,
     "org.awaitility"            % "awaitility"          % "4.2.0"     % Test
   )
 

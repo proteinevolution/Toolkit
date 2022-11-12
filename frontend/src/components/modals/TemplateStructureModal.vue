@@ -28,6 +28,7 @@ import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import {resultsService} from '@/services/ResultsService';
+import {Stage} from 'ngl';
 
 const logger = Logger.get('TemplateStructureModal');
 
@@ -93,11 +94,10 @@ export default Vue.extend({
                     this.stage.dispose();
                     (this.$refs.viewport as HTMLElement).innerHTML = '';
                 }
-                const ngl: any = await import('ngl');
-                this.stage = new ngl.Stage(this.$refs.viewport, {
+                this.stage = new Stage(this.$refs.viewport, {
                     backgroundColor: 'white',
                 });
-                this.stage.loadFile(new Blob([this.file]),
+                await this.stage.loadFile(new Blob([this.file]),
                     {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
                 window.addEventListener('resize', this.resize);
                 this.resize();

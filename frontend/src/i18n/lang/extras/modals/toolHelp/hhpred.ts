@@ -150,6 +150,10 @@ export default {
                     <p> This database is a version of the <a href = http://prodata.swmed.edu/ecod/ target="_blank" rel="noopener">
                         Evolutionary Classification of Protein Domains (ECOD) database</a> filtered for a maximum of 70%
                         sequence identity.</p>
+                    <em>CATH_S40</em>
+                    <p> This database is a version of the <a href = https://www.cathdb.info target="_blank" rel="noopener">
+                        CATH database</a> filtered for a maximum pairwise sequence identity of 40%.</p>
+                        
 
                     <em>COG_KOG</em>
                     <p>The <a href = https://www.ncbi.nlm.nih.gov/COG/ target="_blank" rel="noopener">Clusters of
@@ -190,7 +194,11 @@ export default {
                     filtered for a maximum pairwise sequence identity of 70%.</p>    
 
                     <em>Prokaryotic_proteasome_homologs</em>
-                    <p>This database comprises profile HMMs for several newly discovered prokaryotic proteasome homologs.</p>`,
+                    <p>This database comprises profile HMMs for several newly discovered prokaryotic proteasome homologs.</p>
+                    
+                    <em>PHROGs</em>
+                    <p> This database is based on the <a href = https://phrogs.lmge.uca.fr/ target="_blank" rel="noopener">
+                        Prokaryotic Virus Remote Homologous Groups (PHROGs) database</a>.</p>`,
                     },
                     {
                         title: 'Select proteomes',

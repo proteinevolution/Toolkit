@@ -75,7 +75,7 @@ final class WebSocketActor @Inject() (
         loadFuture.mapTo[UpdateLoad].map { response =>
           out ! JsonObject(
             "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
-            "load" -> Json.fromDoubleOrNull(response.load)
+            "load"     -> Json.fromDoubleOrNull(response.load)
           ).asJson
         }
       case None =>
