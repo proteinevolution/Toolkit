@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -434,10 +434,10 @@ class JobActor @Inject() (
 
               val h_rt = config.get[Int](s"Tools.${job.tool}.hardruntime")
 
-              //Set soft runtime to 30s less than hard runtime
+              // Set soft runtime to 30s less than hard runtime
               val s_rt   = h_rt - 30
               val h_vmem = (config.get[Int](s"Tools.${job.tool}.memory") * TEL.memFactor).toInt
-              //Set soft memory limit to 95% of hard memory limit
+              // Set soft memory limit to 95% of hard memory limit
               val s_vmem  = h_vmem * 0.95
               val threads = math.ceil(config.get[Int](s"Tools.${job.tool}.threads") * TEL.threadsFactor).toInt
 
@@ -565,7 +565,7 @@ class JobActor @Inject() (
           if (job.isFinished) {
             // Now we can update the JobState and remove it, once the update has completed
             updateJobState(job).map { job =>
-              //Remove the job from the jobActor
+              // Remove the job from the jobActor
               updateJobLogAndExecution(job.jobID)
               // Tell the user that their job finished via eMail (can be either failed or done)
               sendJobUpdateMail(job)
@@ -586,7 +586,7 @@ class JobActor @Inject() (
         val jobInCluster  = clusterJobIDs.contains(clusterData.sgeID)
         log.info(
           s"[JobActor[$jobActorNumber].PolledJobs] Job ${job.jobID} with sgeID ${clusterData.sgeID}: ${if (jobInCluster) "active"
-          else "inactive"}"
+            else "inactive"}"
         )
         if ((!job.isFinished && !jobInCluster) || isOverDue(job) || sgeFailed(clusterData.sgeID, qStat))
           self ! JobStateChanged(job.jobID, Error)

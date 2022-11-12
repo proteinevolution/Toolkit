@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,8 +44,7 @@ object ToolkitTypes extends ToolkitTypes {
         def values: Nil.type = Nil
       }
 
-    implicit def coproductSingletons[A, H <: A, T <: Coproduct](
-        implicit
+    implicit def coproductSingletons[A, H <: A, T <: Coproduct](implicit
         tsc: AllSingletons[A, T],
         witness: Witness.Aux[H]
     ): AllSingletons[A, H :+: T] =
@@ -59,8 +58,7 @@ object ToolkitTypes extends ToolkitTypes {
   }
 
   object EnumerableAdt {
-    implicit def fromAllSingletons[A, C <: Coproduct](
-        implicit
+    implicit def fromAllSingletons[A, C <: Coproduct](implicit
         gen: Generic.Aux[A, C],
         singletons: AllSingletons[A, C]
     ): EnumerableAdt[A] =

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ sealed trait LocationProvider {
 }
 
 @Singleton
-class LocationProviderImpl @Inject()(config: Configuration)(implicit ec: ExecutionContext) extends LocationProvider {
+class LocationProviderImpl @Inject() (config: Configuration)(implicit ec: ExecutionContext) extends LocationProvider {
 
   private[this] val geoIp = GeoIPInfo(config.get[String]("maxmind_db"))
 

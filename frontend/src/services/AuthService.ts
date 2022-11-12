@@ -13,94 +13,60 @@ import {
 
 class AuthService {
 
-    public fetchUserData(): Promise<User> {
-        return new Promise<User>(((resolve, reject) => {
-            axios.get(`/api/auth/user/data`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async fetchUserData(): Promise<User> {
+        const res = await axios.get<User>(`/api/auth/user/data`);
+        return res.data;
     }
 
-    public login(data: LoginData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/login`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async login(data: LoginData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/login`, data);
+        return res.data;
     }
 
-    public logout(): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.get(`/api/auth/logout`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async logout(): Promise<AuthMessage> {
+        const res = await axios.get<AuthMessage>(`/api/auth/logout`);
+        return res.data;
     }
 
-    public signUp(data: SignUpData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/signup`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async signUp(data: SignUpData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/signup`, data);
+        return res.data;
     }
 
-    public editProfile(data: ProfileData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/profile`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async editProfile(data: ProfileData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/profile`, data);
+        return res.data;
     }
 
-    public changePassword(data: PasswordChangeData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/password`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async changePassword(data: PasswordChangeData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/password`, data);
+        return res.data;
     }
 
-    public forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/reset/password`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async forgotPassword(data: ForgotPasswordData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/reset/password`, data);
+        return res.data;
     }
 
-    public resetPassword(data: PasswordResetData): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.post(`/api/auth/reset/password/change`, data)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async resetPassword(data: PasswordResetData): Promise<AuthMessage> {
+        const res = await axios.post<AuthMessage>(`/api/auth/reset/password/change`, data);
+        return res.data;
     }
 
-    public verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
-        return new Promise<AuthMessage>(((resolve, reject) => {
-            axios.get(`/api/auth/verify/${nameLogin}/${token}`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async verifyToken(nameLogin: string, token: string): Promise<AuthMessage> {
+        const res = await axios.get<AuthMessage>(`/api/auth/verify/${nameLogin}/${token}`);
+        return res.data;
     }
 
-    public validateModellerKey(key: string): Promise<boolean> {
-        return new Promise<boolean>(((resolve, reject) => {
-            axios.get(`/api/auth/validate/modeller?input=${key}`)
-                .then((response) => resolve(response.data.isValid))
-                .catch(reject);
-        }));
+    public async validateModellerKey(key: string): Promise<boolean> {
+        const res = await axios.get<any>(`/api/auth/validate/modeller?input=${key}`);
+        return res.data.isValid;
     }
 
-    public validateJobId(newJobID: string): Promise<CustomJobIdValidationResult> {
-        return new Promise<CustomJobIdValidationResult>(((resolve, reject) => {
-            axios.get(`/api/jobs/check/job-id/${newJobID}/`)
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async validateJobId(newJobID: string): Promise<CustomJobIdValidationResult> {
+        const res = await axios.get<CustomJobIdValidationResult>(`/api/jobs/check/job-id/${newJobID}/`);
+        return res.data;
     }
-
 }
 
 export const authService = new AuthService();

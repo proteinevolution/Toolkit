@@ -80,6 +80,13 @@ export default {
             numSeqsReduced: 'Number of Sequences (up to {reduced} most diverse sequences): <b>{num}</b>',
             loadingHits: 'Loading hits...',
         },
+        tree: {
+            layout: 'Layout',
+            circular: 'Circular',
+            horizontal: 'Horizontal',
+            horizontalStretch: 'Horizontal stretch',
+            verticalStretch: 'Vertical stretch',
+        },
         seq2ID: {
             numRetrieved: 'Retrieved {num} IDs',
         },
@@ -246,7 +253,7 @@ export default {
             resultsForType: 'Results for repeats type {type}:',
             numResults: 'No. of repeats: {num}',
             pValue: 'P-value: {pval}',
-            length: 'Length: {pval}',
+            length: 'Length: {len}',
         },
         templateAlignment: {
             title: 'Template Alignment (~100 most distinct sequences)',

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class SubmissionController @Inject()(
+class SubmissionController @Inject() (
     jobActorAccess: JobActorAccess,
     userSessions: UserSessionService,
     jobDispatcher: JobDispatcher,
@@ -63,7 +63,8 @@ class SubmissionController @Inject()(
             case None => BadRequest
             case Some(obj) =>
               if (obj.contains("isPublic")) {
-                jobActorAccess.sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
+                jobActorAccess
+                  .sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
               }
               Ok
           }

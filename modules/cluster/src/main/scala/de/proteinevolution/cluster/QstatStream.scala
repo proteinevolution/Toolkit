@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import scala.concurrent.duration._
 import scala.sys.process._
 
 @Singleton
-final private[cluster] class QstatStream @Inject()(constants: ConstantsV2)(
-    implicit ec: ExecutionContext,
+final private[cluster] class QstatStream @Inject() (constants: ConstantsV2)(implicit
+    ec: ExecutionContext,
     mat: Materializer,
     system: ActorSystem
 ) extends Logging {

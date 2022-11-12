@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,14 @@
 package de.proteinevolution.auth.util
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.helpers.ToolkitTypes
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.mvc._
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class UserAction @Inject()(val parser: BodyParsers.Default, userSessions: UserSessionService)(
-    implicit val executionContext: ExecutionContext
+class UserAction @Inject() (val parser: BodyParsers.Default, userSessions: UserSessionService)(implicit
+    val executionContext: ExecutionContext
 ) extends ActionBuilder[UserRequest, AnyContent]
     with ActionTransformer[Request, UserRequest]
     with ToolkitTypes {

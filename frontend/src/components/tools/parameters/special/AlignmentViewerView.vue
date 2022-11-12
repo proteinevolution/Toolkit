@@ -10,7 +10,7 @@
                             class="mt-1 mb-3">
                 <b-btn variant="link"
                        @click="handlePasteExample">
-                    <loading v-if="$store.state.loading.alignmentTextarea"
+                    <loading v-if="rootStore.loading.alignmentTextarea"
                              :size="20" />
                     <span v-else
                           v-text="$t('tools.parameters.textArea.pasteExample')"></span>
@@ -44,6 +44,8 @@ import Logger from 'js-logger';
 import {sampleSeqService} from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
 import {jobService} from '@/services/JobService';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
 
 const logger = Logger.get('AlignmentViewerView');
 
@@ -70,6 +72,7 @@ export default Vue.extend({
             }
             return '';
         },
+        ...mapStores(useRootStore),
     },
     mounted() {
         EventBus.$on('forward-data', this.acceptForwardData);
@@ -83,7 +86,7 @@ export default Vue.extend({
             this.input = data;
         },
         handlePasteExample() {
-            this.$store.commit('startLoading', 'alignmentTextarea');
+            this.rootStore.loading.alignmentTextarea = true;
             sampleSeqService.fetchSampleSequence(this.parameter.sampleInput)
                 .then((res: string) => {
                     this.input = res;
@@ -93,7 +96,7 @@ export default Vue.extend({
                     this.input = 'Error!';
                 })
                 .finally(() => {
-                    this.$store.commit('stopLoading', 'alignmentTextarea');
+                    this.rootStore.loading.alignmentTextarea = false;
                 });
         },
         showAlignment() {

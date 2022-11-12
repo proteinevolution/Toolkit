@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ abstract class PredicativeParam(name: String) extends Param(name) {
   /**
    * Decides whether or not the value for this parameter is allowed
    *
-   * @param value The value that should be tested for its validity
-   * @return Whether the provided value is valid for this parameter
+   * @param value
+   *   The value that should be tested for its validity
+   * @return
+   *   Whether the provided value is valid for this parameter
    */
   def validate(value: String): Boolean
 }

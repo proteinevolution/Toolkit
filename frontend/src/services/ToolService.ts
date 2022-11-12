@@ -2,33 +2,19 @@ import axios from 'axios';
 import {Tool, ToolParameters} from '@/types/toolkit/tools';
 
 class ToolService {
-
-    public fetchToolsVersion(): Promise<string> {
-        return new Promise<string>(((resolve, reject) => {
-            axios.get('/api/tools/version/')
-                .then((response) => resolve(response.data))
-                .catch(reject);
-        }));
+    public async fetchToolsVersion(): Promise<string> {
+        const res = await axios.get<string>('/api/tools/version/');
+        return res.data;
     }
 
-    public fetchTools(): Promise<Tool[]> {
-        return new Promise<Tool[]>((resolve, reject) => {
-            axios.get('/api/tools/')
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async fetchTools(): Promise<Tool[]> {
+        const res = await axios.get<Tool[]>('/api/tools/');
+        return res.data;
     }
 
-    public fetchToolParameters(toolName: string): Promise<ToolParameters> {
-        return new Promise<ToolParameters>((resolve, reject) => {
-            axios.get(`/api/tools/${toolName}/`)
-                .then((response) => {
-                    resolve(response.data);
-                })
-                .catch(reject);
-        });
+    public async fetchToolParameters(toolName: string): Promise<ToolParameters> {
+        const res = await axios.get<ToolParameters>(`/api/tools/${toolName}/`);
+        return res.data;
     }
 }
 

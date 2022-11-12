@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,9 +94,8 @@ class UserSessionService @Inject() (
   }
 
   /**
-   * Grabs the user with the matching sessionID from the cache, or if there is
-   * none, it will try to find it in the database and put it in the cache.
-   * Only used for the websocket where no request object is available.
+   * Grabs the user with the matching sessionID from the cache, or if there is none, it will try to find it in the
+   * database and put it in the cache. Only used for the websocket where no request object is available.
    *
    * @return
    */
@@ -128,7 +127,7 @@ class UserSessionService @Inject() (
    * updates a user in the cache
    */
   def updateUserInCache(user: User): User = {
-    //logger.info("User WatchList is now: " + user.jobs.mkString(", "))
+    // logger.info("User WatchList is now: " + user.jobs.mkString(", "))
     user.sessionID.foreach { sessionID =>
       userCache.set(sessionID, user, 10.minutes)
     }

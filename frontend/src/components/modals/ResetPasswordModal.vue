@@ -36,6 +36,8 @@ import {AuthMessage, PasswordResetData} from '@/types/toolkit/auth';
 import {authService} from '@/services/AuthService';
 import EventBus from '@/util/EventBus';
 import {TranslateResult} from 'vue-i18n';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 export default Vue.extend({
     name: 'ResetPasswordModal',
@@ -69,6 +71,7 @@ export default Vue.extend({
                 this.newPasswordValid
                 && this.confirmPasswordValid;
         },
+        ...mapStores(useAuthStore),
     },
     methods: {
         validateNewPassword() {
@@ -90,7 +93,7 @@ export default Vue.extend({
                 const msg: AuthMessage = await authService.resetPassword(data);
                 const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 if (msg.successful) {
-                    this.$store.commit('auth/setUser', msg.user);
+                    this.authStore.user = msg.user;
                     EventBus.$emit('hide-modal', 'resetPassword');
                     this.$router.replace('/');
                     this.$alert(message);

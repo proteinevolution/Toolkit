@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,17 +66,17 @@ object Parameter {
 
   case class ModellerParameter(
       name: String,
-      label: String,
+      label: String
   ) extends Parameter
 
   case class HHpredSelectsParameter(
-    name: String,
-    options: Seq[SelectOption],
-    nameProteomes: String,
-    optionsProteomes: Seq[SelectOption],
-    maxSelectedOptions: Int,
-    default: Option[String] = None,
-    defaultProteomes: Option[String] = None,
+      name: String,
+      options: Seq[SelectOption],
+      nameProteomes: String,
+      optionsProteomes: Seq[SelectOption],
+      maxSelectedOptions: Int,
+      default: Option[String] = None,
+      defaultProteomes: Option[String] = None
   ) extends Parameter
 
   implicit val ep: Encoder[Parameter] = {

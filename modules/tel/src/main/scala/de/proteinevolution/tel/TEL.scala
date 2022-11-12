@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import play.api.Configuration
 
 /**
  * TEL is the access point to get ExecutionContexts in which runscripts can be executed
- *
  */
 @Singleton
-class TEL @Inject()(params: Params, config: Configuration) extends TELRegex with TELConstants {
+class TEL @Inject() (params: Params, config: Configuration) extends TELRegex with TELConstants {
 
   // Ignore the following keys when writing parameters // TODO This is a hack and must be changed
   val ignore: Seq[String] = Seq("jobID", "newSubmission", "start", "edit")

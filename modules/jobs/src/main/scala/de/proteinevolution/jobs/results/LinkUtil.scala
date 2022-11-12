@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,25 +20,29 @@ import scala.collection.mutable.ArrayBuffer
 
 object LinkUtil {
 
-  private val uniprotReg    = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
-  private val scopReg       = """([defgh][0-9a-zA-Z\.\_]+)""".r
-  private val smartReg      = """(^SM0[0-9]{4})""".r
-  private val ncbiCDReg     = """(^[cs]d[0-9]{5})""".r
-  private val cogkogReg     = """(^[CK]OG[0-9]{4})""".r
-  private val tigrReg       = """(^TIGR[0-9]{5})""".r
-  private val prkReg        = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
-  private val mmcifReg      = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
-  private val pfamReg       = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
-  private val ncbiReg       = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
-  private val ecodReg       = """(ECOD_[0-9]+)_.*""".r
+  private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
+  private val scopReg    = """(SCOP_[defgh][0-9a-zA-Z\.\_]+)""".r
+  private val smartReg   = """(^SM0[0-9]{4})""".r
+  private val ncbiCDReg  = """(^[cs]d[0-9]{5})""".r
+  private val cogkogReg  = """(^[CK]OG[0-9]{4})""".r
+  private val tigrReg    = """(^TIGR[0-9]{5})""".r
+  private val prkReg     = """(CHL|MTH|PHA|PLN|PTZ|PRK)[0-9]{5}""".r
+  private val mmcifReg   = """(...._[0-9a-zA-Z][0-9a-zA-Z]?[0-9a-zA-Z]?[0-9a-zA-Z]?)""".r
+  private val pfamReg    = """(pfam[0-9]+|PF[0-9]+(\.[0-9]+)?)""".r
+  private val ncbiReg    = """[A-Z]{2}_?[0-9]+\.?\#?([0-9]+)?|[A-Z]{3}[0-9]{5}?\.[0-9]""".r
+  private val ecodReg    = """(ECOD_[0-9]+)_.*""".r
+  private val phrogReg   = """(phrog_[0-9]+)""".r
+  private val cathReg    = """(CATH)_.*""".r
 
-  private val envNrNameReg   = """(env.*|nr.*)""".r
-  private val pdbNameReg     = """(pdb.*)""".r
-  private val uniprotNameReg = """(uniprot.*)""".r
-  private val unirefNameReg  = """(uniref.*)""".r
-  private val pfamNameReg    = """(Pfam.*)""".r
-
-  private val pdbBaseLink = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
+  private val nrNameReg                    = """(nr.*)""".r
+  private val prokaryoticProteasomeNameReg = """(prokaryotic_proteasome.*)""".r
+  private val pdbNameReg                   = """(pdb.*)""".r
+  private val uniprotNameReg               = """(uniprot.*)""".r
+  private val unirefNameReg                = """(uniref.*)""".r
+  private val pfamNameReg                  = """(Pfam.*)""".r
+  private val keggocNameReg                = """(.*_OC.[0-9]+)""".r
+  private val alphafolddbNameReg           = """(alphafold_uniprot.*)""".r
+  private val pdbBaseLink                  = "http://www.rcsb.org/pdb/explore/explore.do?structureId="
 
   private val pdbeBaseLink = "http://www.ebi.ac.uk/pdbe/entry/pdb/"
   private val ncbiBaseLink =
@@ -51,6 +55,10 @@ object LinkUtil {
   private val unirefBaseLink      = "http://www.uniprot.org/uniref/"
   private val smartBaseLink       = "http://smart.embl-heidelberg.de/smart/do_annotation.pl?DOMAIN="
   private val ecodBaseLink        = "http://prodata.swmed.edu/ecod/complete/domain/"
+  private val cathBaseLink        = "https://www.cathdb.info/version/latest/domain/"
+  private val phrogBaseLink       = "https://phrogs.lmge.uca.fr/cgi-bin/script_mega_2018.py?mega="
+  private val keggocBaseLink      = "https://www.genome.jp/tools-bin/ocv?entry=OC."
+  private val alphafoldBaseLink   = "https://alphafold.ebi.ac.uk/entry/"
 
   /* GENERATING LINKS FOR HHPRED */
 
@@ -59,7 +67,7 @@ object LinkUtil {
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
     db match {
-      case "scop"    => generateLink(scopBaseLink, id, id)
+      case "scop"    => val idScop = id.slice(5, 12); generateLink(scopBaseLink, idScop, id)
       case "mmcif"   => generateLink(pdbBaseLink, idPdb, id)
       case "prk"     => generateLink(cddBaseLink, id, id)
       case "ncbicd"  => generateLink(cddBaseLink, id, id)
@@ -70,34 +78,53 @@ object LinkUtil {
       case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
       case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
-      case _         => id
+      case "cath"    => val idCath = id.slice(5, 12); generateLink(cathBaseLink, idCath, id)
+      case "phrog"   => val idPhrog = id.replaceAll("phrog_", ""); generateLink(phrogBaseLink, idPhrog, id)
+      case "keggoc" =>
+        val idKeggoc = id.split("OC.").last; generateLink(keggocBaseLink, idKeggoc, id)
+
+      case _ => id
     }
   }
 
   def getSingleLinkDB(db: String, id: String): String = {
-    val idPfam = id.replaceAll("am.*$||..*", "")
-    val idPdb  = id.replaceAll("_.*$", "")
+    val idPfam      = id.replaceAll("am.*$||..*", "")
+    val idPdb       = id.replaceAll("_.*$", "")
+    val idAlphaFold = id.replaceAll("-.*$", "")
+
     db match {
-      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, id, id)
-      case pdbNameReg(_)     => generateLink(pdbBaseLink, idPdb, id)
-      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id, id)
-      case unirefNameReg(_)  => generateLink(unirefBaseLink, id, id)
-      case pfamNameReg(_)    => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
-      case _                 => id
+      case nrNameReg(_)                    => generateLink(ncbiProteinBaseLink, id, id)
+      case prokaryoticProteasomeNameReg(_) => generateLink(ncbiProteinBaseLink, id, id)
+      case pdbNameReg(_)                   => generateLink(pdbBaseLink, idPdb, id)
+      case uniprotNameReg(_)               => generateLink(uniprotBaseLink, id, id)
+      case unirefNameReg(_)                => generateLink(unirefBaseLink, id, id)
+      case pfamNameReg(_)                  => generateLink(pfamBaseLink, idPfam + "#tabview=tab0", id)
+      case alphafolddbNameReg(_)           => generateLink(alphafoldBaseLink, idAlphaFold, id)
+      case _                               => id
     }
   }
 
   def getLinksDB(db: String, id: String): String = {
-    val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
-    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
-    val idCDD  = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val links       = new ArrayBuffer[String]()
+    val idNcbi      = id.replaceAll("#", ".") + "?report=fasta"
+    val idPdb       = id.replaceAll("_.*$", "").toLowerCase
+    val idCDD       = id.replaceAll("PF", "pfam").replaceAll("\\..*", "")
+    val idAlphaFold = id.replaceAll("-.*$", "")
+
     db match {
-      case envNrNameReg(_)   => generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
-      case pdbNameReg(_)     => generateLink(pdbeBaseLink, idPdb, "PDBe")
-      case pfamNameReg(_)    => generateLink(cddBaseLink, idCDD, "CDD")
-      case uniprotNameReg(_) => generateLink(uniprotBaseLink, id + ".fasta", "UniProt")
-      case unirefNameReg(_)  => generateLink(unirefBaseLink, id + ".fasta", "UniRef")
+      case nrNameReg(_)                    => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case prokaryoticProteasomeNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
+      case pdbNameReg(_)                   => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
+      case pfamNameReg(_)                  => links += generateLink(cddBaseLink, idCDD, "CDD")
+      case alphafolddbNameReg(_) =>
+        links += generateLink(uniprotBaseLink, idAlphaFold, "UniProt")
+        links += generateLink(uniprotBaseLink, idAlphaFold + ".fasta", "UniProt FASTA")
+      case uniprotNameReg(_) =>
+        links += generateLink(uniprotBaseLink, id + ".fasta", "UniProt FASTA")
+        links += generateLink(alphafoldBaseLink, id, "AlphaFoldDB")
+      case unirefNameReg(_) => links += generateLink(unirefBaseLink, id + ".fasta", "UniRef")
     }
+    links.mkString(" | ")
   }
 
   def displayModellerLink(db: String, proteome: String): Boolean = {
@@ -107,32 +134,33 @@ object LinkUtil {
   def displayStructLink(id: String): Boolean = {
     val db = identifyDatabase(id)
     db match {
-      case "scop"  => true
-      case "mmcif" => true
-      case "ecod"  => true
-      case _       => false
+      case "scop"   => true
+      case "mmcif"  => true
+      case "ecod"   => true
+      case "cath"   => true
+      case "keggoc" => true
+      case _        => false
     }
   }
 
   def getSingleLinkHHBlits(id: String): String = generateLink(unirefBaseLink, id, id)
 
   def getLinksHHpred(jobID: String, id: String): String = {
-    val db    = identifyDatabase(id)
-    val links = new ArrayBuffer[String]()
-    val idPdb = id.replaceAll("_.*$", "").toLowerCase
-    val idTrimmed = if (id.length > 4) {
-      id.slice(1, 5)
-    } else {
-      id
-    }
+    val db     = identifyDatabase(id)
+    val links  = new ArrayBuffer[String]()
+    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     db match {
       case "scop" =>
-        links += generateLink(pdbBaseLink, idTrimmed, "PDB")
-        links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+        val idPdbScop = id.slice(6, 10)
+        links += generateLink(pdbBaseLink, idPdbScop, "PDB")
+        links += generateLink(ncbiBaseLink, idPdbScop, "NCBI")
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
+        links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
+      case "cath" =>
+        val idPdbEcod = id.slice(5, 9)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
       case "mmcif" =>
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
@@ -160,7 +188,10 @@ object LinkUtil {
     case pfamReg(_, _)    => "pfam"
     case uniprotReg(_)    => "uniprot"
     case ecodReg(_)       => "ecod"
+    case cathReg(_)       => "cath"
+    case phrogReg(_)      => "phrog"
     case ncbiReg(_)       => "ncbi"
+    case keggocNameReg(_) => "keggoc"
     case _: String        => ""
   }
 }

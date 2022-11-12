@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,13 @@ class Parameter(val name: String) {
 
 /**
  * Encompasses the value representation of a runscript parameter.
- *
  */
 abstract class Representation {
   def represent: String
 }
 
 /**
- * Represents Parameter values which can be literally represented by the String value of an arbitrary
- * type 'A'.
+ * Represents Parameter values which can be literally represented by the String value of an arbitrary type 'A'.
  *
  * @param value
  */

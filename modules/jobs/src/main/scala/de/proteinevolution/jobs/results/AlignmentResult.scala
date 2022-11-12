@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ object AlignmentResult {
 
   implicit val alignmentResultDecoder: Decoder[AlignmentResult] = (c: HCursor) => {
     c.as[List[Json]]
-      .map(_.zipWithIndex.map {
-        case (j, i) => AlignmentItem.alignmentItemDecoder(j, i)
+      .map(_.zipWithIndex.map { case (j, i) =>
+        AlignmentItem.alignmentItemDecoder(j, i)
       })
       .map(items => new AlignmentResult(items.flatMap(_.toOption)))
   }

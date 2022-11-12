@@ -20,6 +20,8 @@ import {Parameter} from '@/types/toolkit/tools';
 import {ConstraintError} from '@/types/toolkit/validation';
 import {User} from '@/types/toolkit/auth';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 export default ToolParameterMixin.extend({
     name: 'ModellerParameter',
@@ -41,8 +43,9 @@ export default ToolParameterMixin.extend({
             return '';
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
+        ...mapStores(useAuthStore),
     },
     watch: {
         submissionValue: {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ case class JobEventLog(
        |jobID: $jobID
        |tool name: $toolName
        |internalJob? ${if (internalJob) { "yes" }
-    else { "no" }}
+      else { "no" }}
        |events: ${events.mkString(",")}""".stripMargin
   }
 

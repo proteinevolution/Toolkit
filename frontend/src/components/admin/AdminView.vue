@@ -4,6 +4,7 @@
         <div class="admin-header">
             <h1>Admin Page</h1>
         </div>
+
         <b-card>
             <h4>Maintenance</h4>
             <b-form-group>
@@ -48,6 +49,9 @@ import {User} from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
 import AdminStatistics from './AdminStatistics.vue';
+import {useRootStore} from '@/stores/root';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 export default hasHTMLTitle.extend({
     name: 'AdminView',
@@ -59,8 +63,8 @@ export default hasHTMLTitle.extend({
     data() {
         return {
             maintenance: {
-                message: this.$store.state.maintenance.message,
-                submitBlocked: this.$store.state.maintenance.submitBlocked,
+              message: '',
+              submitBlocked: false,
             },
             maintenanceStateLoading: false,
         };
@@ -70,14 +74,19 @@ export default hasHTMLTitle.extend({
             return 'Admin Page';
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
         isAdmin(): boolean {
             return this.user !== null && this.user.isAdmin;
         },
+        ...mapStores(useRootStore, useAuthStore),
+    },
+    mounted() {
+        this.maintenance.message = this.rootStore.maintenance.message;
+        this.maintenance.submitBlocked = this.rootStore.maintenance.submitBlocked;
     },
     methods: {
         setMaintenanceState(): void {
@@ -97,13 +106,13 @@ export default hasHTMLTitle.extend({
 
 <style lang="scss" scoped>
 .admin-header {
-    height: 2.75rem;
+  height: 2.75rem;
 
-    h1 {
-        color: $primary;
-        font-weight: bold;
-        font-size: 1.25em;
-        line-height: 1.6;
-    }
+  h1 {
+    color: $primary;
+    font-weight: bold;
+    font-size: 1.25em;
+    line-height: 1.6;
+  }
 }
 </style>

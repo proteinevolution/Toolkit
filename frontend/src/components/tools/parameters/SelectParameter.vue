@@ -19,10 +19,8 @@
             <template #maxElements>
                 {{ $t(maxElementTextKey) }}
             </template>
-            <template v-if="parameter.default === option.value"
-                      slot="option"
-                      slot-scope="{ option }">
-                {{ option.text }} (default)
+            <template #option="{option}">
+                {{ option.text + (parameter.default === option.value ? ' (default)' : '') }}
             </template>
         </multiselect>
     </b-form-group>

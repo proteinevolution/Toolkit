@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import de.proteinevolution.tel.execution.WrapperExecutionFactory.{ PendingExecut
 import scala.collection.mutable
 
 /**
- * An Execution Context represent the environment in which a runscript can be executed. Only TEL
- * can produce ExecutionContexts, as TEL knows about the current set context of the Execution
+ * An Execution Context represent the environment in which a runscript can be executed. Only TEL can produce
+ * ExecutionContexts, as TEL knows about the current set context of the Execution
  *
  * @param root
  */
@@ -43,8 +43,8 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
   private val execNumbers    = Iterator.from(0, 1)
 
   /**
-   * Registers a new file in this ExecutionContext with a certain name and content.
-   * A preexisting file with the same name will be overridden
+   * Registers a new file in this ExecutionContext with a certain name and content. A preexisting file with the same
+   * name will be overridden
    */
   def getFile(name: String, content: String): File = {
     val x = repFileBase./(name)
@@ -79,9 +79,10 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
     x
   }
 
-  /** Accepts an execution which is subsequently registered in this Execution Context
-   * The working directory is created within the executionContext. Currently, the names
-   * of the working directories of subsequent executions are just incremented.
+  /**
+   * Accepts an execution which is subsequently registered in this Execution Context The working directory is created
+   * within the executionContext. Currently, the names of the working directories of subsequent executions are just
+   * incremented.
    *
    * @param execution
    */
@@ -95,7 +96,7 @@ class ExecutionContext(val root: File, reOpen: Boolean = false) {
 
   def executeNext: RegisteredExecution = {
     executionQueue.dequeue()
-    //RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
+    // RunnableExecution(Process(x.run.pathAsString, x.run.parent.toJava),x.delete.map(f => Process(f.pathAsString)))
   }
   def hasMoreExecutions: Boolean = executionQueue.nonEmpty
 }

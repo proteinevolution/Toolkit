@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,22 +16,22 @@
 
 package de.proteinevolution.message.controllers
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ ActorSystem, Props }
 import akka.stream.Materializer
 import de.proteinevolution.auth.services.UserSessionService
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.message.actors.WebSocketActor
 import io.circe.syntax._
-import io.circe.{Json, JsonObject}
-import javax.inject.{Inject, Singleton}
+import io.circe.{ Json, JsonObject }
+import javax.inject.{ Inject, Singleton }
 import play.api.libs.streams.ActorFlow
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logging}
+import play.api.{ Configuration, Environment, Logging }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class MessageController @Inject()(
+class MessageController @Inject() (
     cc: ControllerComponents,
     userSessions: UserSessionService,
     environment: Environment,
@@ -51,11 +51,10 @@ class MessageController @Inject()(
         .map { user =>
           Right(ActorFlow.actorRef(out => Props(webSocketActorFactory(user.sessionID.get, out))))
         }
-        .recover {
-          case e: Exception =>
-            logger.warn("Cannot create websocket", e)
-            val jsError = JsonObject("error" -> Json.fromString("Cannot create websocket"))
-            Left(BadRequest(jsError.asJson))
+        .recover { case e: Exception =>
+          logger.warn("Cannot create websocket", e)
+          val jsError = JsonObject("error" -> Json.fromString("Cannot create websocket"))
+          Left(BadRequest(jsError.asJson))
         }
     case rejected =>
       logger.warn(s"Request $rejected failed same origin check")

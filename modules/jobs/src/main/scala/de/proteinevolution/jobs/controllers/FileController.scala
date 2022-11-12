@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.common.models.ConstantsV2
 import de.proteinevolution.jobs.models.HHContext
 import de.proteinevolution.jobs.results.LinkUtil
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import play.api.Configuration
 import play.api.http.ContentTypes
-import play.api.mvc.{AbstractController, Action, AnyContent}
+import play.api.mvc.{ AbstractController, Action, AnyContent }
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class FileController @Inject()(
+class FileController @Inject() (
     ctx: HHContext,
     config: Configuration,
     constants: ConstantsV2,
@@ -42,17 +42,23 @@ class FileController @Inject()(
   def getStructureFile(accession: String): Action[AnyContent] = Action { implicit request =>
     val db = LinkUtil.identifyDatabase(accession)
     val ending = db match {
-      case "scop"  => "pdb"
-      case "ecod"  => "pdb"
-      case "mmcif" => "cif"
+      case "scop"   => "pdb"
+      case "ecod"   => "pdb"
+      case "mmcif"  => "cif"
+      case "keggoc" => "pdb"
+      case "cath"   => "pdb"
     }
     val filepath = db match {
       case "scop" =>
         config.get[String]("tel.env.SCOPE")
       case "ecod" =>
         config.get[String]("tel.env.ECOD")
+      case "cath" =>
+        config.get[String]("tel.env.CATH")
       case "mmcif" =>
         config.get[String]("tel.env.CIF")
+      case "keggoc" =>
+        config.get[String]("tel.env.KEGGOC")
     }
     Ok.sendFile(new java.io.File(s"$filepath${constants.SEPARATOR}$accession.$ending")).as(BINARY)
   }

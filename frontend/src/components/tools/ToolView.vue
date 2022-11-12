@@ -10,6 +10,7 @@
                         {{ tool.longname }}
                     </a>
                     <b-link class="help-icon"
+                            data-v-step="help-modal"
                             @click="launchHelpModal">
                         <i class="far fa-question-circle"
                            :title="$t('jobs.help')"></i>
@@ -20,7 +21,7 @@
                 </div>
             </div>
 
-            <LoadingWrapper :loading="$store.state.loading.toolParameters">
+            <LoadingWrapper :loading="rootStore.loading.toolParameters">
                 <b-form class="tool-form">
                     <b-card no-body
                             :class="[fullScreen ? 'fullscreen' : '']">
@@ -48,7 +49,7 @@
                                            class="submit-button"
                                            :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
                                            :disabled="preventSubmit"
-                                           data-v-step="submit"
+                                           :data-v-step="isJobView ? '' : 'submit'"
                                            variant="primary"
                                            @click="submitJob">
                                         <loading v-if="submitLoading"
@@ -79,8 +80,7 @@
 
                             <!-- hack to show the alignment viewer tool results -->
                             <b-tab v-if="alignmentViewerSequences"
-                                   :title="$t('tools.alignmentViewer.visualization')"
-                                   active>
+                                   :title="$t('tools.alignmentViewer.visualization')">
                                 <alignment-viewer :sequences="alignmentViewerSequences"
                                                   :format="alignmentViewerFormat" />
                             </b-tab>
@@ -128,6 +128,10 @@ import EventBus from '@/util/EventBus';
 import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
 import Loading from '@/components/utils/Loading.vue';
 import {parameterRememberService} from '@/services/ParameterRememberService';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
+import {useAuthStore} from '@/stores/auth';
 
 const logger = Logger.get('ToolView');
 
@@ -142,7 +146,7 @@ export default hasHTMLTitle.extend({
         EmailNotificationSwitch,
         JobPublicToggle,
         Loading,
-        AlignmentViewer: () => import(/* webpackChunkName: "alignment-viewer" */
+        AlignmentViewer: () => import(
             '@/components/tools/AlignmentViewer.vue'),
     },
     props: {
@@ -178,7 +182,7 @@ export default hasHTMLTitle.extend({
             return this.$route.params.toolName;
         },
         tool(): Tool {
-            return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.toolName);
+            return this.toolsStore.tools.find((tool: Tool) => tool.name === this.toolName) as Tool;
         },
         parameterSections(): ParameterSection[] | undefined {
             if (!this.tool || !this.tool.parameters) {
@@ -197,17 +201,18 @@ export default hasHTMLTitle.extend({
             return this.tool.longname;
         },
         submitBlocked(): boolean {
-            return this.$store.state.maintenance.submitBlocked;
+            return this.rootStore.maintenance.submitBlocked;
         },
         preventSubmit(): boolean {
             return this.submitLoading || Object.keys(this.validationErrors).length > 0;
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
         hasRememberedParameters(): boolean {
             return Object.keys(this.rememberParams).length > 0;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore),
     },
     watch: {
         job: {
@@ -243,7 +248,7 @@ export default hasHTMLTitle.extend({
     },
     methods: {
         async loadToolParameters(toolName: string): Promise<void> {
-            await this.$store.dispatch('tools/fetchToolParametersIfNotPresent', toolName);
+            await this.toolsStore.fetchToolParametersIfNotPresent(toolName);
             // wait until parameters are loaded before trying to load remembered values
             if (!this.job) {
                 if (parameterRememberService.has(this.toolName)) {
@@ -298,7 +303,10 @@ export default hasHTMLTitle.extend({
         openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
             this.alignmentViewerSequences = sequences;
             this.alignmentViewerFormat = format;
-            this.tabIndex = 1;
+            setTimeout(() => {
+              this.tabIndex = 1;
+              EventBus.$emit('alignment-viewer-resize', this.fullScreen);
+            }, 100);
         },
         resubmitSectionReceive(section: string): void {
             Vue.set(this.submission, 'alignment', section);

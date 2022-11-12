@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import messages from './lang/en';
-import moment from 'moment';
 import mergeWith from 'lodash-es/mergeWith';
 import Logger from 'js-logger';
+import {Settings} from 'luxon';
 
 export const defaultLanguage = 'en';
+Settings.defaultLocale = defaultLanguage;
 Vue.use(VueI18n);
 
 const logger = Logger.get('i18n');
@@ -24,7 +25,7 @@ const loadedExtraTranslations: string[] = [];
 function setI18nLanguage(lang: string) {
     i18n.locale = lang;
     localStorage.setItem('tk-locale', lang);
-    moment.locale(lang);
+    Settings.defaultLocale = lang;
     const html = document.querySelector('html');
     if (html != null) {
         html.setAttribute('lang', lang);
@@ -35,12 +36,7 @@ function setI18nLanguage(lang: string) {
 export function loadLanguageAsync(lang: string): Promise<string> {
     if (i18n.locale !== lang) {
         if (!loadedLanguages.includes(lang)) {
-            return import(
-                /* webpackChunkName: "lang-[request]",
-                 webpackMode: "lazy",
-                 webpackPrefetch: 0,
-                 webpackPreload: 0 */
-                `./lang/${lang}`)
+            return import(`./lang/${lang}.ts`)
                 .then((msgs) => {
                     i18n.setLocaleMessage(lang, msgs.default[lang]);
                     loadedLanguages.push(lang);
@@ -52,28 +48,33 @@ export function loadLanguageAsync(lang: string): Promise<string> {
     return Promise.resolve(lang);
 }
 
-export function loadExtraTranslations(path: string): Promise<void> {
+export async function loadExtraTranslations(path: string): Promise<void> {
     if (!loadedExtraTranslations.includes(path)) {
         logger.info('loading extra translations for ' + path);
-        return import(
-            /* webpackChunkName: "lang-extra-[request]",
-             webpackMode: "lazy",
-             webpackPrefetch: 0,
-             webpackPreload: 0 */
-            `./lang/extras/${path}.ts`)
-            .then((msgs) => {
-                for (const itemLang in msgs.default) {
-                    if (itemLang in msgs.default) {
-                        const itemMsgs = msgs.default[itemLang];
-                        const curMsgs = i18n.getLocaleMessage(itemLang);
-                        const newMsgs = mergeWith(curMsgs, itemMsgs);
-                        i18n.setLocaleMessage(itemLang, newMsgs);
-                    }
-                }
-                loadedExtraTranslations.push(path);
-            });
+        const splitPath = path.split('/');
+        let msgs;
+        if (splitPath.length === 1) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}.ts`)).default;
+        }
+        if (splitPath.length === 2) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}.ts`)).default;
+        }
+        if (splitPath.length === 3) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}.ts`)).default;
+        }
+        if (splitPath.length === 4) {
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}.ts`)).default;
+        }
+        for (const itemLang in msgs) {
+            if (itemLang in msgs) {
+                const itemMsgs = msgs[itemLang];
+                const curMsgs = i18n.getLocaleMessage(itemLang);
+                const newMsgs = mergeWith(curMsgs, itemMsgs);
+                i18n.setLocaleMessage(itemLang, newMsgs);
+            }
+        }
+        loadedExtraTranslations.push(path);
     }
-    return Promise.resolve();
 }
 
 export default i18n;

@@ -10,7 +10,7 @@ const TourMixin = Vue.extend({
                 {
                     target: '[data-v-step="tool-bar"]',
                     header: {
-                        title: 'Toolbar',
+                        title: 'Tool Bar',
                     },
                     content: this.$t('tour.content.toolBar'),
                     params: {
@@ -24,11 +24,10 @@ const TourMixin = Vue.extend({
                     }),
                 },
                 {
-                    // TODO: Fix issue where tour element is placed wrong when going back from step
-                    // 4 to step 2. This problem occurs when the tour element is placed before
-                    // the image is loaded. The image then pushes the search bar down, away from
-                    // the tour element
                     target: '[data-v-step="search-bar"]',
+                    header: {
+                        title: 'Search Box',
+                    },
                     content: this.$t('tour.content.searchBar'),
                     params: {
                         enableScrolling: false,
@@ -53,15 +52,20 @@ const TourMixin = Vue.extend({
                     },
                     before: () => new Promise<void>((resolve) => {
                         EventBus.$emit('select-nav-bar-section', 'search');
-                        resolve();
+                        // Give the navBar a moment to switch tabs before the message
+                        // can be displayed
+                        setTimeout(resolve, 20);
                     }),
                 },
                 {
-                    target: '[data-v-step="input"]',
-                    content: this.$t('tour.content.input'),
+                    target: '[data-v-step="help-modal"]',
+                    header: {
+                        title: 'Help Pages',
+                    },
+                    content: this.$t('tour.content.help'),
                     params: {
                         enableScrolling: false,
-                        placement: 'top'
+                        placement: 'right'
                     },
                     before: (type: string) => new Promise<void>((resolve) => {
                         if (this.$route.path !== '/tools/hhpred') {
@@ -79,17 +83,22 @@ const TourMixin = Vue.extend({
                     }),
                 },
                 {
+                    target: '[data-v-step="input"]',
+                    header: {
+                        title: 'Input Field',
+                    },
+                    content: this.$t('tour.content.input'),
+                    params: {
+                        enableScrolling: false,
+                        placement: 'top'
+                    },
+                },
+                {
                     target: '[data-v-step="paste"]',
                     content: this.$t('tour.content.paste'),
                     params: {
                         placement: 'left',
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'previous') {
-                            EventBus.$emit('change-tool-tab', 0);
-                        }
-                        resolve();
-                    }),
                 },
                 {
                     target: '[data-v-step="structural-domain-database"]',
@@ -110,9 +119,18 @@ const TourMixin = Vue.extend({
                     params: {
                         placement: 'top',
                     },
+                    before: (type: string) => new Promise<void>((resolve) => {
+                        if (type === 'previous') {
+                            EventBus.$emit('change-tool-tab', 0);
+                        }
+                        resolve();
+                    }),
                 },
                 {
                     target: '.tour-tab-Parameters',
+                    header: {
+                        title: 'Parameters Tab',
+                    },
                     content: this.$t('tour.content.parametersTab'),
                     params: {
                         placement: 'right',
@@ -123,17 +141,68 @@ const TourMixin = Vue.extend({
                     // the active tab
                     target: '.tab-pane[aria-hidden=false] [data-v-step="job-id"]',
                     content: this.$t('tour.content.jobId'),
+                    before: () => new Promise<void>((resolve) => {
+                        EventBus.$emit('change-tool-tab', 1);
+                        resolve();
+                    }),
                 },
                 {
                     target: '.tab-pane[aria-hidden=false] [data-v-step="submit"]',
                     content: this.$t('tour.content.submit'),
+                    before: (type: string) => new Promise<void>((resolve) => {
+                        if (type === 'previous') {
+                            if (this.$route.path !== '/tools/hhpred') {
+                                this.$router.push('/tools/hhpred');
+                            }
+                            const poll = setInterval(() => {
+                                if (document.querySelector('[data-v-step="submit"]')) {
+                                    clearInterval(poll);
+                                    resolve();
+                                }
+                            }, 100);
+                        } else {
+                            resolve()
+                        }
+                    })
+                },
+                {
+                    target: '[data-v-step="job-list"]',
+                    header: {
+                        title: 'Job List',
+                    },
+                    content: this.$t('tour.content.jobList'),
+                    params: {
+                        placement: 'top'
+                    },
+                    before: () => new Promise<void>((resolve) => {
+                        const poll = setInterval(() => {
+                            if (document.querySelector('[data-v-step="job-list"]')) {
+                                clearInterval(poll);
+                                resolve();
+                            }
+                        }, 100);
+                    })
                 },
                 {
                     target: '[data-v-step="job-manager"]',
+                    header: {
+                        title: 'Job Manager',
+                    },
                     content: this.$t('tour.content.jobManager'),
                     params: {
-                        placement: 'right'
-                    }
+                        placement: 'top'
+                    },
+                    before: () => new Promise<void>((resolve) => {
+                        if (this.$route.path !== '/jobmanager') {
+                            this.$router.push('/jobmanager');
+                        }
+                        const poll = setInterval(() => {
+                            if (document.querySelector('[data-v-step="job-manager"]')) {
+                                clearInterval(poll);
+                                resolve();
+                            }
+                        }, 100);
+                    })
                 },
             ],
             options: {
@@ -155,7 +224,11 @@ const TourMixin = Vue.extend({
         '$route.path'(path: string): void {
             if (this.tour.currentStep === 2 && path === '/tools/hhpred') {
                 this.tour.nextStep();
-            } else {
+            } else if (this.tour.currentStep === 10 && path === '/jobmanager') {
+                this.tour.nextStep();
+            } else if (this.tour.currentStep === 9 && path.includes('/jobs')) {
+                this.tour.nextStep();
+            }else {
                 this.tour.stop();
             }
         },

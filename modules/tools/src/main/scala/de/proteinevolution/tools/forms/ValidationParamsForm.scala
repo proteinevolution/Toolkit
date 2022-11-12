@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ object ValidationParamsForm {
   ) extends ValidationParamsForm
 
   case class RegexValidationParamsForm(
-      maxRegexLength: Int,
+      maxRegexLength: Int
   ) extends ValidationParamsForm
 
   case class AccessionIDValidationParamsForm(
-      maxNumIDs: Int,
+      maxNumIDs: Int
   ) extends ValidationParamsForm
 
   case class EmptyValidationParamsForm() extends ValidationParamsForm
@@ -48,9 +48,9 @@ object ValidationParamsForm {
   // encode different cases without discriminator (https://circe.github.io/circe/codecs/adt.html)
   implicit val ep: Encoder[ValidationParamsForm] = Encoder.instance {
     case seq @ SequenceValidationParamsForm(_, _, _, _, _, _, _, _) => seq.asJson
-    case regex @ RegexValidationParamsForm(_) => regex.asJson
-    case acc @ AccessionIDValidationParamsForm(_) => acc.asJson
-    case empty @ EmptyValidationParamsForm() => empty.asJson
+    case regex @ RegexValidationParamsForm(_)                       => regex.asJson
+    case acc @ AccessionIDValidationParamsForm(_)                   => acc.asJson
+    case empty @ EmptyValidationParamsForm()                        => empty.asJson
   }
 
 }

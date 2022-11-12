@@ -52,7 +52,7 @@
                                value-field="name"
                                text-field="longname"
                                :disabled="!hasData">
-                    <template slot="first">
+                    <template #first>
                         <option :value="null"
                                 v-text="$t('jobs.forwarding.' + (hasData ? 'selectPlaceholder' : 'noData'))"></option>
                     </template>
@@ -86,6 +86,8 @@ import {resultsService} from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
 import {ForwardHitsMode, SequenceLengthMode} from '@/types/toolkit/enums';
 import {AlignmentItem} from '@/types/toolkit/results';
+import {mapStores} from 'pinia';
+import {useToolsStore} from '@/stores/tools';
 
 const logger = Logger.get('ForwardingModal');
 
@@ -131,7 +133,7 @@ export default Vue.extend({
     },
     computed: {
         tools(): Tool[] {
-            return this.$store.getters['tools/tools'];
+            return this.toolsStore.tools;
         },
         hasData(): boolean {
             return (Boolean(this.forwardingApiOptions) || Boolean(this.forwardingData) ||
@@ -171,6 +173,7 @@ export default Vue.extend({
         largeModal(): boolean {
             return this.forwardingApiOptions && !this.forwardingApiOptions.disableSequenceLengthSelect;
         },
+        ...mapStores(useToolsStore),
     },
     watch: {
         sequenceLengthMode(value: SequenceLengthMode): void {

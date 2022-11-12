@@ -1,14 +1,12 @@
 declare module 'vue-multiselect';
 declare module 'velocity-animate';
-declare module 'vue-clipboard2';
 declare module 'vue-simple-spinner';
 declare module 'vue-switches';
 declare module 'vue-native-websocket';
 declare module 'vue-cookie-law';
 declare module 'intersection-observer-polyfill';
 declare module 'handy-scroll';
-declare module 'exelixis';
-declare module 'ngl';
+declare module 'tidytree';
 // declare module 'msa' {
 //     interface MSA {
 //         render: () => void;

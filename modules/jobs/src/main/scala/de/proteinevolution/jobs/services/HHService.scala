@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import play.api.Logging
 import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class HHService @Inject()(
+class HHService @Inject() (
     toolFinder: ToolNameGetService,
     resultFiles: ResultFileAccessor
 )(implicit ec: ExecutionContext)

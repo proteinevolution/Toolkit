@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import javax.inject.{ Inject, Singleton }
 import play.api.mvc.{ Action, AnyContent, ControllerComponents }
 
 @Singleton
-class ClusterApiController @Inject()(constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
+class ClusterApiController @Inject() (constants: ConstantsV2, jobActorAccess: JobActorAccess, cc: ControllerComponents)
     extends ToolkitController(cc) {
 
   def setJobStatus(status: String, jobID: String, key: String): Action[AnyContent] = Action {

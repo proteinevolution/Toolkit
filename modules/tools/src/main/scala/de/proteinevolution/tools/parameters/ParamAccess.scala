@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,7 @@ class ParamAccess @Inject() (tel: TEL) {
 
     // Common
     case "ALIGNMENT"         => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
-    case "STANDARD_DB"       => select("standarddb", default = Some("nr50"))
+    case "STANDARD_DB"       => select("standarddb", default = Some("alphafold_uniprot50"))
     case "PMIN"              => select("pmin", default = Some("20"))
     case "DESC"              => select("desc", default = Some("250"))
     case "MAXROUNDS"         => select("maxrounds", default = Some("1"))
@@ -107,12 +107,12 @@ class ParamAccess @Inject() (tel: TEL) {
     case "MACTHRESHOLD" => select("macthreshold", default = Some("0.3"))
 
     // HMMER
-    case "HMMER_DB" => select("hmmerdb", default = Some("nr50"))
+    case "HMMER_DB" => select("hmmerdb", default = Some("alphafold_uniprot50"))
     case "MAX_HHBLITS_ITER" =>
       select("max_hhblits_iter", default = Some("1"), onDetectedMSA = Some("0"))
 
     // PatternSearch
-    case "PATSEARCH_DB" => select("patsearchdb", default = Some("nr50"))
+    case "PATSEARCH_DB" => select("patsearchdb", default = Some("alphafold_uniprot50"))
     case "GRAMMAR"      => select("grammar", default = Some("pro"))
     case "SEQCOUNT"     => select("seqcount", default = Some("500"))
 

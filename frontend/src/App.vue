@@ -1,7 +1,7 @@
 <template>
     <div class="toolkit">
         <VelocityFade>
-            <LoadingView v-if="$store.state.loading.tools || $store.state.loading.maintenanceState" />
+            <LoadingView v-if="rootStore.loading.tools || rootStore.loading.maintenanceState" />
             <b-container v-else
                          class="main-container">
                 <OffscreenMenu />
@@ -58,7 +58,7 @@
         <notifications animation-type="velocity" />
         <cookie-law theme="toolkit"
                     :message="$t('cookieLaw.message')">
-            <template slot-scope="props">
+            <template #default="props">
                 <i18n path="cookieLaw.message"
                       tag="div"
                       class="Cookie__content">
@@ -77,7 +77,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -101,6 +100,11 @@ import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
 import CookieLaw from 'vue-cookie-law';
 import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
 import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
 import TourMixin from '@/mixins/TourMixin';
 
 const logger = Logger.get('App');
@@ -156,6 +160,7 @@ export default TourMixin.extend({
         openJobId(): string {
             return this.$route.params.jobID;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     created() {
         // remove title star on focus
@@ -165,11 +170,11 @@ export default TourMixin.extend({
             }
         });
 
-        this.$store.dispatch('fetchMaintenance');
-        this.$store.dispatch('tools/fetchAllTools');
-        this.$store.dispatch('jobs/fetchAllJobs');
+        this.rootStore.fetchMaintenance();
+        this.toolsStore.fetchAllTools();
+        this.jobsStore.fetchAllJobs();
         // this also makes sure the session id is set
-        this.$store.dispatch('auth/fetchUserData');
+        this.authStore.fetchUserData();
 
         // handle websocket messages which depend on the ui
         (this.$options as any).sockets.onmessage = (response: any) => {
@@ -191,17 +196,17 @@ export default TourMixin.extend({
                     this.showJobNotification(json.jobID, json.title, json.body);
                     break;
                 case 'SOCKET_Logout':
-                    if (!this.$store.state.loading.logout) {
+                    if (!this.rootStore.loading.logout) {
                         this.$alert(this.$t('auth.loggedOutByWS'));
-                        this.$store.dispatch('jobs/fetchAllJobs');
-                        this.$store.commit('auth/setUser', null);
+                        this.jobsStore.fetchAllJobs();
+                        this.authStore.user = null;
                     }
                     break;
                 case 'SOCKET_Login':
-                    if (!this.$store.state.loading.login) {
+                    if (!this.rootStore.loading.login) {
                         this.$alert(this.$t('auth.loggedInByWS'));
-                        this.$store.dispatch('jobs/fetchAllJobs');
-                        this.$store.dispatch('auth/fetchUserData');
+                        this.jobsStore.fetchAllJobs();
+                        this.authStore.fetchUserData();
                     }
                     break;
                 default:
@@ -210,7 +215,7 @@ export default TourMixin.extend({
         };
 
         this.refreshInterval = setInterval(() => {
-            this.$store.commit('updateNow');
+            this.rootStore.now = Date.now();
         }, 10000);
     },
     mounted() {
@@ -232,9 +237,9 @@ export default TourMixin.extend({
     methods: {
         showJobNotification(jobID: string, title: string, body: string): void {
             if (jobID === this.openJobId) {
-                const job: Job = this.$store.getters['jobs/jobs'].find((j: Job) => j.jobID === jobID);
-                const tool: Tool = this.$store.getters['tools/tools'].find((t: Tool) => t.name === job.tool);
-                this.showNotification(title, body, {tool: tool.longname});
+                const job = this.jobsStore.jobs.find((j: Job) => j.jobID === jobID) as Job;
+                const tool = this.toolsStore.tools.find((t: Tool) => t.name === job.tool) as Tool;
+                  this.showNotification(title, body, {tool: tool.longname});
                 this.$title.alert(true);
             }
         },
@@ -261,7 +266,7 @@ export default TourMixin.extend({
             this.modalProps.forwardingData = '';
         },
         setTourFinished(): void {
-            this.$store.commit('setTourFinished');
+            this.rootStore.tourFinished = true;
         },
     },
 });
@@ -270,18 +275,51 @@ export default TourMixin.extend({
 <!-- This should generally be the only global CSS in the app. -->
 <style lang="scss">
 @import './assets/scss/reset';
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-vue/dist/bootstrap-vue.css';
-@import '~vue-multiselect/dist/vue-multiselect.min.css';
-@import '~vue-tour/dist/vue-tour.css';
+@import 'bootstrap/scss/bootstrap';
+@import 'bootstrap-vue/dist/bootstrap-vue.css';
+@import 'vue-multiselect/dist/vue-multiselect.min.css';
+@import 'vue-tour/dist/vue-tour.css';
 @import './assets/scss/form-elements';
 @import './assets/scss/modals';
 @import './assets/scss/sequence-coloring';
 @import url('https://use.fontawesome.com/releases/v5.2.0/css/all.css');
 
 $themeColor: $primary;
-@import '~vue-slider-component/lib/theme/default.scss';
-@import '~handy-scroll/dist/handy-scroll.css';
+@import 'vue-slider-component/lib/theme/default.scss';
+@import 'handy-scroll/dist/handy-scroll.css';
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('./assets/fonts/NotoSans-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('./assets/fonts/NotoSans-Italic.ttf');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('./assets/fonts/NotoSans-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  src: url('./assets/fonts/SourceSansPro-Regular.ttf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Source Sans Pro';
+  src: url('./assets/fonts/SourceSansPro-Bold.ttf');
+  font-weight: 700;
+}
 
 body {
   overflow-y: scroll;
@@ -458,6 +496,16 @@ body {
 
   div:after {
     background-color: $primary;
+  }
+}
+
+.v-tour {
+  .v-step, .v-step__arrow:before, .v-step[data-popper-placement='top'] .v-step__arrow--dark:before, .v-step[data-popper-placement='right'] .v-step__arrow--dark:before {
+    background: #888888e0;
+  }
+
+  .v-step__header, .v-step__arrow.v-step__arrow--dark:before {
+    background: #666666;
   }
 }
 </style>

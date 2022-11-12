@@ -8,9 +8,11 @@ export default {
         back: 'Back',
         cancel: 'Cancel',
         submit: 'Submit',
+        download: 'Download',
         loading: 'Loading...',
         fetching: 'Fetching...',
         reconnecting: 'Reconnecting...',
+        connectionTimeout: 'Connection Timeout!',
         language: {
             lang: 'Language',
             de: 'Deutsch',
@@ -19,7 +21,7 @@ export default {
         auth,
         index: {
             welcomeTitle: 'Welcome to the Bioinformatics Toolkit',
-            welcomeBody: 'of the Max Planck Institute for Developmental Biology, Tübingen, Germany.',
+            welcomeBody: 'of the Max Planck Institute for Biology, Tübingen, Germany.',
             loadBarLabel: 'Cluster workload: {load}%',
             searchPlaceholder: 'Enter a job ID or a tool name',
         },
@@ -87,32 +89,34 @@ export default {
         },
         tour: {
             content: {
-                toolBar: 'These are the different tools you can use',
-                searchBar: 'search for jobs or tools',
-                tool: 'Let\'s checkout this tool.',
-                input: 'Here you can input a protein sequence.',
-                paste: 'Paste an example.',
+                toolBar: 'The available tools are organized into different sections',
+                searchBar: 'Quick access to tools and jobs',
+                tool: 'Let\'s checkout HHpred',
+                help: 'Find details on using HHpred, including target databases and parameters',
+                input: 'Enter your query protein sequence here',
+                paste: 'Alternatively, click here to add an example sequence',
                 structuralDomainDatabase: 'Select structural/domain databases',
-                proteomes: 'Select proteomes',
-                parametersTab: 'Change tool parameters',
-                jobId: 'Create a custom Job ID',
+                proteomes: 'Select proteome databases',
+                parametersTab: 'Change search parameters',
+                jobId: 'Optionally, enter a custom Job ID',
                 submit: 'Submit your job',
-                jobManager: 'Your running/completed jobs. Click here to open the job manager.',
+                jobList: 'Your running and completed jobs are listed below. Click here to access the job manager.',
+                jobManager: 'Here you can see a more detailed list of your jobs',
             },
             labels: {
                 buttonSkip: 'Skip tour',
                 buttonPrevious: 'Previous',
                 buttonNext: 'Next',
-                buttonStop: 'Finish'
+                buttonStop: 'Finish tour'
             },
             banner: {
-                message: 'We have a tour! Yay!',
-                ignore: 'Ignore',
+                message: 'Welcome to the MPI Bioinformatics Toolkit! Would you like a tour?',
+                ignore: 'Skip tour',
                 start: 'Start',
             }
         },
         copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
-            'Max Planck Institute for Developmental Biology, Tübingen',
+            'Max Planck Institute for Biology, Tübingen',
         citation: `A Completely Reimplemented MPI Bioinformatics Toolkit
             with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
             Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.

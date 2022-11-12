@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import play.api.routing.SimpleRouter
 import play.api.routing.sird._
 
 @Singleton
-class MessageRouter @Inject()(messageController: MessageController) extends SimpleRouter {
+class MessageRouter @Inject() (messageController: MessageController) extends SimpleRouter {
 
-  override lazy val routes: Routes = {
-    case GET(p"/") => messageController.ws
+  override lazy val routes: Routes = { case GET(p"/") =>
+    messageController.ws
   }
 
 }

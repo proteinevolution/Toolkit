@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import play.api.{ Configuration, Logging }
 sealed trait TELProvider      extends Provider[String]
 sealed trait TELParamProvider extends Provider[ParamCollector]
 
-class WrapperPathProvider @Inject()(configuration: Configuration) extends TELProvider with Logging {
+class WrapperPathProvider @Inject() (configuration: Configuration) extends TELProvider with Logging {
 
   override def get(): String = {
 
@@ -35,7 +35,7 @@ class WrapperPathProvider @Inject()(configuration: Configuration) extends TELPro
   }
 }
 
-class RunscriptPathProvider @Inject()(configuration: Configuration) extends TELProvider with Logging {
+class RunscriptPathProvider @Inject() (configuration: Configuration) extends TELProvider with Logging {
 
   override def get(): String = {
 
@@ -48,7 +48,7 @@ class RunscriptPathProvider @Inject()(configuration: Configuration) extends TELP
   }
 }
 
-class ParamCollectorProvider @Inject()(
+class ParamCollectorProvider @Inject() (
     pc: ParamCollector,
     configuration: Configuration,
     generativeParamFileParser: GenerativeParamFileParser

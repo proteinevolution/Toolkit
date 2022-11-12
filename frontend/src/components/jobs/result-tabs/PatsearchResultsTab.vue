@@ -24,7 +24,6 @@
                         <tr :key="'hit-seq-' + i">
                             <td class="sequence-alignment"
                                 v-html="colorHits(hit.seq, hit.matches)">
-                                <!-- @{ hit.seq.map(s => Html(Common.insertMatch(s, result.len, hit.pats.getOrElse(Nil)))) -->
                             </td>
                         </tr>
                     </template>

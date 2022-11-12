@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,11 +63,11 @@ case class PSIBlastHSP(
       "score"     -> score.asJson,
       "bitScore"  -> bitScore.asJson,
       "ident"     -> identity.asJson,
-      "perIdent"  -> "%1.0f".format(((identity.toFloat / hit_len) * 100)).asJson,
+      "perIdent"  -> "%1.0f".format((identity.toFloat / hit_len) * 100).asJson,
       "pos"       -> positive.asJson,
-      "perPos"    -> "%1.0f".format(((positive.toFloat / hit_len) * 100)).asJson,
+      "perPos"    -> "%1.0f".format((positive.toFloat / hit_len) * 100).asJson,
       "gap"       -> gaps.asJson,
-      "perGap"    -> "%1.0f".format(((gaps.toFloat / hit_len) * 100)).asJson,
+      "perGap"    -> "%1.0f".format((gaps.toFloat / hit_len) * 100).asJson,
       "refLen"    -> ref_len.asJson,
       "hitLen"    -> hit_len.asJson,
       "agree"     -> midLine.asJson,

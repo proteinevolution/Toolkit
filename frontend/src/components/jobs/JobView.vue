@@ -83,7 +83,6 @@ import JobPendingTab from './state-tabs/JobPendingTab.vue';
 import JobLimitReachedTab from '@/components/jobs/state-tabs/JobLimitReachedTab.vue';
 import ToolView from '../tools/ToolView.vue';
 import {Job} from '@/types/toolkit/jobs';
-import moment from 'moment';
 import {JobState} from '@/types/toolkit/enums';
 import {Tool} from '@/types/toolkit/tools';
 import {jobService} from '@/services/JobService';
@@ -92,6 +91,12 @@ import Logger from 'js-logger';
 import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
 import {lazyLoadView} from '@/router/routes';
 import EventBus from '@/util/EventBus';
+import {mapStores} from 'pinia';
+import {useRootStore} from '@/stores/root';
+import {useToolsStore} from '@/stores/tools';
+import {useJobsStore} from '@/stores/jobs';
+import {useAuthStore} from '@/stores/auth';
+import {DateTime} from 'luxon';
 
 const logger = Logger.get('JobView');
 
@@ -108,46 +113,26 @@ export default Vue.extend({
         JobLimitReachedTab,
         NotFoundView,
         ToolCitationInfo,
-        clustalAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
-            './result-tabs/ClustalAlignmentTab.vue')),
-        fastaAlignment: () => lazyLoadView(import(/* webpackChunkName: "clustal-views" */
-            './result-tabs/FastaAlignmentTab.vue')),
-        alignmentViewer: () => lazyLoadView(import(/* webpackChunkName: "alignment-viewer-tab" */
-            './result-tabs/AlignmentViewerTab.vue')),
-        ngl3dStructureView: () => lazyLoadView(import(/* webpackChunkName: "ngl3d-viewer" */
-            './result-tabs/NGL3DStructureView.vue')),
-        hhompResults: () => lazyLoadView(import(/* webpackChunkName: "hhomp-results" */
-            './result-tabs/HHompResultsTab.vue')),
-        hhblitsResults: () => lazyLoadView(import(/* webpackChunkName: "hhblits-results" */
-            './result-tabs/HHblitsResultsTab.vue')),
-        hhpredResults: () => lazyLoadView(import(/* webpackChunkName: "hhpred-results" */
-            './result-tabs/HHpredResultsTab.vue')),
-        psiblastResults: () => lazyLoadView(import(/* webpackChunkName: "psiblast-results" */
-            './result-tabs/PsiblastResultsTab.vue')),
-        hmmerResults: () => lazyLoadView(import(/* webpackChunkName: "hmmer-results" */
-            './result-tabs/HmmerResultsTab.vue')),
-        clansResults: () => lazyLoadView(import(/* webpackChunkName: "clans-results" */
-            './result-tabs/ClansResultsTab.vue')),
-        patsearchResults: () => lazyLoadView(import(/* webpackChunkName: "patsearch-results" */
-            './result-tabs/PatsearchResultsTab.vue')),
-        plotView: () => lazyLoadView(import(/* webpackChunkName: "probability-plot" */
-            './result-tabs/PlotTab.vue')),
-        tprpredResults: () => lazyLoadView(import(/* webpackChunkName: "tprpred-results" */
-            './result-tabs/TprpredResultsTab.vue')),
-        quick2dResults: () => lazyLoadView(import(/* webpackChunkName: "quick2d-results" */
-            './result-tabs/Quick2DResultsTab.vue')),
-        hhrepidResults: () => lazyLoadView(import(/* webpackChunkName: "hhrepid-results" */
-            './result-tabs/HhrepidResultsTab.vue')),
-        imagesView: () => lazyLoadView(import(/* webpackChunkName: "images-view" */
-            './result-tabs/ImagesViewTab.vue')),
-        seq2IDResults: () => lazyLoadView(import(/* webpackChunkName: "seq2id-results" */
-            './result-tabs/Seq2IDResultsTab.vue')),
-        treeView: () => lazyLoadView(import(/* webpackChunkName: "tree-view" */
-            './result-tabs/TreeTab.vue')),
-        dataView: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
-            './result-tabs/DataTab.vue')),
-        templateSelection: () => lazyLoadView(import(/* webpackChunkName: "data-view" */
-            './result-tabs/TemplateSelectionViewTab.vue')),
+        clustalAlignment: () => lazyLoadView(import('./result-tabs/ClustalAlignmentTab.vue')),
+        fastaAlignment: () => lazyLoadView(import('./result-tabs/FastaAlignmentTab.vue')),
+        alignmentViewer: () => lazyLoadView(import('./result-tabs/AlignmentViewerTab.vue')),
+        ngl3dStructureView: () => lazyLoadView(import('./result-tabs/NGL3DStructureView.vue')),
+        hhompResults: () => lazyLoadView(import('./result-tabs/HHompResultsTab.vue')),
+        hhblitsResults: () => lazyLoadView(import('./result-tabs/HHblitsResultsTab.vue')),
+        hhpredResults: () => lazyLoadView(import('./result-tabs/HHpredResultsTab.vue')),
+        psiblastResults: () => lazyLoadView(import('./result-tabs/PsiblastResultsTab.vue')),
+        hmmerResults: () => lazyLoadView(import('./result-tabs/HmmerResultsTab.vue')),
+        clansResults: () => lazyLoadView(import('./result-tabs/ClansResultsTab.vue')),
+        patsearchResults: () => lazyLoadView(import('./result-tabs/PatsearchResultsTab.vue')),
+        plotView: () => lazyLoadView(import('./result-tabs/PlotTab.vue')),
+        tprpredResults: () => lazyLoadView(import('./result-tabs/TprpredResultsTab.vue')),
+        quick2dResults: () => lazyLoadView(import('./result-tabs/Quick2DResultsTab.vue')),
+        hhrepidResults: () => lazyLoadView(import('./result-tabs/HhrepidResultsTab.vue')),
+        imagesView: () => lazyLoadView(import('./result-tabs/ImagesViewTab.vue')),
+        seq2IDResults: () => lazyLoadView(import('./result-tabs/Seq2IDResultsTab.vue')),
+        treeView: () => lazyLoadView(import('./result-tabs/TreeTab.vue')),
+        dataView: () => lazyLoadView(import('./result-tabs/DataTab.vue')),
+        templateSelection: () => lazyLoadView(import('./result-tabs/TemplateSelectionViewTab.vue')),
     },
     data() {
         return {
@@ -160,17 +145,18 @@ export default Vue.extend({
             return this.$route.params.jobID;
         },
         dateCreated(): string {
-            return moment(this.job.dateCreated).from(moment.utc(this.$store.state.now));
+            return DateTime.fromMillis(this.job.dateCreated ?? 0).toRelative({ base: DateTime.fromMillis(this.rootStore.now) }) ?? '';
         },
         job(): Job {
-            return this.$store.getters['jobs/jobs'].find((job: Job) => job.jobID === this.jobID);
+            return this.jobsStore.jobs.find((job: Job) => job.jobID === this.jobID) as Job;
         },
         tool(): Tool {
-            return this.$store.getters['tools/tools'].find((tool: Tool) => tool.name === this.job.tool);
+            return this.toolsStore.tools.find((tool: Tool) => tool.name === this.job.tool) as Tool;
         },
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
+        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     watch: {
         // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
@@ -182,7 +168,7 @@ export default Vue.extend({
                 this.loadJobDetails(this.jobID);
             } else {
                 // need to handle error separately
-                this.$store.dispatch('jobs/loadJobDetails', this.jobID)
+                this.jobsStore.loadJobDetails(this.jobID)
                     .catch((err) => {
                         logger.info('Error when getting jobs!', err);
                         if (err.request.status === 401) {
@@ -203,14 +189,14 @@ export default Vue.extend({
             jobService.deleteJob(oldJobID)
                 .then(() => {
                     this.$router.replace('/jobmanager');
-                    this.$store.commit('jobs/removeJob', {jobID: oldJobID});
+                    this.jobsStore.removeJob(oldJobID);
                 })
                 .catch(() => {
                     this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
-        loadJobDetails(jobID: string): Promise<Job> {
-            return this.$store.dispatch('jobs/loadJobDetails', jobID)
+        loadJobDetails(jobID: string): Promise<void> {
+            return this.jobsStore.loadJobDetails(jobID)
                 .catch((err) => {
                     logger.warn('Error when getting jobs', err);
                     if (err.request.status === 401) {

@@ -7,10 +7,10 @@ val appProperties = settingKey[Properties]("The application properties")
 
 inThisBuild(
   Seq(
-    organization := "de.proteinevolution",
-    organizationName := "Dept. Protein Evolution, Max Planck Institute for Developmental Biology",
-    startYear := Some(2018),
-    licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0")),
+    organization     := "de.proteinevolution",
+    organizationName := "Dept. of Protein Evolution, Max Planck Institute for Biology",
+    startYear        := Some(2018),
+    licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0")),
     scalaVersion := "2.13.6"
   )
 )
@@ -143,11 +143,12 @@ lazy val root = (project in file("."))
   )
 
 resolvers += "scalaz-bintray".at("https://dl.bintray.com/scalaz/releases")
-resolvers ++= Resolver.sonatypeRepo("releases") :: Resolver.sonatypeRepo("snapshots") :: Nil
+resolvers ++= Resolver.sonatypeOssRepos("releases")
+resolvers ++= Resolver.sonatypeOssRepos("snapshots")
 
 fork := true // required for "sbt run" to pick up javaOptions
 javaOptions += "-Dplay.editor=http://localhost:63342/api/file/?file=%s&line=%s"
-Test / fork := true
+Test / fork     := true
 Test / logLevel := Level.Info
 
 Test / scalacOptions ++= Seq("-Yrangepos")

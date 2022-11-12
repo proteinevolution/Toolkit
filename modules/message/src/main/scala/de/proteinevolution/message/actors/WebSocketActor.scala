@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,8 +74,8 @@ final class WebSocketActor @Inject() (
         val loadFuture = clusterSubscriber ? SGELoad.Ask
         loadFuture.mapTo[UpdateLoad].map { response =>
           out ! JsonObject(
-            "type" -> Json.fromString("UpdateLoad"),
-            "load" -> Json.fromDoubleOrNull(response.load)
+            "mutation" -> Json.fromString("SOCKET_UpdateLoad"),
+            "load"     -> Json.fromDoubleOrNull(response.load)
           ).asJson
         }
       case None =>
@@ -120,7 +120,7 @@ final class WebSocketActor @Inject() (
             // Received a ping, so we return a pong
             case "Ping" =>
               json.hcursor.get[Long]("date").map { msTime =>
-                //log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
+                // log.info(s"[WSActor] Ping from session ${sid.stringify} with msTime $msTime")
                 out ! JsonObject("type" -> Json.fromString("Pong"), "date" -> Json.fromLong(msTime)).asJson
               }
 

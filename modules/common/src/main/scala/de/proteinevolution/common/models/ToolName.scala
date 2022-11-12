@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ object ToolName {
       "alnviz"    -> "AlignmentViewer",
       "clustalo"  -> "ClustalΩ",
       "deepcoil"  -> "DeepCoil",
-      "deepcoil2"  -> "DeepCoil2",
+      "deepcoil2" -> "DeepCoil2",
       "kalign"    -> "Kalign",
       "mafft"     -> "MAFFT",
       "msaprobs"  -> "MSAProbs",
@@ -77,7 +77,7 @@ object ToolName {
   final val TPRPRED             = ToolName("tprpred")
   final val HHBLITS             = ToolName("hhblits")
   final val DEEPCOIL            = ToolName("deepcoil")
-  final val DEEPCOIL2            = ToolName("deepcoil2")
+  final val DEEPCOIL2           = ToolName("deepcoil2")
   final val MARCOIL             = ToolName("marcoil")
   final val PCOILS              = ToolName("pcoils")
   final val REPPER              = ToolName("repper")

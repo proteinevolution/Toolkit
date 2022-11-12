@@ -36,6 +36,8 @@ import RegisterForm from '../auth/RegisterForm.vue';
 import Profile from '../auth/Profile.vue';
 import Settings from '../auth/Settings.vue';
 import {User} from '@/types/toolkit/auth';
+import {mapStores} from 'pinia';
+import {useAuthStore} from '@/stores/auth';
 
 export default Vue.extend({
     name: 'AuthModal',
@@ -48,11 +50,12 @@ export default Vue.extend({
     },
     computed: {
         loggedIn(): boolean {
-            return this.$store.getters['auth/loggedIn'];
+            return this.authStore.loggedIn;
         },
         user(): User | null {
-            return this.$store.getters['auth/user'];
+            return this.authStore.user;
         },
+        ...mapStores(useAuthStore),
     },
 });
 </script>

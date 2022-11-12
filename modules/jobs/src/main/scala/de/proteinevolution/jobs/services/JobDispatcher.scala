@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,14 +54,16 @@ final class JobDispatcher @Inject() (
       EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
     } else {
       for {
-        generatedId     <- generateJobId(parts)
-        _               <- validateJobId(generatedId)
-        _               <- checkNotAlreadyTaken(generatedId)
-        job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
-        isFromInstitute <- EitherT.pure[Future, JobSubmitError](user.userData.map(_.eMail).getOrElse("").matches(".+@tuebingen.mpg.de"))
-        _               <- EitherT.liftF(jobDao.insertJob(job))
-        _               <- EitherT.liftF(assignJob(user, job))
-        _               <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))
+        generatedId <- generateJobId(parts)
+        _           <- validateJobId(generatedId)
+        _           <- checkNotAlreadyTaken(generatedId)
+        job         <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
+        isFromInstitute <- EitherT.pure[Future, JobSubmitError](
+          user.userData.map(_.eMail).getOrElse("").matches(".+@tuebingen.mpg.de")
+        )
+        _ <- EitherT.liftF(jobDao.insertJob(job))
+        _ <- EitherT.liftF(assignJob(user, job))
+        _ <- EitherT.pure[Future, JobSubmitError](send(generatedId, job, parts, isFromInstitute))
       } yield job
     }
   }

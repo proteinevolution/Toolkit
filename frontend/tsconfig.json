@@ -8,12 +8,15 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
       "node",
       "mocha",
-      "chai"
+      "chai",
+      "vite/client",
+      "@types/jest"
     ],
     "paths": {
       "@/*": [
@@ -21,11 +24,10 @@
       ]
     },
     "lib": [
-      "esnext",
-      "es6",
+      "es7",
       "dom",
       "dom.iterable",
-      "scripthost"
+      "scripthost" // Remove for Vue3 - dropped support for IE
     ]
   },
   "include": [

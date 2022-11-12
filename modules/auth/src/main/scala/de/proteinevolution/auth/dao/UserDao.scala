@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. of Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,8 +126,10 @@ class UserDao @Inject() (
   /**
    * modify the user internally. Do not expose any db logic to the outside.
    *
-   * @param userID   identifier of the user
-   * @param modifier operations to perform on the user
+   * @param userID
+   *   identifier of the user
+   * @param modifier
+   *   operations to perform on the user
    * @return
    */
   private def modifyUser(userID: String, modifier: BSONDocument): Future[Option[User]] = {
