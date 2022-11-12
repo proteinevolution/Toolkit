@@ -6,36 +6,25 @@
  * REFORMAT.JS
  * Authors: Seung-Zin Nam, David Rau
  */
-import {Format, Sequence, SequenceType} from '@/modules/reformat/types';
-import {FASTA} from '@/modules/reformat/formats/FASTA';
-import {CLUSTAL} from '@/modules/reformat/formats/CLUSTAL';
-import {A3M} from '@/modules/reformat/formats/A3M';
-import {STOCKHOLM} from '@/modules/reformat/formats/STOCKHOLM';
-import {PROTEIN} from './sequenceTypes/PROTEIN';
-import {DNA} from './sequenceTypes/DNA';
-import {RNA} from './sequenceTypes/RNA';
-import {PIR} from '@/modules/reformat/formats/PIR';
+import { Format, Sequence, SequenceType } from '@/modules/reformat/types';
+import { FASTA } from '@/modules/reformat/formats/FASTA';
+import { CLUSTAL } from '@/modules/reformat/formats/CLUSTAL';
+import { A3M } from '@/modules/reformat/formats/A3M';
+import { STOCKHOLM } from '@/modules/reformat/formats/STOCKHOLM';
+import { PROTEIN } from './sequenceTypes/PROTEIN';
+import { DNA } from './sequenceTypes/DNA';
+import { RNA } from './sequenceTypes/RNA';
+import { PIR } from '@/modules/reformat/formats/PIR';
 
 /**
  * Register possible formats here.
  */
-const supportedFormats: Format[] = [
-    FASTA,
-    CLUSTAL,
-    A3M,
-    STOCKHOLM,
-    PIR,
-];
-
+const supportedFormats: Format[] = [FASTA, CLUSTAL, A3M, STOCKHOLM, PIR];
 
 /**
  * Register sequence types here.
  */
-const supportedTypes: SequenceType[] = [
-    PROTEIN,
-    DNA,
-    RNA,
-];
+const supportedTypes: SequenceType[] = [PROTEIN, DNA, RNA];
 
 export class Reformat {
     private readonly seqs: string;
@@ -73,8 +62,9 @@ export class Reformat {
     }
 
     public isOfType(type: string): boolean {
-        return this.types ? this.types.some((val: SequenceType) =>
-            val.name.toUpperCase() === type.toUpperCase()) : false;
+        return this.types
+            ? this.types.some((val: SequenceType) => val.name.toUpperCase() === type.toUpperCase())
+            : false;
     }
 
     public isNucleotide(): boolean {
@@ -110,7 +100,6 @@ export class Reformat {
 
         return '';
     }
-
 
     // Operations
 
@@ -148,7 +137,6 @@ export class Reformat {
         return this.sequences ? this.sequences.length <= maxSeqLimit : false;
     }
 
-
     public minSeqLength(minCharPerSeq: number): boolean {
         return this.sequences ? this.sequences.every((val: Sequence) => val.seq.length >= minCharPerSeq) : false;
     }
@@ -185,4 +173,3 @@ function getFormat(seqs: string): Format | undefined {
 function getAllTypes(sequences: Sequence[]): SequenceType[] | undefined {
     return supportedTypes.filter((val: SequenceType) => val.validate(sequences));
 }
-

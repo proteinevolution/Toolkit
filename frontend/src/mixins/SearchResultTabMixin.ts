@@ -1,11 +1,11 @@
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
-import {HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse} from '@/types/toolkit/results';
-import {colorSequence, ssColorSequence} from '@/util/SequenceUtils';
+import { HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse } from '@/types/toolkit/results';
+import { colorSequence, ssColorSequence } from '@/util/SequenceUtils';
 import ResultTabMixin from '@/mixins/ResultTabMixin';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
-import {debounce} from 'lodash-es';
+import { debounce } from 'lodash-es';
 
 const logger = Logger.get('SearchResultTabMixin');
 
@@ -27,15 +27,17 @@ const SearchResultTabMixin = ResultTabMixin.extend({
             if (!this.total) {
                 return false;
             }
-            return this.total > 0 &&
-                this.selectedItems.length === this.total;
+            return this.total > 0 && this.selectedItems.length === this.total;
         },
     },
     created() {
         (this as any).debouncedUpdateHandyScroll = debounce(this.updateHandyScroll.bind(this), 100);
     },
     beforeDestroy(): void {
-        handyScroll.destroy(this.$refs.scrollElem);
+        const scrollElem = this.$refs.scrollElem as Element | undefined;
+        if (scrollElem) {
+            handyScroll.destroy(scrollElem);
+        }
         window.removeEventListener('resize', (this as any).debouncedUpdateHandyScroll);
     },
     methods: {
@@ -67,8 +69,9 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         },
         scrollTo(ref: string): void {
             if (this.$refs[ref]) {
-                const elem: HTMLElement = (this.$refs[ref] as any).length ?
-                    (this.$refs[ref] as HTMLElement[])[0] : this.$refs[ref] as HTMLElement;
+                const elem: HTMLElement = (this.$refs[ref] as any).length
+                    ? (this.$refs[ref] as HTMLElement[])[0]
+                    : (this.$refs[ref] as HTMLElement);
                 elem.scrollIntoView({
                     block: 'start',
                     behavior: 'smooth',
@@ -87,7 +90,8 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         displayTemplateAlignment(accession: string): void {
             if (this.tool.parameters) {
                 EventBus.$emit('show-modal', {
-                    id: 'templateAlignmentModal', props: {
+                    id: 'templateAlignmentModal',
+                    props: {
                         jobID: this.job.jobID,
                         accession,
                         forwardingMode: this.tool.parameters.forwarding,
@@ -100,7 +104,8 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         forward(disableSequenceLengthSelect: boolean = false): void {
             if (this.tool.parameters) {
                 EventBus.$emit('show-modal', {
-                    id: 'forwardingModal', props: {
+                    id: 'forwardingModal',
+                    props: {
                         forwardingJobID: this.job.jobID,
                         forwardingMode: this.tool.parameters.forwarding,
                         forwardingApiOptions: {
@@ -116,7 +121,8 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         async forwardQueryA3M() {
             const a3mData: any = await resultsService.getFile(this.job.jobID, 'reduced.a3m');
             EventBus.$emit('show-modal', {
-                id: 'forwardingModal', props: {
+                id: 'forwardingModal',
+                props: {
                     forwardingJobID: this.job.jobID,
                     forwardingData: a3mData,
                     forwardingMode: {
@@ -160,7 +166,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
             this.$nextTick(this.updateHandyScroll.bind(this));
         },
         updateHandyScroll(): void {
-            const scrollElem: Element = this.$refs.scrollElem as Element;
+            const scrollElem = this.$refs.scrollElem as Element | undefined;
             if (scrollElem) {
                 if (!handyScroll.mounted(scrollElem)) {
                     handyScroll.mount(scrollElem);
@@ -181,7 +187,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         alEnd(a: { end: number }): string {
             return ` &nbsp; ${a.end}`;
         },
-        alEndRef(a: { end: number, ref: number }): string {
+        alEndRef(a: { end: number; ref: number }): string {
             return ` &nbsp; ${a.end} (${a.ref})`;
         },
     },

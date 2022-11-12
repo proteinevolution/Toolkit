@@ -1,4 +1,4 @@
-import {Format, Sequence} from '@/modules/reformat/types';
+import { Format, Sequence } from '@/modules/reformat/types';
 
 export const STOCKHOLM: Format = {
     name: 'STOCKHOLM',
@@ -79,4 +79,3 @@ export const STOCKHOLM: Format = {
         return result;
     },
 };
-

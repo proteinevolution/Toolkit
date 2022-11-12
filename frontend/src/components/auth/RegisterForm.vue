@@ -1,65 +1,47 @@
 <template>
     <b-form @submit.prevent="signUp">
-        <b-form-group :label="$t('auth.username')"
-                      :invalid-feedback="$t('constraints.username')">
-            <b-form-input v-model="username"
-                          type="text"
-                          :state="usernameState"
-                          required
-                          @change="validateUsername" />
+        <b-form-group :label="$t('auth.username')" :invalid-feedback="$t('constraints.username')">
+            <b-form-input v-model="username" type="text" :state="usernameState" required @change="validateUsername" />
         </b-form-group>
-        <b-form-group :label="$t('auth.eMail')"
-                      :invalid-feedback="$t('constraints.email')">
-            <b-form-input v-model="email"
-                          type="email"
-                          :state="emailState"
-                          required
-                          @change="validateEmail" />
+        <b-form-group :label="$t('auth.eMail')" :invalid-feedback="$t('constraints.email')">
+            <b-form-input v-model="email" type="email" :state="emailState" required @change="validateEmail" />
         </b-form-group>
-        <b-form-group :label="$t('auth.password')"
-                      :invalid-feedback="$t('constraints.password')">
-            <b-form-input v-model="password"
-                          type="password"
-                          :state="passwordState"
-                          required
-                          @change="validatePassword" />
+        <b-form-group :label="$t('auth.password')" :invalid-feedback="$t('constraints.password')">
+            <b-form-input
+                v-model="password"
+                type="password"
+                :state="passwordState"
+                required
+                @change="validatePassword" />
         </b-form-group>
-        <b-form-group :label="$t('auth.passwordRepeat')"
-                      :invalid-feedback="$t('constraints.passwordsMatch')">
-            <b-form-input v-model="passwordRepeat"
-                          type="password"
-                          :state="passwordRepeatState"
-                          required
-                          @change="validatePasswordRepeat" />
+        <b-form-group :label="$t('auth.passwordRepeat')" :invalid-feedback="$t('constraints.passwordsMatch')">
+            <b-form-input
+                v-model="passwordRepeat"
+                type="password"
+                :state="passwordRepeatState"
+                required
+                @change="validatePasswordRepeat" />
         </b-form-group>
         <b-form-group>
-            <b-form-checkbox v-model="privacyAccepted"
-                             required>
-                <i18n path="auth.privacyAccept"
-                      tag="span">
-                    <a class="privacy-link"
-                       @click.stop="openPrivacyPolicy">
+            <b-form-checkbox v-model="privacyAccepted" required>
+                <i18n path="auth.privacyAccept" tag="span">
+                    <a class="privacy-link" @click.stop="openPrivacyPolicy">
                         {{ $t('footerLinkModals.names.privacy') }}
                     </a>
                 </i18n>
             </b-form-checkbox>
         </b-form-group>
-        <b-alert :variant="successful ? 'info' : 'danger'"
-                 :show="message !== ''"
-                 v-text="message" />
-        <b-btn type="submit"
-               variant="primary"
-               :disabled="!valid"
-               v-text="$t('auth.signUp')" />
+        <b-alert :variant="successful ? 'info' : 'danger'" :show="message !== ''" v-text="message" />
+        <b-btn type="submit" variant="primary" :disabled="!valid" v-text="$t('auth.signUp')" />
     </b-form>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import EventBus from '@/util/EventBus';
-import {authService} from '@/services/AuthService';
-import {AuthMessage, SignUpData} from '@/types/toolkit/auth';
-import {TranslateResult} from 'vue-i18n';
+import { authService } from '@/services/AuthService';
+import { AuthMessage, SignUpData } from '@/types/toolkit/auth';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
     name: 'RegisterForm',
@@ -92,11 +74,13 @@ export default Vue.extend({
             return this.passwordRepeat === this.password;
         },
         valid(): boolean {
-            return this.usernameValid
-                && this.emailValid
-                && this.passwordValid
-                && this.passwordRepeatValid
-                && this.privacyAccepted;
+            return (
+                this.usernameValid &&
+                this.emailValid &&
+                this.passwordValid &&
+                this.passwordRepeatValid &&
+                this.privacyAccepted
+            );
         },
     },
     methods: {
@@ -133,7 +117,7 @@ export default Vue.extend({
             }
         },
         openPrivacyPolicy() {
-            EventBus.$emit('show-modal', {id: 'footerLink', props: {modal: 'privacy'}});
+            EventBus.$emit('show-modal', { id: 'footerLink', props: { modal: 'privacy' } });
         },
     },
 });
@@ -141,7 +125,7 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .privacy-link {
-  color: $primary !important;
-  cursor: pointer;
+    color: $primary !important;
+    cursor: pointer;
 }
 </style>

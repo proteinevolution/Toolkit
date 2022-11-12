@@ -1,5 +1,5 @@
-import {Format, Sequence} from '@/modules/reformat/types';
-import {FASTA} from './FASTA';
+import { Format, Sequence } from '@/modules/reformat/types';
+import { FASTA } from './FASTA';
 
 export const A3M: Format = {
     name: 'A3M',

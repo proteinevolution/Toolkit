@@ -1,103 +1,83 @@
 <template>
-    <Loading v-if="loading"
-             :message="$t('loading')" />
-    <div v-else
-         class="font-small">
-        <b v-if="total === 0"
-           v-text="$t('jobs.results.hmmer.noResults')"></b>
+    <Loading v-if="loading" :message="$t('loading')" />
+    <div v-else class="font-small">
+        <b v-if="total === 0" v-text="$t('jobs.results.hmmer.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
                 <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="mr-4"
-                   @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a class="mr-4" @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
-                <a :class="{active: allSelected}"
-                   @click="toggleAllSelected">
-                    {{ $t('jobs.results.actions.selectAll') }}</a>
+                <a :class="{ active: allSelected }" @click="toggleAllSelected">
+                    {{ $t('jobs.results.actions.selectAll') }}</a
+                >
                 <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
-                <a :class="{active: color}"
-                   @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-                <a :class="{active: wrap}"
-                   @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+                <a :class="{ active: color }" @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{ active: wrap }" @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hmmer.numHits', {num: total})"></div>
+            <div v-html="$t('jobs.results.hmmer.numHits', { num: total })"></div>
 
-            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'"
-                 class="mt-2">
+            <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'" class="mt-2">
                 {{ $t('jobs.results.sequenceFeatures.header') }}
-                <b v-if="info.coil === '0'"
-                   v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm > '0'"
-                   v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
-                <b v-if="info.signal === '1'"
-                   v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+                <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm > '0'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
-            <div ref="visualization"
-                 class="result-section">
+            <div ref="visualization" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
-                <hit-map :job="job"
-                         @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection" />
+                <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
             </div>
 
-            <div ref="hits"
-                 class="result-section">
+            <div ref="hits" class="result-section">
                 <h4 class="mb-4">
                     {{ $t('jobs.results.hitlist.hits') }}
                 </h4>
-                <hit-list-table :job="job"
-                                :fields="hitListFields"
-                                :selected-items="selectedItems"
-                                @elem-clicked="scrollToElem" />
+                <hit-list-table
+                    :job="job"
+                    :fields="hitListFields"
+                    :selected-items="selectedItems"
+                    @elem-clicked="scrollToElem" />
             </div>
 
-            <div ref="alignments"
-                 class="result-section">
+            <div ref="alignments" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
 
-                <div ref="scrollElem"
-                     class="table-responsive">
+                <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
                             <template v-for="(al, i) in alignments">
-                                <tr :key="'alignment-' + al.num"
-                                    :ref="'alignment-' + al.num"
-                                    class="blank-row">
+                                <tr :key="'alignment-' + al.num" :ref="'alignment-' + al.num" class="blank-row">
                                     <td colspan="4">
-                                        <hr v-if="i !== 0">
+                                        <hr v-if="i !== 0" />
                                     </td>
                                 </tr>
                                 <tr :key="'alignment-fasta-' + i">
                                     <td></td>
-                                    <td colspan="3"
-                                        v-html="al.fastaLink"></td>
+                                    <td colspan="3" v-html="al.fastaLink"></td>
                                 </tr>
-                                <tr :key="'alignment-num-' + i"
-                                    class="font-weight-bold">
+                                <tr :key="'alignment-num-' + i" class="font-weight-bold">
                                     <td class="no-wrap">
-                                        <b-checkbox class="d-inline"
-                                                    :checked="selectedItems.includes(al.num)"
-                                                    @change="check($event, al.num)" />
+                                        <b-checkbox
+                                            class="d-inline"
+                                            :checked="selectedItems.includes(al.num)"
+                                            @change="check($event, al.num)" />
                                         <span v-text="al.num + '.'"></span>
                                     </td>
-                                    <td colspan="3"
-                                        v-html="al.acc + ' ' + al.name"></td>
+                                    <td colspan="3" v-html="al.acc + ' ' + al.name"></td>
                                 </tr>
                                 <tr :key="'alignment-alinf-' + i">
                                     <td></td>
-                                    <td colspan="3"
-                                        v-html="$t('jobs.results.hmmer.alignmentInfo', al)"></td>
+                                    <td colspan="3" v-html="$t('jobs.results.hmmer.alignmentInfo', al)"></td>
                                 </tr>
 
                                 <template v-for="(alPart, alIdx) in wrapAlignments(al)">
-                                    <tr :key="'alignment-' + i + '-blank-' + alIdx"
-                                        class="blank-row">
+                                    <tr :key="'alignment-' + i + '-blank-' + alIdx" class="blank-row">
                                         <td></td>
                                     </tr>
-                                    <tr v-if="alPart.query.seq"
+                                    <tr
+                                        v-if="alPart.query.seq"
                                         :key="'alignment-' + i + '-seq-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -105,7 +85,8 @@
                                         <td v-text="alPart.query.start"></td>
                                         <td v-html="coloredSeq(alPart.query.seq) + alEnd(alPart.query)"></td>
                                     </tr>
-                                    <tr v-if="alPart.agree"
+                                    <tr
+                                        v-if="alPart.agree"
                                         :key="'alignment-' + i + '-agree-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -113,7 +94,8 @@
                                         <td></td>
                                         <td v-text="alPart.agree"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.seq"
+                                    <tr
+                                        v-if="alPart.template.seq"
                                         :key="'alignment-' + i + '-tplseq-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -126,10 +108,11 @@
 
                             <tr v-if="alignments.length !== total">
                                 <td colspan="4">
-                                    <Loading v-if="loadingMore"
-                                             :message="$t('jobs.results.alignment.loadingHits')"
-                                             justify="center"
-                                             class="mt-4" />
+                                    <Loading
+                                        v-if="loadingMore"
+                                        :message="$t('jobs.results.alignment.loadingHits')"
+                                        justify="center"
+                                        class="mt-4" />
                                     <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
@@ -146,7 +129,7 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import {HMMERAlignmentItem, HMMERHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import { HMMERAlignmentItem, HMMERHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
 export default SearchResultTabMixin.extend({
@@ -162,37 +145,45 @@ export default SearchResultTabMixin.extend({
             alignments: undefined as HMMERAlignmentItem[] | undefined,
             info: undefined as HMMERHHInfoResult | undefined,
             breakAfter: 90,
-            hitListFields: [{
-                key: 'numCheck',
-                label: this.$t('jobs.results.hmmer.table.num'),
-                sortable: true,
-            }, {
-                key: 'acc',
-                label: this.$t('jobs.results.hmmer.table.accession'),
-                sortable: true,
-            }, {
-                key: 'name',
-                label: this.$t('jobs.results.hmmer.table.description'),
-                sortable: true,
-            }, {
-                key: 'fullEval',
-                label: this.$t('jobs.results.hmmer.table.full_evalue'),
-                class: 'no-wrap',
-                sortable: true,
-            }, {
-                key: 'eval',
-                label: this.$t('jobs.results.hmmer.table.eValue'),
-                class: 'no-wrap',
-                sortable: true,
-            }, {
-                key: 'bitScore',
-                label: this.$t('jobs.results.hmmer.table.bitscore'),
-                sortable: true,
-            }, {
-                key: 'hitLen',
-                label: this.$t('jobs.results.hmmer.table.hit_len'),
-                sortable: true,
-            }],
+            hitListFields: [
+                {
+                    key: 'numCheck',
+                    label: this.$t('jobs.results.hmmer.table.num'),
+                    sortable: true,
+                },
+                {
+                    key: 'acc',
+                    label: this.$t('jobs.results.hmmer.table.accession'),
+                    sortable: true,
+                },
+                {
+                    key: 'name',
+                    label: this.$t('jobs.results.hmmer.table.description'),
+                    sortable: true,
+                },
+                {
+                    key: 'fullEval',
+                    label: this.$t('jobs.results.hmmer.table.full_evalue'),
+                    class: 'no-wrap',
+                    sortable: true,
+                },
+                {
+                    key: 'eval',
+                    label: this.$t('jobs.results.hmmer.table.eValue'),
+                    class: 'no-wrap',
+                    sortable: true,
+                },
+                {
+                    key: 'bitScore',
+                    label: this.$t('jobs.results.hmmer.table.bitscore'),
+                    sortable: true,
+                },
+                {
+                    key: 'hitLen',
+                    label: this.$t('jobs.results.hmmer.table.hit_len'),
+                    sortable: true,
+                },
+            ],
         };
     },
     methods: {
@@ -234,30 +225,30 @@ export default SearchResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .result-section {
-  padding-top: 3.5rem;
+    padding-top: 3.5rem;
 }
 
 .alignments-table {
-  font-size: 0.95em;
+    font-size: 0.95em;
 
-  .blank-row {
-    height: 0.8rem;
-  }
-
-  .sequence td {
-    word-break: keep-all;
-    white-space: nowrap;
-    font-family: $font-family-monospace;
-    padding: 0 1rem 0 0;
-  }
-
-  a {
-    cursor: pointer;
-    color: $primary;
-
-    &:hover {
-      color: $tk-dark-green;
+    .blank-row {
+        height: 0.8rem;
     }
-  }
+
+    .sequence td {
+        word-break: keep-all;
+        white-space: nowrap;
+        font-family: $font-family-monospace;
+        padding: 0 1rem 0 0;
+    }
+
+    a {
+        cursor: pointer;
+        color: $primary;
+
+        &:hover {
+            color: $tk-dark-green;
+        }
+    }
 }
 </style>

@@ -1,4 +1,4 @@
-import {Sequence, SequenceType} from '../types';
+import { Sequence, SequenceType } from '../types';
 
 export const DNA: SequenceType = {
     name: 'DNA',

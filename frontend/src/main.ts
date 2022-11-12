@@ -7,8 +7,8 @@ import axios from 'axios';
 import './bootstrap.ts';
 import '@/util/LoggerConfig';
 import Logger from 'js-logger';
-import {pinia} from '@/stores';
-import {useRootStoreWithout} from '@/stores/root';
+import { pinia } from '@/stores';
+import { useRootStoreWithout } from '@/stores/root';
 
 Vue.config.productionTip = false;
 Vue.config.silent = import.meta.env.PROD;

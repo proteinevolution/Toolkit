@@ -1,20 +1,22 @@
-import {VueConstructor} from 'vue/types/vue';
+import { VueConstructor } from 'vue/types/vue';
 import Vue from 'vue';
 import VueNotifications from 'vue-notification';
 import velocity from 'velocity-animate';
-import {TKNotificationOptions} from './types';
+import { TKNotificationOptions } from './types';
 
-Vue.use(VueNotifications, {velocity});
+Vue.use(VueNotifications, { velocity });
 
 const Notifications = {
     install(vconst: VueConstructor, args: any = {}): void {
         vconst.prototype.$alert = (params: TKNotificationOptions | string, type?: string) => {
-            const newParams: TKNotificationOptions = (typeof params === 'string') ?
-                {
-                    title: '',
-                    text: params,
-                    useBrowserNotifications: true, // TODO
-                } : params;
+            const newParams: TKNotificationOptions =
+                typeof params === 'string'
+                    ? {
+                          title: '',
+                          text: params,
+                          useBrowserNotifications: true, // TODO
+                      }
+                    : params;
 
             if (type) {
                 newParams.type = type;
@@ -30,9 +32,11 @@ const Notifications = {
                 if (favicon) {
                     notifOptions.icon = (favicon as HTMLLinkElement).href;
                 }
-                if ('Notification' in window && newParams.useBrowserNotifications &&
-                    (!args.browserNotifications.onlyIfHidden || document.hidden)) {
-
+                if (
+                    'Notification' in window &&
+                    newParams.useBrowserNotifications &&
+                    (!args.browserNotifications.onlyIfHidden || document.hidden)
+                ) {
                     const browserNotification = (window as any).Notification;
                     if (browserNotification.permission === 'granted') {
                         const n = new Notification(newParams.title, notifOptions);

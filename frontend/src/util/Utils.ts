@@ -1,7 +1,8 @@
-import {ProcessLogItem} from '@/types/toolkit/jobs';
+import { ProcessLogItem } from '@/types/toolkit/jobs';
 
 export function parseProcessLog(file: string): ProcessLogItem[] {
-    return file.split('#')
+    return file
+        .split('#')
         .filter((val: string) => val.trim() !== '')
         .map((val: string) => {
             const split = val.split('\n');

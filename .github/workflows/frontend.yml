@@ -13,7 +13,7 @@ on:
 jobs:
   build-frontend:
     runs-on: ubuntu-latest
-    name: Build with Node 14
+    name: Build & test with Node 16
 
     steps:
       - name: Git checkout
@@ -46,7 +46,7 @@ jobs:
 
   eslint:
     runs-on: ubuntu-latest
-    name: Lint with ESLint
+    name: Lint with ESLint and Prettier
 
     steps:
       - name: Git checkout
@@ -78,5 +78,7 @@ jobs:
         with:
           # auto_fix: true
           eslint: true
-          eslint_dir: ./frontend
-          eslint_extensions: js,ts,vue
+          eslint_dir: ./frontend/src
+          eslint_extensions: ts,vue
+          prettier: true
+          prettier_dir: ./frontend/src

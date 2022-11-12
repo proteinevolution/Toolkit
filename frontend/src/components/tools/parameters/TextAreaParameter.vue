@@ -1,22 +1,23 @@
 <template>
     <div>
         <ExpandHeight>
-            <TextAreaSubComponent v-model="submissionValue"
-                                  :parameter="parameter"
-                                  :validation-params="validationParams"
-                                  @validation="handleValidation" />
+            <TextAreaSubComponent
+                v-model="submissionValue"
+                :parameter="parameter"
+                :validation-params="validationParams"
+                @validation="handleValidation" />
         </ExpandHeight>
         <ExpandHeight>
-            <TextAreaSubComponent v-if="secondTextAreaEnabled"
-                                  v-model="submissionValueTwo"
-                                  :second="true"
-                                  :parameter="parameter"
-                                  :validation-params="validationParams"
-                                  @validation="handleValidationSecond" />
+            <TextAreaSubComponent
+                v-if="secondTextAreaEnabled"
+                v-model="submissionValueTwo"
+                :second="true"
+                :parameter="parameter"
+                :validation-params="validationParams"
+                @validation="handleValidationSecond" />
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas">
-            <switches v-model="secondTextAreaEnabled"
-                      :label="$t('tools.parameters.textArea.alignTwoSeqToggle')" />
+            <switches v-model="secondTextAreaEnabled" :label="$t('tools.parameters.textArea.alignTwoSeqToggle')" />
         </b-form-group>
     </div>
 </template>
@@ -25,10 +26,10 @@
 import Vue from 'vue';
 import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
-import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
+import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
-import {ValidationResult} from '@/types/toolkit/validation';
+import { ValidationResult } from '@/types/toolkit/validation';
 import EventBus from '@/util/EventBus';
 
 export default ToolParameterMixin.extend({
@@ -69,7 +70,8 @@ export default ToolParameterMixin.extend({
                 this.secondTextAreaEnabledInternal = value;
             },
         },
-        submissionValueTwo: { // has to be handled manually, not covered by the ToolParameterMixin
+        submissionValueTwo: {
+            // has to be handled manually, not covered by the ToolParameterMixin
             get(): string {
                 if (!(this.parameterNameTwo in this.submission)) {
                     return '';
@@ -103,26 +105,27 @@ export default ToolParameterMixin.extend({
         },
     },
     methods: {
-        acceptForwardData({data, jobID}: { data: string, jobID: string }): void {
+        acceptForwardData({ data, jobID }: { data: string; jobID: string }): void {
             this.submissionValue = data;
             Vue.set(this.submission, 'parentID', jobID);
         },
         handleValidation(val: ValidationResult) {
             if (val.failed) {
-                this.setError({textKey: val.textKey, textKeyParams: val.textKeyParams});
+                this.setError({ textKey: val.textKey, textKeyParams: val.textKeyParams });
             } else if (this.submissionValue === '') {
-                this.setError({textKey: 'constraints.notEmpty'});
+                this.setError({ textKey: 'constraints.notEmpty' });
             } else {
                 this.setError(undefined);
             }
         },
         handleValidationSecond(val: ValidationResult) {
             if (val.failed) {
-                Vue.set(this.validationErrors, this.parameterNameTwo,
-                    {textKey: val.textKey, textKeyParams: val.textKeyParams});
+                Vue.set(this.validationErrors, this.parameterNameTwo, {
+                    textKey: val.textKey,
+                    textKeyParams: val.textKeyParams,
+                });
             } else if (this.submissionValueTwo === '') {
-                Vue.set(this.validationErrors, this.parameterNameTwo,
-                    {textKey: 'constraints.notEmpty'});
+                Vue.set(this.validationErrors, this.parameterNameTwo, { textKey: 'constraints.notEmpty' });
             } else {
                 Vue.delete(this.validationErrors, this.parameterNameTwo);
             }

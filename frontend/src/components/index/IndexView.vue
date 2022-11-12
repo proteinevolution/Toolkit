@@ -1,8 +1,7 @@
 <template>
     <div class="index-view">
         <div class="caption-container d-none d-sm-block">
-            <img :src="require('../../assets/images/Toolkit100.png')"
-                 class="img-fluid">
+            <img :src="require('../../assets/images/Toolkit100.png')" class="img-fluid" />
             <div class="caption d-none d-lg-block">
                 <div class="caption-header">
                     {{ $t('index.welcomeTitle') }}
@@ -35,7 +34,7 @@ export default hasHTMLTitle.extend({
             immediate: true,
             async handler(query: any) {
                 if (query && query.action) {
-                    EventBus.$emit('show-modal', {id: query.action});
+                    EventBus.$emit('show-modal', { id: query.action });
                 }
             },
         },
@@ -45,35 +44,35 @@ export default hasHTMLTitle.extend({
 
 <style lang="scss" scoped>
 .caption-container {
-  position: relative;
+    position: relative;
 
-  .img-fluid {
-    border-radius: $global-radius;
-  }
-
-  .caption {
-    border-top-right-radius: $global-radius;
-    border-bottom-right-radius: $global-radius;
-    position: absolute;
-    height: 100%;
-    width: 23%;
-    color: white;
-    letter-spacing: 1px;
-    background: rgba(4, 4, 4, 0.9);
-    opacity: 0.55;
-    top: 0;
-    right: 0;
-    padding: 2.5rem 2rem;
-
-    .caption-header {
-      margin-bottom: 1rem;
-      font-size: 1.1em;
+    .img-fluid {
+        border-radius: $global-radius;
     }
 
-    .caption-body {
-      font-size: 0.9em;
-      line-height: 1.5rem;
+    .caption {
+        border-top-right-radius: $global-radius;
+        border-bottom-right-radius: $global-radius;
+        position: absolute;
+        height: 100%;
+        width: 23%;
+        color: white;
+        letter-spacing: 1px;
+        background: rgba(4, 4, 4, 0.9);
+        opacity: 0.55;
+        top: 0;
+        right: 0;
+        padding: 2.5rem 2rem;
+
+        .caption-header {
+            margin-bottom: 1rem;
+            font-size: 1.1em;
+        }
+
+        .caption-body {
+            font-size: 0.9em;
+            line-height: 1.5rem;
+        }
     }
-  }
 }
 </style>

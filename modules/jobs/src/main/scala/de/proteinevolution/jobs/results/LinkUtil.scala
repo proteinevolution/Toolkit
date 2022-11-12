@@ -21,7 +21,7 @@ import scala.collection.mutable.ArrayBuffer
 object LinkUtil {
 
   private val uniprotReg = """([A-Z0-9]{10}|[A-Z0-9]{6})""".r
-  private val scopReg    = """([defgh][0-9a-zA-Z\.\_]+)""".r
+  private val scopReg    = """(SCOP_[defgh][0-9a-zA-Z\.\_]+)""".r
   private val smartReg   = """(^SM0[0-9]{4})""".r
   private val ncbiCDReg  = """(^[cs]d[0-9]{5})""".r
   private val cogkogReg  = """(^[CK]OG[0-9]{4})""".r
@@ -67,7 +67,7 @@ object LinkUtil {
     val idPfam = id.replaceAll("am.*$||..*", "")
     val idPdb  = id.replaceAll("_.*$", "")
     db match {
-      case "scop"    => generateLink(scopBaseLink, id, id)
+      case "scop"    => val idScop = id.slice(5, 12); generateLink(scopBaseLink, idScop, id)
       case "mmcif"   => generateLink(pdbBaseLink, idPdb, id)
       case "prk"     => generateLink(cddBaseLink, id, id)
       case "ncbicd"  => generateLink(cddBaseLink, id, id)
@@ -77,7 +77,7 @@ object LinkUtil {
       case "ncbi"    => generateLink(ncbiProteinBaseLink, id, id)
       case "uniprot" => generateLink(uniprotBaseLink, id, id)
       case "smart"   => generateLink(smartBaseLink, id, id)
-      case "ecod"    => val idEcod = id.slice(5, 14); println(idEcod); generateLink(ecodBaseLink, idEcod, id)
+      case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
       case "cath"    => val idCath = id.slice(5, 12); generateLink(cathBaseLink, idCath, id)
       case "phrog"   => val idPhrog = id.replaceAll("phrog_", ""); generateLink(phrogBaseLink, idPhrog, id)
       case "keggoc" =>
@@ -146,27 +146,22 @@ object LinkUtil {
   def getSingleLinkHHBlits(id: String): String = generateLink(unirefBaseLink, id, id)
 
   def getLinksHHpred(jobID: String, id: String): String = {
-    val db    = identifyDatabase(id)
-    val links = new ArrayBuffer[String]()
-    val idPdb = id.replaceAll("_.*$", "").toLowerCase
-    val idTrimmed = if (id.length > 4) {
-      id.slice(1, 5)
-    } else {
-      id
-    }
+    val db     = identifyDatabase(id)
+    val links  = new ArrayBuffer[String]()
+    val idPdb  = id.replaceAll("_.*$", "").toLowerCase
     val idCDD  = id.replaceAll("PF", "pfam")
     val idNcbi = id.replaceAll("#", ".") + "?report=fasta"
     db match {
       case "scop" =>
-        links += generateLink(pdbBaseLink, idTrimmed, "PDB")
-        links += generateLink(ncbiBaseLink, idTrimmed, "NCBI")
+        val idPdbScop = id.slice(6, 10)
+        links += generateLink(pdbBaseLink, idPdbScop, "PDB")
+        links += generateLink(ncbiBaseLink, idPdbScop, "NCBI")
       case "ecod" =>
         val idPdbEcod = id.slice(16, 20)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
       case "cath" =>
         val idPdbEcod = id.slice(5, 9)
         links += generateLink(pdbBaseLink, idPdbEcod, "PDB")
-
       case "mmcif" =>
         links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case "pfam" =>

@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import {ConstraintError} from '@/types/toolkit/validation';
-import {TranslateResult} from 'vue-i18n';
+import { ConstraintError } from '@/types/toolkit/validation';
+import { TranslateResult } from 'vue-i18n';
 
 const ToolParameterMixin = Vue.extend({
     props: {

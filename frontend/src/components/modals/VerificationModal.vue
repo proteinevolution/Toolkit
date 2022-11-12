@@ -1,23 +1,17 @@
 <template>
-    <BaseModal id="verification"
-               :title="title"
-               size="sm"
-               @hide="onHide">
-        <Loading v-if="loading"
-                 variant="primary"
-                 class="mb-2" />
-        <p v-else
-           v-text="message"></p>
+    <BaseModal id="verification" :title="title" size="sm" @hide="onHide">
+        <Loading v-if="loading" variant="primary" class="mb-2" />
+        <p v-else v-text="message"></p>
     </BaseModal>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import BaseModal from './BaseModal.vue';
-import {TranslateResult} from 'vue-i18n';
+import { TranslateResult } from 'vue-i18n';
 import Loading from '@/components/utils/Loading.vue';
-import {authService} from '@/services/AuthService';
-import {AuthMessage} from '@/types/toolkit/auth';
+import { authService } from '@/services/AuthService';
+import { AuthMessage } from '@/types/toolkit/auth';
 
 export default Vue.extend({
     name: 'VerificationModal',

@@ -3,7 +3,7 @@ import VueI18n from 'vue-i18n';
 import messages from './lang/en';
 import mergeWith from 'lodash-es/mergeWith';
 import Logger from 'js-logger';
-import {Settings} from 'luxon';
+import { Settings } from 'luxon';
 
 export const defaultLanguage = 'en';
 Settings.defaultLocale = defaultLanguage;
@@ -36,12 +36,11 @@ function setI18nLanguage(lang: string) {
 export function loadLanguageAsync(lang: string): Promise<string> {
     if (i18n.locale !== lang) {
         if (!loadedLanguages.includes(lang)) {
-            return import(`./lang/${lang}.ts`)
-                .then((msgs) => {
-                    i18n.setLocaleMessage(lang, msgs.default[lang]);
-                    loadedLanguages.push(lang);
-                    return setI18nLanguage(lang);
-                });
+            return import(`./lang/${lang}.ts`).then((msgs) => {
+                i18n.setLocaleMessage(lang, msgs.default[lang]);
+                loadedLanguages.push(lang);
+                return setI18nLanguage(lang);
+            });
         }
         return Promise.resolve(setI18nLanguage(lang));
     }
@@ -63,7 +62,8 @@ export async function loadExtraTranslations(path: string): Promise<void> {
             msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}.ts`)).default;
         }
         if (splitPath.length === 4) {
-            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}.ts`)).default;
+            msgs = (await import(`./lang/extras/${splitPath[0]}/${splitPath[1]}/${splitPath[2]}/${splitPath[3]}.ts`))
+                .default;
         }
         for (const itemLang in msgs) {
             if (itemLang in msgs) {

@@ -1,49 +1,48 @@
 <template>
-    <b-form-group class="textarea-group"
-                  :class="{'uploading-file': uploadingFile}">
-        <b-form-textarea class="textarea-alignment break-all"
-                         :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
-                         :value="value"
-                         cols="70"
-                         spellcheck="false"
-                         @input="handleInput" />
-        <input :id="'file-upload-' + parameter.name + '-' + second"
-               :ref="'fileUpload' + parameter.name + '-' + second"
-               type="file"
-               :class="{'d-none': !fileDragged}"
-               class="file-upload-dropzone"
-               @change="handleFileUpload">
-        <b-progress :value="fileUploadProgress"
-                    class="file-upload-progress"
-                    :max="100" />
-        <b-button-group size="sm"
-                        class="mt-1 mb-3">
-            <b-btn variant="link"
-                   @click="handlePasteExample">
-                <loading v-if="rootStore.loading.alignmentTextarea"
-                         :size="20" />
-                <span v-else
-                      v-text="$t('tools.parameters.textArea.pasteExample')"></span>
+    <b-form-group class="textarea-group" :class="{ 'uploading-file': uploadingFile }">
+        <b-form-textarea
+            class="textarea-alignment break-all"
+            :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
+            :value="value"
+            data-v-step="input"
+            cols="70"
+            spellcheck="false"
+            @input="handleInput" />
+        <input
+            :id="'file-upload-' + parameter.name + '-' + second"
+            :ref="'fileUpload' + parameter.name + '-' + second"
+            type="file"
+            :class="{ 'd-none': !fileDragged }"
+            class="file-upload-dropzone"
+            @change="handleFileUpload" />
+        <b-progress :value="fileUploadProgress" class="file-upload-progress" :max="100" />
+        <b-button-group size="sm" class="mt-1 mb-3">
+            <b-btn data-v-step="paste" variant="link" @click="handlePasteExample">
+                <loading v-if="rootStore.loading.alignmentTextarea" :size="20" />
+                <span v-else v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
-            <label class="btn btn-link mb-0 cursor-pointer"
-                   tabindex="0"
-                   :for="'file-upload-' + parameter.name + '-' + second"
-                   @keyup.enter="$refs['fileUpload' + parameter.name + '-' + second].click()"
-                   v-text="$t('tools.parameters.textArea.uploadFile')"></label>
+            <label
+                class="btn btn-link mb-0 cursor-pointer"
+                tabindex="0"
+                :for="'file-upload-' + parameter.name + '-' + second"
+                @keyup.enter="$refs['fileUpload' + parameter.name + '-' + second].click()"
+                v-text="$t('tools.parameters.textArea.uploadFile')"></label>
         </b-button-group>
         <VelocityFade v-if="value">
-            <b-alert v-if="autoTransformedParams"
-                     key="autoTransformMessage"
-                     :show="true"
-                     variant="success"
-                     class="validation-alert mb-0 mr-2">
+            <b-alert
+                v-if="autoTransformedParams"
+                key="autoTransformMessage"
+                :show="true"
+                variant="success"
+                class="validation-alert mb-0 mr-2">
                 {{ $t('tools.validation.autoTransformedToFasta', autoTransformedParams) }}
             </b-alert>
-            <b-alert v-if="validation.cssClass && !autoTransformedParams"
-                     key="validationMessage"
-                     :show="true"
-                     :variant="validation.cssClass"
-                     class="validation-alert mb-0">
+            <b-alert
+                v-if="validation.cssClass && !autoTransformedParams"
+                key="validationMessage"
+                :show="true"
+                :variant="validation.cssClass"
+                class="validation-alert mb-0">
                 {{ $t('tools.validation.' + validation.textKey, validation.textKeyParams) }}
             </b-alert>
         </VelocityFade>
@@ -52,16 +51,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {TextAreaParameter, ValidationParams} from '@/types/toolkit/tools';
-import {transformToFormat, validation} from '@/util/validation';
-import {ValidationResult} from '@/types/toolkit/validation';
+import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
+import { transformToFormat, validation } from '@/util/validation';
+import { ValidationResult } from '@/types/toolkit/validation';
 import VelocityFade from '@/transitions/VelocityFade.vue';
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
-import {sampleSeqService} from '@/services/SampleSeqService';
+import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
-import {mapStores} from 'pinia';
-import {useRootStore} from '@/stores/root';
+import { mapStores } from 'pinia';
+import { useRootStore } from '@/stores/root';
 
 const logger = Logger.get('TextAreaSubComponent');
 
@@ -104,7 +103,7 @@ export default Vue.extend({
         };
     },
     computed: {
-      ...mapStores(useRootStore),
+        ...mapStores(useRootStore),
     },
     watch: {
         value: {
@@ -130,12 +129,16 @@ export default Vue.extend({
             },
         },
     },
+    mounted() {
+        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
+    },
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
+        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
     },
     methods: {
         handleDragOver(e: Event): void {
@@ -206,7 +209,8 @@ export default Vue.extend({
             EventBus.$emit('paste-example');
             this.rootStore.loading.alignmentTextarea = true;
             const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
-            sampleSeqService.fetchSampleSequence(sampleSeqKey)
+            sampleSeqService
+                .fetchSampleSequence(sampleSeqKey)
                 .then((res: string) => {
                     this.handleInput(res);
                 })
@@ -227,59 +231,61 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .textarea-group {
-  width: 100%;
+    width: 100%;
 
-  .btn-link:hover, .btn-link:active, .btn-link:focus {
-    text-decoration: none;
-  }
-
-  .file-upload-progress {
-    height: 0;
-    transition: height 1s;
-  }
-
-  &.uploading-file {
-    .textarea-alignment {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+    .btn-link:hover,
+    .btn-link:active,
+    .btn-link:focus {
+        text-decoration: none;
     }
 
     .file-upload-progress {
-      height: 1rem;
-      transition: height 0s;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+        height: 0;
+        transition: height 1s;
     }
-  }
+
+    &.uploading-file {
+        .textarea-alignment {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .file-upload-progress {
+            height: 1rem;
+            transition: height 0s;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
 }
 
 .textarea-alignment {
-  font-family: $font-family-monospace;
-  width: 100%;
-  height: 20em;
-  font-size: 0.9em;
+    font-family: $font-family-monospace;
+    width: 100%;
+    height: 20em;
+    font-size: 0.9em;
 
-  &.shrink {
-    height: 14em;
-  }
+    &.shrink {
+        height: 14em;
+    }
 }
 
 .validation-alert {
-  margin-top: 0.5rem;
-  float: right;
-  padding: 0.4rem 0.5rem;
+    margin-top: 0.5rem;
+    float: right;
+    padding: 0.4rem 0.5rem;
 }
 
 .file-upload-dropzone {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: $tk-lighter-gray;
-  border: 1px dashed $tk-light-gray;
-  border-radius: $global-radius;
-  z-index: 1;
-  padding: 2rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: $tk-lighter-gray;
+    border: 1px dashed $tk-light-gray;
+    border-radius: $global-radius;
+    z-index: 1;
+    padding: 2rem;
 }
 </style>

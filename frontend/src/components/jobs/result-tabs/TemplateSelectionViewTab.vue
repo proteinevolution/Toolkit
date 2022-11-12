@@ -1,14 +1,9 @@
 <template>
-    <Loading v-if="loading"
-             :message="$t('loading')" />
+    <Loading v-if="loading" :message="$t('loading')" />
     <div v-else>
-        <pre class="file-view"
-             v-html="file"></pre>
+        <pre class="file-view" v-html="file"></pre>
         <div class="result-options">
-            <b-btn type="button"
-                   variant="primary"
-                   class="submit-button float-right"
-                   @click="forwardToModeller">
+            <b-btn type="button" variant="primary" class="submit-button float-right" @click="forwardToModeller">
                 {{ $t('jobs.results.actions.forwardToModeller') }}
             </b-btn>
         </div>
@@ -18,7 +13,7 @@
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import EventBus from '@/util/EventBus';
 
 export default ResultTabMixin.extend({
@@ -47,7 +42,7 @@ export default ResultTabMixin.extend({
         },
         pasteForwardData(): void {
             EventBus.$off('paste-area-loaded', this.pasteForwardData);
-            EventBus.$emit('forward-data', {data: this.file, jobID: this.job.jobID});
+            EventBus.$emit('forward-data', { data: this.file, jobID: this.job.jobID });
         },
     },
 });
@@ -55,18 +50,18 @@ export default ResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .result-options {
-  border-bottom: none;
-  border-top: 1px solid rgba(10, 10, 10, 0.1);
+    border-bottom: none;
+    border-top: 1px solid rgba(10, 10, 10, 0.1);
 }
 
 .file-view {
-  width: 100%;
-  font-size: 12px;
-  height: 50vh;
-  font-family: $font-family-monospace;
+    width: 100%;
+    font-size: 12px;
+    height: 50vh;
+    font-family: $font-family-monospace;
 }
 
 .fullscreen .file-view {
-  height: 85vh;
+    height: 85vh;
 }
 </style>

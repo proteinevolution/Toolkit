@@ -1,27 +1,26 @@
-import {Format, Sequence} from '@/modules/reformat/types';
-import {formatLongSeq} from '@/modules/reformat/utils';
+import { Format, Sequence } from '@/modules/reformat/types';
+import { formatLongSeq } from '@/modules/reformat/utils';
 
 export const FASTA: Format = {
     name: 'FASTA',
 
-    validate(value: string): boolean { // allowEmpty?: boolean
+    validate(value: string): boolean {
+        // allowEmpty?: boolean
 
         // remove preceding spaces and newlines
         value = value.trimLeft();
 
-        if (value.includes('>')) { // could be one or more sequences and will have a header
+        if (value.includes('>')) {
+            // could be one or more sequences and will have a header
 
             // the first real character needs to be a '>'
             if (!value.trimLeft().startsWith('>')) {
                 return false;
             }
 
-            const sequences = value.substr(1)
-                .split('\n>');
-
+            const sequences = value.substr(1).split('\n>');
 
             for (let sequence of sequences) {
-
                 // remove all spaces
                 sequence = sequence.replace(/ /g, '');
 
@@ -32,7 +31,7 @@ export const FASTA: Format = {
                 sequence = sequence.substr(headerEnd).replace(/\s/g, '');
 
                 // it must start with a alphanumerical character
-                if (header.length < 1 || !(/[A-Z0-9]/i).test(header[0].toUpperCase())) {
+                if (header.length < 1 || !/[A-Z0-9]/i.test(header[0].toUpperCase())) {
                     return false;
                 }
 
@@ -40,23 +39,23 @@ export const FASTA: Format = {
                 if (/[^-.*A-Z]/i.test(sequence.toUpperCase())) {
                     return false;
                 }
-
             }
             return true;
-
-        } else { // can only be one sequence without a header
-            return !(/[^-.*A-Z\n\s]/i.test(value.toUpperCase()));
+        } else {
+            // can only be one sequence without a header
+            return !/[^-.*A-Z\n\s]/i.test(value.toUpperCase());
         }
     },
 
     read(value: string): Sequence[] {
-        const newlines = value.split('\n')
+        const newlines = value
+            .split('\n')
             // remove empty lines
             .filter((line: string) => line !== '');
 
         const result: Sequence[] = [];
 
-        for (let i = 0; i < newlines.length;) {
+        for (let i = 0; i < newlines.length; ) {
             const element: Sequence = {
                 identifier: '',
                 seq: '',

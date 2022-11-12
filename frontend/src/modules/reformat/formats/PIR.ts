@@ -1,5 +1,5 @@
-import {Format, Sequence} from '@/modules/reformat/types';
-import {formatLongSeq} from '@/modules/reformat/utils';
+import { Format, Sequence } from '@/modules/reformat/types';
+import { formatLongSeq } from '@/modules/reformat/utils';
 
 export const PIR: Format = {
     name: 'PIR',
@@ -59,7 +59,7 @@ export const PIR: Format = {
 
         const lines = value.trimLeft().split('\n').filter(Boolean);
 
-        for (let i = 0; i < lines.length;) {
+        for (let i = 0; i < lines.length; ) {
             const element: Sequence = {
                 identifier: '',
                 description: '',
@@ -107,5 +107,3 @@ export const PIR: Format = {
         return result;
     },
 };
-
-

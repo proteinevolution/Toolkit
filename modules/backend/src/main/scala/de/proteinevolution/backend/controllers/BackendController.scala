@@ -16,33 +16,28 @@
 
 package de.proteinevolution.backend.controllers
 
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
-
 import akka.actor.{ ActorRef, ActorSystem }
 import de.proteinevolution.auth.dao.UserDao
 import de.proteinevolution.auth.util.UserAction
 import de.proteinevolution.backend.actors.DatabaseMonitor.{ DeleteOldJobs, DeleteOldUsers }
-import de.proteinevolution.backend.dao.BackendDao
 import de.proteinevolution.base.controllers.ToolkitController
 import de.proteinevolution.jobs.dao.JobDao
 import de.proteinevolution.message.actors.WebSocketActor.MaintenanceAlert
-import de.proteinevolution.tools.ToolConfig
+import de.proteinevolution.statistics.StatisticsObject
 import io.circe.Json
 import io.circe.syntax._
-import javax.inject.{ Inject, Named, Singleton }
 import play.api.Logging
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
-import cats.effect.unsafe.implicits.global
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import javax.inject.{ Inject, Named, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
 final class BackendController @Inject() (
-    backendDao: BackendDao,
     userDao: UserDao,
     jobDao: JobDao,
-    toolConfig: ToolConfig,
     @Named("databaseMonitor") databaseMonitor: ActorRef,
     actorSystem: ActorSystem,
     cc: ControllerComponents,
@@ -53,81 +48,6 @@ final class BackendController @Inject() (
 
   private var maintenanceSubmitBlocked: Boolean = false
   private var maintenanceMessage: String        = ""
-
-  def statistics: Action[AnyContent] = userAction.async { implicit request =>
-    logger.info(
-      "Statistics called. Access " + (if (request.user.isSuperuser) "granted."
-                                      else "denied.")
-    )
-    if (request.user.isSuperuser) {
-      // Get the first moment of the last month as a DateTime object
-      val firstOfLastMonth: ZonedDateTime =
-        ZonedDateTime.now.minusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1)
-
-      // Grab the current statistics
-      logger.info("Loading Statistics...")
-      val stats = backendDao.getStats
-
-      // Ensure all tools are in the statistics, even if they have not been used yet
-      logger.info("Statistics loaded.... checking for new tools")
-      val statsUpdated = stats.map(_.updateTools(toolConfig.values.unsafeRunSync().values.map(_.toolNameShort).toList))
-
-      // Collect the job events up until the first of the last month
-      statsUpdated.flatMap { statistics =>
-        if (statistics.lastPushed.compareTo(firstOfLastMonth) < 0) {
-          jobDao
-            .findJobEventLogs(firstOfLastMonth.toInstant.toEpochMilli)
-            .map { jobEventLogs =>
-              logger.info(
-                "Collected " + jobEventLogs.length + " elements from the job event logs. Last Push: " + statistics.lastPushed
-              )
-              statistics.addMonthsToTools(
-                jobEventLogs,
-                statistics.lastPushed.plusMonths(1).truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1),
-                firstOfLastMonth
-              )
-            }
-            .flatMap { statisticsObject =>
-              backendDao.updateStats(statisticsObject).map {
-                case Some(statisticsObjectUpdated) =>
-                  logger.info(
-                    "Successfully pushed statistics for Months: " + statisticsObjectUpdated.datePushed
-                      .filterNot(a => statistics.datePushed.contains(a))
-                      .mkString(", ")
-                  )
-                  // TODO add a way to remove the now collected elements from the JobEventLogs
-                  NoCache(
-                    Ok(
-                      Json.obj(
-                        "success" -> Json.fromString("new statistics added"),
-                        "stat"    -> statisticsObjectUpdated.asJson
-                      )
-                    )
-                  )
-                case None =>
-                  logger
-                    .info("Statistics generated, but it seems like the statistics could not be reloaded from the db")
-                  NoCache(
-                    Ok(
-                      Json.obj(
-                        "error" -> Json.fromString("could not reload new stats from DB"),
-                        "stat"  -> statisticsObject.asJson
-                      )
-                    )
-                  )
-              }
-            }
-        } else {
-          logger.info("No need to push statistics. Last Push: " + statistics.lastPushed)
-          fuccess(
-            NoCache(Ok(Json.obj("success" -> Json.fromString("old statistics used"), "stat" -> statistics.asJson)))
-          )
-        }
-      }
-    } else {
-      fuccess(Unauthorized)
-    }
-  }
 
   def runUserSweep: Action[AnyContent] = userAction { implicit request =>
     logger.info(
@@ -194,4 +114,21 @@ final class BackendController @Inject() (
 
   }
 
+  def statistics: Action[AnyContent] = userAction.async { implicit request =>
+    val fromDateString = request.getQueryString("fromDate").getOrElse("")
+    val fromDate       = LocalDate.parse(fromDateString, DateTimeFormatter.ISO_DATE)
+    val toDateString   = request.getQueryString("toDate").getOrElse("")
+    val toDate         = LocalDate.parse(toDateString, DateTimeFormatter.ISO_DATE)
+
+    val statisticsObject: StatisticsObject = StatisticsObject(fromDate, toDate)
+
+    jobDao.findAllJobEventLogs().flatMap { jobEventLogs =>
+      jobEventLogs.foreach(jobEventLog => {
+        statisticsObject.addJobEventLog(jobEventLog)
+      })
+      Future.successful(
+        Ok(statisticsObject.asJson)
+      )
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import {Tool} from '@/types/toolkit/tools';
-import {Job, JobViewOptions} from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 

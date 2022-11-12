@@ -1,25 +1,32 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-        <multiselect v-model="selected"
-                     :multiple="isMulti"
-                     :max="isMulti ? parameter.maxSelectedOptions : null"
-                     :allow-empty="isMulti"
-                     :options="parameter.options"
-                     :options-limit="optionsLimit"
-                     track-by="value"
-                     label="text"
-                     :placeholder="$t(isMulti ? 'tools.parameters.select.multiplePlaceholder' : 'tools.parameters.select.singlePlaceholder')"
-                     :searchable="true"
-                     :show-no-results="false"
-                     :disabled="disabled"
-                     select-label=""
-                     deselect-label=""
-                     selected-label=""
-                     :class="{nonDefault: !disabled && isNonDefaultValue}">
+        <multiselect
+            v-model="selected"
+            :multiple="isMulti"
+            :max="isMulti ? parameter.maxSelectedOptions : null"
+            :allow-empty="isMulti"
+            :options="parameter.options"
+            :options-limit="optionsLimit"
+            track-by="value"
+            label="text"
+            :placeholder="
+                $t(
+                    isMulti
+                        ? 'tools.parameters.select.multiplePlaceholder'
+                        : 'tools.parameters.select.singlePlaceholder'
+                )
+            "
+            :searchable="true"
+            :show-no-results="false"
+            :disabled="disabled"
+            select-label=""
+            deselect-label=""
+            selected-label=""
+            :class="{ nonDefault: !disabled && isNonDefaultValue }">
             <template #maxElements>
                 {{ $t(maxElementTextKey) }}
             </template>
-            <template #option="{option}">
+            <template #option="{ option }">
                 {{ option.text + (parameter.default === option.value ? ' (default)' : '') }}
             </template>
         </multiselect>
@@ -28,7 +35,7 @@
 
 <script lang="ts">
 import Multiselect from 'vue-multiselect';
-import {SelectOption, SelectParameter} from '@/types/toolkit/tools';
+import { SelectOption, SelectParameter } from '@/types/toolkit/tools';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
@@ -86,9 +93,8 @@ export default ParameterRememberMixin.extend({
                 }
             },
             set(value: SelectOption[] | SelectOption) {
-                this.submissionValue = value instanceof Array ?
-                    value.map((o: SelectOption) => o.value).join(' ') :
-                    value.value;
+                this.submissionValue =
+                    value instanceof Array ? value.map((o: SelectOption) => o.value).join(' ') : value.value;
             },
         },
         isMulti(): boolean {

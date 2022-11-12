@@ -1,17 +1,15 @@
 <template>
     <div class="custom-job-id">
-        <b-form-input v-model="customJobId"
-                      v-b-tooltip.hover="$t('constraints.customerJobIdTooShort')"
-                      :placeholder="$t('tools.parameters.customJobId.placeholder')"
-                      aria-describedby="custom-job-id-invalid"
-                      :state="valid"
-                      @input="inputChanged" />
-        <b-form-invalid-feedback v-if="hasError"
-                                 id="custom-job-id-invalid">
-            <i18n :path="error.textKey"
-                  tag="span">
-                <span class="suggestion-link"
-                      @click="takeSuggestion">{{ suggestion }}</span>
+        <b-form-input
+            v-model="customJobId"
+            v-b-tooltip.hover="$t('constraints.customerJobIdTooShort')"
+            :placeholder="$t('tools.parameters.customJobId.placeholder')"
+            aria-describedby="custom-job-id-invalid"
+            :state="valid"
+            @input="inputChanged" />
+        <b-form-invalid-feedback v-if="hasError" id="custom-job-id-invalid">
+            <i18n :path="error.textKey" tag="span">
+                <span class="suggestion-link" @click="takeSuggestion">{{ suggestion }}</span>
             </i18n>
         </b-form-invalid-feedback>
     </div>
@@ -19,11 +17,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {authService} from '@/services/AuthService';
+import { authService } from '@/services/AuthService';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
-import {ConstraintError} from '@/types/toolkit/validation';
-import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
-import {debounce} from 'lodash-es';
+import { ConstraintError } from '@/types/toolkit/validation';
+import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
+import { debounce } from 'lodash-es';
 
 export default ToolParameterMixin.extend({
     name: 'CustomJobIdInput',
@@ -37,7 +35,8 @@ export default ToolParameterMixin.extend({
             // override mixin value
             return 'jobID';
         },
-        customJobId: { // handle submission manually (not via ToolParameterMixin) to exclude empty strings
+        customJobId: {
+            // handle submission manually (not via ToolParameterMixin) to exclude empty strings
             get(): string {
                 if (!(this.parameterName in this.submission)) {
                     return '';
@@ -77,17 +76,18 @@ export default ToolParameterMixin.extend({
             (this as any).debouncedValidateCustomJobId(value);
         },
         validateCustomJobId(value: string) {
-            authService.validateJobId(value)
-                .then((result: CustomJobIdValidationResult) => {
-                    if (this.customJobId === value) {
-                        // only update the error if value hasn't changed since api call
-                        const error: ConstraintError | undefined = !result.exists ? undefined : {
-                            textKey: 'constraints.invalidCustomJobId',
-                        };
-                        this.setError(error);
-                        this.suggestion = result.suggested ? result.suggested : '';
-                    }
-                });
+            authService.validateJobId(value).then((result: CustomJobIdValidationResult) => {
+                if (this.customJobId === value) {
+                    // only update the error if value hasn't changed since api call
+                    const error: ConstraintError | undefined = !result.exists
+                        ? undefined
+                        : {
+                              textKey: 'constraints.invalidCustomJobId',
+                          };
+                    this.setError(error);
+                    this.suggestion = result.suggested ? result.suggested : '';
+                }
+            });
         },
         takeSuggestion() {
             this.customJobId = this.suggestion;
@@ -99,8 +99,8 @@ export default ToolParameterMixin.extend({
 
 <style lang="scss" scoped>
 .suggestion-link {
-  text-decoration: underline;
-  color: $primary;
-  cursor: pointer;
+    text-decoration: underline;
+    color: $primary;
+    cursor: pointer;
 }
 </style>

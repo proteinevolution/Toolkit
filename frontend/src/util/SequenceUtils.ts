@@ -1,4 +1,4 @@
-import {PatsearchMatch} from '@/types/toolkit/results';
+import { PatsearchMatch } from '@/types/toolkit/results';
 
 export function colorSequence(seq: string): string {
     return seq.replace(/(?:[WYF]+|[LIVM]+|[AST]+|[KR]+|[DE]+|[QN]+|H+|C+|P+|G+)/g, (m) => {

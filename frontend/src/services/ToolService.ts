@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Tool, ToolParameters} from '@/types/toolkit/tools';
+import { Tool, ToolParameters } from '@/types/toolkit/tools';
 
 class ToolService {
     public async fetchToolsVersion(): Promise<string> {
