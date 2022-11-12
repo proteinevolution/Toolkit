@@ -35,6 +35,8 @@
                     <span v-else>Reset</span>
                 </b-button>
             </b-form-group>
+            <h4>Statistics</h4>
+            <admin-statistics />
         </b-card>
     </div>
     <div v-else></div>
@@ -46,6 +48,7 @@ import {backendService} from '@/services/BackendService';
 import {User} from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
+import AdminStatistics from './AdminStatistics.vue';
 import {useRootStore} from '@/stores/root';
 import {mapStores} from 'pinia';
 import {useAuthStore} from '@/stores/auth';
@@ -55,6 +58,7 @@ export default hasHTMLTitle.extend({
     components: {
         Loading,
         Switches,
+        AdminStatistics,
     },
     data() {
         return {

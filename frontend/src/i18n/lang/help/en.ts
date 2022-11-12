@@ -701,9 +701,9 @@ section, we explain which data we record when you visit one of our websites, and
 
 
 <div class="section">
-    <h5> D. Contact form (contact through E-Mail)</h5>
+    <h5> D. Contact form (contact through email)</h5>
     <p>
-        A contact E-mail is available on our website for the purposes of making contact electronically. If a user opts
+        A contact email address is available on our website for the purposes of making contact electronically. If a user opts
         to email us, we save the data contained in the email. These are generally your email address, family name and
         first name. We inform you about the specific processing of the data and we obtain your consent as part
         of the utilization procedure. Reference is also made to this data protection statement. The data are utilized

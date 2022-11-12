@@ -19,6 +19,7 @@ if (import.meta.env.DEV) {
     axios.defaults.withCredentials = true;
 }
 
+
 const isSecure: boolean = location.protocol === 'https:';
 const websocketUrl: string = isSecure ? 'wss://' + location.host + '/ws/' : 'ws://' + location.host + '/ws/';
 Vue.use(VueNativeSock, websocketUrl, {
