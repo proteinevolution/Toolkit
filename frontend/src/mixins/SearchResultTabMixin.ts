@@ -35,7 +35,10 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         (this as any).debouncedUpdateHandyScroll = debounce(this.updateHandyScroll.bind(this), 100);
     },
     beforeDestroy(): void {
-        handyScroll.destroy(this.$refs.scrollElem);
+        const scrollElem = this.$refs.scrollElem as Element | undefined;
+        if (scrollElem) {
+            handyScroll.destroy(scrollElem);
+        }
         window.removeEventListener('resize', (this as any).debouncedUpdateHandyScroll);
     },
     methods: {
@@ -160,7 +163,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
             this.$nextTick(this.updateHandyScroll.bind(this));
         },
         updateHandyScroll(): void {
-            const scrollElem: Element = this.$refs.scrollElem as Element;
+            const scrollElem = this.$refs.scrollElem as Element | undefined;
             if (scrollElem) {
                 if (!handyScroll.mounted(scrollElem)) {
                     handyScroll.mount(scrollElem);
