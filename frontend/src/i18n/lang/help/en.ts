@@ -166,8 +166,8 @@ export default {
     </p>
     <p>
         Dr. Vikram Alva Kullanja<br>
-        MPI for Developmental Biology<br>
-        Spemannstr. 35<br>
+        MPI for Biology Tübingen<br>
+        Max-Planck-Ring 5<br>
         72076 Tübingen<br>
         vikram.alva[at]tuebingen.mpg.de
     </p>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Developmental Biology
+ * Copyright 2018 Dept. Protein Evolution, Max Planck Institute for Biology
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package de.proteinevolution.statistics
 
 import io.circe.syntax._
-import io.circe.{Encoder, Json}
+import io.circe.{ Encoder, Json }
 
 case class ToolStatisticCollection(
     var summaryStatistics: ToolStatistic = ToolStatistic("summary"),
@@ -38,12 +38,12 @@ case class ToolStatisticCollection(
   }
 }
 
-  object ToolStatisticCollection {
+object ToolStatisticCollection {
 
-  val SUMMARY = "summary"
+  val SUMMARY        = "summary"
   val TOOLSTATISTICS = "singleToolStats"
 
-  implicit val toolCollectionEncoder : Encoder[ToolStatisticCollection] = (obj: ToolStatisticCollection) =>
+  implicit val toolCollectionEncoder: Encoder[ToolStatisticCollection] = (obj: ToolStatisticCollection) =>
     Json.obj(
       (SUMMARY, obj.summaryStatistics.asJson),
       (TOOLSTATISTICS, obj.asList().asJson)
