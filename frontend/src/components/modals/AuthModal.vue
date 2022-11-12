@@ -1,12 +1,6 @@
 <template>
-    <BaseModal id="auth"
-               title=""
-               size="sm"
-               body-class="no-scroll-y"
-               modal-class="tk-auth-modal">
-        <template #header>
-            &#8203;
-        </template>
+    <BaseModal id="auth" title="" size="sm" body-class="no-scroll-y" modal-class="tk-auth-modal">
+        <template #header> &#8203; </template>
         <template #body>
             <b-tabs v-if="loggedIn">
                 <b-tab :title="$t('auth.profile')">
@@ -35,9 +29,9 @@ import LoginForm from '../auth/LoginForm.vue';
 import RegisterForm from '../auth/RegisterForm.vue';
 import Profile from '../auth/Profile.vue';
 import Settings from '../auth/Settings.vue';
-import {User} from '@/types/toolkit/auth';
-import {mapStores} from 'pinia';
-import {useAuthStore} from '@/stores/auth';
+import { User } from '@/types/toolkit/auth';
+import { mapStores } from 'pinia';
+import { useAuthStore } from '@/stores/auth';
 
 export default Vue.extend({
     name: 'AuthModal',
@@ -62,72 +56,72 @@ export default Vue.extend({
 
 <style lang="scss">
 .tk-auth-modal {
-  .modal-body {
-    display: flex;
-    padding: 0;
-
-    .tabs {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-
-      .nav-tabs {
-        width: 100%;
+    .modal-body {
         display: flex;
+        padding: 0;
 
-        .nav-item {
-          flex-grow: 1;
-          text-align: center;
+        .tabs {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
 
-          .nav-link {
-            background-color: $primary;
-            color: white;
-            padding: 0.9rem 1.2rem;
-            border: 0;
-            font-size: 1.1em;
-          }
+            .nav-tabs {
+                width: 100%;
+                display: flex;
 
-          .nav-link:not(.active) {
-            color: #e1e1e1;
-            background-color: darken($primary, 3%);
-          }
+                .nav-item {
+                    flex-grow: 1;
+                    text-align: center;
 
-          &:first-of-type {
-            .nav-link {
-              border-top-right-radius: 0;
-              border-top-left-radius: $global-radius;
-              box-shadow: -1px 0px 1px 0 darken($primary, 8%) inset;
+                    .nav-link {
+                        background-color: $primary;
+                        color: white;
+                        padding: 0.9rem 1.2rem;
+                        border: 0;
+                        font-size: 1.1em;
+                    }
+
+                    .nav-link:not(.active) {
+                        color: #e1e1e1;
+                        background-color: darken($primary, 3%);
+                    }
+
+                    &:first-of-type {
+                        .nav-link {
+                            border-top-right-radius: 0;
+                            border-top-left-radius: $global-radius;
+                            box-shadow: -1px 0px 1px 0 darken($primary, 8%) inset;
+                        }
+
+                        .nav-link.active {
+                            box-shadow: none;
+                        }
+                    }
+
+                    &:last-of-type {
+                        .nav-link {
+                            border-top-left-radius: 0;
+                            border-top-right-radius: $global-radius;
+                            box-shadow: 1px 0px 1px 0 darken($primary, 8%) inset;
+                        }
+
+                        .nav-link.active {
+                            box-shadow: none;
+                        }
+                    }
+                }
             }
 
-            .nav-link.active {
-              box-shadow: none;
-            }
-          }
+            .tab-content {
+                overflow-y: auto;
+                // trick to prevent shrinkage
+                padding: 1.5rem 1.5rem 0;
 
-          &:last-of-type {
-            .nav-link {
-              border-top-left-radius: 0;
-              border-top-right-radius: $global-radius;
-              box-shadow: 1px 0px 1px 0 darken($primary, 8%) inset;
+                & > div {
+                    padding-bottom: 1.5rem;
+                }
             }
-
-            .nav-link.active {
-              box-shadow: none;
-            }
-          }
         }
-      }
-
-      .tab-content {
-        overflow-y: auto;
-        // trick to prevent shrinkage
-        padding: 1.5rem 1.5rem 0;
-
-        & > div {
-          padding-bottom: 1.5rem;
-        }
-      }
     }
-  }
 }
 </style>

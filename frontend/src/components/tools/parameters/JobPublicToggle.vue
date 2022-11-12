@@ -1,21 +1,22 @@
 <template>
-    <i class="tool-action tool-action-push-up fa mr-4 hover-unlock"
-       :class="[isPublic ? 'fa-lock-open' : 'fa-lock']"
-       :title="$t('tools.parameters.isPublic.' + isPublic)"
-       @click="togglePublic"></i>
+    <i
+        class="tool-action tool-action-push-up fa mr-4 hover-unlock"
+        :class="[isPublic ? 'fa-lock-open' : 'fa-lock']"
+        :title="$t('tools.parameters.isPublic.' + isPublic)"
+        @click="togglePublic"></i>
 </template>
 
 <script lang="ts">
 import Switches from 'vue-switches';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
-import {Job} from '@/types/toolkit/jobs';
-import {mapStores} from 'pinia';
-import {useJobsStore} from '@/stores/jobs';
-import {useAuthStore} from '@/stores/auth';
+import { Job } from '@/types/toolkit/jobs';
+import { mapStores } from 'pinia';
+import { useJobsStore } from '@/stores/jobs';
+import { useAuthStore } from '@/stores/auth';
 
 export default ToolParameterMixin.extend({
     name: 'JobPublicToggle',
-    components: {Switches},
+    components: { Switches },
     props: {
         job: {
             type: Object as () => Job,
@@ -58,6 +59,6 @@ export default ToolParameterMixin.extend({
 
 <style lang="scss" scoped>
 .hover-unlock.fa-lock:hover::before {
-  content: "\f09c";
+    content: '\f09c';
 }
 </style>

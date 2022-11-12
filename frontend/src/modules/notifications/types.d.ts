@@ -1,7 +1,7 @@
 // Important: import Vue from 'vue';
 import Vue from 'vue'; // eslint-disable-line @typescript-eslint/no-unused-vars
 
-import {NotificationOptions} from 'vue-notification';
+import { NotificationOptions } from 'vue-notification';
 
 declare module 'vue/types/vue' {
     // Global properties can be declared

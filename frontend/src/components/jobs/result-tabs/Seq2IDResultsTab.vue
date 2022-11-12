@@ -1,6 +1,5 @@
 <template>
-    <Loading v-if="loading || !accIds"
-             :message="$t('loading')" />
+    <Loading v-if="loading || !accIds" :message="$t('loading')" />
     <div v-else>
         <div class="result-options">
             <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
@@ -8,11 +7,9 @@
         </div>
 
         <div class="file-view">
-            <b v-text="$t('jobs.results.seq2ID.numRetrieved', {num: accIds.length})"></b>
-            <br><br>
-            <div v-for="(acc, i) in accIds"
-                 :key="'accession-' + i"
-                 v-text="acc"></div>
+            <b v-text="$t('jobs.results.seq2ID.numRetrieved', { num: accIds.length })"></b>
+            <br /><br />
+            <div v-for="(acc, i) in accIds" :key="'accession-' + i" v-text="acc"></div>
         </div>
     </div>
 </template>
@@ -21,9 +18,9 @@
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import EventBus from '@/util/EventBus';
-import {timeout} from '@/util/Utils';
+import { timeout } from '@/util/Utils';
 
 const logger = Logger.get('Seq2IDResultsTab');
 
@@ -53,7 +50,7 @@ export default ResultTabMixin.extend({
             } else {
                 ++this.tries;
                 if (this.tries === this.maxTries) {
-                    logger.info('Couldn\'t fetch files.');
+                    logger.info("Couldn't fetch files.");
                     return;
                 }
                 await timeout(300);
@@ -67,30 +64,29 @@ export default ResultTabMixin.extend({
         forwardAll(): void {
             if (this.tool.parameters) {
                 EventBus.$emit('show-modal', {
-                    id: 'forwardingModal', props: {
+                    id: 'forwardingModal',
+                    props: {
                         forwardingJobID: this.job.jobID,
                         forwardingData: this.accIds.join('\n'),
                         forwardingMode: this.tool.parameters.forwarding,
                     },
                 });
             } else {
-
                 logger.error('tool parameters not loaded. Cannot forward');
             }
         },
     },
-})
-;
+});
 </script>
 
 <style lang="scss" scoped>
 .file-view {
-  width: 100%;
-  font-size: 12px;
-  font-family: $font-family-monospace;
+    width: 100%;
+    font-size: 12px;
+    font-family: $font-family-monospace;
 }
 
 .fullscreen .file-view {
-  height: 70vh;
+    height: 70vh;
 }
 </style>

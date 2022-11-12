@@ -1,11 +1,11 @@
 <template>
     <div>
-        <hr>
-        <span v-text="$t('tools.citations.intro', {tool: tool.longname})"></span>
+        <hr />
+        <span v-text="$t('tools.citations.intro', { tool: tool.longname })"></span>
         <div class="citation">
             <div v-html="$t('citation')"></div>
 
-            <br v-if="$t('tools.citations.' + tool.name)">
+            <br v-if="$t('tools.citations.' + tool.name)" />
             <div v-html="$t('tools.citations.' + tool.name)"></div>
         </div>
     </div>
@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {Tool} from '@/types/toolkit/tools';
+import { Tool } from '@/types/toolkit/tools';
 
 export default Vue.extend({
     name: 'ToolCitationInfo',
@@ -28,12 +28,12 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .citation {
-  border-left: 2px solid rgba(0, 110, 98, 0.75);
-  margin: 0.65rem 0.5em 0;
-  font-size: 0.95em;
+    border-left: 2px solid rgba(0, 110, 98, 0.75);
+    margin: 0.65rem 0.5em 0;
+    font-size: 0.95em;
 
-  div {
-    margin-left: 1em;
-  }
+    div {
+        margin-left: 1em;
+    }
 }
 </style>

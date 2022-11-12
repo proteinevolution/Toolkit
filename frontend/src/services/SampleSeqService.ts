@@ -7,7 +7,9 @@ class SampleSeqService {
         if (sampleSequenceKey in this.sampleSeqs) {
             return this.sampleSeqs[sampleSequenceKey];
         } else {
-            const res = await axios.get<string>(`/sample-seqs/${sampleSequenceKey}`, {headers: {'Content-Type': 'text/plain'}});
+            const res = await axios.get<string>(`/sample-seqs/${sampleSequenceKey}`, {
+                headers: { 'Content-Type': 'text/plain' },
+            });
             this.sampleSeqs[sampleSequenceKey] = res.data.trim();
             return this.sampleSeqs[sampleSequenceKey];
         }

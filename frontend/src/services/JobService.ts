@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {Job, SimilarJobResult, SubmissionResponse} from '@/types/toolkit/jobs';
+import { Job, SimilarJobResult, SubmissionResponse } from '@/types/toolkit/jobs';
 
 class JobService {
     public async fetchJobs(): Promise<Job[]> {
@@ -39,7 +39,7 @@ class JobService {
     }
 
     public async setJobPublic(jobID: string, isPublic: boolean): Promise<void> {
-        await axios.put(`/api/jobs/${jobID}/`, {isPublic});
+        await axios.put(`/api/jobs/${jobID}/`, { isPublic });
     }
 
     public async suggestJobsForJobId(query: string): Promise<Job[]> {

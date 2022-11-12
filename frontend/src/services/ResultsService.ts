@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import {
     AlignmentResultResponse,
     ForwardingSubmission,
@@ -15,8 +15,12 @@ class ResultsService {
         return res.data;
     }
 
-    public async fetchAlignmentResults(jobId: string, start?: number, end?: number, resultField?: string):
-        Promise<AlignmentResultResponse> {
+    public async fetchAlignmentResults(
+        jobId: string,
+        start?: number,
+        end?: number,
+        resultField?: string
+    ): Promise<AlignmentResultResponse> {
         const res = await axios.get<AlignmentResultResponse>(`/api/jobs/${jobId}/results/alignments/`, {
             params: {
                 start,
@@ -41,8 +45,14 @@ class ResultsService {
         return res.data;
     }
 
-    public async fetchHits(jobId: string, start?: number, end?: number, filter?: string, sortBy?: string, desc?: boolean):
-        Promise<SearchHitsResponse> {
+    public async fetchHits(
+        jobId: string,
+        start?: number,
+        end?: number,
+        filter?: string,
+        sortBy?: string,
+        desc?: boolean
+    ): Promise<SearchHitsResponse> {
         const res = await axios.get<SearchHitsResponse>(`/api/jobs/${jobId}/results/hits/`, {
             params: {
                 start,
@@ -70,7 +80,7 @@ class ResultsService {
     }
 
     public downloadAsFile(file: string, downloadFilename: string): void {
-        const blob = new Blob([file], {type: 'application/octet-stream'});
+        const blob = new Blob([file], { type: 'application/octet-stream' });
         if ((window as any).navigator.msSaveOrOpenBlob) {
             (window as any).navigator.msSaveBlob(blob, downloadFilename);
         } else {
@@ -95,7 +105,7 @@ class ResultsService {
 
     public async getStructureFile(accession: string): Promise<StructureFileResponse> {
         const res = await axios.get<StructureFileResponse>(`/api/jobs/structure-file/${accession}`);
-        return {data: res.data, filename: ResultsService.getResponseFilename(res)};
+        return { data: res.data, filename: ResultsService.getResponseFilename(res) };
     }
 
     private static getResponseFilename(response: AxiosResponse): string | undefined {

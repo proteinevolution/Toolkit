@@ -1,7 +1,6 @@
 <template>
     <div class="d-flex">
-        <switches v-model="submissionValue"
-                  :label="$t('tools.parameters.emailNotification')" />
+        <switches v-model="submissionValue" :label="$t('tools.parameters.emailNotification')" />
     </div>
 </template>
 
@@ -11,7 +10,7 @@ import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 
 export default ToolParameterMixin.extend({
     name: 'EmailNotificationSwitch',
-    components: {Switches},
+    components: { Switches },
     computed: {
         parameterName() {
             // override mixin value

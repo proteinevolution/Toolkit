@@ -2,47 +2,37 @@
     <div>
         <b-form @submit.prevent="login">
             <b-form-group :label="$t('auth.eMailOrUsername')">
-                <b-form-input v-model="username"
-                              type="text"
-                              autofocus
-                              required />
+                <b-form-input v-model="username" type="text" autofocus required />
             </b-form-group>
             <b-form-group :label="$t('auth.password')">
-                <b-form-input v-model="password"
-                              type="password"
-                              required />
+                <b-form-input v-model="password" type="password" required />
             </b-form-group>
-            <b-alert variant="danger"
-                     :show="message !== ''"
-                     v-text="message" />
-            <b-btn type="submit"
-                   v-text="$t('auth.signIn')" />
-            <a class="password-link"
-               @click.stop="toggleForgotContainer">
+            <b-alert variant="danger" :show="message !== ''" v-text="message" />
+            <b-btn type="submit" v-text="$t('auth.signIn')" />
+            <a class="password-link" @click.stop="toggleForgotContainer">
                 {{ $t('auth.forgotPassword') }}
             </a>
         </b-form>
 
         <ExpandHeight>
-            <b-alert v-if="forgot.show"
-                     :variant="!forgot.message || forgot.successful ? 'primary' : 'danger'"
-                     :show="true"
-                     class="mt-3 mb-0">
-                <b-form v-show="!(forgot.message && forgot.successful)"
-                        :class="[forgot.successful ? '' : 'mb-3']"
-                        @submit.prevent="forgotPasswordSubmit">
+            <b-alert
+                v-if="forgot.show"
+                :variant="!forgot.message || forgot.successful ? 'primary' : 'danger'"
+                :show="true"
+                class="mt-3 mb-0">
+                <b-form
+                    v-show="!(forgot.message && forgot.successful)"
+                    :class="[forgot.successful ? '' : 'mb-3']"
+                    @submit.prevent="forgotPasswordSubmit">
                     <b-form-group :label="$t('auth.forgotPasswordInstructions')">
-                        <b-form-input v-model="forgot.eMailOrUsername"
-                                      :placeholder="$t('auth.eMailOrUsername')"
-                                      type="text" />
+                        <b-form-input
+                            v-model="forgot.eMailOrUsername"
+                            :placeholder="$t('auth.eMailOrUsername')"
+                            type="text" />
                     </b-form-group>
-                    <b-btn :disabled="eMailOrUsernameInvalid"
-                           type="submit"
-                           variant="primary"
-                           v-text="$t('submit')" />
+                    <b-btn :disabled="eMailOrUsernameInvalid" type="submit" variant="primary" v-text="$t('submit')" />
                 </b-form>
-                <div v-show="forgot.message"
-                     v-text="forgot.message"></div>
+                <div v-show="forgot.message" v-text="forgot.message"></div>
             </b-alert>
         </ExpandHeight>
     </div>
@@ -50,15 +40,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {AuthMessage, ForgotPasswordData, LoginData} from '@/types/toolkit/auth';
-import {authService} from '@/services/AuthService';
+import { AuthMessage, ForgotPasswordData, LoginData } from '@/types/toolkit/auth';
+import { authService } from '@/services/AuthService';
 import EventBus from '@/util/EventBus';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
-import {TranslateResult} from 'vue-i18n';
-import {mapStores} from 'pinia';
-import {useRootStore} from '@/stores/root';
-import {useJobsStore} from '@/stores/jobs';
-import {useAuthStore} from '@/stores/auth';
+import { TranslateResult } from 'vue-i18n';
+import { mapStores } from 'pinia';
+import { useRootStore } from '@/stores/root';
+import { useJobsStore } from '@/stores/jobs';
+import { useAuthStore } from '@/stores/auth';
 
 export default Vue.extend({
     name: 'LoginForm',
@@ -82,7 +72,7 @@ export default Vue.extend({
         eMailOrUsernameInvalid(): boolean {
             return this.forgot.eMailOrUsername === '';
         },
-      ...mapStores(useRootStore, useAuthStore, useJobsStore),
+        ...mapStores(useRootStore, useAuthStore, useJobsStore),
     },
     methods: {
         async login() {
@@ -137,9 +127,9 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .password-link {
-  padding: 0.375rem 0;
-  float: right;
-  color: $primary !important;
-  cursor: pointer;
+    padding: 0.375rem 0;
+    float: right;
+    color: $primary !important;
+    cursor: pointer;
 }
 </style>

@@ -1,8 +1,7 @@
 <template>
     <div>
-        <h3 class="mb-3 h5"
-            v-text="$t('jobs.stateMessages.prepared')"></h3>
-        <p v-html="$t('jobs.citationInfo', {tool: tool.longname})"></p>
+        <h3 class="mb-3 h5" v-text="$t('jobs.stateMessages.prepared')"></h3>
+        <p v-html="$t('jobs.citationInfo', { tool: tool.longname })"></p>
         <div v-text="$t('jobs.jobIDDetails', job)"></div>
     </div>
 </template>

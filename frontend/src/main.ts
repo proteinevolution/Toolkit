@@ -7,8 +7,8 @@ import axios from 'axios';
 import './bootstrap.ts';
 import '@/util/LoggerConfig';
 import Logger from 'js-logger';
-import {pinia} from '@/stores';
-import {useRootStoreWithout} from '@/stores/root';
+import { pinia } from '@/stores';
+import { useRootStoreWithout } from '@/stores/root';
 
 Vue.config.productionTip = false;
 Vue.config.silent = import.meta.env.PROD;
@@ -18,7 +18,6 @@ if (import.meta.env.DEV) {
     Logger.get('Main').log('Running in Development Mode');
     axios.defaults.withCredentials = true;
 }
-
 
 const isSecure: boolean = location.protocol === 'https:';
 const websocketUrl: string = isSecure ? 'wss://' + location.host + '/ws/' : 'ws://' + location.host + '/ws/';

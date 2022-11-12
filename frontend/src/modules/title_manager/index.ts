@@ -1,5 +1,5 @@
-import {VueConstructor} from 'vue';
-import {TitleProperties} from './types';
+import { VueConstructor } from 'vue';
+import { TitleProperties } from './types';
 
 const titleProperties: TitleProperties = {
     base: document.title,

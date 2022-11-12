@@ -1,6 +1,6 @@
 import axios from 'axios';
-import {MaintenanceState} from '@/types/toolkit/auth';
-import {Statistics} from '@/types/toolkit/admin';
+import { MaintenanceState } from '@/types/toolkit/auth';
+import { Statistics } from '@/types/toolkit/admin';
 
 class BackendService {
     public async setMaintenanceState(state: MaintenanceState): Promise<void> {
@@ -13,12 +13,13 @@ class BackendService {
     }
 
     public fetchStatistics(fromDate: string, toDate: string): Promise<Statistics> {
-        return new Promise<Statistics>(((resolve, reject) => {
-            const params = {fromDate, toDate};
-            axios.get(`/api/backend/statistics`, {params})
+        return new Promise<Statistics>((resolve, reject) => {
+            const params = { fromDate, toDate };
+            axios
+                .get(`/api/backend/statistics`, { params })
                 .then((response) => resolve(response.data))
                 .catch(reject);
-        }));
+        });
     }
 }
 

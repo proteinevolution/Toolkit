@@ -1,17 +1,18 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-        <b-form-input v-model="submissionValue"
-                      :placeholder="parameter.inputPlaceholder"
-                      :state="state"
-                      :class="{nonDefault: !disableRemember && isNonDefaultValue}"
-                      type="text"
-                      size="sm"
-                      required />
+        <b-form-input
+            v-model="submissionValue"
+            :placeholder="parameter.inputPlaceholder"
+            :state="state"
+            :class="{ nonDefault: !disableRemember && isNonDefaultValue }"
+            type="text"
+            size="sm"
+            required />
     </b-form-group>
 </template>
 
 <script lang="ts">
-import {TextInputParameter} from '@/types/toolkit/tools';
+import { TextInputParameter } from '@/types/toolkit/tools';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
 import EventBus from '@/util/EventBus';
 
@@ -55,7 +56,7 @@ export default ParameterRememberMixin.extend({
             immediate: true,
             handler(value: string) {
                 if (this.regex && !this.regex.test(value)) {
-                    this.setError({textKey: 'constraints.format'});
+                    this.setError({ textKey: 'constraints.format' });
                 } else {
                     this.setError(undefined);
                 }
@@ -74,6 +75,6 @@ export default ParameterRememberMixin.extend({
 
 <style lang="scss" scoped>
 .nonDefault {
-  background: $non-default-highlight;
+    background: $non-default-highlight;
 }
 </style>

@@ -1,63 +1,58 @@
 <template>
     <div class="autocomplete">
-        <input ref="searchInput"
-               v-model.trim="search"
-               class="form-control search-field"
-               :class="targetClass"
-               v-bind="$attrs"
-               @input="onChange"
-               @keydown.down="onArrowDown"
-               @keydown.up="onArrowUp"
-               @keydown.enter="onEnter"
-               @focus="onFocus">
+        <input
+            ref="searchInput"
+            v-model.trim="search"
+            class="form-control search-field"
+            :class="targetClass"
+            v-bind="$attrs"
+            @input="onChange"
+            @keydown.down="onArrowDown"
+            @keydown.up="onArrowUp"
+            @keydown.enter="onEnter"
+            @focus="onFocus" />
         <i class="fas fa-search search-icon"></i>
-        <div v-show="isOpen"
-             class="autocomplete-results">
-            <div v-show="!isLoading && suggestions.jobs.length === 0 && suggestions.tools.length === 0"
-                 class="autocomplete-no-results">
+        <div v-show="isOpen" class="autocomplete-results">
+            <div
+                v-show="!isLoading && suggestions.jobs.length === 0 && suggestions.tools.length === 0"
+                class="autocomplete-no-results">
                 {{ $t('search.nothingFound') }}
             </div>
-            <div v-show="suggestions.tools.length > 0"
-                 class="autocomplete-group"
-                 :class="[suggestions.jobs.length > 0 ? 'mb-3' : '']">
+            <div
+                v-show="suggestions.tools.length > 0"
+                class="autocomplete-group"
+                :class="[suggestions.jobs.length > 0 ? 'mb-3' : '']">
                 <h6 class="autocomplete-group-header">
                     {{ $t('tools.header') }}
                 </h6>
-                <div v-for="(tool, i) in suggestions.tools.slice(0, itemsPerGroup)"
-                     :key="i"
-                     class="autocomplete-result"
-                     :class="{ 'is-active': i === arrowCounter }">
-                    <a class="search-results"
-                       @click="goToTool(tool)"
-                       v-text="tool.longname"></a>
+                <div
+                    v-for="(tool, i) in suggestions.tools.slice(0, itemsPerGroup)"
+                    :key="i"
+                    class="autocomplete-result"
+                    :class="{ 'is-active': i === arrowCounter }">
+                    <a class="search-results" @click="goToTool(tool)" v-text="tool.longname"></a>
                 </div>
-                <div v-if="suggestions.tools.length > itemsPerGroup"
-                     class="autocomplete-more-results">
-                    ...
-                </div>
+                <div v-if="suggestions.tools.length > itemsPerGroup" class="autocomplete-more-results">...</div>
             </div>
-            <div v-show="!isLoading && suggestions.jobs.length > 0"
-                 class="autocomplete-group">
+            <div v-show="!isLoading && suggestions.jobs.length > 0" class="autocomplete-group">
                 <h6 class="autocomplete-group-header">
                     {{ $t('jobs.header') }}
                 </h6>
-                <li v-if="isLoading"
-                    class="autocomplete-loading">
+                <li v-if="isLoading" class="autocomplete-loading">
                     {{ $t('loading') }}
                 </li>
                 <div v-else>
-                    <div v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
-                         :key="i"
-                         class="autocomplete-result"
-                         :class="{ 'is-active': (i + suggestions.tools.length) === arrowCounter }">
-                        <a class="search-results"
-                           @click="goToJob(job)">
+                    <div
+                        v-for="(job, i) in suggestions.jobs.slice(0, itemsPerGroup)"
+                        :key="i"
+                        class="autocomplete-result"
+                        :class="{ 'is-active': i + suggestions.tools.length === arrowCounter }">
+                        <a class="search-results" @click="goToJob(job)">
                             {{ job.jobID }} ({{ job.tool.substr(0, 4).toUpperCase() }})
                         </a>
                     </div>
                 </div>
-                <div v-if="suggestions.tools.length > itemsPerGroup && !isLoading"
-                     class="autocomplete-more-results">
+                <div v-if="suggestions.tools.length > itemsPerGroup && !isLoading" class="autocomplete-more-results">
                     ...
                 </div>
             </div>
@@ -67,12 +62,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {Tool} from '@/types/toolkit/tools';
-import {Job} from '@/types/toolkit/jobs';
-import {sections} from '@/conf/ToolSections';
-import {jobService} from '@/services/JobService';
-import {mapStores} from 'pinia';
-import {useToolsStore} from '@/stores/tools';
+import { Tool } from '@/types/toolkit/tools';
+import { Job } from '@/types/toolkit/jobs';
+import { sections } from '@/conf/ToolSections';
+import { jobService } from '@/services/JobService';
+import { mapStores } from 'pinia';
+import { useToolsStore } from '@/stores/tools';
 
 export default Vue.extend({
     name: 'SearchField',
@@ -125,7 +120,8 @@ export default Vue.extend({
             (this.suggestions.tools as Tool[]) = this.tools.filter((t: Tool) => {
                 return t.longname.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
             });
-            jobService.suggestJobsForJobId(this.search)
+            jobService
+                .suggestJobsForJobId(this.search)
                 .then((jobs: Job[]) => {
                     (this.suggestions.jobs as Job[]) = jobs;
                 })
@@ -180,70 +176,70 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .autocomplete {
-  width: 100%;
-  position: relative;
-  z-index: 10;
-
-  .search-field {
-    font-size: 0.9em;
-  }
-
-  .form-control-gray:not(:focus) {
-    background-color: transparent;
-  }
-
-  .search-icon {
-    color: $tk-gray;
-    position: absolute;
-    right: 0.7rem;
-    top: 0.63rem;
-    pointer-events: none;
-  }
-
-  .form-control-sm ~ .search-icon {
-    right: 0.6rem;
-    top: 25%;
-  }
-
-  .autocomplete-results {
-    border-radius: $global-radius;
-    background: white;
-    padding: 0.5rem 0;
-    margin-top: 0.25rem;
-    border: 1px solid $tk-light-gray;
-    max-height: 15rem;
-    overflow: auto;
-    position: absolute;
     width: 100%;
+    position: relative;
+    z-index: 10;
 
-    .autocomplete-group-header {
-      color: $primary;
-      font-weight: bold;
-      padding: 0 0.6rem;
+    .search-field {
+        font-size: 0.9em;
     }
 
-    .autocomplete-more-results,
-    .autocomplete-no-results {
-      list-style: none;
-      text-align: left;
-      padding: 0.3rem 0.6rem;
+    .form-control-gray:not(:focus) {
+        background-color: transparent;
     }
 
-    .autocomplete-result {
-      list-style: none;
-      text-align: left;
-      padding: 0.3rem 0.6rem;
-      cursor: pointer;
+    .search-icon {
+        color: $tk-gray;
+        position: absolute;
+        right: 0.7rem;
+        top: 0.63rem;
+        pointer-events: none;
     }
 
-    .autocomplete-result.is-active,
-    .autocomplete-result:hover {
-      background-color: $primary;
-
-      .search-results {
-        color: white;
-      }
+    .form-control-sm ~ .search-icon {
+        right: 0.6rem;
+        top: 25%;
     }
-  }
+
+    .autocomplete-results {
+        border-radius: $global-radius;
+        background: white;
+        padding: 0.5rem 0;
+        margin-top: 0.25rem;
+        border: 1px solid $tk-light-gray;
+        max-height: 15rem;
+        overflow: auto;
+        position: absolute;
+        width: 100%;
+
+        .autocomplete-group-header {
+            color: $primary;
+            font-weight: bold;
+            padding: 0 0.6rem;
+        }
+
+        .autocomplete-more-results,
+        .autocomplete-no-results {
+            list-style: none;
+            text-align: left;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .autocomplete-result {
+            list-style: none;
+            text-align: left;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+
+        .autocomplete-result.is-active,
+        .autocomplete-result:hover {
+            background-color: $primary;
+
+            .search-results {
+                color: white;
+            }
+        }
+    }
 }
 </style>

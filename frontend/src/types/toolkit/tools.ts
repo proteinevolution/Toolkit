@@ -1,5 +1,5 @@
 // TODO: move content into different files
-import {AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType} from './enums';
+import { AlignmentSeqFormat, AlignmentSeqType, ParameterType, TextAreaInputType } from './enums';
 
 export interface Tool {
     name: string;
@@ -18,9 +18,7 @@ export interface ToolParameters {
     hideSubmitButtons?: boolean;
 }
 
-export interface ValidationParams {
-
-}
+export interface ValidationParams {}
 
 export interface SequenceValidationParams extends ValidationParams {
     allowedSeqFormats: AlignmentSeqFormat[];

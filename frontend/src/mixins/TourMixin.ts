@@ -16,12 +16,13 @@ const TourMixin = Vue.extend({
                     params: {
                         enableScrolling: false,
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'start' && this.$route.path !== '/') {
-                            this.$router.push('/');
-                        }
-                        resolve();
-                    }),
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (type === 'start' && this.$route.path !== '/') {
+                                this.$router.push('/');
+                            }
+                            resolve();
+                        }),
                 },
                 {
                     target: '[data-v-step="search-bar"]',
@@ -32,17 +33,18 @@ const TourMixin = Vue.extend({
                     params: {
                         enableScrolling: false,
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'previous' && this.$route.path !== '/') {
-                            this.$router.push('/');
-                        }
-                        const poll = setInterval(() => {
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (type === 'previous' && this.$route.path !== '/') {
+                                this.$router.push('/');
+                            }
+                            const poll = setInterval(() => {
                                 if (document.querySelector('[data-v-step="search-bar"]')) {
                                     clearInterval(poll);
                                     resolve();
                                 }
-                        }, 100);
-                    }),
+                            }, 100);
+                        }),
                 },
                 {
                     target: '[data-v-step="tool"]',
@@ -50,12 +52,13 @@ const TourMixin = Vue.extend({
                     params: {
                         enableScrolling: false,
                     },
-                    before: () => new Promise<void>((resolve) => {
-                        EventBus.$emit('select-nav-bar-section', 'search');
-                        // Give the navBar a moment to switch tabs before the message
-                        // can be displayed
-                        setTimeout(resolve, 20);
-                    }),
+                    before: () =>
+                        new Promise<void>((resolve) => {
+                            EventBus.$emit('select-nav-bar-section', 'search');
+                            // Give the navBar a moment to switch tabs before the message
+                            // can be displayed
+                            setTimeout(resolve, 20);
+                        }),
                 },
                 {
                     target: '[data-v-step="help-modal"]',
@@ -65,22 +68,23 @@ const TourMixin = Vue.extend({
                     content: this.$t('tour.content.help'),
                     params: {
                         enableScrolling: false,
-                        placement: 'right'
+                        placement: 'right',
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (this.$route.path !== '/tools/hhpred') {
-                            this.$router.push('/tools/hhpred');
-                        }
-                        if (type === 'previous') {
-                            EventBus.$emit('change-tool-tab', 0);
-                        }
-                        const poll = setInterval(() => {
-                            if (document.querySelector('[data-v-step="input"]')) {
-                                clearInterval(poll);
-                                resolve();
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (this.$route.path !== '/tools/hhpred') {
+                                this.$router.push('/tools/hhpred');
                             }
-                        }, 100);
-                    }),
+                            if (type === 'previous') {
+                                EventBus.$emit('change-tool-tab', 0);
+                            }
+                            const poll = setInterval(() => {
+                                if (document.querySelector('[data-v-step="input"]')) {
+                                    clearInterval(poll);
+                                    resolve();
+                                }
+                            }, 100);
+                        }),
                 },
                 {
                     target: '[data-v-step="input"]',
@@ -90,7 +94,7 @@ const TourMixin = Vue.extend({
                     content: this.$t('tour.content.input'),
                     params: {
                         enableScrolling: false,
-                        placement: 'top'
+                        placement: 'top',
                     },
                 },
                 {
@@ -106,12 +110,13 @@ const TourMixin = Vue.extend({
                     params: {
                         placement: 'top',
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'next') {
-                            EventBus.$emit('remote-trigger-paste-example');
-                        }
-                        resolve();
-                    }),
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (type === 'next') {
+                                EventBus.$emit('remote-trigger-paste-example');
+                            }
+                            resolve();
+                        }),
                 },
                 {
                     target: '[data-v-step="proteomes"]',
@@ -119,12 +124,13 @@ const TourMixin = Vue.extend({
                     params: {
                         placement: 'top',
                     },
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'previous') {
-                            EventBus.$emit('change-tool-tab', 0);
-                        }
-                        resolve();
-                    }),
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (type === 'previous') {
+                                EventBus.$emit('change-tool-tab', 0);
+                            }
+                            resolve();
+                        }),
                 },
                 {
                     target: '.tour-tab-Parameters',
@@ -141,29 +147,31 @@ const TourMixin = Vue.extend({
                     // the active tab
                     target: '.tab-pane[aria-hidden=false] [data-v-step="job-id"]',
                     content: this.$t('tour.content.jobId'),
-                    before: () => new Promise<void>((resolve) => {
-                        EventBus.$emit('change-tool-tab', 1);
-                        resolve();
-                    }),
+                    before: () =>
+                        new Promise<void>((resolve) => {
+                            EventBus.$emit('change-tool-tab', 1);
+                            resolve();
+                        }),
                 },
                 {
                     target: '.tab-pane[aria-hidden=false] [data-v-step="submit"]',
                     content: this.$t('tour.content.submit'),
-                    before: (type: string) => new Promise<void>((resolve) => {
-                        if (type === 'previous') {
-                            if (this.$route.path !== '/tools/hhpred') {
-                                this.$router.push('/tools/hhpred');
-                            }
-                            const poll = setInterval(() => {
-                                if (document.querySelector('[data-v-step="submit"]')) {
-                                    clearInterval(poll);
-                                    resolve();
+                    before: (type: string) =>
+                        new Promise<void>((resolve) => {
+                            if (type === 'previous') {
+                                if (this.$route.path !== '/tools/hhpred') {
+                                    this.$router.push('/tools/hhpred');
                                 }
-                            }, 100);
-                        } else {
-                            resolve()
-                        }
-                    })
+                                const poll = setInterval(() => {
+                                    if (document.querySelector('[data-v-step="submit"]')) {
+                                        clearInterval(poll);
+                                        resolve();
+                                    }
+                                }, 100);
+                            } else {
+                                resolve();
+                            }
+                        }),
                 },
                 {
                     target: '[data-v-step="job-list"]',
@@ -172,16 +180,17 @@ const TourMixin = Vue.extend({
                     },
                     content: this.$t('tour.content.jobList'),
                     params: {
-                        placement: 'top'
+                        placement: 'top',
                     },
-                    before: () => new Promise<void>((resolve) => {
-                        const poll = setInterval(() => {
-                            if (document.querySelector('[data-v-step="job-list"]')) {
-                                clearInterval(poll);
-                                resolve();
-                            }
-                        }, 100);
-                    })
+                    before: () =>
+                        new Promise<void>((resolve) => {
+                            const poll = setInterval(() => {
+                                if (document.querySelector('[data-v-step="job-list"]')) {
+                                    clearInterval(poll);
+                                    resolve();
+                                }
+                            }, 100);
+                        }),
                 },
                 {
                     target: '[data-v-step="job-manager"]',
@@ -190,19 +199,20 @@ const TourMixin = Vue.extend({
                     },
                     content: this.$t('tour.content.jobManager'),
                     params: {
-                        placement: 'top'
+                        placement: 'top',
                     },
-                    before: () => new Promise<void>((resolve) => {
-                        if (this.$route.path !== '/jobmanager') {
-                            this.$router.push('/jobmanager');
-                        }
-                        const poll = setInterval(() => {
-                            if (document.querySelector('[data-v-step="job-manager"]')) {
-                                clearInterval(poll);
-                                resolve();
+                    before: () =>
+                        new Promise<void>((resolve) => {
+                            if (this.$route.path !== '/jobmanager') {
+                                this.$router.push('/jobmanager');
                             }
-                        }, 100);
-                    })
+                            const poll = setInterval(() => {
+                                if (document.querySelector('[data-v-step="job-manager"]')) {
+                                    clearInterval(poll);
+                                    resolve();
+                                }
+                            }, 100);
+                        }),
                 },
             ],
             options: {
@@ -211,8 +221,8 @@ const TourMixin = Vue.extend({
                     buttonPrevious: this.$t('tour.labels.buttonPrevious'),
                     buttonNext: this.$t('tour.labels.buttonNext'),
                     buttonStop: this.$t('tour.labels.buttonStop'),
-                }
-            }
+                },
+            },
         };
     },
     computed: {
@@ -228,7 +238,7 @@ const TourMixin = Vue.extend({
                 this.tour.nextStep();
             } else if (this.tour.currentStep === 9 && path.includes('/jobs')) {
                 this.tour.nextStep();
-            }else {
+            } else {
                 this.tour.stop();
             }
         },

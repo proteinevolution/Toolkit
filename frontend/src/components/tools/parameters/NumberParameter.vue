@@ -1,26 +1,25 @@
 <template>
     <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
-        <b-form-input v-model.number="submissionValue"
-                      type="number"
-                      :class="{nonDefault: isNonDefaultValue}"
-                      :min="parameter.min"
-                      :max="parameter.max"
-                      :step="parameter.step"
-                      :state="hasError ? false : null"
-                      :aria-describedby="parameter.name + '-invalid'"
-                      size="sm"
-                      :placeholder="parameter.default + ' (default)'"
-                      :title="parameter.default + ' (default)'"
-                      required />
-        <b-form-invalid-feedback v-if="hasError"
-                                 :id="parameter.name + '-invalid'"
-                                 v-text="errorMessage" />
+        <b-form-input
+            v-model.number="submissionValue"
+            type="number"
+            :class="{ nonDefault: isNonDefaultValue }"
+            :min="parameter.min"
+            :max="parameter.max"
+            :step="parameter.step"
+            :state="hasError ? false : null"
+            :aria-describedby="parameter.name + '-invalid'"
+            size="sm"
+            :placeholder="parameter.default + ' (default)'"
+            :title="parameter.default + ' (default)'"
+            required />
+        <b-form-invalid-feedback v-if="hasError" :id="parameter.name + '-invalid'" v-text="errorMessage" />
     </b-form-group>
 </template>
 
 <script lang="ts">
-import {NumberParameter} from '@/types/toolkit/tools';
-import {ConstraintError} from '@/types/toolkit/validation';
+import { NumberParameter } from '@/types/toolkit/tools';
+import { ConstraintError } from '@/types/toolkit/validation';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
 
 export default ParameterRememberMixin.extend({
@@ -53,11 +52,13 @@ export default ParameterRememberMixin.extend({
                 return {
                     textKey: 'constraints.notEmpty',
                 };
-            } else if (this.parameter.min && value < this.parameter.min ||
-                this.parameter.max && value > this.parameter.max) {
+            } else if (
+                (this.parameter.min && value < this.parameter.min) ||
+                (this.parameter.max && value > this.parameter.max)
+            ) {
                 return {
                     textKey: 'constraints.range',
-                    textKeyParams: {min: this.parameter.min, max: this.parameter.max},
+                    textKeyParams: { min: this.parameter.min, max: this.parameter.max },
                 };
             }
         },
@@ -70,6 +71,6 @@ export default ParameterRememberMixin.extend({
 
 <style lang="scss" scoped>
 .nonDefault {
-  background: $non-default-highlight;
+    background: $non-default-highlight;
 }
 </style>

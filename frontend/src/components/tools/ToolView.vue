@@ -1,19 +1,13 @@
 <template>
     <VelocityFade :duration="100">
-        <div v-if="tool"
-             :key="toolName + 'view'"
-             class="tool-view">
+        <div v-if="tool" :key="toolName + 'view'" class="tool-view">
             <div class="tool-header d-flex align-items-baseline">
                 <h1 class="no-wrap mr-3">
-                    <a class="cursor-pointer mr-1"
-                       @click="refresh">
+                    <a class="cursor-pointer mr-1" @click="refresh">
                         {{ tool.longname }}
                     </a>
-                    <b-link class="help-icon"
-                            data-v-step="help-modal"
-                            @click="launchHelpModal">
-                        <i class="far fa-question-circle"
-                           :title="$t('jobs.help')"></i>
+                    <b-link class="help-icon" data-v-step="help-modal" @click="launchHelpModal">
+                        <i class="far fa-question-circle" :title="$t('jobs.help')"></i>
                     </b-link>
                 </h1>
                 <div class="job-details ml-auto text-muted mb-2">
@@ -23,81 +17,85 @@
 
             <LoadingWrapper :loading="rootStore.loading.toolParameters">
                 <b-form class="tool-form">
-                    <b-card no-body
-                            :class="[fullScreen ? 'fullscreen' : '']">
-                        <b-tabs v-model="tabIndex"
-                                class="parameter-tabs"
-                                card
-                                nav-class="tabs-nav"
-                                no-fade>
-                            <b-tab v-for="section in parameterSections"
-                                   :key="toolName + section.name"
-                                   :title-item-class="'tour-tab-' + section.name"
-                                   :title="section.name">
+                    <b-card no-body :class="[fullScreen ? 'fullscreen' : '']">
+                        <b-tabs v-model="tabIndex" class="parameter-tabs" card nav-class="tabs-nav" no-fade>
+                            <b-tab
+                                v-for="section in parameterSections"
+                                :key="toolName + section.name"
+                                :title-item-class="'tour-tab-' + section.name"
+                                :title="section.name">
                                 <div class="tabs-panel">
-                                    <Section :section="section"
-                                             :validation-params="tool.validationParams"
-                                             :validation-errors="validationErrors"
-                                             :full-screen="fullScreen"
-                                             :submission="submission"
-                                             :remember-params="rememberParams" />
+                                    <Section
+                                        :section="section"
+                                        :validation-params="tool.validationParams"
+                                        :validation-errors="validationErrors"
+                                        :full-screen="fullScreen"
+                                        :submission="submission"
+                                        :remember-params="rememberParams" />
                                 </div>
 
-                                <b-form-group v-if="showSubmitButtons"
-                                              class="submit-buttons pt-4">
-                                    <b-btn v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
-                                           class="submit-button"
-                                           :class="{ 'margin' : loggedIn, 'maintenance': submitBlocked }"
-                                           :disabled="preventSubmit"
-                                           :data-v-step="isJobView ? '' : 'submit'"
-                                           variant="primary"
-                                           @click="submitJob">
-                                        <loading v-if="submitLoading"
-                                                 :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
-                                                 :size="20" />
-                                        <span v-else
-                                              v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                                <b-form-group v-if="showSubmitButtons" class="submit-buttons pt-4">
+                                    <b-btn
+                                        v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
+                                        class="submit-button"
+                                        :class="{ margin: loggedIn, maintenance: submitBlocked }"
+                                        :disabled="preventSubmit"
+                                        :data-v-step="isJobView ? '' : 'submit'"
+                                        variant="primary"
+                                        @click="submitJob">
+                                        <loading
+                                            v-if="submitLoading"
+                                            :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                            :size="20" />
+                                        <span
+                                            v-else
+                                            v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
                                     </b-btn>
-                                    <custom-job-id-input data-v-step="job-id"
-                                                         :validation-errors="validationErrors"
-                                                         :submission="submission" />
-                                    <b-btn v-if="hasRememberedParameters"
-                                           class="reset-params-button"
-                                           variant="secondary"
-                                           :title="$t('jobs.resetParamsTitle')"
-                                           @click="clearParameterRemember"
-                                           v-text="$t('jobs.resetParams')" />
-                                    <email-notification-switch v-if="loggedIn"
-                                                               :validation-errors="validationErrors"
-                                                               :submission="submission"
-                                                               class="pull-left" />
+                                    <custom-job-id-input
+                                        data-v-step="job-id"
+                                        :validation-errors="validationErrors"
+                                        :submission="submission" />
+                                    <b-btn
+                                        v-if="hasRememberedParameters"
+                                        class="reset-params-button"
+                                        variant="secondary"
+                                        :title="$t('jobs.resetParamsTitle')"
+                                        @click="clearParameterRemember"
+                                        v-text="$t('jobs.resetParams')" />
+                                    <email-notification-switch
+                                        v-if="loggedIn"
+                                        :validation-errors="validationErrors"
+                                        :submission="submission"
+                                        class="pull-left" />
                                 </b-form-group>
                             </b-tab>
 
                             <!-- the job form can insert more tabs here -->
-                            <slot name="job-tabs"
-                                  :full-screen="fullScreen"></slot>
+                            <slot name="job-tabs" :full-screen="fullScreen"></slot>
 
                             <!-- hack to show the alignment viewer tool results -->
-                            <b-tab v-if="alignmentViewerSequences"
-                                   :title="$t('tools.alignmentViewer.visualization')">
-                                <alignment-viewer :sequences="alignmentViewerSequences"
-                                                  :format="alignmentViewerFormat" />
+                            <b-tab v-if="alignmentViewerSequences" :title="$t('tools.alignmentViewer.visualization')">
+                                <alignment-viewer
+                                    :sequences="alignmentViewerSequences"
+                                    :format="alignmentViewerFormat" />
                             </b-tab>
 
                             <template #tabs-end>
                                 <div class="ml-auto">
-                                    <job-public-toggle v-if="loggedIn && (!isJobView || !job.foreign)"
-                                                       :job="job"
-                                                       :submission="submission" />
-                                    <i v-if="job && !job.foreign"
-                                       class="tool-action tool-action-push-up fa fa-trash mr-4"
-                                       :title="$t('jobs.delete')"
-                                       @click="$emit('delete-job')"></i>
-                                    <i class="tool-action tool-action-lg fa mr-1"
-                                       :title="$t('jobs.toggleFullscreen')"
-                                       :class="[fullScreen ? 'fa-compress' : 'fa-expand']"
-                                       @click="toggleFullScreen"></i>
+                                    <job-public-toggle
+                                        v-if="loggedIn && (!isJobView || !job.foreign)"
+                                        :job="job"
+                                        :submission="submission" />
+                                    <i
+                                        v-if="job && !job.foreign"
+                                        class="tool-action tool-action-push-up fa fa-trash mr-4"
+                                        :title="$t('jobs.delete')"
+                                        @click="$emit('delete-job')"></i>
+                                    <i
+                                        class="tool-action tool-action-lg fa mr-1"
+                                        :title="$t('jobs.toggleFullscreen')"
+                                        :class="[fullScreen ? 'fa-compress' : 'fa-expand']"
+                                        @click="toggleFullScreen"></i>
                                 </div>
                             </template>
                         </b-tabs>
@@ -105,8 +103,7 @@
                 </b-form>
             </LoadingWrapper>
         </div>
-        <not-found-view v-else
-                        error-message="errors.ToolNotFound" />
+        <not-found-view v-else error-message="errors.ToolNotFound" />
     </VelocityFade>
 </template>
 
@@ -116,22 +113,22 @@ import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
 import JobPublicToggle from '@/components/tools/parameters/JobPublicToggle.vue';
-import {ParameterSection, Tool} from '@/types/toolkit/tools';
+import { ParameterSection, Tool } from '@/types/toolkit/tools';
 import VelocityFade from '@/transitions/VelocityFade.vue';
 import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 import NotFoundView from '@/components/utils/NotFoundView.vue';
 import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
-import {jobService} from '@/services/JobService';
-import {authService} from '@/services/AuthService';
+import { jobService } from '@/services/JobService';
+import { authService } from '@/services/AuthService';
 import Logger from 'js-logger';
 import EventBus from '@/util/EventBus';
-import {CustomJobIdValidationResult, Job} from '@/types/toolkit/jobs';
+import { CustomJobIdValidationResult, Job } from '@/types/toolkit/jobs';
 import Loading from '@/components/utils/Loading.vue';
-import {parameterRememberService} from '@/services/ParameterRememberService';
-import {mapStores} from 'pinia';
-import {useRootStore} from '@/stores/root';
-import {useToolsStore} from '@/stores/tools';
-import {useAuthStore} from '@/stores/auth';
+import { parameterRememberService } from '@/services/ParameterRememberService';
+import { mapStores } from 'pinia';
+import { useRootStore } from '@/stores/root';
+import { useToolsStore } from '@/stores/tools';
+import { useAuthStore } from '@/stores/auth';
 
 const logger = Logger.get('ToolView');
 
@@ -146,8 +143,7 @@ export default hasHTMLTitle.extend({
         EmailNotificationSwitch,
         JobPublicToggle,
         Loading,
-        AlignmentViewer: () => import(
-            '@/components/tools/AlignmentViewer.vue'),
+        AlignmentViewer: () => import('@/components/tools/AlignmentViewer.vue'),
     },
     props: {
         isJobView: {
@@ -188,8 +184,7 @@ export default hasHTMLTitle.extend({
             if (!this.tool || !this.tool.parameters) {
                 return undefined;
             }
-            return this.tool.parameters.sections
-                .filter((section: ParameterSection) => section.parameters.length > 0);
+            return this.tool.parameters.sections.filter((section: ParameterSection) => section.parameters.length > 0);
         },
         showSubmitButtons(): boolean {
             return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
@@ -219,7 +214,7 @@ export default hasHTMLTitle.extend({
             immediate: true,
             handler(value: Job | undefined) {
                 if (value) {
-                    this.submission = {...value.paramValues};
+                    this.submission = { ...value.paramValues };
                     Vue.set(this.submission, 'parentID', value.jobID);
                     // Take the suggested Job ID immediately when loading existing job parameters into the tool
                     this.checkJobId(value.jobID);
@@ -288,7 +283,8 @@ export default hasHTMLTitle.extend({
             const toolName = this.toolName;
             const submission = this.submission;
             this.submitLoading = true;
-            jobService.submitJob(this.toolName, submission)
+            jobService
+                .submitJob(this.toolName, submission)
                 .then((response) => {
                     this.submitLoading = false;
                     this.saveParametersToRemember(toolName);
@@ -300,12 +296,12 @@ export default hasHTMLTitle.extend({
                     this.$alert(this.$t('errors.general'), 'danger');
                 });
         },
-        openAlignmentViewerResults({sequences, format}: { sequences: string, format: string }): void {
+        openAlignmentViewerResults({ sequences, format }: { sequences: string; format: string }): void {
             this.alignmentViewerSequences = sequences;
             this.alignmentViewerFormat = format;
             setTimeout(() => {
-              this.tabIndex = 1;
-              EventBus.$emit('alignment-viewer-resize', this.fullScreen);
+                this.tabIndex = 1;
+                EventBus.$emit('alignment-viewer-resize', this.fullScreen);
             }, 100);
         },
         resubmitSectionReceive(section: string): void {
@@ -313,7 +309,7 @@ export default hasHTMLTitle.extend({
             this.tabIndex = 0;
         },
         launchHelpModal(): void {
-            EventBus.$emit('show-modal', {id: 'helpModal', props: {toolName: this.toolName}});
+            EventBus.$emit('show-modal', { id: 'helpModal', props: { toolName: this.toolName } });
         },
         refresh(): void {
             if (this.$route.name === 'tools') {
@@ -323,12 +319,11 @@ export default hasHTMLTitle.extend({
             }
         },
         checkJobId(jobId: string): void {
-            authService.validateJobId(jobId)
-                .then((result: CustomJobIdValidationResult) => {
-                    if (result.suggested) {
-                        Vue.set(this.submission, 'jobID', result.suggested);
-                    }
-                });
+            authService.validateJobId(jobId).then((result: CustomJobIdValidationResult) => {
+                if (result.suggested) {
+                    Vue.set(this.submission, 'jobID', result.suggested);
+                }
+            });
         },
     },
 });
@@ -336,139 +331,137 @@ export default hasHTMLTitle.extend({
 
 <style lang="scss">
 .tool-header {
-  @include media-breakpoint-up(md) {
-    height: 2.75rem;
-  }
+    @include media-breakpoint-up(md) {
+        height: 2.75rem;
+    }
 
-  h1 {
-    color: $primary;
-    font-weight: bold;
-    font-size: 1.25em;
-    line-height: 1.6;
-  }
+    h1 {
+        color: $primary;
+        font-weight: bold;
+        font-size: 1.25em;
+        line-height: 1.6;
+    }
 
-  .help-icon i {
-    color: $tk-gray;
-    font-size: 0.9em;
-    margin-left: 0.15rem;
-  }
+    .help-icon i {
+        color: $tk-gray;
+        font-size: 0.9em;
+        margin-left: 0.15rem;
+    }
 }
 
 .tool-form {
-  .tool-action {
-    font-size: 1.25rem;
-    color: $tk-dark-gray;
-    cursor: pointer;
+    .tool-action {
+        font-size: 1.25rem;
+        color: $tk-dark-gray;
+        cursor: pointer;
 
-    &.tool-action-lg {
-      font-size: 1.625rem;
+        &.tool-action-lg {
+            font-size: 1.625rem;
+        }
+
+        &.tool-action-push-up {
+            position: relative;
+            top: -2px;
+        }
     }
 
-    &.tool-action-push-up {
-      position: relative;
-      top: -2px;
+    .parameter-tabs {
+        .nav-link {
+            font-size: 0.9em;
+            color: $tk-dark-gray;
+        }
     }
 
-  }
+    .submit-buttons {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        padding-right: 0;
 
-  .parameter-tabs {
-    .nav-link {
-      font-size: 0.9em;
-      color: $tk-dark-gray;
+        .submit-button {
+            margin-left: 0.5em;
+            float: right;
+            width: 7.9em;
+
+            @media (max-width: 560px) {
+                width: 100%;
+            }
+        }
+
+        .submit-button.margin {
+            @media (max-width: 560px) {
+                margin-top: 3em;
+            }
+        }
+
+        .submit-button.maintenance {
+            opacity: 0.65;
+            cursor: default;
+            background-color: $primary !important;
+            border-color: $primary !important;
+            color: $white !important;
+
+            &:focus {
+                box-shadow: none;
+            }
+        }
+
+        .reset-params-button {
+            float: right;
+            width: 7.9em;
+
+            @media (max-width: 560px) {
+                width: 100%;
+                margin-top: 1em;
+            }
+        }
+
+        .btn-secondary,
+        .btn-secondary:active {
+            color: $white;
+            background-color: $secondary-1;
+            border-color: $secondary-1;
+        }
+
+        .btn-secondary:hover {
+            background-color: $secondary-2;
+            border-color: $secondary-2;
+        }
+
+        .custom-job-id {
+            margin-left: 0.5em;
+            float: right;
+            width: 10em;
+
+            @media (max-width: 560px) {
+                width: 100%;
+                margin-top: 1em;
+            }
+
+            ::placeholder {
+                text-align: center;
+            }
+        }
     }
-  }
 
-  .submit-buttons {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    padding-right: 0;
-
-
-    .submit-button {
-      margin-left: 0.5em;
-      float: right;
-      width: 7.9em;
-
-      @media (max-width: 560px) {
+    .card.fullscreen {
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
-      }
+        height: 100%;
+        z-index: 11;
+        overflow-y: auto;
+        border-radius: 0;
     }
 
-    .submit-button.margin {
-      @media (max-width: 560px) {
-        margin-top: 3em;
-      }
+    .vue-switcher__label {
+        font-size: 11px;
+        margin-top: -1em;
+        white-space: nowrap;
+
+        @media (max-width: 560px) {
+            margin-top: -2.5em;
+        }
     }
-
-    .submit-button.maintenance {
-      opacity: 0.65;
-      cursor: default;
-      background-color: $primary !important;
-      border-color: $primary !important;
-      color: $white !important;
-
-      &:focus {
-        box-shadow: none;
-      }
-    }
-
-    .reset-params-button {
-      float: right;
-      width: 7.9em;
-
-      @media (max-width: 560px) {
-        width: 100%;
-        margin-top: 1em;
-      }
-    }
-
-    .btn-secondary, .btn-secondary:active {
-      color: $white;
-      background-color: $secondary-1;
-      border-color: $secondary-1;
-    }
-
-    .btn-secondary:hover {
-      background-color: $secondary-2;
-      border-color: $secondary-2;
-    }
-
-    .custom-job-id {
-      margin-left: 0.5em;
-      float: right;
-      width: 10em;
-
-      @media (max-width: 560px) {
-        width: 100%;
-        margin-top: 1em;
-      }
-
-      ::placeholder {
-        text-align: center;
-      }
-    }
-  }
-
-  .card.fullscreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 11;
-    overflow-y: auto;
-    border-radius: 0;
-  }
-
-  .vue-switcher__label {
-    font-size: 11px;
-    margin-top: -1em;
-    white-space: nowrap;
-
-    @media (max-width: 560px) {
-      margin-top: -2.5em;
-    }
-  }
-
 }
 </style>
