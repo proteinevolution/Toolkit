@@ -5,8 +5,9 @@ module.exports = {
         '^.+\\.vue$': '@vue/vue2-jest',
     },
     // necessary to allow transforming vue-switches Vue SFCs
-    // TODO: currently one test fails because of https://github.com/vuejs/vue-jest/issues/435
     transformIgnorePatterns: ['/node_modules/(?!vue-switches)'],
+    // TODO: currently one test fails because of https://github.com/vuejs/vue-jest/issues/435
+    testPathIgnorePatterns: ['<rootDir>/tests/unit/components/tools/parameters/BooleanParameter.spec.ts'],
     moduleNameMapper: {
         '^@/(.*)': '<rootDir>/src/$1',
         '^lodash-es$': 'lodash',
