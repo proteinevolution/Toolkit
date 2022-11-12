@@ -1,5 +1,5 @@
-import {FrontendToolParameter, Tool} from '@/types/toolkit/tools';
-import {ParameterType} from '@/types/toolkit/enums';
+import { FrontendToolParameter, Tool } from '@/types/toolkit/tools';
+import { ParameterType } from '@/types/toolkit/enums';
 
 export const Reformat: Tool = {
     name: 'reformat',
@@ -14,17 +14,21 @@ export const Reformat: Tool = {
             alignment: [],
             multiSeq: [],
         },
-        sections: [{
-            name: 'Input',
-            multiColumnLayout: false,
-            parameters: [({
-                parameterType: ParameterType.ReformatView,
-                sampleInput: 'inputClustal',
-                placeholderKey: 'protMSA',
-                label: '',
-                name: '',
-            } as FrontendToolParameter)],
-        }],
+        sections: [
+            {
+                name: 'Input',
+                multiColumnLayout: false,
+                parameters: [
+                    {
+                        parameterType: ParameterType.ReformatView,
+                        sampleInput: 'inputClustal',
+                        placeholderKey: 'protMSA',
+                        label: '',
+                        name: '',
+                    } as FrontendToolParameter,
+                ],
+            },
+        ],
     },
 };
 
@@ -41,16 +45,20 @@ export const AlignmentViewer: Tool = {
             alignment: [],
             multiSeq: [],
         },
-        sections: [{
-            name: 'Input',
-            multiColumnLayout: false,
-            parameters: [({
-                parameterType: ParameterType.AlignmentViewerView,
-                sampleInput: 'msaProtSeq',
-                placeholderKey: 'protMSA',
-                label: '',
-                name: '',
-            } as FrontendToolParameter)],
-        }],
+        sections: [
+            {
+                name: 'Input',
+                multiColumnLayout: false,
+                parameters: [
+                    {
+                        parameterType: ParameterType.AlignmentViewerView,
+                        sampleInput: 'msaProtSeq',
+                        placeholderKey: 'protMSA',
+                        label: '',
+                        name: '',
+                    } as FrontendToolParameter,
+                ],
+            },
+        ],
     },
 };

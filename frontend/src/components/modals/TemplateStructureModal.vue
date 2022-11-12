@@ -1,24 +1,18 @@
 <template>
-    <BaseModal id="templateStructureModal"
-               :title="$t('jobs.results.templateStructure.title', {accession})"
-               size="lmd"
-               :static="true"
-               :lazy="false"
-               @shown="onShow"
-               @hide="resetView">
-        <Loading v-if="loading"
-                 :message="$t('loading')" />
+    <BaseModal
+        id="templateStructureModal"
+        :title="$t('jobs.results.templateStructure.title', { accession })"
+        size="lmd"
+        :static="true"
+        :lazy="false"
+        @shown="onShow"
+        @hide="resetView">
+        <Loading v-if="loading" :message="$t('loading')" />
 
         <!-- refs are only accessible when in DOM => don't hide -->
-        <div ref="viewport"
-             class="stage"
-             style="width: 100%; height: 500px"></div>
+        <div ref="viewport" class="stage" style="width: 100%; height: 500px"></div>
 
-        <b-btn v-if="!loading"
-               variant="primary"
-               class="mt-3"
-               @click="download"
-               v-text="$t('download')" />
+        <b-btn v-if="!loading" variant="primary" class="mt-3" @click="download" v-text="$t('download')" />
     </BaseModal>
 </template>
 
@@ -27,8 +21,8 @@ import Vue from 'vue';
 import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
-import {resultsService} from '@/services/ResultsService';
-import {Stage} from 'ngl';
+import { resultsService } from '@/services/ResultsService';
+import { Stage } from 'ngl';
 
 const logger = Logger.get('TemplateStructureModal');
 
@@ -63,7 +57,7 @@ export default Vue.extend({
             return filename.split('.').reverse()[0];
         },
         resize(): void {
-            const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
+            const viewport: HTMLElement = this.$refs.viewport as HTMLElement;
             if (!viewport || !this.stage) {
                 return;
             }
@@ -84,7 +78,7 @@ export default Vue.extend({
             try {
                 const response = await resultsService.getStructureFile(this.accession);
                 if (!response.filename) {
-                    logger.error('Filename couldn\'t be read from axios response.');
+                    logger.error("Filename couldn't be read from axios response.");
                     this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
                     return;
                 }
@@ -97,8 +91,12 @@ export default Vue.extend({
                 this.stage = new Stage(this.$refs.viewport, {
                     backgroundColor: 'white',
                 });
-                await this.stage.loadFile(new Blob([this.file]),
-                    {defaultRepresentation: true, binary: true, sele: ':A or :B or DPPC', ext});
+                await this.stage.loadFile(new Blob([this.file]), {
+                    defaultRepresentation: true,
+                    binary: true,
+                    sele: ':A or :B or DPPC',
+                    ext,
+                });
                 window.addEventListener('resize', this.resize);
                 this.resize();
             } catch (err) {
@@ -113,10 +111,10 @@ export default Vue.extend({
 
 <style lang="scss">
 .stage {
-  margin: 0 auto;
+    margin: 0 auto;
 
-  canvas {
-    border: 1px solid lightgray;
-  }
+    canvas {
+        border: 1px solid lightgray;
+    }
 }
 </style>

@@ -97,7 +97,8 @@ export default {
             noResults: 'No hits found! Please consider picking a different target database.',
         },
         hhomp: {
-            noResults: 'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with ' +
+            noResults:
+                'No hits found! Please re-run HHomp with an increased number of MSA generation steps or with ' +
                 'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
                 '0). Please also consider picking a different target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
@@ -114,12 +115,14 @@ export default {
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
-            alignmentInfo: 'Probability (hit): {probabHit}%,&emsp;Probability (OMP): {probabOMP}%,&emsp;' +
+            alignmentInfo:
+                'Probability (hit): {probabHit}%,&emsp;Probability (OMP): {probabOMP}%,&emsp;' +
                 'E-value: {eval},&emsp;Score: {score},&emsp;Aligned Cols: {alignedCols},&emsp;' +
                 'Identities: {identities}%',
         },
         hhblits: {
-            noResults: 'No hits found! Please re-run HHblits with a custom-built multiple sequence alignment as ' +
+            noResults:
+                'No hits found! Please re-run HHblits with a custom-built multiple sequence alignment as ' +
                 'input. Please also consider using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
             table: {
@@ -132,23 +135,27 @@ export default {
                 targetLength: 'Target Length',
             },
             templateAlignment: 'Template alignment',
-            alignmentInfo: 'Probability: {probab}%,&emsp;E-value: {eval},&emsp;' +
+            alignmentInfo:
+                'Probability: {probab}%,&emsp;E-value: {eval},&emsp;' +
                 'Score: {score},&emsp;Aligned Cols: {alignedCols},&emsp;' +
                 'Identities: {identities}%,&emsp;Similarity: {similarity}',
         },
         hhpred: {
-            noResults: 'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +
+            noResults:
+                'No hits found! Please re-run HHpred with an increased number of MSA generation steps or with ' +
                 'a custom-built multiple sequence alignment as input (set "Maximal no. of MSA generation steps" to ' +
                 '0). You could also consider picking a different target database and/or using different parameters.',
             qa3mWarning: 'Note: your query alignment consists of only <b>{num}</b> sequence(s).',
-            uniclustWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
+            uniclustWarning:
+                ' You could improve the sensitivity of your search vastly by building a larger query ' +
                 'alignment with PSI-BLAST over nr70. You could also consider increasing the number of MSA ' +
                 'generation iterations and/or relaxing the E-value threshold.',
-            psiblastWarning: ' You could improve the sensitivity of your search vastly by building a larger query ' +
+            psiblastWarning:
+                ' You could improve the sensitivity of your search vastly by building a larger query ' +
                 'alignment; for instance, by increasing the number of MSA generation iterations and/or relaxing the ' +
                 'E-value threshold. Alternatively, you could input your own alignment.',
-            customWarning: ' You could improve the sensitivity of your search vastly by providing a larger ' +
-                'query alignment.',
+            customWarning:
+                ' You could improve the sensitivity of your search vastly by providing a larger ' + 'query alignment.',
             numHits: 'Number of Hits: <b>{num}</b>',
             queryNeff: 'Query MSA diversity (Neff): <b>{num}</b>',
             table: {
@@ -164,13 +171,15 @@ export default {
             },
             templateAlignment: 'Template alignment',
             templateStructure: 'Template 3D Structure',
-            alignmentInfo: 'Probability: {probab}%,&emsp;E-value: {eval},&emsp;Score: {score},&emsp;' +
+            alignmentInfo:
+                'Probability: {probab}%,&emsp;E-value: {eval},&emsp;Score: {score},&emsp;' +
                 'Aligned cols: {alignedCols},&emsp;Identities: {ident}%,&emsp;Similarity: ' +
                 '{similarity},&emsp;Template Neff: {template_neff}',
             modelUsingFirst: 'No templates selected! Using the first template for modelling.',
         },
         psiblast: {
-            noResults: 'No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence ' +
+            noResults:
+                'No hits found! Please re-run ProtBLAST/PSI-BLAST with a custom-built multiple sequence ' +
                 'alignment. You could also consider picking a different target database and/or using ' +
                 'different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
@@ -183,12 +192,14 @@ export default {
                 ref_len: 'Length',
                 hit_len: 'Aligned Positions',
             },
-            alignmentInfo: 'E-value: {eval},&emsp;Length: {refLen},&emsp; Score: {bitScore} bits ({score})' +
+            alignmentInfo:
+                'E-value: {eval},&emsp;Length: {refLen},&emsp; Score: {bitScore} bits ({score})' +
                 ',&emsp;Identities: {ident}/{hitLen} ({perIdent}%),&emsp;Positives: {pos}/{hitLen}  ' +
                 '({perPos}%),&emsp;Gaps: {gap}/{hitLen}  ({perGap}%)',
         },
         hmmer: {
-            noResults: 'No hits found! Please re-run HMMER with a custom-built multiple sequence alignment as input ' +
+            noResults:
+                'No hits found! Please re-run HMMER with a custom-built multiple sequence alignment as input ' +
                 '(set "MSA enrichment iterations using HHblits" to 0). You could also consider picking a different ' +
                 'target database and/or using different parameters.',
             numHits: 'Number of Hits: <b>{num}</b>',
@@ -201,7 +212,8 @@ export default {
                 bitscore: 'Bitscore',
                 hit_len: 'Aligned Positions',
             },
-            alignmentInfo: 'E-value: {fullEval},&emsp;Ind. E-value: {eval},&emsp;' +
+            alignmentInfo:
+                'E-value: {fullEval},&emsp;Ind. E-value: {eval},&emsp;' +
                 'Score: {bitScore},&emsp;Aligned positions: {hitLen},&emsp;' +
                 'Observed domains: {observedDomains}',
         },
@@ -211,7 +223,8 @@ export default {
         },
         plot: {
             numHits: 'Number of Hits: <b>{num}</b>',
-            noResults: 'No hits found! <br> Please consider picking a less stringent E-value/probability cut-off.' +
+            noResults:
+                'No hits found! <br> Please consider picking a less stringent E-value/probability cut-off.' +
                 'and/or pick a different target database.',
             prob: {
                 title: 'Cumulative histogram of probability values',
@@ -236,8 +249,8 @@ export default {
             resubmitSection: 'Resubmit Section',
             table: {
                 paginationInfo: 'Displaying {start} to {end} of {total} hits',
-                paginationInfoFiltered: 'Displaying {start} to {end} of ' +
-                    '{totalRows} hits (filtered from {totalNoFilter} total hits)',
+                paginationInfoFiltered:
+                    'Displaying {start} to {end} of ' + '{totalRows} hits (filtered from {totalNoFilter} total hits)',
                 noData: 'No hits found!',
                 noDataFiltered: 'No matching hits found.',
                 perPage: {
@@ -248,7 +261,8 @@ export default {
             },
         },
         hhrepid: {
-            noResults: 'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +
+            noResults:
+                'No repeats found!<br> Please try increasing the number of MSA generation steps or input your ' +
                 'own custom MSA.',
             resultsForType: 'Results for repeats type {type}:',
             numResults: 'No. of repeats: {num}',
@@ -280,7 +294,8 @@ export default {
     resetParams: 'Reset',
     resetParamsTitle: 'Reset parameters to their default values',
     toggleFullscreen: 'Toggle Fullscreen',
-    foundIdenticalCopy: 'We found an identical copy of your job in our database!<br>' +
+    foundIdenticalCopy:
+        'We found an identical copy of your job in our database!<br>' +
         'Job ID: {jobID}, which was created {createdAt}.',
     startJob: 'Start job anyway',
     loadExistingJob: 'Load existing job',

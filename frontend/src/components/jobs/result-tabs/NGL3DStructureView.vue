@@ -1,7 +1,6 @@
 <template>
     <div>
-        <Loading v-if="loading"
-                 :message="$t('loading')" />
+        <Loading v-if="loading" :message="$t('loading')" />
         <div v-else>
             <div class="result-options">
                 <a @click="downloadPdb">{{ $t('jobs.results.actions.downloadPDBFile') }}</a>
@@ -9,17 +8,15 @@
         </div>
 
         <!-- refs are only accessible when in DOM => don't hide -->
-        <div ref="viewport"
-             class="stage"
-             style="width: 100%; height: 500px"></div>
+        <div ref="viewport" class="stage" style="width: 100%; height: 500px"></div>
     </div>
 </template>
 
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
-import {Stage} from 'ngl';
+import { Stage } from 'ngl';
 
 export default ResultTabMixin.extend({
     name: 'NGL3DStructureView',
@@ -45,15 +42,14 @@ export default ResultTabMixin.extend({
     },
     methods: {
         async init() {
-            this.file = await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`) as string;
+            this.file = (await resultsService.getFile(this.job.jobID, `${this.job.jobID}.pdb`)) as string;
             this.stage = new Stage(this.$refs.viewport, {
                 backgroundColor: 'white',
             });
-            await this.stage.loadFile(
-                new Blob([(this.file as string)],
-                {type: 'text/plain'}),
-                {defaultRepresentation: true, ext: 'pdb'},
-            );
+            await this.stage.loadFile(new Blob([this.file as string], { type: 'text/plain' }), {
+                defaultRepresentation: true,
+                ext: 'pdb',
+            });
             window.addEventListener('resize', this.windowResized);
             this.windowResized();
         },
@@ -61,7 +57,7 @@ export default ResultTabMixin.extend({
             this.resize(this.fullScreen);
         },
         resize(fullScreen: boolean): void {
-            const viewport: HTMLElement = (this.$refs.viewport as HTMLElement);
+            const viewport: HTMLElement = this.$refs.viewport as HTMLElement;
             if (!viewport) {
                 return;
             }
@@ -83,10 +79,10 @@ export default ResultTabMixin.extend({
 
 <style lang="scss">
 .stage {
-  margin: 0 auto;
+    margin: 0 auto;
 
-  canvas {
-    border: 1px solid lightgray;
-  }
+    canvas {
+        border: 1px solid lightgray;
+    }
 }
 </style>

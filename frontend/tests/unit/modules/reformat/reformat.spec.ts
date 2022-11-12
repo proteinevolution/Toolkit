@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {Reformat} from '@/modules/reformat';
+import { expect } from 'chai';
+import { Reformat } from '@/modules/reformat';
 
 const seqs: string = `
 > Sequence 1

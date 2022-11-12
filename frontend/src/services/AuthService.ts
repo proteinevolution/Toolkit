@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {CustomJobIdValidationResult} from '@/types/toolkit/jobs';
+import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
 import {
     AuthMessage,
     ForgotPasswordData,
@@ -12,7 +12,6 @@ import {
 } from '@/types/toolkit/auth';
 
 class AuthService {
-
     public async fetchUserData(): Promise<User> {
         const res = await axios.get<User>(`/api/auth/user/data`);
         return res.data;

@@ -1,79 +1,63 @@
 <template>
     <b-form @submit.prevent="onSubmit">
-        <b-form-group :label="$t('auth.firstName')"
-                      :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
-            <b-form-input v-model="firstName"
-                          type="text"
-                          :state="firstNameState"
-                          :placeholder="$t('auth.firstNameEnter')"
-                          @change="validateFirstName" />
+        <b-form-group :label="$t('auth.firstName')" :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
+            <b-form-input
+                v-model="firstName"
+                type="text"
+                :state="firstNameState"
+                :placeholder="$t('auth.firstNameEnter')"
+                @change="validateFirstName" />
         </b-form-group>
-        <b-form-group :label="$t('auth.lastName')"
-                      :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
-            <b-form-input v-model="lastName"
-                          type="text"
-                          :state="lastNameState"
-                          :placeholder="$t('auth.lastNameEnter')"
-                          @change="validateLastName" />
+        <b-form-group :label="$t('auth.lastName')" :invalid-feedback="$t('constraints.lengthMax', { max: 25 })">
+            <b-form-input
+                v-model="lastName"
+                type="text"
+                :state="lastNameState"
+                :placeholder="$t('auth.lastNameEnter')"
+                @change="validateLastName" />
         </b-form-group>
-        <b-form-group :label="$t('auth.eMail')"
-                      :invalid-feedback="$t('constraints.email')">
-            <b-form-input v-model="eMail"
-                          type="text"
-                          :state="eMailState"
-                          @change="validateEmail" />
+        <b-form-group :label="$t('auth.eMail')" :invalid-feedback="$t('constraints.email')">
+            <b-form-input v-model="eMail" type="text" :state="eMailState" @change="validateEmail" />
         </b-form-group>
         <b-form-group :label="$t('auth.country')">
-            <b-form-select v-model="country"
-                           :options="countries">
+            <b-form-select v-model="country" :options="countries">
                 <template #first>
-                    <option :value="''"
-                            v-text="$t('auth.countrySelect')"></option>
+                    <option :value="''" v-text="$t('auth.countrySelect')"></option>
                 </template>
             </b-form-select>
         </b-form-group>
 
-
         <ExpandHeight>
-            <b-alert v-if="needsConfirmation"
-                     variant="primary"
-                     :show="true">
+            <b-alert v-if="needsConfirmation" variant="primary" :show="true">
                 <b-form-group :label="$t('auth.reenterPassword')">
-                    <b-form-input v-model="password"
-                                  type="password" />
+                    <b-form-input v-model="password" type="password" />
                 </b-form-group>
-                <b-btn class="mr-1"
-                       @click="cancel"
-                       v-text="$t('cancel')" />
-                <b-btn :disabled="!valid"
-                       type="submit"
-                       variant="primary"
-                       v-text="$t('submit')" />
+                <b-btn class="mr-1" @click="cancel" v-text="$t('cancel')" />
+                <b-btn :disabled="!valid" type="submit" variant="primary" v-text="$t('submit')" />
             </b-alert>
         </ExpandHeight>
 
-        <b-alert variant="danger"
-                 :show="message !== ''"
-                 v-text="message" />
+        <b-alert variant="danger" :show="message !== ''" v-text="message" />
 
-        <b-btn :type="needsConfirmation ? 'button' : 'submit'"
-               :disabled="!editButtonEnabled"
-               @click="needsConfirmation = true"
-               v-text="$t('auth.editProfile')" />
+        <b-btn
+            :type="needsConfirmation ? 'button' : 'submit'"
+            :disabled="!editButtonEnabled"
+            @click="needsConfirmation = true"
+            v-text="$t('auth.editProfile')" />
     </b-form>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {AuthMessage, ProfileData, User} from '@/types/toolkit/auth';
+import { AuthMessage, ProfileData, User } from '@/types/toolkit/auth';
 import countries from '@/i18n/lang/countries';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
-import {authService} from '@/services/AuthService';
-import {TranslateResult} from 'vue-i18n';
-import {mapStores} from 'pinia';
-import {useAuthStore} from '@/stores/auth';
+import { authService } from '@/services/AuthService';
+import { TranslateResult } from 'vue-i18n';
+import { mapStores } from 'pinia';
+import { useAuthStore } from '@/stores/auth';
 
-const options = countries.map((value: string[]) => ({value: value[0], text: value[1]}));
+const options = countries.map((value: string[]) => ({ value: value[0], text: value[1] }));
 
 export default Vue.extend({
     name: 'Profile',
@@ -101,10 +85,12 @@ export default Vue.extend({
         },
         editButtonEnabled(): boolean {
             if (this.user) {
-                return this.firstName !== this.user.nameFirst
-                    || this.lastName !== this.user.nameLast
-                    || this.eMail !== this.user.eMail
-                    || this.country !== this.user.country;
+                return (
+                    this.firstName !== this.user.nameFirst ||
+                    this.lastName !== this.user.nameLast ||
+                    this.eMail !== this.user.eMail ||
+                    this.country !== this.user.country
+                );
             }
             return false;
         },
@@ -121,10 +107,7 @@ export default Vue.extend({
             return this.password !== '';
         },
         valid(): boolean {
-            return this.firstNameValid
-                && this.lastNameValid
-                && this.eMailValid
-                && this.passwordValid;
+            return this.firstNameValid && this.lastNameValid && this.eMailValid && this.passwordValid;
         },
         ...mapStores(useAuthStore),
     },

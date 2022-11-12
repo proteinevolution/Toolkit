@@ -1,6 +1,6 @@
-import {defineStore} from 'pinia';
-import {User} from '@/types/toolkit/auth';
-import {authService} from '@/services/AuthService';
+import { defineStore } from 'pinia';
+import { User } from '@/types/toolkit/auth';
+import { authService } from '@/services/AuthService';
 
 export interface AuthState {
     user: User | null;
@@ -30,5 +30,5 @@ export const useAuthStore = defineStore('auth', {
                 this.user = user;
             }
         },
-    }
+    },
 });

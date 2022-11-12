@@ -1,29 +1,30 @@
 <template>
     <div class="d-flex flex-column my-2">
-        <p class="text-center"
-           v-html="$t('jobs.foundIdenticalCopy', {jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated)})"></p>
+        <p
+            class="text-center"
+            v-html="
+                $t('jobs.foundIdenticalCopy', { jobID: similarJob.jobID, createdAt: fromNow(similarJob.dateCreated) })
+            "></p>
         <div class="d-flex flex-column flex-md-row justify-content-center mt-4 mx-md-5">
-            <b-btn variant="primary"
-                   class="mb-3 mb-md-0 mr-5 ml-5"
-                   @click="startJob"
-                   v-text="$t('jobs.startJob')" />
-            <b-btn variant="primary"
-                   class="mr-5 ml-5"
-                   @click="loadExistingJobAndDelete"
-                   v-text="$t('jobs.loadExistingJob')" />
+            <b-btn variant="primary" class="mb-3 mb-md-0 mr-5 ml-5" @click="startJob" v-text="$t('jobs.startJob')" />
+            <b-btn
+                variant="primary"
+                class="mr-5 ml-5"
+                @click="loadExistingJobAndDelete"
+                v-text="$t('jobs.loadExistingJob')" />
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {jobService} from '@/services/JobService';
-import {SimilarJobResult} from '@/types/toolkit/jobs';
+import { jobService } from '@/services/JobService';
+import { SimilarJobResult } from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
-import {mapStores} from 'pinia';
-import {useJobsStore} from '@/stores/jobs';
-import {DateTime} from 'luxon';
-import {useRootStore} from '@/stores/root';
+import { mapStores } from 'pinia';
+import { useJobsStore } from '@/stores/jobs';
+import { DateTime } from 'luxon';
+import { useRootStore } from '@/stores/root';
 
 const logger = Logger.get('JobPendingTab');
 
@@ -47,7 +48,8 @@ export default Vue.extend({
         ...mapStores(useRootStore, useJobsStore),
     },
     created(): void {
-        jobService.getSimilarJob(this.job.jobID)
+        jobService
+            .getSimilarJob(this.job.jobID)
             .then((similarJob: SimilarJobResult) => {
                 this.similarJob = similarJob;
             })
@@ -58,17 +60,17 @@ export default Vue.extend({
     },
     methods: {
         startJob() {
-            jobService.startJob(this.job.jobID)
-                .catch(() => {
-                    logger.error('Could not start job!');
-                    this.$alert(this.$t('errors.general'), 'danger');
-                });
+            jobService.startJob(this.job.jobID).catch(() => {
+                logger.error('Could not start job!');
+                this.$alert(this.$t('errors.general'), 'danger');
+            });
         },
         loadExistingJobAndDelete() {
             const oldJobID: string = this.job.jobID;
             logger.debug(`loading existing job ${this.similarJob.jobID}, deleting job ${oldJobID}`);
             this.$router.push(`/jobs/${this.similarJob.jobID}`);
-            jobService.deleteJob(oldJobID)
+            jobService
+                .deleteJob(oldJobID)
                 .then(() => {
                     this.jobsStore.removeJob(oldJobID);
                 })

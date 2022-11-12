@@ -1,17 +1,14 @@
 <template>
-    <Loading v-if="loading || !results"
-             :message="$t('loading')" />
-    <div v-else
-         class="font-small">
-        <b v-if="results.results.hits.length === 0"
-           v-text="$t('jobs.results.patsearch.noResults')"></b>
+    <Loading v-if="loading || !results" :message="$t('loading')" />
+    <div v-else class="font-small">
+        <b v-if="results.results.hits.length === 0" v-text="$t('jobs.results.patsearch.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="download">{{ $t('jobs.results.actions.downloadHits') }}</a>
                 <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
             </div>
 
-            <span v-html="$t('jobs.results.alignment.numSeqs', {num: results.results.hits.length})"></span>
+            <span v-html="$t('jobs.results.alignment.numSeqs', { num: results.results.hits.length })"></span>
 
             <table class="alignment-table mt-3">
                 <tbody>
@@ -22,9 +19,7 @@
                             </td>
                         </tr>
                         <tr :key="'hit-seq-' + i">
-                            <td class="sequence-alignment"
-                                v-html="colorHits(hit.seq, hit.matches)">
-                            </td>
+                            <td class="sequence-alignment" v-html="colorHits(hit.seq, hit.matches)"></td>
                         </tr>
                     </template>
                 </tbody>
@@ -36,10 +31,10 @@
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
-import {PatsearchHit, PatsearchMatch, PatsearchResults} from '@/types/toolkit/results';
-import {patsearchColor} from '@/util/SequenceUtils';
+import { PatsearchHit, PatsearchMatch, PatsearchResults } from '@/types/toolkit/results';
+import { patsearchColor } from '@/util/SequenceUtils';
 import EventBus from '@/util/EventBus';
 
 const logger = Logger.get('PatsearchResultsTab');
@@ -72,18 +67,20 @@ export default ResultTabMixin.extend({
         download(): void {
             const toolName = this.tool.name;
             const downloadFilename = `${toolName}_${this.job.jobID}.fas`;
-            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename)
-                .catch((e) => {
-                    logger.error(e);
-                });
+            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename).catch((e) => {
+                logger.error(e);
+            });
         },
         forwardAll(): void {
             if (this.tool.parameters && this.results) {
                 EventBus.$emit('show-modal', {
-                    id: 'forwardingModal', props: {
+                    id: 'forwardingModal',
+                    props: {
                         forwardingJobID: this.job.jobID,
-                        forwardingData: this.results.results.hits.reduce((acc: string, cur: PatsearchHit) =>
-                            acc + cur.name + '\n' + cur.seq + '\n', ''),
+                        forwardingData: this.results.results.hits.reduce(
+                            (acc: string, cur: PatsearchHit) => acc + cur.name + '\n' + cur.seq + '\n',
+                            ''
+                        ),
                         forwardingMode: this.tool.parameters.forwarding,
                     },
                 });
@@ -92,32 +89,30 @@ export default ResultTabMixin.extend({
             }
         },
     },
-
 });
-
 </script>
 
 <style lang="scss" scoped>
 .alignment-table {
-  font-size: 0.9em;
+    font-size: 0.9em;
 
-  .sequence-alignment {
-    font-family: $font-family-monospace;
-    letter-spacing: 0.05em;
-    word-break: break-all;
-    white-space: unset;
+    .sequence-alignment {
+        font-family: $font-family-monospace;
+        letter-spacing: 0.05em;
+        word-break: break-all;
+        white-space: unset;
 
-    .pattern-match {
-      color: red;
-      background-color: rgba(255, 0, 8, 0.1);
+        .pattern-match {
+            color: red;
+            background-color: rgba(255, 0, 8, 0.1);
+        }
     }
-  }
 }
 </style>
 
 <style lang="scss">
 .pattern-match {
-  color: red;
-  background-color: rgba(255, 0, 8, 0.1);
+    color: red;
+    background-color: rgba(255, 0, 8, 0.1);
 }
 </style>

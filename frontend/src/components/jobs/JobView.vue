@@ -1,75 +1,49 @@
 <template>
-    <tool-view v-if="job"
-               is-job-view
-               :job="job"
-               @delete-job="deleteJob">
+    <tool-view v-if="job" is-job-view :job="job" @delete-job="deleteJob">
         <template #job-details>
-            <small class="text-muted mr-2"
-                   v-text="$t('jobs.details.jobID', {jobID})"></small>
-            <i18n v-if="job.parentID"
-                  path="jobs.details.parentID"
-                  tag="small"
-                  class="text-muted mr-2">
-                <a class="cursor-pointer text-primary"
-                   @click="goToParent"
-                   v-text="job.parentID"></a>
+            <small class="text-muted mr-2" v-text="$t('jobs.details.jobID', { jobID })"></small>
+            <i18n v-if="job.parentID" path="jobs.details.parentID" tag="small" class="text-muted mr-2">
+                <a class="cursor-pointer text-primary" @click="goToParent" v-text="job.parentID"></a>
             </i18n>
-            <small class="text-muted"
-                   v-text="$t('jobs.details.dateCreated', {dateCreated})"></small>
+            <small class="text-muted" v-text="$t('jobs.details.dateCreated', { dateCreated })"></small>
         </template>
 
-        <template v-if="job.status === JobState.Done && job.views"
-                  #job-tabs="{fullScreen}">
-            <b-tab v-for="(jobViewOptions, index) in job.views"
-                   :key="'jobview-' + index"
-                   :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
-                   :active="index === 0"
-                   @click="tabActivated(jobViewOptions.component)">
-                <component :is="jobViewOptions.component"
-                           :result-tab-name="jobViewOptions.component"
-                           :job="job"
-                           :view-options="jobViewOptions"
-                           :full-screen="fullScreen"
-                           :render-on-create="index === 0"
-                           :tool="tool" />
+        <template v-if="job.status === JobState.Done && job.views" #job-tabs="{ fullScreen }">
+            <b-tab
+                v-for="(jobViewOptions, index) in job.views"
+                :key="'jobview-' + index"
+                :title="$t('jobs.results.titles.' + (jobViewOptions.title || jobViewOptions.component))"
+                :active="index === 0"
+                @click="tabActivated(jobViewOptions.component)">
+                <component
+                    :is="jobViewOptions.component"
+                    :result-tab-name="jobViewOptions.component"
+                    :job="job"
+                    :view-options="jobViewOptions"
+                    :full-screen="fullScreen"
+                    :render-on-create="index === 0"
+                    :tool="tool" />
 
                 <tool-citation-info :tool="tool" />
             </b-tab>
         </template>
-        <template v-else
-                  #job-tabs>
-            <b-tab :title="$t('jobs.states.' + job.status)"
-                   active>
-                <job-prepared-tab v-if="job.status === JobState.Prepared"
-                                  :tool="tool"
-                                  :job="job" />
-                <job-queued-tab v-else-if="job.status === JobState.Queued"
-                                :tool="tool"
-                                :job="job" />
-                <job-running-tab v-else-if="job.status === JobState.Running"
-                                 :tool="tool"
-                                 :job="job" />
-                <job-error-tab v-else-if="job.status === JobState.Error"
-                               :tool="tool"
-                               :job="job" />
-                <job-submitted-tab v-else-if="job.status === JobState.Submitted"
-                                   :tool="tool"
-                                   :job="job" />
-                <job-pending-tab v-else-if="job.status === JobState.Pending"
-                                 :tool="tool"
-                                 :job="job" />
-                <job-limitReached-tab v-else-if="job.status === JobState.LimitReached"
-                                      :tool="tool"
-                                      :job="job" />
+        <template v-else #job-tabs>
+            <b-tab :title="$t('jobs.states.' + job.status)" active>
+                <job-prepared-tab v-if="job.status === JobState.Prepared" :tool="tool" :job="job" />
+                <job-queued-tab v-else-if="job.status === JobState.Queued" :tool="tool" :job="job" />
+                <job-running-tab v-else-if="job.status === JobState.Running" :tool="tool" :job="job" />
+                <job-error-tab v-else-if="job.status === JobState.Error" :tool="tool" :job="job" />
+                <job-submitted-tab v-else-if="job.status === JobState.Submitted" :tool="tool" :job="job" />
+                <job-pending-tab v-else-if="job.status === JobState.Pending" :tool="tool" :job="job" />
+                <job-limitReached-tab v-else-if="job.status === JobState.LimitReached" :tool="tool" :job="job" />
                 <span v-else>
                     Error!
-                    <p class="cursor-pointer text-primary"
-                       v-text="job.status"></p>                </span>
+                    <p class="cursor-pointer text-primary" v-text="job.status"></p>
+                </span>
             </b-tab>
         </template>
     </tool-view>
-    <not-found-view v-else
-                    :error-message="errorMessage" />
+    <not-found-view v-else :error-message="errorMessage" />
 </template>
 
 <script lang="ts">
@@ -82,21 +56,21 @@ import JobSubmittedTab from './state-tabs/JobSubmittedTab.vue';
 import JobPendingTab from './state-tabs/JobPendingTab.vue';
 import JobLimitReachedTab from '@/components/jobs/state-tabs/JobLimitReachedTab.vue';
 import ToolView from '../tools/ToolView.vue';
-import {Job} from '@/types/toolkit/jobs';
-import {JobState} from '@/types/toolkit/enums';
-import {Tool} from '@/types/toolkit/tools';
-import {jobService} from '@/services/JobService';
+import { Job } from '@/types/toolkit/jobs';
+import { JobState } from '@/types/toolkit/enums';
+import { Tool } from '@/types/toolkit/tools';
+import { jobService } from '@/services/JobService';
 import NotFoundView from '@/components/utils/NotFoundView.vue';
 import Logger from 'js-logger';
 import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
-import {lazyLoadView} from '@/router/routes';
+import { lazyLoadView } from '@/router/routes';
 import EventBus from '@/util/EventBus';
-import {mapStores} from 'pinia';
-import {useRootStore} from '@/stores/root';
-import {useToolsStore} from '@/stores/tools';
-import {useJobsStore} from '@/stores/jobs';
-import {useAuthStore} from '@/stores/auth';
-import {DateTime} from 'luxon';
+import { mapStores } from 'pinia';
+import { useRootStore } from '@/stores/root';
+import { useToolsStore } from '@/stores/tools';
+import { useJobsStore } from '@/stores/jobs';
+import { useAuthStore } from '@/stores/auth';
+import { DateTime } from 'luxon';
 
 const logger = Logger.get('JobView');
 
@@ -145,7 +119,11 @@ export default Vue.extend({
             return this.$route.params.jobID;
         },
         dateCreated(): string {
-            return DateTime.fromMillis(this.job.dateCreated ?? 0).toRelative({ base: DateTime.fromMillis(this.rootStore.now) }) ?? '';
+            return (
+                DateTime.fromMillis(this.job.dateCreated ?? 0).toRelative({
+                    base: DateTime.fromMillis(this.rootStore.now),
+                }) ?? ''
+            );
         },
         job(): Job {
             return this.jobsStore.jobs.find((job: Job) => job.jobID === this.jobID) as Job;
@@ -168,14 +146,13 @@ export default Vue.extend({
                 this.loadJobDetails(this.jobID);
             } else {
                 // need to handle error separately
-                this.jobsStore.loadJobDetails(this.jobID)
-                    .catch((err) => {
-                        logger.info('Error when getting jobs!', err);
-                        if (err.request.status === 401) {
-                            logger.info('Redirecting to index');
-                            this.$router.push('/');
-                        }
-                    });
+                this.jobsStore.loadJobDetails(this.jobID).catch((err) => {
+                    logger.info('Error when getting jobs!', err);
+                    if (err.request.status === 401) {
+                        logger.info('Redirecting to index');
+                        this.$router.push('/');
+                    }
+                });
             }
         },
     },
@@ -186,7 +163,8 @@ export default Vue.extend({
     methods: {
         deleteJob() {
             const oldJobID: string = this.jobID;
-            jobService.deleteJob(oldJobID)
+            jobService
+                .deleteJob(oldJobID)
                 .then(() => {
                     this.$router.replace('/jobmanager');
                     this.jobsStore.removeJob(oldJobID);
@@ -196,15 +174,14 @@ export default Vue.extend({
                 });
         },
         loadJobDetails(jobID: string): Promise<void> {
-            return this.jobsStore.loadJobDetails(jobID)
-                .catch((err) => {
-                    logger.warn('Error when getting jobs', err);
-                    if (err.request.status === 401) {
-                        this.errorMessage = 'errors.JobNotAuthorized';
-                    } else {
-                        this.errorMessage = 'errors.JobNotFound';
-                    }
-                });
+            return this.jobsStore.loadJobDetails(jobID).catch((err) => {
+                logger.warn('Error when getting jobs', err);
+                if (err.request.status === 401) {
+                    this.errorMessage = 'errors.JobNotAuthorized';
+                } else {
+                    this.errorMessage = 'errors.JobNotFound';
+                }
+            });
         },
         goToParent() {
             this.$router.push(`/jobs/${this.job.parentID}`);
@@ -218,36 +195,36 @@ export default Vue.extend({
 
 <style lang="scss">
 .result-options {
-  font-size: 0.9em;
-  background: $white;
-  border-bottom: 1px solid rgba(10, 10, 10, 0.1);
-  margin-top: -1rem;
-  margin-bottom: 1rem;
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  overflow-x: auto;
-  white-space: nowrap;
+    font-size: 0.9em;
+    background: $white;
+    border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    overflow-x: auto;
+    white-space: nowrap;
 
-  a {
-    cursor: pointer;
-    margin-right: 1rem;
-    @include media-breakpoint-up(lg) {
-      margin-right: 2.5rem;
-    }
-    color: inherit;
+    a {
+        cursor: pointer;
+        margin-right: 1rem;
+        @include media-breakpoint-up(lg) {
+            margin-right: 2.5rem;
+        }
+        color: inherit;
 
-    &[disabled] {
-      cursor: not-allowed;
-      color: $tk-gray;
-    }
+        &[disabled] {
+            cursor: not-allowed;
+            color: $tk-gray;
+        }
 
-    &:hover,
-    &.active {
-      color: $primary !important;
-      text-decoration: none;
+        &:hover,
+        &.active {
+            color: $primary !important;
+            text-decoration: none;
+        }
     }
-  }
 }
 </style>

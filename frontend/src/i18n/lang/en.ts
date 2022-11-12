@@ -33,7 +33,7 @@ export default {
                 tool: 'Tool',
                 dateCreated: 'Created',
                 actions: 'Actions',
-                noData: 'Currently you don\'t own any jobs.',
+                noData: "Currently you don't own any jobs.",
                 noDataFiltered: 'There are no jobs matching your request.',
             },
             watched: {
@@ -82,7 +82,8 @@ export default {
             content: modalContent,
         },
         cookieLaw: {
-            message: 'We use cookies to ensure you get the best experience on our website. ' +
+            message:
+                'We use cookies to ensure you get the best experience on our website. ' +
                 'By using our services you agree to our {0}.',
             privacyLink: 'Privacy Policy',
             accept: 'Got it!',
@@ -91,7 +92,7 @@ export default {
             content: {
                 toolBar: 'The available tools are organized into different sections',
                 searchBar: 'Quick access to tools and jobs',
-                tool: 'Let\'s checkout HHpred',
+                tool: "Let's checkout HHpred",
                 help: 'Find details on using HHpred, including target databases and parameters',
                 input: 'Enter your query protein sequence here',
                 paste: 'Alternatively, click here to add an example sequence',
@@ -107,16 +108,15 @@ export default {
                 buttonSkip: 'Skip tour',
                 buttonPrevious: 'Previous',
                 buttonNext: 'Next',
-                buttonStop: 'Finish tour'
+                buttonStop: 'Finish tour',
             },
             banner: {
                 message: 'Welcome to the MPI Bioinformatics Toolkit! Would you like a tour?',
                 ignore: 'Skip tour',
                 start: 'Start',
-            }
+            },
         },
-        copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' +
-            'Max Planck Institute for Biology, Tübingen',
+        copyright: '© 2008-{currentYear}, Dept. of Protein Evolution, ' + 'Max Planck Institute for Biology, Tübingen',
         citation: `A Completely Reimplemented MPI Bioinformatics Toolkit
             with a New HHpred Server at its Core.<br>Zimmermann L, Stephens A, Nam SZ, Rau D,
             Kübler J, Lozajic M, Gabler F, Söding J, Lupas AN, Alva V.

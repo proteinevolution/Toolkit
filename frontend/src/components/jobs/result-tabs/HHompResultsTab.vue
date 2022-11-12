@@ -1,87 +1,68 @@
 <template>
-    <Loading v-if="loading || !alignments"
-             :message="$t('loading')" />
-    <div v-else
-         class="font-small">
-        <b v-if="total === 0"
-           v-text="$t('jobs.results.hhomp.noResults')"></b>
+    <Loading v-if="loading || !alignments" :message="$t('loading')" />
+    <div v-else class="font-small">
+        <b v-if="total === 0" v-text="$t('jobs.results.hhomp.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
                 <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="mr-4"
-                   @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a class="mr-4" @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
                 <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
-                <a :class="{active: color}"
-                   @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-                <a :class="{active: wrap}"
-                   @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+                <a :class="{ active: color }" @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{ active: wrap }" @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hhomp.numHits', {num: total})"></div>
-            <div v-html="$t('jobs.results.hhomp.probOMP', {num: info.probOMP})"></div>
+            <div v-html="$t('jobs.results.hhomp.numHits', { num: total })"></div>
+            <div v-html="$t('jobs.results.hhomp.probOMP', { num: info.probOMP })"></div>
 
-
-            <div ref="visualization"
-                 class="result-section">
+            <div ref="visualization" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
-                <hit-map :job="job"
-                         @elem-clicked="scrollToElem"
-                         @resubmit-section="resubmitSection" />
+                <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
             </div>
 
-            <div ref="hits"
-                 class="result-section">
+            <div ref="hits" class="result-section">
                 <h4 class="mb-4">
                     {{ $t('jobs.results.hitlist.hits') }}
                 </h4>
-                <hit-list-table :job="job"
-                                :fields="hitListFields"
-                                @elem-clicked="scrollToElem" />
+                <hit-list-table :job="job" :fields="hitListFields" @elem-clicked="scrollToElem" />
             </div>
 
-            <div ref="alignments"
-                 class="result-section">
+            <div ref="alignments" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
 
-                <div ref="scrollElem"
-                     class="table-responsive">
+                <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
                             <template v-for="(al, i) in alignments">
-                                <tr :key="'alignment-' + al.num"
-                                    :ref="'alignment-' + al.num"
-                                    class="blank-row">
+                                <tr :key="'alignment-' + al.num" :ref="'alignment-' + al.num" class="blank-row">
                                     <td colspan="4">
-                                        <hr v-if="i !== 0">
+                                        <hr v-if="i !== 0" />
                                     </td>
                                 </tr>
                                 <tr :key="'alignment-acc-' + i">
                                     <td></td>
                                     <td colspan="3">
-                                        <a @click="displayTemplateAlignment(al.template.accession)"
-                                           v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
+                                        <a
+                                            @click="displayTemplateAlignment(al.template.accession)"
+                                            v-text="$t('jobs.results.hhomp.templateAlignment')"></a>
                                     </td>
                                 </tr>
-                                <tr :key="'alignment-num-' + i"
-                                    class="font-weight-bold">
+                                <tr :key="'alignment-num-' + i" class="font-weight-bold">
                                     <td v-text="al.num + '.'"></td>
-                                    <td colspan="3"
-                                        v-text="al.acc + ' ' + al.name"></td>
+                                    <td colspan="3" v-text="al.acc + ' ' + al.name"></td>
                                 </tr>
                                 <tr :key="'alignment-alinf-' + i">
                                     <td></td>
-                                    <td colspan="3"
-                                        v-html="$t('jobs.results.hhomp.alignmentInfo', al)"></td>
+                                    <td colspan="3" v-html="$t('jobs.results.hhomp.alignmentInfo', al)"></td>
                                 </tr>
 
                                 <template v-for="(alPart, alIdx) in wrapAlignments(al)">
-                                    <tr :key="'alignment-' + i + '-blank-' + alIdx"
-                                        class="blank-row">
+                                    <tr :key="'alignment-' + i + '-blank-' + alIdx" class="blank-row">
                                         <td></td>
                                     </tr>
-                                    <tr v-if="alPart.query.ss_conf"
+                                    <tr
+                                        v-if="alPart.query.ss_conf"
                                         :key="'alignment-' + i + '-ss_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -89,7 +70,8 @@
                                         <td></td>
                                         <td v-html="alPart.query.ss_conf"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.ss_dssp"
+                                    <tr
+                                        v-if="alPart.query.ss_dssp"
                                         :key="'alignment-' + i + '-ss_dssp-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -97,7 +79,8 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.query.ss_dssp)"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.ss_pred"
+                                    <tr
+                                        v-if="alPart.query.ss_pred"
                                         :key="'alignment-' + i + '-ss_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -105,7 +88,8 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.query.ss_pred)"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.seq"
+                                    <tr
+                                        v-if="alPart.query.seq"
                                         :key="'alignment-' + i + '-seq-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -113,7 +97,8 @@
                                         <td v-text="alPart.query.start"></td>
                                         <td v-html="coloredSeq(alPart.query.seq) + alEndRef(alPart.query)"></td>
                                     </tr>
-                                    <tr v-if="alPart.query.consensus"
+                                    <tr
+                                        v-if="alPart.query.consensus"
                                         :key="'alignment-' + i + '-consensus-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -121,16 +106,17 @@
                                         <td v-text="alPart.query.start"></td>
                                         <td v-html="alPart.query.consensus + alEndRef(alPart.query)"></td>
                                     </tr>
-                                    <tr v-if="alPart.agree"
+                                    <tr
+                                        v-if="alPart.agree"
                                         :key="'alignment-' + i + '-agree-' + alIdx"
                                         class="sequence">
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td class="consensus-agree"
-                                            v-text="alPart.agree"></td>
+                                        <td class="consensus-agree" v-text="alPart.agree"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.consensus"
+                                    <tr
+                                        v-if="alPart.template.consensus"
                                         :key="'alignment-' + i + '-tpl-cons-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -138,7 +124,8 @@
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="alPart.template.consensus + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.seq"
+                                    <tr
+                                        v-if="alPart.template.seq"
                                         :key="'alignment-' + i + '-tplseq-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -146,7 +133,8 @@
                                         <td v-text="alPart.template.start"></td>
                                         <td v-html="coloredSeq(alPart.template.seq) + alEndRef(alPart.template)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.ss_pred"
+                                    <tr
+                                        v-if="alPart.template.ss_pred"
                                         :key="'alignment-' + i + '-tplss_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -154,7 +142,8 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.template.ss_pred)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.ss_dssp"
+                                    <tr
+                                        v-if="alPart.template.ss_dssp"
                                         :key="'alignment-' + i + '-tplss_dssp-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -162,7 +151,8 @@
                                         <td></td>
                                         <td v-html="coloredSeqSS(alPart.template.ss_dssp)"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.ss_conf"
+                                    <tr
+                                        v-if="alPart.template.ss_conf"
                                         :key="'alignment-' + i + '-tplss_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -170,7 +160,8 @@
                                         <td></td>
                                         <td v-text="alPart.template.ss_conf"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.bb_pred"
+                                    <tr
+                                        v-if="alPart.template.bb_pred"
                                         :key="'alignment-' + i + '-tplbb_pred-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -178,7 +169,8 @@
                                         <td></td>
                                         <td v-text="alPart.template.bb_pred"></td>
                                     </tr>
-                                    <tr v-if="alPart.template.bb_conf"
+                                    <tr
+                                        v-if="alPart.template.bb_conf"
                                         :key="'alignment-' + i + '-tplbb_conf-' + alIdx"
                                         class="sequence">
                                         <td></td>
@@ -186,18 +178,18 @@
                                         <td></td>
                                         <td v-text="alPart.template.bb_conf"></td>
                                     </tr>
-                                    <tr :key="'alignment-' + i + '-br-' + alIdx"
-                                        class="blank-row">
+                                    <tr :key="'alignment-' + i + '-br-' + alIdx" class="blank-row">
                                         <td></td>
                                     </tr>
                                 </template>
                             </template>
                             <tr v-if="alignments.length !== total">
                                 <td colspan="4">
-                                    <Loading v-if="loadingMore"
-                                             :message="$t('jobs.results.alignment.loadingHits')"
-                                             justify="center"
-                                             class="mt-4" />
+                                    <Loading
+                                        v-if="loadingMore"
+                                        :message="$t('jobs.results.alignment.loadingHits')"
+                                        justify="center"
+                                        class="mt-4" />
                                     <intersection-observer @intersect="intersected" />
                                 </td>
                             </tr>
@@ -214,7 +206,7 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import {HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender} from '@/types/toolkit/results';
+import { HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 
 export default SearchResultTabMixin.extend({
@@ -230,44 +222,54 @@ export default SearchResultTabMixin.extend({
             alignments: undefined as HHompAlignmentItem[] | undefined,
             info: undefined as HHompHHInfoResult | undefined,
             breakAfter: 70,
-            hitListFields: [{
-                key: 'num',
-                label: this.$t('jobs.results.hhomp.table.num'),
-                sortable: true,
-            }, {
-                key: 'acc',
-                label: this.$t('jobs.results.hhomp.table.hit'),
-                sortable: true,
-            }, {
-                key: 'name',
-                label: this.$t('jobs.results.hhomp.table.name'),
-                sortable: true,
-            }, {
-                key: 'probabHit',
-                label: this.$t('jobs.results.hhomp.table.probHits'),
-                sortable: true,
-            }, {
-                key: 'probabOMP',
-                label: this.$t('jobs.results.hhomp.table.probOMP'),
-                sortable: true,
-            }, {
-                key: 'eval',
-                label: this.$t('jobs.results.hhomp.table.eVal'),
-                class: 'no-wrap',
-                sortable: true,
-            }, {
-                key: 'ssScore',
-                label: this.$t('jobs.results.hhomp.table.ssScore'),
-                sortable: true,
-            }, {
-                key: 'alignedCols',
-                label: this.$t('jobs.results.hhomp.table.cols'),
-                sortable: true,
-            }, {
-                key: 'templateRef',
-                label: this.$t('jobs.results.hhomp.table.targetLength'),
-                sortable: true,
-            }],
+            hitListFields: [
+                {
+                    key: 'num',
+                    label: this.$t('jobs.results.hhomp.table.num'),
+                    sortable: true,
+                },
+                {
+                    key: 'acc',
+                    label: this.$t('jobs.results.hhomp.table.hit'),
+                    sortable: true,
+                },
+                {
+                    key: 'name',
+                    label: this.$t('jobs.results.hhomp.table.name'),
+                    sortable: true,
+                },
+                {
+                    key: 'probabHit',
+                    label: this.$t('jobs.results.hhomp.table.probHits'),
+                    sortable: true,
+                },
+                {
+                    key: 'probabOMP',
+                    label: this.$t('jobs.results.hhomp.table.probOMP'),
+                    sortable: true,
+                },
+                {
+                    key: 'eval',
+                    label: this.$t('jobs.results.hhomp.table.eVal'),
+                    class: 'no-wrap',
+                    sortable: true,
+                },
+                {
+                    key: 'ssScore',
+                    label: this.$t('jobs.results.hhomp.table.ssScore'),
+                    sortable: true,
+                },
+                {
+                    key: 'alignedCols',
+                    label: this.$t('jobs.results.hhomp.table.cols'),
+                    sortable: true,
+                },
+                {
+                    key: 'templateRef',
+                    label: this.$t('jobs.results.hhomp.table.targetLength'),
+                    sortable: true,
+                },
+            ],
         };
     },
     methods: {
@@ -323,36 +325,36 @@ export default SearchResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .result-section {
-  padding-top: 3.5rem;
+    padding-top: 3.5rem;
 }
 
 .alignments-table {
-  font-size: 0.95em;
+    font-size: 0.95em;
 
-  .blank-row {
-    height: 0.8rem;
-  }
-
-  .sequence {
-    td {
-      word-break: keep-all;
-      white-space: nowrap;
-      font-family: $font-family-monospace;
-      padding: 0 1rem 0 0;
+    .blank-row {
+        height: 0.8rem;
     }
 
-    .consensus-agree {
-      white-space: pre-wrap;
-    }
-  }
+    .sequence {
+        td {
+            word-break: keep-all;
+            white-space: nowrap;
+            font-family: $font-family-monospace;
+            padding: 0 1rem 0 0;
+        }
 
-  a {
-    cursor: pointer;
-    color: $primary;
-
-    &:hover {
-      color: $tk-dark-green;
+        .consensus-agree {
+            white-space: pre-wrap;
+        }
     }
-  }
+
+    a {
+        cursor: pointer;
+        color: $primary;
+
+        &:hover {
+            color: $tk-dark-green;
+        }
+    }
 }
 </style>

@@ -1,38 +1,32 @@
 <template>
-    <Loading v-if="loading || !results"
-             :message="$t('loading')" />
+    <Loading v-if="loading || !results" :message="$t('loading')" />
     <div v-else>
-        <b v-if="results.results.length === 0"
-           v-html="$t('jobs.results.hhrepid.noResults')"></b>
+        <b v-if="results.results.length === 0" v-html="$t('jobs.results.hhrepid.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
             <template v-for="(hit, i) in results.results.reptypes">
-                <h4 :key="'hit-' + i"
+                <h4
+                    :key="'hit-' + i"
                     class="mb-4"
-                    v-text="$t('jobs.results.hhrepid.resultsForType', {type: hit.typ})"></h4>
-                <img :key="hit.typ"
-                     :src="getFilePath(hit.typ)"
-                     class="mb-3"
-                     alt="">
+                    v-text="$t('jobs.results.hhrepid.resultsForType', { type: hit.typ })"></h4>
+                <img :key="hit.typ" :src="getFilePath(hit.typ)" class="mb-3" alt="" />
 
-                <table :key="'hit-table-' + i"
-                       class="alignment-table mt-2">
+                <table :key="'hit-table-' + i" class="alignment-table mt-2">
                     <tbody>
                         <tr>
-                            <td v-text="$t('jobs.results.hhrepid.numResults', {num: hit.num})"></td>
+                            <td v-text="$t('jobs.results.hhrepid.numResults', { num: hit.num })"></td>
                         </tr>
                         <tr>
-                            <td v-text="$t('jobs.results.hhrepid.pValue', {pval: hit.pval})"></td>
+                            <td v-text="$t('jobs.results.hhrepid.pValue', { pval: hit.pval })"></td>
                         </tr>
                         <tr>
-                            <td v-text="$t('jobs.results.hhrepid.length', {len: hit.len})"></td>
+                            <td v-text="$t('jobs.results.hhrepid.length', { len: hit.len })"></td>
                         </tr>
                     </tbody>
                 </table>
-                <table :key="'hit-table2-' + i"
-                       class="alignment-table mt-4">
+                <table :key="'hit-table2-' + i" class="alignment-table mt-4">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -44,7 +38,8 @@
                     </thead>
                     <tbody>
                         <template v-for="hitIdx in breakIndices(hit.len)">
-                            <tr v-for="rep in hit.reps"
+                            <tr
+                                v-for="rep in hit.reps"
                                 :key="'hit-' + i + '-seqal-' + hitIdx + '-' + rep.id"
                                 class="sequence-alignment">
                                 <td v-text="rep.id"></td>
@@ -53,12 +48,11 @@
                                 <td v-text="rep.loc"></td>
                                 <td v-html="coloredSeq(rep.seq.slice(hitIdx, hitIdx + breakAfter))"></td>
                             </tr>
-                            <tr :key="'br-' + hitIdx"
-                                class="empty-row"></tr>
+                            <tr :key="'br-' + hitIdx" class="empty-row"></tr>
                         </template>
                     </tbody>
                 </table>
-                <br :key="'hit-br-' + i">
+                <br :key="'hit-br-' + i" />
             </template>
         </div>
     </div>
@@ -67,11 +61,11 @@
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
-import {HhrepidResults} from '@/types/toolkit/results';
+import { HhrepidResults } from '@/types/toolkit/results';
 import EventBus from '@/util/EventBus';
-import {colorSequence} from '@/util/SequenceUtils';
+import { colorSequence } from '@/util/SequenceUtils';
 
 const logger = Logger.get('HhrepidResultsTab');
 
@@ -110,7 +104,8 @@ export default ResultTabMixin.extend({
         forwardQueryA3M(): void {
             if (this.tool.parameters) {
                 EventBus.$emit('show-modal', {
-                    id: 'forwardingModal', props: {
+                    id: 'forwardingModal',
+                    props: {
                         forwardingJobID: this.job.jobID,
                         forwardingData: this.file,
                         forwardingMode: this.tool.parameters.forwarding,
@@ -134,23 +129,23 @@ export default ResultTabMixin.extend({
 
 <style lang="scss" scoped>
 img {
-  max-width: 100%;
+    max-width: 100%;
 }
 
 .alignment-table {
-  width: 100%;
-  @include media-breakpoint-up(xl) {
     width: 100%;
-  }
-  font-size: 0.85em;
+    @include media-breakpoint-up(xl) {
+        width: 100%;
+    }
+    font-size: 0.85em;
 
-  .sequence-alignment {
-    font-family: $font-family-monospace;
-    letter-spacing: 0.05em;
-  }
+    .sequence-alignment {
+        font-family: $font-family-monospace;
+        letter-spacing: 0.05em;
+    }
 }
 
 .empty-row {
-  height: 2em;
+    height: 2em;
 }
 </style>

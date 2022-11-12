@@ -1,10 +1,10 @@
-import {Tool, ToolParameters} from '@/types/toolkit/tools';
-import {defineStore} from 'pinia';
-import {toolService} from '@/services/ToolService';
-import {AlignmentViewer, Reformat} from '@/conf/FrontendTools';
+import { Tool, ToolParameters } from '@/types/toolkit/tools';
+import { defineStore } from 'pinia';
+import { toolService } from '@/services/ToolService';
+import { AlignmentViewer, Reformat } from '@/conf/FrontendTools';
 import Vue from 'vue';
-import {useStorage} from '@vueuse/core';
-import {useRootStore} from '@/stores/root';
+import { useStorage } from '@vueuse/core';
+import { useRootStore } from '@/stores/root';
 
 export interface ToolState {
     version: string;
@@ -51,5 +51,5 @@ export const useToolsStore = defineStore('tools', {
                 rootStore.loading.toolParameters = false;
             }
         },
-    }
+    },
 });

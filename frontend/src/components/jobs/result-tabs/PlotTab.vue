@@ -1,16 +1,11 @@
 <template>
-    <Loading v-if="loading"
-             :message="$t('loading')" />
-    <div v-else
-         class="font-small">
-        <b v-if="results.vals.length === 0"
-           v-html="$t('jobs.results.plot.noResults')"></b>
-        <div v-else
-             class="high-chart-container">
-            <div v-html="$t('jobs.results.plot.numHits', {num: results.vals.length})"></div>
-            <br><br>
-            <highcharts :options="chartOptions"
-                        class="high-chart" />
+    <Loading v-if="loading" :message="$t('loading')" />
+    <div v-else class="font-small">
+        <b v-if="results.vals.length === 0" v-html="$t('jobs.results.plot.noResults')"></b>
+        <div v-else class="high-chart-container">
+            <div v-html="$t('jobs.results.plot.numHits', { num: results.vals.length })"></div>
+            <br /><br />
+            <highcharts :options="chartOptions" class="high-chart" />
         </div>
     </div>
 </template>
@@ -18,9 +13,9 @@
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
-import {resultsService} from '@/services/ResultsService';
-import {ProbEvalList} from '@/types/toolkit/results';
-import {Chart} from 'highcharts-vue';
+import { resultsService } from '@/services/ResultsService';
+import { ProbEvalList } from '@/types/toolkit/results';
+import { Chart } from 'highcharts-vue';
 
 export default ResultTabMixin.extend({
     name: 'PlotTab',
@@ -50,11 +45,13 @@ export default ResultTabMixin.extend({
                     title: {
                         text: this.$t(`jobs.results.plot.${this.type}.yLabel`),
                     },
-                    plotLines: [{
-                        value: 0,
-                        width: 1,
-                        color: '#808080',
-                    }],
+                    plotLines: [
+                        {
+                            value: 0,
+                            width: 1,
+                            color: '#808080',
+                        },
+                    ],
                 },
                 tooltip: {},
                 legend: {
@@ -66,10 +63,12 @@ export default ResultTabMixin.extend({
                 chart: {
                     width: 750,
                 },
-                series: [{
-                    name: this.$t(`jobs.results.plot.${this.type}.legend`),
-                    data: this.probabilities,
-                }],
+                series: [
+                    {
+                        name: this.$t(`jobs.results.plot.${this.type}.legend`),
+                        data: this.probabilities,
+                    },
+                ],
                 credits: {
                     enabled: false,
                 },
@@ -94,7 +93,7 @@ export default ResultTabMixin.extend({
     },
     methods: {
         async init() {
-            this.results = await resultsService.getFile(this.job.jobID, 'plot_data.json') as ProbEvalList;
+            this.results = (await resultsService.getFile(this.job.jobID, 'plot_data.json')) as ProbEvalList;
             this.loading = false;
         },
     },
@@ -103,14 +102,13 @@ export default ResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .high-chart-container {
-  padding-left: 50px;
-  @include media-breakpoint-down(md) {
-    padding-left: 0;
-  }
+    padding-left: 50px;
+    @include media-breakpoint-down(md) {
+        padding-left: 0;
+    }
 
-  .high-chart {
-    overflow-x: auto !important;
-  }
+    .high-chart {
+        overflow-x: auto !important;
+    }
 }
 </style>
-

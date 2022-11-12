@@ -1,29 +1,22 @@
 <template>
-    <BaseModal id="templateAlignmentModal"
-               :title="$t('jobs.results.templateAlignment.title')"
-               size="lmd">
-        <b-form-select v-if="forwardingEnabled && !loading"
-                       v-model="selectedTool"
-                       :options="toolOptions"
-                       value-field="name"
-                       text-field="longname"
-                       class="select"
-                       :disabled="!data || loading"
-                       @change="forward">
+    <BaseModal id="templateAlignmentModal" :title="$t('jobs.results.templateAlignment.title')" size="lmd">
+        <b-form-select
+            v-if="forwardingEnabled && !loading"
+            v-model="selectedTool"
+            :options="toolOptions"
+            value-field="name"
+            text-field="longname"
+            class="select"
+            :disabled="!data || loading"
+            @change="forward">
             <template #first>
-                <option :value="null"
-                        v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
+                <option :value="null" v-text="$t('jobs.results.templateAlignment.forwardTo')"></option>
             </template>
         </b-form-select>
 
-        <Loading v-if="loading"
-                 :message="$t('loading')"
-                 class="float-right mb-3"
-                 :size="24" />
+        <Loading v-if="loading" :message="$t('loading')" class="float-right mb-3" :size="24" />
 
-        <b-form-textarea :value="displayData"
-                         readonly
-                         class="file-view mb-2" />
+        <b-form-textarea :value="displayData" readonly class="file-view mb-2" />
     </BaseModal>
 </template>
 
@@ -32,11 +25,11 @@ import Vue from 'vue';
 import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
-import {resultsService} from '@/services/ResultsService';
-import {ForwardingMode, Tool} from '@/types/toolkit/tools';
+import { resultsService } from '@/services/ResultsService';
+import { ForwardingMode, Tool } from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
-import {mapStores} from 'pinia';
-import {useToolsStore} from '@/stores/tools';
+import { mapStores } from 'pinia';
+import { useToolsStore } from '@/stores/tools';
 
 const logger = Logger.get('TemplateAlignmentModal');
 
@@ -76,12 +69,14 @@ export default Vue.extend({
         },
         toolOptions(): Tool[] {
             if (this.forwardingEnabled) {
-                const options: string[] = (this.forwardingMode.templateAlignment as string[]);
-                return this.tools.filter((t: Tool) => options.includes(t.name))
+                const options: string[] = this.forwardingMode.templateAlignment as string[];
+                return this.tools
+                    .filter((t: Tool) => options.includes(t.name))
                     .sort((t1: Tool, t2: Tool) => {
                         const t1Name = t1.longname.toLowerCase();
                         const t2Name = t2.longname.toLowerCase();
-                        if (t1Name < t2Name) { // sort string ascending
+                        if (t1Name < t2Name) {
+                            // sort string ascending
                             return -1;
                         } else if (t1Name > t2Name) {
                             return 1;
@@ -144,7 +139,7 @@ export default Vue.extend({
         },
         pasteForwardData() {
             EventBus.$off('paste-area-loaded', this.pasteForwardData);
-            EventBus.$emit('forward-data', {data: this.data, jobID: this.jobID});
+            EventBus.$emit('forward-data', { data: this.data, jobID: this.jobID });
         },
         resetData() {
             this.selectedTool = null;
@@ -155,18 +150,18 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .file-view {
-  background: white !important;
-  font-size: 0.7rem;
-  height: 50vh;
-  font-family: $font-family-monospace;
+    background: white !important;
+    font-size: 0.7rem;
+    height: 50vh;
+    font-family: $font-family-monospace;
 }
 
 .select {
-  width: 12em;
-  margin-bottom: 1em;
+    width: 12em;
+    margin-bottom: 1em;
 }
 
 .vue-simple-spinner {
-  margin-left: 20rem !important;
+    margin-left: 20rem !important;
 }
 </style>

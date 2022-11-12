@@ -1,69 +1,63 @@
 <template>
     <div>
-        <b-form-textarea v-model="input"
-                         class="textarea-input break-all"
-                         :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
-                         cols="70"
-                         spellcheck="false"
-                         @input="clearOutput" />
-        <b-button-group size="sm"
-                        class="mt-1 mb-3">
-            <b-btn variant="link"
-                   @click="handlePasteExample">
-                <loading v-if="rootStore.loading.alignmentTextarea"
-                         :size="20" />
-                <span v-else
-                      v-text="$t('tools.parameters.textArea.pasteExample')"></span>
+        <b-form-textarea
+            v-model="input"
+            class="textarea-input break-all"
+            :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
+            cols="70"
+            spellcheck="false"
+            @input="clearOutput" />
+        <b-button-group size="sm" class="mt-1 mb-3">
+            <b-btn variant="link" @click="handlePasteExample">
+                <loading v-if="rootStore.loading.alignmentTextarea" :size="20" />
+                <span v-else v-text="$t('tools.parameters.textArea.pasteExample')"></span>
             </b-btn>
         </b-button-group>
-        <b-alert v-if="detectedFormat"
-                 :show="true"
-                 variant="success"
-                 class="validation-alert mb-0"
-                 v-html="$t('tools.reformat.detectedFormat', {format: detectedFormat})" />
-        <b-row align-h="center"
-               class="my-2">
-            <b-col cols="12"
-                   md="4">
-                <multiselect v-model="selectedOutputFormat"
-                             :allow-empty="true"
-                             :options="outputFormatOptions"
-                             :disabled="!detectedFormat"
-                             track-by="value"
-                             label="text"
-                             :placeholder="$t('tools.reformat.selectOutputFormat')"
-                             :searchable="false"
-                             select-label=""
-                             deselect-label=""
-                             selected-label=""
-                             @select="computeOutput" />
+        <b-alert
+            v-if="detectedFormat"
+            :show="true"
+            variant="success"
+            class="validation-alert mb-0"
+            v-html="$t('tools.reformat.detectedFormat', { format: detectedFormat })" />
+        <b-row align-h="center" class="my-2">
+            <b-col cols="12" md="4">
+                <multiselect
+                    v-model="selectedOutputFormat"
+                    :allow-empty="true"
+                    :options="outputFormatOptions"
+                    :disabled="!detectedFormat"
+                    track-by="value"
+                    label="text"
+                    :placeholder="$t('tools.reformat.selectOutputFormat')"
+                    :searchable="false"
+                    select-label=""
+                    deselect-label=""
+                    selected-label=""
+                    @select="computeOutput" />
             </b-col>
         </b-row>
         <div v-if="output">
-            <b-form-textarea v-model="output"
-                             class="textarea-output break-all"
-                             cols="70"
-                             spellcheck="false"
-                             readonly />
+            <b-form-textarea v-model="output" class="textarea-output break-all" cols="70" spellcheck="false" readonly />
             <div class="halign-center-wrapper mt-2">
                 <b-button-group class="mt-2 output-button-group">
-                    <b-dropdown :text="$t('tools.reformat.forwardTo')"
-                                variant="primary">
-                        <b-dropdown-item v-for="option in forwardingOptions"
-                                         :key="option.value"
-                                         @click="forward(option)">
+                    <b-dropdown :text="$t('tools.reformat.forwardTo')" variant="primary">
+                        <b-dropdown-item
+                            v-for="option in forwardingOptions"
+                            :key="option.value"
+                            @click="forward(option)">
                             {{ option.text }}
                         </b-dropdown-item>
                     </b-dropdown>
-                    <b-button v-if="canCopy"
-                              variant="primary"
-                              @click="copyToClipboard">
+                    <b-button v-if="canCopy" variant="primary" @click="copyToClipboard">
                         {{ $t('tools.reformat.copyToClipboard') }}
                     </b-button>
-                    <b-button download="reformat_download.txt"
-                              :href="'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,'
-                                  + encodeURIComponent(output)"
-                              variant="primary">
+                    <b-button
+                        download="reformat_download.txt"
+                        :href="
+                            'data:application/octet-stream;content-disposition:attachment;filename=file.txt;charset=utf-8,' +
+                            encodeURIComponent(output)
+                        "
+                        variant="primary">
                         {{ $t('tools.reformat.download') }}
                     </b-button>
                 </b-button-group>
@@ -74,18 +68,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import {FrontendToolParameter, SelectOption, SequenceValidationParams, Tool} from '@/types/toolkit/tools';
-import {Reformat} from '@/modules/reformat';
+import { FrontendToolParameter, SelectOption, SequenceValidationParams, Tool } from '@/types/toolkit/tools';
+import { Reformat } from '@/modules/reformat';
 import Multiselect from 'vue-multiselect';
-import {AlignmentSeqFormat} from '@/types/toolkit/enums';
+import { AlignmentSeqFormat } from '@/types/toolkit/enums';
 import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
-import {sampleSeqService} from '@/services/SampleSeqService';
+import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
-import {jobService} from '@/services/JobService';
-import {mapStores} from 'pinia';
-import {useRootStore} from '@/stores/root';
-import {useToolsStore} from '@/stores/tools';
+import { jobService } from '@/services/JobService';
+import { mapStores } from 'pinia';
+import { useRootStore } from '@/stores/root';
+import { useToolsStore } from '@/stores/tools';
 
 const logger = Logger.get('ReformatView');
 
@@ -106,9 +100,9 @@ export default Vue.extend({
             input: '',
             output: '',
             outputFormatOptions: [
-                {value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false},
-                {value: AlignmentSeqFormat.CLUSTAL, text: 'CLUSTAL', $isDisabled: false},
-                {value: AlignmentSeqFormat.STOCKHOM, text: 'STOCKHOLM', $isDisabled: false},
+                { value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false },
+                { value: AlignmentSeqFormat.CLUSTAL, text: 'CLUSTAL', $isDisabled: false },
+                { value: AlignmentSeqFormat.STOCKHOM, text: 'STOCKHOLM', $isDisabled: false },
             ],
             forwardingOptions: [] as SelectOption[],
             selectedOutputFormat: undefined,
@@ -126,9 +120,9 @@ export default Vue.extend({
             return this.reformat.getFormat();
         },
         canCopy(): boolean {
-            return navigator && "clipboard" in navigator;
+            return navigator && 'clipboard' in navigator;
         },
-        ...mapStores(useRootStore, useToolsStore)
+        ...mapStores(useRootStore, useToolsStore),
     },
     mounted() {
         EventBus.$on('forward-data', this.acceptForwardData);
@@ -138,12 +132,13 @@ export default Vue.extend({
         EventBus.$off('forward-data', this.acceptForwardData);
     },
     methods: {
-        acceptForwardData({data}: { data: string }): void {
+        acceptForwardData({ data }: { data: string }): void {
             this.input = data;
         },
         handlePasteExample(): void {
             this.rootStore.loading.alignmentTextarea = true;
-            sampleSeqService.fetchSampleSequence(this.parameter.sampleInput)
+            sampleSeqService
+                .fetchSampleSequence(this.parameter.sampleInput)
                 .then((res: string) => {
                     this.input = res;
                 })
@@ -168,14 +163,19 @@ export default Vue.extend({
                         const maxNumSeqs = (tool.validationParams as SequenceValidationParams).maxNumSeq;
                         const sameLength = (tool.validationParams as SequenceValidationParams).requiresSameLengthSeq;
 
-                        return allowedFormats !== undefined &&
-                            allowedFormats.includes((selectedFormat.value as AlignmentSeqFormat)) &&
-                            (maxNumSeqs && maxNumSeqs > 1) && (sameLength);
+                        return (
+                            allowedFormats !== undefined &&
+                            allowedFormats.includes(selectedFormat.value as AlignmentSeqFormat) &&
+                            maxNumSeqs &&
+                            maxNumSeqs > 1 &&
+                            sameLength
+                        );
                     })
                     .sort((t1: Tool, t2: Tool) => {
                         const t1Name = t1.longname.toLowerCase();
                         const t2Name = t2.longname.toLowerCase();
-                        if (t1Name < t2Name) { // sort string ascending
+                        if (t1Name < t2Name) {
+                            // sort string ascending
                             return -1;
                         } else if (t1Name > t2Name) {
                             return 1;
@@ -193,7 +193,7 @@ export default Vue.extend({
             this.output = '';
         },
         forward(selectedTool: SelectOption): void {
-            this.$router.push({name: 'tools', params: {toolName: selectedTool.value, input: this.output}});
+            this.$router.push({ name: 'tools', params: { toolName: selectedTool.value, input: this.output } });
         },
         async copyToClipboard() {
             try {
@@ -208,28 +208,31 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.textarea-input, .textarea-output {
-  background-color: $white;
-  font-family: $font-family-monospace;
-  font-size: 0.9em;
-  height: 15em;
+.textarea-input,
+.textarea-output {
+    background-color: $white;
+    font-family: $font-family-monospace;
+    font-size: 0.9em;
+    height: 15em;
 }
 
-.btn-link:hover, .btn-link:active, .btn-link:focus {
-  text-decoration: none;
+.btn-link:hover,
+.btn-link:active,
+.btn-link:focus {
+    text-decoration: none;
 }
 
 .validation-alert {
-  margin-top: 0.5rem;
-  float: right;
-  padding: 0.4rem 0.5rem;
+    margin-top: 0.5rem;
+    float: right;
+    padding: 0.4rem 0.5rem;
 }
 
 .halign-center-wrapper {
-  text-align: center;
+    text-align: center;
 }
 
 .output-button-group {
-  display: inline-block;
+    display: inline-block;
 }
 </style>

@@ -1,5 +1,4 @@
 class ParameterRememberService {
-
     private KEY = 'remember_parameters';
 
     public has(toolName: string): boolean {

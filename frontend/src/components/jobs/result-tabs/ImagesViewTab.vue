@@ -1,24 +1,21 @@
 <template>
     <div class="text-center img-container">
-        <div v-for="(img, index) in images"
-             :key="'img-' + index">
-            <div v-if="labels[index]"
-                 class="text-left border-bottom mb-3"
-                 v-text="labels[index]"></div>
-            <img :key="'img' + index"
-                 :src="img"
-                 class="plot-img"
-                 alt=""
-                 onerror="this.parentNode.classList.add('img-broken');">
-            <span class="plot-img-alt"
-                  v-text="altTexts[index]"></span>
+        <div v-for="(img, index) in images" :key="'img-' + index">
+            <div v-if="labels[index]" class="text-left border-bottom mb-3" v-text="labels[index]"></div>
+            <img
+                :key="'img' + index"
+                :src="img"
+                class="plot-img"
+                alt=""
+                onerror="this.parentNode.classList.add('img-broken');" />
+            <span class="plot-img-alt" v-text="altTexts[index]"></span>
         </div>
     </div>
 </template>
 
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
-import {resultsService} from '@/services/ResultsService';
+import { resultsService } from '@/services/ResultsService';
 
 export default ResultTabMixin.extend({
     name: 'ImagesViewTab',
@@ -41,9 +38,9 @@ export default ResultTabMixin.extend({
             if (!this.viewOptions.altTexts) {
                 return [];
             }
-            return this.viewOptions.altTexts.split(';')
-                .map((key: string) => key ?
-                    this.$t('jobs.results.imagesView.' + key) as string : '');
+            return this.viewOptions.altTexts
+                .split(';')
+                .map((key: string) => (key ? (this.$t('jobs.results.imagesView.' + key) as string) : ''));
         },
     },
 });
@@ -51,24 +48,24 @@ export default ResultTabMixin.extend({
 
 <style lang="scss" scoped>
 .img-container {
-  overflow-x: auto;
+    overflow-x: auto;
 }
 
 .plot-img {
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 }
 
 .plot-img-alt {
-  display: none;
+    display: none;
 }
 
 .img-broken {
-  .plot-img {
-    display: none;
-  }
+    .plot-img {
+        display: none;
+    }
 
-  .plot-img-alt {
-    display: block;
-  }
+    .plot-img-alt {
+        display: block;
+    }
 }
 </style>

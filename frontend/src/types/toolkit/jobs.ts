@@ -1,4 +1,4 @@
-import {JobState} from '@/types/toolkit/enums';
+import { JobState } from '@/types/toolkit/enums';
 
 export interface Job {
     jobID: string;

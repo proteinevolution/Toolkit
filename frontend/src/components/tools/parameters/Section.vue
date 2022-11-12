@@ -1,19 +1,21 @@
 <template>
     <div>
         <b-row>
-            <b-col v-for="parameter in section.parameters"
-                   :key="parameter.name"
-                   :md="mediumSize(parameter)"
-                   :sm="smallSize(parameter)"
-                   :lg="largeSize(parameter)">
-                <component :is="parameter.parameterType"
-                           :parameter="parameter"
-                           :validation-params="validationParams"
-                           :validation-errors="validationErrors"
-                           :submission="submission"
-                           :remember-params="rememberParams"
-                           :class="['size-' + mediumSize(parameter)]"
-                           class="parameter-component" />
+            <b-col
+                v-for="parameter in section.parameters"
+                :key="parameter.name"
+                :md="mediumSize(parameter)"
+                :sm="smallSize(parameter)"
+                :lg="largeSize(parameter)">
+                <component
+                    :is="parameter.parameterType"
+                    :parameter="parameter"
+                    :validation-params="validationParams"
+                    :validation-errors="validationErrors"
+                    :submission="submission"
+                    :remember-params="rememberParams"
+                    :class="['size-' + mediumSize(parameter)]"
+                    class="parameter-component" />
             </b-col>
         </b-row>
     </div>
@@ -29,8 +31,8 @@ import BooleanParameter from './BooleanParameter.vue';
 import ModellerParameter from './special/ModellerParameter.vue';
 import AlignmentViewerView from './special/AlignmentViewerView.vue';
 import ReformatView from './special/ReformatView.vue';
-import {Parameter, ParameterSection, ValidationParams} from '@/types/toolkit/tools';
-import {ParameterType} from '@/types/toolkit/enums';
+import { Parameter, ParameterSection, ValidationParams } from '@/types/toolkit/tools';
+import { ParameterType } from '@/types/toolkit/enums';
 import HHpredSelectsParameter from '@/components/tools/parameters/special/HHpredSelectsParameter.vue';
 
 export default Vue.extend({
@@ -101,15 +103,15 @@ export default Vue.extend({
 
 <style lang="scss">
 .parameter-component {
-  width: 100%;
-  max-width: 15rem;
+    width: 100%;
+    max-width: 15rem;
 
-  .col-form-label {
-    font-size: 0.8em;
-  }
+    .col-form-label {
+        font-size: 0.8em;
+    }
 
-  &.size-12 {
-    max-width: none;
-  }
+    &.size-12 {
+        max-width: none;
+    }
 }
 </style>

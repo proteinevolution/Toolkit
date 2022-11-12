@@ -23,7 +23,8 @@ export default {
                     @:toolHelpModals.common.singleseq`,
                     },
                 ],
-                references: 'DeepCoil - a fast and accurate prediction of coiled-coil domains in protein sequences.<br>' +
+                references:
+                    'DeepCoil - a fast and accurate prediction of coiled-coil domains in protein sequences.<br>' +
                     'Ludwiczak J, Winski A, Szczepaniak K, Alva V, Dunin-Horkawicz S.<a ' +
                     'href="https://www.ncbi.nlm.nih.gov/pubmed/?term=30601942" target="_blank" rel="noopener">\n' +
                     'Bioinformatics. 2019 Aug 15;35(16):2790-2795</a>.',

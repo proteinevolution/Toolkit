@@ -1,9 +1,9 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 import BootstrapVue from 'bootstrap-vue';
-import {createLocalVue, shallowMount} from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import NavBar from '@/components/navigation/NavBar.vue';
-import {tools1} from '../../mocks/tools';
-import {sections} from '@/conf/ToolSections';
+import { tools1 } from '../../mocks/tools';
+import { sections } from '@/conf/ToolSections';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);

@@ -1,13 +1,10 @@
 <template>
-    <div v-show="display"
-         ref="scrollTop"
-         class="scroll-top-button"
-         @click="scrollTop"></div>
+    <div v-show="display" ref="scrollTop" class="scroll-top-button" @click="scrollTop"></div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {throttle} from 'lodash-es';
+import { throttle } from 'lodash-es';
 
 export default Vue.extend({
     name: 'ScrollTopButton',
@@ -46,15 +43,15 @@ export default Vue.extend({
 
 <style lang="scss" scoped>
 .scroll-top-button {
-  width: 40px;
-  height: 40px;
-  position: fixed;
-  cursor: pointer;
-  bottom: 2rem;
-  right: 2rem;
-  background: url(../../assets/images/arrow-top.svg) no-repeat;
-  background-size: 40px 40px;
-  outline: 0;
-  z-index: 10;
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    cursor: pointer;
+    bottom: 2rem;
+    right: 2rem;
+    background: url(../../assets/images/arrow-top.svg) no-repeat;
+    background-size: 40px 40px;
+    outline: 0;
+    z-index: 10;
 }
 </style>
