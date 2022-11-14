@@ -303,14 +303,14 @@ $themeColor: $primary;
 }
 
 @font-face {
-    font-family: 'Source Sans Pro';
-    src: url('./assets/fonts/SourceSansPro-Regular.ttf');
+    font-family: 'Source Code Pro';
+    src: url('./assets/fonts/SourceCodePro-Regular.ttf');
     font-weight: 400;
 }
 
 @font-face {
-    font-family: 'Source Sans Pro';
-    src: url('./assets/fonts/SourceSansPro-Bold.ttf');
+    font-family: 'Source Code Pro';
+    src: url('./assets/fonts/SourceCodePro-Bold.ttf');
     font-weight: 700;
 }
 
