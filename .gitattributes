@@ -10,3 +10,4 @@
 *.jpg binary
 *.exe binary
 *.msi binary
+*.ttf binary
