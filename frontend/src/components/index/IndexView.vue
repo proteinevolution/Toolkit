@@ -16,29 +16,23 @@
     </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
+import { watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 import ToolFinder from './ToolFinder.vue';
 import UpdatesSection from './UpdatesSection.vue';
-import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+import useToolkitTitle from '@/hooks/useToolkitTitle';
 import EventBus from '@/util/EventBus';
 
-export default hasHTMLTitle.extend({
-    name: 'IndexView',
-    components: {
-        ToolFinder,
-        UpdatesSection,
-    },
-    watch: {
-        // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
-        '$route.query': {
-            immediate: true,
-            async handler(query: any) {
-                if (query && query.action) {
-                    EventBus.$emit('show-modal', { id: query.action });
-                }
-            },
-        },
-    },
+useToolkitTitle();
+
+// Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
+const route = useRoute();
+watchEffect(() => {
+    const query = route.query;
+    if (query && query.action) {
+        EventBus.$emit('show-modal', { id: query.action });
+    }
 });
 </script>
 

@@ -10,7 +10,6 @@ import { pinia } from '@/stores';
 import { useRootStoreWithout } from '@/stores/root';
 import BootstrapVue from 'bootstrap-vue';
 import Notifications from '@/modules/notifications';
-import TitleManager from '@/modules/title_manager';
 import VueTour from 'v3-tour';
 
 const app = createApp(App);
@@ -66,7 +65,6 @@ app.use(Notifications, {
         onlyIfHidden: true,
     },
 });
-app.use(TitleManager);
 app.use(VueTour);
 
 app.mount('#app');

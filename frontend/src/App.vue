@@ -106,6 +106,7 @@ import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { Tour } from 'v3-tour';
+import { useGlobalTitleState } from '@/hooks/useToolkitTitle';
 
 const logger = Logger.get('App');
 
@@ -397,13 +398,6 @@ export default defineComponent({
         },
     },
     created() {
-        // remove title star on focus
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                this.$title.alert(false);
-            }
-        });
-
         this.rootStore.fetchMaintenance();
         this.toolsStore.fetchAllTools();
         this.jobsStore.fetchAllJobs();
@@ -474,7 +468,8 @@ export default defineComponent({
                 const job = this.jobsStore.jobs.find((j: Job) => j.jobID === jobID) as Job;
                 const tool = this.toolsStore.tools.find((t: Tool) => t.name === job.tool) as Tool;
                 this.showNotification(title, body, { tool: tool.longname });
-                this.$title.alert(true);
+                const { alert } = useGlobalTitleState();
+                alert.value = true;
             }
         },
         showNotification(title: string, text: string, args: any): void {

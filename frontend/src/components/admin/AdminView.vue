@@ -38,66 +38,41 @@
     <div v-else></div>
 </template>
 
-<script lang="ts">
-import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 import { backendService } from '@/services/BackendService';
-import { User } from '@/types/toolkit/auth';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
 import AdminStatistics from './AdminStatistics.vue';
 import { useRootStore } from '@/stores/root';
-import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
+import useToolkitTitle from '@/hooks/useToolkitTitle';
 
-export default hasHTMLTitle.extend({
-    name: 'AdminView',
-    components: {
-        Loading,
-        Switches,
-        AdminStatistics,
-    },
-    data() {
-        return {
-            maintenance: {
-                message: '',
-                submitBlocked: false,
-            },
-            maintenanceStateLoading: false,
-        };
-    },
-    computed: {
-        htmlTitle() {
-            return 'Admin Page';
-        },
-        loggedIn(): boolean {
-            return this.authStore.loggedIn;
-        },
-        user(): User | null {
-            return this.authStore.user;
-        },
-        isAdmin(): boolean {
-            return this.user !== null && this.user.isAdmin;
-        },
-        ...mapStores(useRootStore, useAuthStore),
-    },
-    mounted() {
-        this.maintenance.message = this.rootStore.maintenance.message;
-        this.maintenance.submitBlocked = this.rootStore.maintenance.submitBlocked;
-    },
-    methods: {
-        setMaintenanceState(): void {
-            this.maintenanceStateLoading = true;
-            backendService.setMaintenanceState(this.maintenance).finally(() => {
-                this.maintenanceStateLoading = false;
-            });
-        },
-        resetMaintenanceState(): void {
-            this.maintenance.message = '';
-            this.maintenance.submitBlocked = false;
-            this.setMaintenanceState();
-        },
-    },
+useToolkitTitle('Admin Page');
+
+const { maintenance: storedMaintenance } = useRootStore();
+const maintenance = ref({
+    message: storedMaintenance.message,
+    submitBlocked: storedMaintenance.submitBlocked,
 });
+const maintenanceStateLoading = ref(false);
+
+const setMaintenanceState = async () => {
+    maintenanceStateLoading.value = true;
+    await backendService.setMaintenanceState(maintenance.value);
+    maintenanceStateLoading.value = false;
+};
+
+const resetMaintenanceState = () => {
+    maintenance.value = {
+        message: '',
+        submitBlocked: false,
+    };
+    setMaintenanceState();
+};
+
+const { user } = useAuthStore();
+const isAdmin = computed<boolean>(() => user?.isAdmin === true);
 </script>
 
 <style lang="scss" scoped>

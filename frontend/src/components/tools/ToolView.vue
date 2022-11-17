@@ -108,14 +108,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { computed, defineComponent } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
 import JobPublicToggle from '@/components/tools/parameters/JobPublicToggle.vue';
 import { ParameterSection, Tool } from '@/types/toolkit/tools';
 import VelocityFade from '@/transitions/VelocityFade.vue';
-import hasHTMLTitle from '@/mixins/hasHTMLTitle';
 import NotFoundView from '@/components/utils/NotFoundView.vue';
 import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
 import { jobService } from '@/services/JobService';
@@ -129,10 +128,12 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import { useAuthStore } from '@/stores/auth';
+import { useRoute } from 'vue-router';
+import useToolkitTitle from '@/hooks/useToolkitTitle';
 
 const logger = Logger.get('ToolView');
 
-export default hasHTMLTitle.extend({
+export default defineComponent({
     name: 'ToolView',
     components: {
         Section,
@@ -157,6 +158,25 @@ export default hasHTMLTitle.extend({
             default: undefined,
         },
     },
+    setup(props) {
+        const route = useRoute();
+
+        const toolName = computed<string>(() => {
+            const { isJobView, job } = props;
+            if (isJobView && job) {
+                return job.tool;
+            }
+            return route.params.toolName as string;
+        });
+
+        const toolsStore = useToolsStore();
+
+        const tool = computed<Tool>(() => toolsStore.tools.find((tool: Tool) => tool.name === toolName.value) as Tool);
+
+        useToolkitTitle(computed<string>(() => tool.value.longname));
+
+        return { tool, toolName };
+    },
     data() {
         return {
             submitLoading: false,
@@ -171,15 +191,6 @@ export default hasHTMLTitle.extend({
         };
     },
     computed: {
-        toolName(): string {
-            if (this.isJobView) {
-                return this.job.tool;
-            }
-            return this.$route.params.toolName;
-        },
-        tool(): Tool {
-            return this.toolsStore.tools.find((tool: Tool) => tool.name === this.toolName) as Tool;
-        },
         parameterSections(): ParameterSection[] | undefined {
             if (!this.tool || !this.tool.parameters) {
                 return undefined;
@@ -188,12 +199,6 @@ export default hasHTMLTitle.extend({
         },
         showSubmitButtons(): boolean {
             return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
-        },
-        htmlTitle(): string {
-            if (!this.tool) {
-                return '';
-            }
-            return this.tool.longname;
         },
         submitBlocked(): boolean {
             return this.rootStore.maintenance.submitBlocked;

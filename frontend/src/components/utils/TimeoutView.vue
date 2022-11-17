@@ -1,20 +1,7 @@
 <template>
-    <NotFoundView error-message="connectionTimeout" />
+    <NotFoundView error-message="connectionTimeout" title="Timeout" />
 </template>
 
-<script lang="ts">
-import hasHTMLTitle from '../../mixins/hasHTMLTitle';
+<script lang="ts" setup>
 import NotFoundView from '@/components/utils/NotFoundView.vue';
-
-export default hasHTMLTitle.extend({
-    name: 'TimeoutView',
-    components: {
-        NotFoundView,
-    },
-    computed: {
-        htmlTitle() {
-            return 'Timeout';
-        },
-    },
-});
 </script>

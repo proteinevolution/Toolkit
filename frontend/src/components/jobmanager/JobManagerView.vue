@@ -84,7 +84,8 @@
 </template>
 
 <script lang="ts">
-import hasHTMLTitle from '@/mixins/hasHTMLTitle';
+import { defineComponent } from 'vue';
+import useToolkitTitle from '@/hooks/useToolkitTitle';
 import { Job } from '@/types/toolkit/jobs';
 import { Tool } from '@/types/toolkit/tools';
 import { jobService } from '@/services/JobService';
@@ -95,8 +96,11 @@ import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { DateTime } from 'luxon';
 
-export default hasHTMLTitle.extend({
+export default defineComponent({
     name: 'JobManagerView',
+    setup() {
+        useToolkitTitle('Jobmanager');
+    },
     data() {
         return {
             fields: [
@@ -139,9 +143,6 @@ export default hasHTMLTitle.extend({
         };
     },
     computed: {
-        htmlTitle() {
-            return 'Jobmanager';
-        },
         jobs(): Job[] {
             return this.jobsStore.ownedJobs.slice(0);
         },
