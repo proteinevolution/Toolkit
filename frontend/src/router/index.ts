@@ -1,15 +1,11 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 import routes from './routes';
 import Logger from 'js-logger';
 
 const logger = Logger.get('router');
 
-Vue.use(Router);
-
-const router = new Router({
-    mode: 'history',
-    base: import.meta.env.BASE_URL,
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes,
 });
 

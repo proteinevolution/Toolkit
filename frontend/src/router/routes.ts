@@ -1,8 +1,14 @@
 import IndexView from '../components/index/IndexView.vue';
 import Loading from '../components/utils/Loading.vue';
 import TimeoutView from '../components/utils/TimeoutView.vue';
-import { Component, CreateElement, defineAsyncComponent, VNode, VNodeChildren, VNodeData } from 'vue';
-import { Location, NavigationGuardNext, Route, RouteConfig } from 'vue-router';
+import { Component, defineAsyncComponent, defineComponent, h } from 'vue';
+import {
+    NavigationGuardNext,
+    RouteLocation,
+    RouteLocationNormalized,
+    RouteLocationRaw,
+    RouteRecordRaw,
+} from 'vue-router';
 import { authService } from '@/services/AuthService';
 import Logger from 'js-logger';
 
@@ -12,7 +18,7 @@ const JobManagerView = (): Promise<Component> => lazyLoadView(import('../compone
 const AdminView = (): Promise<Component> => lazyLoadView(import('../components/admin/AdminView.vue'));
 const NotFoundView = (): Promise<Component> => lazyLoadView(import('../components/utils/NotFoundView.vue'));
 
-const routes: RouteConfig[] = [
+const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'index',
@@ -52,7 +58,11 @@ const routes: RouteConfig[] = [
         meta: {
             showJobList: true,
         },
-        beforeEnter: async (to: Route, from: Route, next: NavigationGuardNext): Promise<void> => {
+        beforeEnter: async (
+            to: RouteLocationNormalized,
+            from: RouteLocationNormalized,
+            next: NavigationGuardNext
+        ): Promise<void> => {
             const user = await authService.fetchUserData();
             if (user != null && user.isAdmin) {
                 next();
@@ -63,7 +73,7 @@ const routes: RouteConfig[] = [
     },
     {
         path: '/verify/:nameLogin/:token',
-        redirect: (to: Route): Location => {
+        redirect: (to: RouteLocation): RouteLocationRaw => {
             const { params } = to;
             params.action = 'verification';
             return { name: 'index', query: params };
@@ -71,14 +81,14 @@ const routes: RouteConfig[] = [
     },
     {
         path: '/reset-password/:nameLogin/:token',
-        redirect: (to: Route): Location => {
+        redirect: (to: RouteLocation): RouteLocationRaw => {
             const { params } = to;
             params.action = 'resetPassword';
             return { name: 'index', query: params };
         },
     },
     {
-        path: '/**',
+        path: '/:pathMatch(.*)*',
         name: '404',
         component: NotFoundView,
         meta: {
@@ -148,12 +158,11 @@ export function lazyLoadView(AsyncView: Promise<typeof import('*.vue')>): Promis
         },
     });
 
-    // TODO: with Vue3 replace this with what the template has
-    return Promise.resolve({
-        functional: true,
-        render(h: CreateElement, { data, children }: { data: VNodeData; children: VNodeChildren }): VNode {
-            // Transparently pass any props or children to the view component.
-            return h(AsyncHandler, data, children);
-        },
-    });
+    return Promise.resolve(
+        defineComponent({
+            setup(props, { attrs, slots }) {
+                return () => h(AsyncHandler, { ...attrs, ...props }, slots);
+            },
+        })
+    );
 }

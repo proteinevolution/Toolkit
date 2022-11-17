@@ -12,9 +12,14 @@
                         <SideBar />
                     </b-col>
                     <b-col :class="[showJobList ? 'col-lg-9 col-xl-10' : '']">
-                        <VelocityFade :duration="1000">
-                            <router-view :key="$route.fullPath + refreshCounter" @refresh="refreshCounter++" />
-                        </VelocityFade>
+                        <router-view
+                            :key="$route.fullPath + refreshCounter"
+                            v-slot="{ Component }"
+                            @refresh="refreshCounter++">
+                            <VelocityFade :duration="1000">
+                                <component :is="Component" />
+                            </VelocityFade>
+                        </router-view>
                     </b-col>
                 </b-row>
                 <b-row>
