@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import VueI18n from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
 import messages from './lang/en';
 import mergeWith from 'lodash-es/mergeWith';
 import Logger from 'js-logger';
@@ -7,37 +6,41 @@ import { Settings } from 'luxon';
 
 export const defaultLanguage = 'en';
 Settings.defaultLocale = defaultLanguage;
-Vue.use(VueI18n);
 
 const logger = Logger.get('i18n');
 
-const i18n = new VueI18n({
+const i18n = createI18n({
     locale: localStorage.getItem('tk-locale') || defaultLanguage, // set locale
     fallbackLocale: defaultLanguage,
     messages, // set locale messages
-    silentTranslationWarn: process.env.NODE_ENV === 'production',
+    silentTranslationWarn: import.meta.env.PROD,
 });
 
 export const possibleLanguages: string[] = [defaultLanguage, 'de'];
 const loadedLanguages: string[] = [defaultLanguage]; // our default language that is preloaded
 const loadedExtraTranslations: string[] = [];
 
-function setI18nLanguage(lang: string) {
-    i18n.locale = lang;
+function setI18nLanguage(lang: PossibleLanguage) {
+    if (i18n.mode === 'legacy') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore we have to wait until vue-i18n fixes the types https://github.com/intlify/vue-i18n-next/issues/1003
+        i18n.global.locale = lang;
+    } else {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore we have to wait until vue-i18n fixes the types https://github.com/intlify/vue-i18n-next/issues/1003
+        i18n.global.locale.value = lang;
+    }
     localStorage.setItem('tk-locale', lang);
     Settings.defaultLocale = lang;
-    const html = document.querySelector('html');
-    if (html != null) {
-        html.setAttribute('lang', lang);
-    }
+    document.querySelector('html')?.setAttribute('lang', lang);
     return lang;
 }
 
 export function loadLanguageAsync(lang: string): Promise<string> {
-    if (i18n.locale !== lang) {
+    if (i18n.global.locale !== lang && isPossibleLanguage(lang)) {
         if (!loadedLanguages.includes(lang)) {
             return import(`./lang/${lang}.ts`).then((msgs) => {
-                i18n.setLocaleMessage(lang, msgs.default[lang]);
+                i18n.global.setLocaleMessage(lang, msgs.default[lang]);
                 loadedLanguages.push(lang);
                 return setI18nLanguage(lang);
             });
@@ -68,13 +71,19 @@ export async function loadExtraTranslations(path: string): Promise<void> {
         for (const itemLang in msgs) {
             if (itemLang in msgs) {
                 const itemMsgs = msgs[itemLang];
-                const curMsgs = i18n.getLocaleMessage(itemLang);
+                const curMsgs = i18n.global.getLocaleMessage(itemLang);
                 const newMsgs = mergeWith(curMsgs, itemMsgs);
-                i18n.setLocaleMessage(itemLang, newMsgs);
+                i18n.global.setLocaleMessage(itemLang, newMsgs);
             }
         }
         loadedExtraTranslations.push(path);
     }
+}
+
+type PossibleLanguage = 'en' | 'de';
+
+function isPossibleLanguage(lang: string): lang is PossibleLanguage {
+    return possibleLanguages.includes(lang);
 }
 
 export default i18n;

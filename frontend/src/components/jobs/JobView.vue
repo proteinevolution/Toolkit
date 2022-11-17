@@ -2,9 +2,9 @@
     <tool-view v-if="job" is-job-view :job="job" @delete-job="deleteJob">
         <template #job-details>
             <small class="text-muted mr-2" v-text="$t('jobs.details.jobID', { jobID })"></small>
-            <i18n v-if="job.parentID" path="jobs.details.parentID" tag="small" class="text-muted mr-2">
+            <i18n-t v-if="job.parentID" keypath="jobs.details.parentID" tag="small" class="text-muted mr-2">
                 <a class="cursor-pointer text-primary" @click="goToParent" v-text="job.parentID"></a>
-            </i18n>
+            </i18n-t>
             <small class="text-muted" v-text="$t('jobs.details.dateCreated', { dateCreated })"></small>
         </template>
 

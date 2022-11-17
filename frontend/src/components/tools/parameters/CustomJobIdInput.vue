@@ -8,9 +8,9 @@
             :state="valid"
             @input="inputChanged" />
         <b-form-invalid-feedback v-if="hasError" id="custom-job-id-invalid">
-            <i18n :path="error.textKey" tag="span">
+            <i18n-t :keypath="error.textKey">
                 <span class="suggestion-link" @click="takeSuggestion">{{ suggestion }}</span>
-            </i18n>
+            </i18n-t>
         </b-form-invalid-feedback>
     </div>
 </template>

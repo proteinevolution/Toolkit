@@ -24,11 +24,11 @@
         </b-form-group>
         <b-form-group>
             <b-form-checkbox v-model="privacyAccepted" required>
-                <i18n path="auth.privacyAccept" tag="span">
+                <i18n-t keypath="auth.privacyAccept" tag="span">
                     <a class="privacy-link" @click.stop="openPrivacyPolicy">
                         {{ $t('footerLinkModals.names.privacy') }}
                     </a>
-                </i18n>
+                </i18n-t>
             </b-form-checkbox>
         </b-form-group>
         <b-alert :variant="successful ? 'info' : 'danger'" :show="message !== ''" v-text="message" />

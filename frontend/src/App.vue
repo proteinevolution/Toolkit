@@ -61,12 +61,12 @@
         <notifications animation-type="velocity" />
         <cookie-law theme="toolkit" :message="$t('cookieLaw.message')">
             <template #default="props">
-                <i18n path="cookieLaw.message" tag="div" class="Cookie__content">
+                <i18n-t keypath="cookieLaw.message" tag="div" class="Cookie__content">
                     <b
                         class="cursor-pointer"
                         @click="showModal({ id: 'footerLink', props: { modal: 'privacy' } })"
                         v-text="$t('cookieLaw.privacyLink')"></b>
-                </i18n>
+                </i18n-t>
                 <div class="Cookie__buttons">
                     <button class="Cookie__button" @click="props.accept" v-text="$t('cookieLaw.accept')"></button>
                 </div>
