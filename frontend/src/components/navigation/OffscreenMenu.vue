@@ -163,7 +163,7 @@ export default Vue.extend({
         transition: opacity 0.35s;
     }
 
-    .fade-enter,
+    .fade-enter-from,
     .fade-leave-to {
         opacity: 0;
     }
@@ -174,11 +174,11 @@ export default Vue.extend({
     }
 
     .slide-enter-to,
-    .slide-leave {
+    .slide-leave-from {
         left: 0;
     }
 
-    .slide-enter,
+    .slide-enter-from,
     .slide-leave-to {
         left: -340px;
     }

@@ -28,6 +28,7 @@
                 @keyup.enter="$refs['fileUpload' + parameter.name + '-' + second].click()"
                 v-text="$t('tools.parameters.textArea.uploadFile')"></label>
         </b-button-group>
+        <!-- TODO: Vue3 migration https://v3-migration.vuejs.org/breaking-changes/transition-as-root.html -->
         <VelocityFade v-if="value">
             <b-alert
                 v-if="autoTransformedParams"

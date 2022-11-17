@@ -53,7 +53,7 @@ export default Vue.extend({
     overflow: hidden;
 }
 
-.expand-enter,
+.expand-enter-from,
 .expand-leave-to {
     height: 0;
 }

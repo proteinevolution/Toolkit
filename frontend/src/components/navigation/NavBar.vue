@@ -169,7 +169,7 @@ export default Vue.extend({
     transition: opacity 0.5s, transform 0.5s;
     display: inline-block;
 
-    &.list-complete-enter,
+    &.list-complete-enter-from,
     &.list-complete-leave-to {
         opacity: 0;
         transform: translateY(-15px);
