@@ -685,7 +685,7 @@
     consola "^2.15.0"
     node-fetch "^2.6.7"
 
-"@popperjs/core@^2.9.1":
+"@popperjs/core@^2.11.0":
   version "2.11.6"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
@@ -6262,6 +6262,15 @@ uuid@^3.0.1:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
+v3-tour@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/v3-tour/-/v3-tour-3.1.2.tgz#0819811534d290d24209e3358ab2a695dfd25038"
+  integrity sha512-9/iBfrdO68dseQPmYo6T7PK+S7evBetZR5dkwz28kw+RisRMon899eNB+QVBeQpqY4qfF99oXYfxOJHpLR7O5A==
+  dependencies:
+    "@popperjs/core" "^2.11.0"
+    hash-sum "^2.0.0"
+    jump.js "^1.0.2"
+
 v8-to-istanbul@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/v8-to-istanbul/-/v8-to-istanbul-9.0.1.tgz#b6f994b0b5d4ef255e17a0d17dc444a9f5132fa4"
@@ -6440,17 +6449,7 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue-tour@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vue-tour/-/vue-tour-2.0.0.tgz#aa4489cfc9f9090ca57d3208a074010f3be8ec05"
-  integrity sha512-vhKzqdhunQ3EoO1733UxhOB389u3EKv2X8JqYhX4tIq4ilqlZtnY3azPFBYPFmnAqHn5RyZBrP2CpqSaxTs8og==
-  dependencies:
-    "@popperjs/core" "^2.9.1"
-    hash-sum "^2.0.0"
-    jump.js "^1.0.2"
-    vue "^2.6.12"
-
-vue@^2.2.6, vue@^2.6.12:
+vue@^2.2.6:
   version "2.7.8"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.7.8.tgz#34e06553137611d8cecc4b0cd78b7a59f80b1299"
   integrity sha512-ncwlZx5qOcn754bCu5/tS/IWPhXHopfit79cx+uIlLMyt3vCMGcXai5yCG5y+I6cDmEj4ukRYyZail9FTQh7lQ==

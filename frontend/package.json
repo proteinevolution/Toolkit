@@ -28,6 +28,7 @@
     "ngl": "^2.0.1",
     "pinia": "^2.0.24",
     "tidytree": "https://github.com/proteinevolution/TidyTree.git",
+    "v3-tour": "^3.1.2",
     "velocity-animate": "^1.5.2",
     "vue": "^3.2.45",
     "vue-cookie-law": "^1.13.3",
@@ -39,8 +40,7 @@
     "vue-router": "^4.1.6",
     "vue-simple-spinner": "^1.2.10",
     "vue-slider-component": "^3.2.23",
-    "vue-switches": "^2.0.1",
-    "vue-tour": "^2.0.0"
+    "vue-switches": "^2.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.4",
