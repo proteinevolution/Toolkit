@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
@@ -33,7 +33,7 @@ import { useToolsStore } from '@/stores/tools';
 
 const logger = Logger.get('TemplateAlignmentModal');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'TemplateAlignmentModal',
     components: {
         BaseModal,

@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import SearchField from '../index/SearchField.vue';
 import JobList from './JobList.vue';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'SideBar',
     components: {
         SearchField,

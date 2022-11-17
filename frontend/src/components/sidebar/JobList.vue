@@ -52,14 +52,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { Job } from '@/types/toolkit/jobs';
 import { Route } from 'vue-router';
 import { mapStores } from 'pinia';
 import { useJobsStore } from '@/stores/jobs';
 import { DateTime } from 'luxon';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JobList',
     data() {
         return {

@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { FrontendToolParameter } from '@/types/toolkit/tools';
 import { Reformat } from '@/modules/reformat';
 import EventBus from '@/util/EventBus';
@@ -49,7 +49,7 @@ import { useRootStore } from '@/stores/root';
 
 const logger = Logger.get('AlignmentViewerView');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'AlignmentViewerView',
     components: {
         Loading,

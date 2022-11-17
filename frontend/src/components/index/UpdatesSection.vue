@@ -30,12 +30,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import updates from '@/i18n/lang/updates';
 import EventBus from '@/util/EventBus';
 import { DateTime } from 'luxon';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'UpdatesSection',
     data() {
         return {

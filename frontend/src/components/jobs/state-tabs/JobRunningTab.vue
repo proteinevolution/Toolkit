@@ -15,11 +15,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { parseProcessLog } from '@/util/Utils';
 import { ProcessLogItem } from '@/types/toolkit/jobs';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JobRunningTab',
     props: {
         job: {

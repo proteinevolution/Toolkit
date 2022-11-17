@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import LoginForm from '../auth/LoginForm.vue';
 import RegisterForm from '../auth/RegisterForm.vue';
@@ -33,7 +33,7 @@ import { User } from '@/types/toolkit/auth';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'AuthModal',
     components: {
         BaseModal,

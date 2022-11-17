@@ -31,14 +31,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { defineComponent } from 'vue';
 import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
 import EventBus from '@/util/EventBus';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'HHpredSelectsParameter',
     components: {
         SelectParameterComponent,

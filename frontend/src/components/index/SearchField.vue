@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { Tool } from '@/types/toolkit/tools';
 import { Job } from '@/types/toolkit/jobs';
 import { sections } from '@/conf/ToolSections';
@@ -69,7 +69,7 @@ import { jobService } from '@/services/JobService';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'SearchField',
     inheritAttrs: false,
     props: {

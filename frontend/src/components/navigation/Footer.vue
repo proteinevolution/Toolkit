@@ -17,10 +17,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import EventBus from '@/util/EventBus';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Footer',
     data() {
         return {

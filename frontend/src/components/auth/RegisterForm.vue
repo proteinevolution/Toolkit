@@ -37,13 +37,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import EventBus from '@/util/EventBus';
 import { authService } from '@/services/AuthService';
 import { AuthMessage, SignUpData } from '@/types/toolkit/auth';
 import { TranslateResult } from 'vue-i18n';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'RegisterForm',
     data() {
         return {

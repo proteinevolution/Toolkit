@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { AuthMessage, ForgotPasswordData, LoginData } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
 import EventBus from '@/util/EventBus';
@@ -50,7 +50,7 @@ import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'LoginForm',
     components: {
         ExpandHeight,

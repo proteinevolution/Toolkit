@@ -30,13 +30,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import NavBar from '@/components/navigation/NavBar.vue';
 import TopNavBar from '@/components/navigation/TopNavBar.vue';
 import { useRootStore } from '@/stores/root';
 import { mapStores } from 'pinia';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Header',
     components: {
         NavBar,

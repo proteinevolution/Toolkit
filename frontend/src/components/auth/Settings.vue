@@ -25,12 +25,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { AuthMessage, PasswordChangeData } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
 import { TranslateResult } from 'vue-i18n';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Settings',
     data() {
         return {

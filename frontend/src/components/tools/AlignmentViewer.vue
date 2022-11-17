@@ -8,7 +8,7 @@
 <script lang="ts">
 /*global msa*/
 
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { MSAViewerSeq } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
 import { AlignmentItem } from '@/types/toolkit/results';
@@ -17,7 +17,7 @@ import '@/modules/msa/msa.min';
 
 const logger = Logger.get('AlignmentViewer');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'AlignmentViewer',
     props: {
         sequences: {

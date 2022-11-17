@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { AuthMessage, PasswordResetData } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
@@ -33,7 +33,7 @@ import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ResetPasswordModal',
     components: {
         BaseModal,

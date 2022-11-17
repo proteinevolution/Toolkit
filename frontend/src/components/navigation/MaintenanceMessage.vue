@@ -6,11 +6,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'MaintenanceMessage',
     computed: {
         maintenanceMessage(): string {

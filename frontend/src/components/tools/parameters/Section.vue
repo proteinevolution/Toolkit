@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import TextInputParameter from './TextInputParameter.vue';
 import TextAreaParameter from './TextAreaParameter.vue';
 import SelectParameter from './SelectParameter.vue';
@@ -35,7 +35,7 @@ import { Parameter, ParameterSection, ValidationParams } from '@/types/toolkit/t
 import { ParameterType } from '@/types/toolkit/enums';
 import HHpredSelectsParameter from '@/components/tools/parameters/special/HHpredSelectsParameter.vue';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Section',
     components: {
         TextInputParameter,

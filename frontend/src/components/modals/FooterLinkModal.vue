@@ -5,10 +5,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'FooterLinkModal',
     components: {
         BaseModal,

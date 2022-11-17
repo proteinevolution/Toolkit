@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { Tool } from '@/types/toolkit/tools';
 import { Job } from '@/types/toolkit/jobs';
 import { sectionColors, sections } from '@/conf/ToolSections';
@@ -53,7 +53,7 @@ import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import EventBus from '@/util/EventBus';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'NavBar',
     data() {
         return {

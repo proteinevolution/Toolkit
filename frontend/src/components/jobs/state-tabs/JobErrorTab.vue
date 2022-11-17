@@ -14,12 +14,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { resultsService } from '@/services/ResultsService';
 import { parseProcessLog } from '@/util/Utils';
 import { ProcessLogItem } from '@/types/toolkit/jobs';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JobErrorTab',
     props: {
         job: {

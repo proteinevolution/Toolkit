@@ -9,12 +9,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import updates from '@/i18n/lang/updates';
 import { DateTime } from 'luxon';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'UpdatesModal',
     components: {
         BaseModal,

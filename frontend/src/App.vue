@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -109,7 +109,7 @@ import { Tour } from 'v3-tour';
 
 const logger = Logger.get('App');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'App',
     components: {
         OffscreenMenu,
@@ -382,6 +382,20 @@ export default Vue.extend({
         },
         ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
+    // Only used for tour
+    watch: {
+        '$route.path'(path: string): void {
+            if (this.tour.currentStep === 2 && path === '/tools/hhpred') {
+                this.tour.nextStep();
+            } else if (this.tour.currentStep === 10 && path === '/jobmanager') {
+                this.tour.nextStep();
+            } else if (this.tour.currentStep === 9 && path.includes('/jobs')) {
+                this.tour.nextStep();
+            } else {
+                this.tour.stop();
+            }
+        },
+    },
     created() {
         // remove title star on focus
         document.addEventListener('visibilitychange', () => {
@@ -447,20 +461,6 @@ export default Vue.extend({
 
         EventBus.$on('show-modal', this.showModal);
         EventBus.$on('hide-modal', this.hideModal);
-    },
-    // Only used for tour
-    watch: {
-        '$route.path'(path: string): void {
-            if (this.tour.currentStep === 2 && path === '/tools/hhpred') {
-                this.tour.nextStep();
-            } else if (this.tour.currentStep === 10 && path === '/jobmanager') {
-                this.tour.nextStep();
-            } else if (this.tour.currentStep === 9 && path.includes('/jobs')) {
-                this.tour.nextStep();
-            } else {
-                this.tour.stop();
-            }
-        },
     },
     destroyed(): void {
         delete (this.$options as any).sockets.onmessage;

@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import Accordion from '@/components/utils/Accordion.vue';
 import { AccordionItem } from '@/types/toolkit/utils';
@@ -29,7 +29,7 @@ import { loadExtraTranslations } from '@/i18n';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'HelpModal',
     components: {
         BaseModal,

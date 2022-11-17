@@ -12,10 +12,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { Tool } from '@/types/toolkit/tools';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ToolCitationInfo',
     props: {
         tool: {

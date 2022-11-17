@@ -3,10 +3,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { throttle } from 'lodash-es';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ScrollTopButton',
     data() {
         return {

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { jobService } from '@/services/JobService';
 import { SimilarJobResult } from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
@@ -28,7 +28,7 @@ import { useRootStore } from '@/stores/root';
 
 const logger = Logger.get('JobPendingTab');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JobPendingTab',
     props: {
         job: {

@@ -90,7 +90,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import EventBus from '@/util/EventBus';
 import { AuthMessage, User } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
@@ -104,7 +104,7 @@ import { useAuthStore } from '@/stores/auth';
 
 const logger = Logger.get('TopNavBar');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'TopNavBar',
     components: { MaintenanceMessage },
     computed: {

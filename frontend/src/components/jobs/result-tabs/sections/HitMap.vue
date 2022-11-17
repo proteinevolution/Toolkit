@@ -44,14 +44,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { resultsService } from '@/services/ResultsService';
 import { Job } from '@/types/toolkit/jobs';
 import { HitMapItem, HitMapResponse } from '@/types/toolkit/results';
 import VueSlider from 'vue-slider-component';
 import Loading from '@/components/utils/Loading.vue';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'HitMap',
     components: {
         VueSlider,

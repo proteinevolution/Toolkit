@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
 import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
 import JobRunningTab from './state-tabs/JobRunningTab.vue';
@@ -74,7 +74,7 @@ import { DateTime } from 'luxon';
 
 const logger = Logger.get('JobView');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JobView',
     components: {
         ToolView,

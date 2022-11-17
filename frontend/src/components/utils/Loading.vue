@@ -11,10 +11,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import VueSimpleSpinner from 'vue-simple-spinner';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Loading',
     components: {
         VueSimpleSpinner,

@@ -25,14 +25,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { Chart } from 'highcharts-vue';
 import { DateTime } from 'luxon';
 import { SingleToolStats, Statistics } from '@/types/toolkit/admin';
 import { backendService } from '@/services/BackendService';
 import { Options, SeriesBarOptions } from 'highcharts';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'AdminStatistics',
     components: {
         highcharts: Chart,

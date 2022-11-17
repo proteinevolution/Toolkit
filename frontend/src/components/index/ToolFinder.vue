@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import SearchField from './SearchField.vue';
 import { JobState } from '@/types/toolkit/enums';
 import { Job } from '@/types/toolkit/jobs';
@@ -45,7 +45,7 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ToolFinder',
     components: {
         SearchField,

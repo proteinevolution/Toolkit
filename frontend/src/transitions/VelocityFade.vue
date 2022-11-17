@@ -12,9 +12,9 @@
 
 <script lang="ts">
 import Velocity from 'velocity-animate';
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'VelocityFade',
     props: {
         duration: {

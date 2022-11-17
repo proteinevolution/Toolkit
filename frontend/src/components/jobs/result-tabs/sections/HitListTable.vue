@@ -69,12 +69,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { resultsService } from '@/services/ResultsService';
 import { Job } from '@/types/toolkit/jobs';
 import { SearchHitsResponse } from '@/types/toolkit/results';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'HitListTable',
     props: {
         selectedItems: {

@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { ForwardingApiOptions, ForwardingApiOptionsAlignment, ForwardingMode, Tool } from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
@@ -84,7 +84,7 @@ import { useToolsStore } from '@/stores/tools';
 
 const logger = Logger.get('ForwardingModal');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ForwardingModal',
     components: {
         BaseModal,

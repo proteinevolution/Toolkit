@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { FrontendToolParameter, SelectOption, SequenceValidationParams, Tool } from '@/types/toolkit/tools';
 import { Reformat } from '@/modules/reformat';
 import Multiselect from 'vue-multiselect';
@@ -83,7 +83,7 @@ import { useToolsStore } from '@/stores/tools';
 
 const logger = Logger.get('ReformatView');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ReformatView',
     components: {
         Multiselect,

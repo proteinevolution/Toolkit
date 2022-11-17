@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
@@ -26,7 +26,7 @@ import { Stage } from 'ngl';
 
 const logger = Logger.get('TemplateStructureModal');
 
-export default Vue.extend({
+export default defineComponent({
     name: 'TemplateStructureModal',
     components: {
         BaseModal,

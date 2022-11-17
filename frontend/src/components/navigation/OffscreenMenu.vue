@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import JobList from '@/components/sidebar/JobList.vue';
 import { sectionColors, sections } from '@/conf/ToolSections';
 import { Tool } from '@/types/toolkit/tools';
@@ -55,7 +55,7 @@ import { useToolsStore } from '@/stores/tools';
 import { useRootStore } from '@/stores/root';
 import { useAuthStore } from '@/stores/auth';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'OffscreenMenu',
     components: {
         JobList,

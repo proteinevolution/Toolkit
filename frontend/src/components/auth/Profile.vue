@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 import { AuthMessage, ProfileData, User } from '@/types/toolkit/auth';
 import countries from '@/i18n/lang/countries';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
@@ -59,7 +59,7 @@ import { useAuthStore } from '@/stores/auth';
 
 const options = countries.map((value: string[]) => ({ value: value[0], text: value[1] }));
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Profile',
     components: {
         ExpandHeight,
