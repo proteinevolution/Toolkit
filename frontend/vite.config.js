@@ -9,7 +9,15 @@ export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd());
     return {
         plugins: [
-            vue(),
+            vue({
+                template: {
+                    compilerOptions: {
+                        compatConfig: {
+                            MODE: 2,
+                        },
+                    },
+                },
+            }),
             viteImagemin({
                 bypassOnDebug: true,
                 mozjpeg: {
@@ -37,6 +45,7 @@ export default defineConfig(({ mode }) => {
         resolve: {
             alias: {
                 '@': path.resolve(__dirname, './src'),
+                vue: '@vue/compat',
             },
         },
         css: {

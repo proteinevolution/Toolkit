@@ -15,12 +15,7 @@
         "paths": {
             "@/*": ["src/*"]
         },
-        "lib": [
-            "es7",
-            "dom",
-            "dom.iterable",
-            "scripthost" // Remove for Vue3 - dropped support for IE
-        ]
+        "lib": ["es7", "dom", "dom.iterable"]
     },
     "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
     "exclude": ["node_modules", ".yarn"]
