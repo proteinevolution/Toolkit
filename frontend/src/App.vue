@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onMounted, reactive } from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -89,7 +89,6 @@ import LoadingView from '@/components/utils/LoadingView.vue';
 import { Job } from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
 import { ForwardingApiOptions, ForwardingApiOptionsAlignment, Tool } from '@/types/toolkit/tools';
-import EventBus from '@/util/EventBus';
 import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
 import UpdatesModal from '@/components/modals/UpdatesModal.vue';
 import HelpModal from '@/components/modals/HelpModal.vue';
@@ -109,6 +108,7 @@ import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { Tour } from 'v3-tour';
 import { useRoute } from 'vue-router';
+import { useEventBus } from '@vueuse/core';
 import { useGlobalTitleState } from '@/composables/useToolkitTitle';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useToolkitTour from '@/composables/useToolkitTour';
@@ -149,26 +149,70 @@ export default defineComponent({
         const toolsStore = useToolsStore();
         const jobsStore = useJobsStore();
 
-        return { alert, options, steps, showJobList, openJobId, rootStore, authStore, toolsStore, jobsStore };
+        // Modals logic
+        const root = getCurrentInstance();
+        const modalProps = reactive({
+            modal: 'help', // for Simple Modal
+            toolName: '', // for Help Modal
+            sequences: '', // for AlignmentViewerModal
+            format: '', // for AlignmentViewerModal
+            forwardingMode: {}, // for ForwardingModal and TemplateAlignmentModal
+            forwardingData: '', // for ForwardingModal
+            forwardingJobID: '', // for ForwardingModal
+            forwardingApiOptions: undefined as ForwardingApiOptions | undefined, // for ForwardingModal
+            forwardingApiOptionsAlignment: undefined as ForwardingApiOptionsAlignment | undefined, // for ForwardingModal
+            jobID: '', // for TemplateAlignmentModal
+            accession: '', // for TemplateAlignmentModal
+            // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!
+            accessionStructure: '', // for TemplateStructureModal
+        });
+
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        const hideModalsBus = useEventBus<string>('hide-modal');
+        const showModal = (params: ModalParams) => {
+            if (params.props) {
+                Object.assign(modalProps, params.props);
+            }
+            root?.emit('bv::show::modal', params.id);
+        };
+
+        const clearForwardingModalData = (): void => {
+            modalProps.forwardingApiOptions = undefined;
+            modalProps.forwardingApiOptionsAlignment = undefined;
+            modalProps.forwardingData = '';
+        };
+
+        onMounted(() => {
+            /* Modals are shown using showModalsBus.emit({id: <MODAL_ID>, props: {<ANY PROPS TO BE PASSED>}});
+         where MODAL_ID is the prop "id" passed to the base modal. It is used by Bootstrap-Vue to access the modal
+         programmatically. The props are passed to the modal via data attributes of the App-component.
+
+         They are hidden with hideModalsBus.emit(<MODAL_ID>). */
+
+            showModalsBus.on(showModal);
+            hideModalsBus.on((id: string) => {
+                root?.emit('bv::hide::modal', id);
+            });
+        });
+
+        return {
+            alert,
+            options,
+            steps,
+            showJobList,
+            openJobId,
+            rootStore,
+            authStore,
+            toolsStore,
+            jobsStore,
+            modalProps,
+            showModal,
+            clearForwardingModalData,
+        };
     },
     data() {
         return {
-            modalProps: {
-                modal: 'help', // for Simple Modal
-                toolName: '', // for Help Modal
-                sequences: '', // for AlignmentViewerModal
-                format: '', // for AlignmentViewerModal
-                forwardingMode: {}, // for ForwardingModal and TemplateAlignmentModal
-                forwardingData: '', // for ForwardingModal
-                forwardingJobID: '', // for ForwardingModal
-                forwardingApiOptions: undefined as ForwardingApiOptions | undefined, // for ForwardingModal
-                forwardingApiOptionsAlignment: undefined as ForwardingApiOptionsAlignment | undefined, // for ForwardingModal
-                jobID: '', // for TemplateAlignmentModal
-                accession: '', // for TemplateAlignmentModal
-                // care: Don't share the accession properties between modals, otherwise they react to the wrong updates!
-                accessionStructure: '', // for TemplateStructureModal
-            },
-            // allow for update of human readable time by updating reference point in store
+            // allow for update of human-readable time by updating reference point in store
             refreshInterval: null as any,
             refreshCounter: 0,
         };
@@ -241,16 +285,6 @@ export default defineComponent({
             this.rootStore.now = Date.now();
         }, 10000);
     },
-    mounted() {
-        /* Modals are shown using EventBus.$emit('show-modal', {id: <MODAL_ID>, props: {<ANY PROPS TO BE PASSED>}});
-         where MODAL_ID is the prop "id" passed to the base modal. It is used by Bootstrap-Vue to access the modal
-         programmatically. The props are passed to the modal via data attributes of the App-component.
-
-         They are hidden with EventBus.$emit('hide-modal', <MODAL_ID>). */
-
-        EventBus.$on('show-modal', this.showModal);
-        EventBus.$on('hide-modal', this.hideModal);
-    },
     destroyed(): void {
         delete (this.$options as any).sockets.onmessage;
         if (this.refreshInterval) {
@@ -274,20 +308,6 @@ export default defineComponent({
                 text: this.$t(text, args),
                 useBrowserNotifications: true,
             });
-        },
-        showModal(params: ModalParams) {
-            if (params.props) {
-                Object.assign(this.modalProps, params.props);
-            }
-            this.$root?.$emit('bv::show::modal', params.id);
-        },
-        hideModal(id: string) {
-            this.$root?.$emit('bv::hide::modal', id);
-        },
-        clearForwardingModalData(): void {
-            this.modalProps.forwardingApiOptions = undefined;
-            this.modalProps.forwardingApiOptionsAlignment = undefined;
-            this.modalProps.forwardingData = '';
         },
         setTourFinished(): void {
             this.rootStore.tourFinished = true;
