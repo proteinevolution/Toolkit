@@ -59,19 +59,23 @@
         <scroll-top-button />
 
         <notifications animation-type="velocity" />
-        <cookie-law theme="toolkit" :message="$t('cookieLaw.message')">
-            <template #default="props">
+
+        <vue-cookie-accept-decline type="bar">
+            <template #message>
                 <i18n-t keypath="cookieLaw.message" tag="div" class="Cookie__content">
                     <b
                         class="cursor-pointer"
                         @click="showModal({ id: 'footerLink', props: { modal: 'privacy' } })"
                         v-text="$t('cookieLaw.privacyLink')"></b>
                 </i18n-t>
+            </template>
+
+            <template #acceptContent>
                 <div class="Cookie__buttons">
                     <button class="Cookie__button" @click="props.accept" v-text="$t('cookieLaw.accept')"></button>
                 </div>
             </template>
-        </cookie-law>
+        </vue-cookie-accept-decline>
     </div>
 </template>
 
@@ -96,7 +100,7 @@ import TemplateStructureModal from '@/components/modals/TemplateStructureModal.v
 import { ModalParams } from '@/types/toolkit/utils';
 import VerificationModal from '@/components/modals/VerificationModal.vue';
 import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
-import CookieLaw from 'vue-cookie-law';
+import VueCookieAcceptDecline from 'vue-cookie-accept-decline';
 import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
 import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
 import { mapStores } from 'pinia';
@@ -128,7 +132,7 @@ export default defineComponent({
         TemplateAlignmentModal,
         TemplateStructureModal,
         AuthModal,
-        CookieLaw,
+        VueCookieAcceptDecline,
         ScrollTopButton,
     },
     setup() {

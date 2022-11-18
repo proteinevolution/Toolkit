@@ -4,7 +4,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import IntersectionObserver from 'intersection-observer-polyfill';
 
 export default defineComponent({
     name: 'IntersectionObserver',

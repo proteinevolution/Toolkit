@@ -3,8 +3,7 @@ declare module 'velocity-animate';
 declare module 'vue-simple-spinner';
 declare module 'vue-switches';
 declare module 'vue-native-websocket';
-declare module 'vue-cookie-law';
-declare module 'intersection-observer-polyfill';
+declare module 'vue-cookie-accept-decline';
 declare module 'handy-scroll';
 declare module 'tidytree';
 // declare module 'msa' {
