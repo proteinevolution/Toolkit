@@ -51,10 +51,14 @@ import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
-import EventBus from '@/util/EventBus';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'NavBar',
+    setup() {
+        const selectNavBarSectionBus = useEventBus<string>('select-nav-bar-section');
+        return { selectNavBarSectionBus };
+    },
     data() {
         return {
             userSelectedSection: '',
@@ -119,7 +123,10 @@ export default defineComponent({
         },
     },
     mounted() {
-        EventBus.$on('select-nav-bar-section', this.selectSection);
+        this.selectNavBarSectionBus.on(this.selectSection);
+    },
+    beforeDestroy() {
+        this.selectNavBarSectionBus.off(this.selectSection);
     },
     methods: {
         selectSection(section: string): void {

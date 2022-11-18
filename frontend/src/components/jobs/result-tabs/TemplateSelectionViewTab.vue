@@ -14,12 +14,17 @@
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
-import EventBus from '@/util/EventBus';
+import { useEventBus } from '@vueuse/core';
 
 export default ResultTabMixin.extend({
     name: 'TemplateSelectionViewTab',
     components: {
         Loading,
+    },
+    setup() {
+        const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        return { forwardDataBus, pasteAreaLoadedBus };
     },
     data() {
         return {
@@ -37,12 +42,12 @@ export default ResultTabMixin.extend({
         },
         forwardToModeller(): void {
             this.$router.push('/tools/modeller', () => {
-                EventBus.$on('paste-area-loaded', this.pasteForwardData);
+                this.pasteAreaLoadedBus.on(this.pasteForwardData);
             });
         },
         pasteForwardData(): void {
-            EventBus.$off('paste-area-loaded', this.pasteForwardData);
-            EventBus.$emit('forward-data', { data: this.file, jobID: this.job.jobID });
+            this.pasteAreaLoadedBus.off(this.pasteForwardData);
+            this.forwardDataBus.emit({ data: this.file, jobID: this.job.jobID });
         },
     },
 });

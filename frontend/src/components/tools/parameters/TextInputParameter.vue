@@ -14,7 +14,7 @@
 <script lang="ts">
 import { TextInputParameter } from '@/types/toolkit/tools';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
-import EventBus from '@/util/EventBus';
+import { useEventBus } from '@vueuse/core';
 
 export default ParameterRememberMixin.extend({
     name: 'TextInputParameter',
@@ -25,8 +25,12 @@ export default ParameterRememberMixin.extend({
          */
         parameter: Object as () => TextInputParameter,
     },
+    setup() {
+        const pasteExampleBus = useEventBus<void>('paste-example');
+        return { pasteExampleBus };
+    },
     mounted() {
-        EventBus.$on('paste-example', this.handlePasteExample);
+        this.pasteExampleBus.on(this.handlePasteExample);
     },
     computed: {
         defaultSubmissionValue(): any {

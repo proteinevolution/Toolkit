@@ -37,8 +37,8 @@
 import Multiselect from '@suadelabs/vue3-multiselect';
 import { SelectOption, SelectParameter } from '@/types/toolkit/tools';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('SelectParameter');
 
@@ -69,10 +69,17 @@ export default ParameterRememberMixin.extend({
             default: false,
         },
     },
+    setup() {
+        const msaDetectedChangedBus = useEventBus<boolean>('msa-detected-changed');
+        return { msaDetectedChangedBus };
+    },
     mounted() {
         if (this.parameter.onDetectedMSA !== undefined && this.parameter.onDetectedMSA !== null) {
-            EventBus.$on('msa-detected-changed', this.msaDetectedChanged);
+            this.msaDetectedChangedBus.on(this.msaDetectedChanged);
         }
+    },
+    beforeDestroy() {
+        this.msaDetectedChangedBus.off(this.msaDetectedChanged);
     },
     computed: {
         defaultSubmissionValue(): any {

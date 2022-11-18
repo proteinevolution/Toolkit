@@ -31,12 +31,12 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent } from 'vue';
+import Vue, { defineComponent, onBeforeUnmount, ref } from 'vue';
 import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
-import EventBus from '@/util/EventBus';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'HHpredSelectsParameter',
@@ -54,10 +54,20 @@ export default defineComponent({
          */
         parameter: Object as () => HHpredSelectsParameter,
     },
-    data() {
-        return {
-            disabled: false,
+    setup() {
+        const disabled = ref(false);
+
+        const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled');
+        const onSecondTextAreaEnabled = (enabled: boolean): void => {
+            disabled.value = enabled;
         };
+        const unsubscribeSecondTextAreaEnabled = secondTextAreaEnabledBus.on(onSecondTextAreaEnabled);
+
+        onBeforeUnmount(() => {
+            unsubscribeSecondTextAreaEnabled();
+        });
+
+        return { disabled };
     },
     computed: {
         selectedOptionsHHSuite(): number {
@@ -126,14 +136,6 @@ export default defineComponent({
                     Vue.delete(this.validationErrors, this.parameter.name);
                 }
             },
-        },
-    },
-    mounted() {
-        EventBus.$on('second-text-area-enabled', this.onSecondTextAreaEnabled);
-    },
-    methods: {
-        onSecondTextAreaEnabled(enabled: boolean): void {
-            this.disabled = enabled;
         },
     },
 });

@@ -42,7 +42,6 @@
 import { defineComponent } from 'vue';
 import { AuthMessage, ForgotPasswordData, LoginData } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
-import EventBus from '@/util/EventBus';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
@@ -50,6 +49,7 @@ import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'LoginForm',
@@ -58,7 +58,8 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const hideModalsBus = useEventBus<string>('hide-modal');
+        return { alert, hideModalsBus };
     },
     data() {
         return {
@@ -91,7 +92,7 @@ export default defineComponent({
                 const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 if (msg.successful) {
                     this.authStore.user = msg.user;
-                    EventBus.$emit('hide-modal', 'auth');
+                    this.hideModalsBus.emit('auth');
                     this.alert(message);
                     // get jobs of user
                     await this.jobsStore.fetchAllJobs();

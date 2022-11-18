@@ -91,7 +91,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import EventBus from '@/util/EventBus';
 import { AuthMessage, User } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
 import Logger from 'js-logger';
@@ -102,6 +101,8 @@ import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('TopNavBar');
 
@@ -110,7 +111,8 @@ export default defineComponent({
     components: { MaintenanceMessage },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { alert, showModalsBus };
     },
     computed: {
         reconnecting(): boolean {
@@ -129,7 +131,7 @@ export default defineComponent({
             window.location.reload();
         },
         openAuthModal(): void {
-            EventBus.$emit('show-modal', { id: 'auth' });
+            this.showModalsBus.emit({ id: 'auth' });
         },
         toggleOffscreenMenu(): void {
             this.rootStore.offscreenMenuShow = true;

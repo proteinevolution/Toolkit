@@ -200,11 +200,12 @@ import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vu
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 import { HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
-import EventBus from '@/util/EventBus';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 import { jobService } from '@/services/JobService';
 import { resultsService } from '@/services/ResultsService';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('HHpredResultsTab');
 
@@ -218,7 +219,8 @@ export default SearchResultTabMixin.extend({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { alert, showModalsBus };
     },
     data() {
         return {
@@ -286,7 +288,7 @@ export default SearchResultTabMixin.extend({
     },
     methods: {
         displayTemplateStructure(accession: string): void {
-            EventBus.$emit('show-modal', {
+            this.showModalsBus.emit({
                 id: 'templateStructureModal',
                 props: { accessionStructure: accession },
             });

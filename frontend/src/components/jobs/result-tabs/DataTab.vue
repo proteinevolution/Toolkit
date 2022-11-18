@@ -15,8 +15,9 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
-import EventBus from '@/util/EventBus';
 import { timeout } from '@/util/Utils';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('DataTab');
 
@@ -24,6 +25,10 @@ export default ResultTabMixin.extend({
     name: 'DataTab',
     components: {
         Loading,
+    },
+    setup() {
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { showModalsBus };
     },
     data() {
         return {
@@ -69,7 +74,7 @@ export default ResultTabMixin.extend({
         },
         forwardAll(): void {
             if (this.tool.parameters) {
-                EventBus.$emit('show-modal', {
+                this.showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
                         forwardingJobID: this.job.jobID,

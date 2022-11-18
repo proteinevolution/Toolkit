@@ -27,10 +27,10 @@ import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import { ForwardingMode, Tool } from '@/types/toolkit/tools';
-import EventBus from '@/util/EventBus';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('TemplateAlignmentModal');
 
@@ -56,7 +56,10 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
+        const hideModalsBus = useEventBus<string>('hide-modal');
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        return { alert, forwardDataBus, hideModalsBus, pasteAreaLoadedBus };
     },
     data() {
         return {
@@ -134,17 +137,17 @@ export default defineComponent({
         forward() {
             if (this.selectedTool) {
                 this.$router.push('/tools/' + this.selectedTool, () => {
-                    EventBus.$on('paste-area-loaded', this.pasteForwardData);
+                    this.pasteAreaLoadedBus.on(this.pasteForwardData);
                 });
-                EventBus.$emit('hide-modal', 'templateAlignmentModal');
+                this.hideModalsBus.emit('templateAlignmentModal');
                 this.resetData();
             } else {
                 logger.log('no tool selected');
             }
         },
         pasteForwardData() {
-            EventBus.$off('paste-area-loaded', this.pasteForwardData);
-            EventBus.$emit('forward-data', { data: this.data, jobID: this.jobID });
+            this.pasteAreaLoadedBus.off(this.pasteForwardData);
+            this.forwardDataBus.emit({ data: this.data, jobID: this.jobID });
         },
         resetData() {
             this.selectedTool = null;

@@ -56,13 +56,12 @@ import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import { transformToFormat, validation } from '@/util/validation';
 import { ValidationResult } from '@/types/toolkit/validation';
 import VelocityFade from '@/transitions/VelocityFade.vue';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
-import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('TextAreaSubComponent');
 
@@ -94,8 +93,12 @@ export default defineComponent({
         },
     },
     setup() {
+        const rootStore = useRootStore();
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const pasteExampleBus = useEventBus<void>('paste-example');
+        const msaDetectedChangedBus = useEventBus<boolean>('msa-detected-changed');
+        const remoteTriggerPasteExampleBus = useEventBus<void>('remote-trigger-paste-example');
+        return { alert, pasteExampleBus, msaDetectedChangedBus, remoteTriggerPasteExampleBus, rootStore };
     },
     data() {
         return {
@@ -107,9 +110,6 @@ export default defineComponent({
             autoTransformMessageTimeout: 2500,
             validation: {} as ValidationResult,
         };
-    },
-    computed: {
-        ...mapStores(useRootStore),
     },
     watch: {
         value: {
@@ -127,7 +127,7 @@ export default defineComponent({
 
                 // emit event if msa detected (except for second input)
                 if (!this.second && val.msaDetected !== undefined && this.validation.msaDetected !== val.msaDetected) {
-                    EventBus.$emit('msa-detected-changed', val.msaDetected);
+                    this.msaDetectedChangedBus.emit(val.msaDetected);
                 }
 
                 this.validation = val;
@@ -136,7 +136,7 @@ export default defineComponent({
         },
     },
     mounted() {
-        EventBus.$on('remote-trigger-paste-example', this.handlePasteExample);
+        this.remoteTriggerPasteExampleBus.on(this.handlePasteExample);
     },
     created() {
         (this as any).boundDragOver = this.handleDragOver.bind(this);
@@ -144,7 +144,7 @@ export default defineComponent({
     },
     beforeDestroy() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
-        EventBus.$off('remote-trigger-paste-example', this.handlePasteExample);
+        this.remoteTriggerPasteExampleBus.off(this.handlePasteExample);
     },
     methods: {
         handleDragOver(e: Event): void {
@@ -212,7 +212,7 @@ export default defineComponent({
             }
         },
         handlePasteExample(): void {
-            EventBus.$emit('paste-example');
+            this.pasteExampleBus.emit();
             this.rootStore.loading.alignmentTextarea = true;
             const sampleSeqKey: string = this.parameter.sampleInputKey.split(',')[this.second ? 1 : 0];
             sampleSeqService

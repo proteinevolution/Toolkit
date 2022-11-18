@@ -73,7 +73,6 @@
 import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { ForwardingApiOptions, ForwardingApiOptionsAlignment, ForwardingMode, Tool } from '@/types/toolkit/tools';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
@@ -82,6 +81,7 @@ import { AlignmentItem } from '@/types/toolkit/results';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('ForwardingModal');
 
@@ -115,7 +115,10 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
+        const hideModalsBus = useEventBus<string>('hide-modal');
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        return { alert, forwardDataBus, hideModalsBus, pasteAreaLoadedBus };
     },
     data() {
         return {
@@ -234,9 +237,9 @@ export default defineComponent({
 
                 if (this.internalForwardData) {
                     this.$router.push('/tools/' + this.selectedTool, () => {
-                        EventBus.$on('paste-area-loaded', this.pasteForwardData);
+                        this.pasteAreaLoadedBus.on(this.pasteForwardData);
                     });
-                    EventBus.$emit('hide-modal', 'forwardingModal');
+                    this.hideModalsBus.emit('forwardingModal');
                     this.resetData();
                 } else {
                     this.alert(this.$t('jobs.forwarding.noData'), 'danger');
@@ -247,8 +250,8 @@ export default defineComponent({
             }
         },
         pasteForwardData() {
-            EventBus.$off('paste-area-loaded', this.pasteForwardData);
-            EventBus.$emit('forward-data', { data: this.internalForwardData, jobID: this.forwardingJobID });
+            this.pasteAreaLoadedBus.off(this.pasteForwardData);
+            this.forwardDataBus.emit({ data: this.internalForwardData, jobID: this.forwardingJobID });
         },
         onShown(): void {
             if (this.forwardingApiOptions) {

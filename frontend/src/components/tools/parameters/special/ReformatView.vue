@@ -67,12 +67,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { FrontendToolParameter, SelectOption, SequenceValidationParams, Tool } from '@/types/toolkit/tools';
 import { Reformat } from '@/modules/reformat';
 import Multiselect from '@suadelabs/vue3-multiselect';
 import { AlignmentSeqFormat } from '@/types/toolkit/enums';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
@@ -81,6 +80,7 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('ReformatView');
 
@@ -97,12 +97,28 @@ export default defineComponent({
         },
     },
     setup() {
+        const input = ref('');
+        const reformat = computed(() => new Reformat(input.value));
+
         const { alert } = useToolkitNotifications();
-        return { alert };
+
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        onMounted(() => {
+            pasteAreaLoadedBus.emit();
+        });
+
+        const forwardDataBus = useEventBus<{ data: string }>('forward-data');
+        const unsubscribeForwardData = forwardDataBus.on(({ data }) => {
+            input.value = data;
+        });
+        onBeforeUnmount(() => {
+            unsubscribeForwardData();
+        });
+
+        return { alert, input, reformat };
     },
     data() {
         return {
-            input: '',
             output: '',
             outputFormatOptions: [
                 { value: AlignmentSeqFormat.FASTA, text: 'FASTA', $isDisabled: false },
@@ -118,9 +134,6 @@ export default defineComponent({
         tools(): Tool[] {
             return this.toolsStore.tools;
         },
-        reformat(): Reformat {
-            return new Reformat(this.input);
-        },
         detectedFormat(): string {
             return this.reformat.getFormat();
         },
@@ -129,17 +142,7 @@ export default defineComponent({
         },
         ...mapStores(useRootStore, useToolsStore),
     },
-    mounted() {
-        EventBus.$on('forward-data', this.acceptForwardData);
-        EventBus.$emit('paste-area-loaded');
-    },
-    beforeDestroy() {
-        EventBus.$off('forward-data', this.acceptForwardData);
-    },
     methods: {
-        acceptForwardData({ data }: { data: string }): void {
-            this.input = data;
-        },
         handlePasteExample(): void {
             this.rootStore.loading.alignmentTextarea = true;
             sampleSeqService

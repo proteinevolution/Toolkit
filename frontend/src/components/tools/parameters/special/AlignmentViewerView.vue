@@ -36,16 +36,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, ref } from 'vue';
 import { FrontendToolParameter } from '@/types/toolkit/tools';
 import { Reformat } from '@/modules/reformat';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
 import { jobService } from '@/services/JobService';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('AlignmentViewerView');
 
@@ -57,15 +57,30 @@ export default defineComponent({
     props: {
         parameter: Object as () => FrontendToolParameter,
     },
-    data() {
-        return {
-            input: '',
-        };
+    setup() {
+        const input = ref('');
+        const reformat = computed(() => new Reformat(input.value));
+
+        const alignmentViewerResultOpenBus = useEventBus<{ sequences: string; format: string }>(
+            'alignment-viewer-result-open'
+        );
+
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        onMounted(() => {
+            pasteAreaLoadedBus.emit();
+        });
+
+        const forwardDataBus = useEventBus<{ data: string }>('forward-data');
+        const unsubscribeForwardData = forwardDataBus.on(({ data }) => {
+            input.value = data;
+        });
+        onBeforeUnmount(() => {
+            unsubscribeForwardData();
+        });
+
+        return { alignmentViewerResultOpenBus, input, reformat };
     },
     computed: {
-        reformat(): Reformat {
-            return new Reformat(this.input);
-        },
         detectedFormat(): string {
             if (this.input.replace(/\s/g, '') !== '') {
                 return this.reformat.getFormat();
@@ -74,17 +89,7 @@ export default defineComponent({
         },
         ...mapStores(useRootStore),
     },
-    mounted() {
-        EventBus.$on('forward-data', this.acceptForwardData);
-        EventBus.$emit('paste-area-loaded');
-    },
-    beforeDestroy() {
-        EventBus.$off('forward-data', this.acceptForwardData);
-    },
     methods: {
-        acceptForwardData({ data }: { data: string }): void {
-            this.input = data;
-        },
         handlePasteExample() {
             this.rootStore.loading.alignmentTextarea = true;
             sampleSeqService
@@ -103,7 +108,7 @@ export default defineComponent({
         showAlignment() {
             jobService.logFrontendJob(this.$route.params.toolName);
             this.input = new Reformat(this.input).reformat('FASTA');
-            EventBus.$emit('alignment-viewer-result-open', {
+            this.alignmentViewerResultOpenBus.emit({
                 sequences: this.input,
                 format: this.detectedFormat.toLowerCase(),
             });

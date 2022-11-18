@@ -60,8 +60,9 @@ import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
 import { range } from 'lodash-es';
 import { colorSequence } from '@/util/SequenceUtils';
-import EventBus from '@/util/EventBus';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('ClustalAlignmentTab');
 
@@ -70,6 +71,10 @@ export default ResultTabMixin.extend({
     components: {
         Loading,
         IntersectionObserver,
+    },
+    setup() {
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { showModalsBus };
     },
     data() {
         return {
@@ -175,7 +180,7 @@ export default ResultTabMixin.extend({
         forwardSelected(): void {
             if (this.selected.length > 0) {
                 if (this.tool.parameters && this.alignments) {
-                    EventBus.$emit('show-modal', {
+                    this.showModalsBus.emit({
                         id: 'forwardingModal',
                         props: {
                             forwardingJobID: this.job.jobID,

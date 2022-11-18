@@ -28,11 +28,11 @@ import { defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { AuthMessage, PasswordResetData } from '@/types/toolkit/auth';
 import { authService } from '@/services/AuthService';
-import EventBus from '@/util/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'ResetPasswordModal',
@@ -41,7 +41,8 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const hideModalsBus = useEventBus<string>('hide-modal');
+        return { alert, hideModalsBus };
     },
     data() {
         return {
@@ -91,7 +92,7 @@ export default defineComponent({
                 const message: TranslateResult = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 if (msg.successful) {
                     this.authStore.user = msg.user;
-                    EventBus.$emit('hide-modal', 'resetPassword');
+                    this.hideModalsBus.emit('resetPassword');
                     this.$router.replace('/');
                     this.alert(message);
                 }

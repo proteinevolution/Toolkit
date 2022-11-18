@@ -64,8 +64,9 @@ import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
 import { HhrepidResults } from '@/types/toolkit/results';
-import EventBus from '@/util/EventBus';
 import { colorSequence } from '@/util/SequenceUtils';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('HhrepidResultsTab');
 
@@ -73,6 +74,10 @@ export default ResultTabMixin.extend({
     name: 'HhrepidResultsTab',
     components: {
         Loading,
+    },
+    setup() {
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { showModalsBus };
     },
     data() {
         return {
@@ -103,7 +108,7 @@ export default ResultTabMixin.extend({
         },
         forwardQueryA3M(): void {
             if (this.tool.parameters) {
-                EventBus.$emit('show-modal', {
+                this.showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
                         forwardingJobID: this.job.jobID,

@@ -7,13 +7,12 @@
 
 <script lang="ts">
 /*global msa*/
-
 import { defineComponent } from 'vue';
 import { MSAViewerSeq } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
 import { AlignmentItem } from '@/types/toolkit/results';
-import EventBus from '@/util/EventBus';
 import '@/modules/msa/msa.min';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('AlignmentViewer');
 
@@ -30,6 +29,10 @@ export default defineComponent({
             required: false,
             default: 'fasta',
         },
+    },
+    setup() {
+        const alignmentViewerResizeBus = useEventBus<boolean>('alignment-viewer-resize');
+        return { alignmentViewerResizeBus };
     },
     data() {
         return {
@@ -77,21 +80,22 @@ export default defineComponent({
     },
     mounted() {
         window.addEventListener('resize', this.autoResize);
-        EventBus.$on('alignment-viewer-resize', (fullScreen: boolean) => {
-            this.fullScreen = fullScreen;
-            this.$nextTick(() => {
-                this.autoResize();
-            });
-        });
+        this.alignmentViewerResizeBus.on(this.handleAlignmentViewerResize);
         if (this.seqs) {
             this.buildMSAViewer(this.seqs);
         }
     },
     beforeDestroy() {
-        EventBus.$off('alignment-viewer-resize');
+        this.alignmentViewerResizeBus.off(this.handleAlignmentViewerResize);
         window.removeEventListener('resize', this.autoResize);
     },
     methods: {
+        handleAlignmentViewerResize(fullScreen: boolean): void {
+            this.fullScreen = fullScreen;
+            this.$nextTick(() => {
+                this.autoResize();
+            });
+        },
         buildMSAViewer(seqs: MSAViewerSeq[]) {
             const opts = {
                 colorscheme: {

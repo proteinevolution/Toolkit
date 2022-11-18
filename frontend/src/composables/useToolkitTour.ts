@@ -1,11 +1,14 @@
-import EventBus from '@/util/EventBus';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import { useEventBus } from '@vueuse/core';
 
 export default function useToolkitTour() {
     const { t } = useI18n();
     const router = useRouter();
     const route = useRoute();
+    const changeToolTabBus = useEventBus<number>('change-tool-tab');
+    const remoteTriggerPasteExampleBus = useEventBus<void>('remote-trigger-paste-example');
+    const selectNavBarSectionBus = useEventBus<string>('select-nav-bar-section');
 
     const steps = [
         {
@@ -55,7 +58,7 @@ export default function useToolkitTour() {
             },
             before: () =>
                 new Promise<void>((resolve) => {
-                    EventBus.$emit('select-nav-bar-section', 'search');
+                    selectNavBarSectionBus.emit('search');
                     // Give the navBar a moment to switch tabs before the message
                     // can be displayed
                     setTimeout(resolve, 20);
@@ -77,7 +80,7 @@ export default function useToolkitTour() {
                         router.push('/tools/hhpred');
                     }
                     if (type === 'previous') {
-                        EventBus.$emit('change-tool-tab', 0);
+                        changeToolTabBus.emit(0);
                     }
                     const poll = setInterval(() => {
                         if (document.querySelector('[data-v-step="input"]')) {
@@ -114,7 +117,7 @@ export default function useToolkitTour() {
             before: (type: string) =>
                 new Promise<void>((resolve) => {
                     if (type === 'next') {
-                        EventBus.$emit('remote-trigger-paste-example');
+                        remoteTriggerPasteExampleBus.emit();
                     }
                     resolve();
                 }),
@@ -128,7 +131,7 @@ export default function useToolkitTour() {
             before: (type: string) =>
                 new Promise<void>((resolve) => {
                     if (type === 'previous') {
-                        EventBus.$emit('change-tool-tab', 0);
+                        changeToolTabBus.emit(0);
                     }
                     resolve();
                 }),
@@ -150,7 +153,7 @@ export default function useToolkitTour() {
             content: t('tour.content.jobId'),
             before: () =>
                 new Promise<void>((resolve) => {
-                    EventBus.$emit('change-tool-tab', 1);
+                    changeToolTabBus.emit(1);
                     resolve();
                 }),
         },

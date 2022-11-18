@@ -22,16 +22,19 @@ import { useRoute } from 'vue-router';
 import ToolFinder from './ToolFinder.vue';
 import UpdatesSection from './UpdatesSection.vue';
 import useToolkitTitle from '@/composables/useToolkitTitle';
-import EventBus from '@/util/EventBus';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 useToolkitTitle();
+
+const showModalsBus = useEventBus<ModalParams>('show-modal');
 
 // Use a watcher here - component cannot use 'beforeRouteEnter' because of lazy loading
 const route = useRoute();
 watchEffect(() => {
     const query = route.query;
     if (query && query.action) {
-        EventBus.$emit('show-modal', { id: query.action });
+        showModalsBus.emit({ id: query.action });
     }
 });
 </script>

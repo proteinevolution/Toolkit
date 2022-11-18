@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import JobPreparedTab from './state-tabs/JobPreparedTab.vue';
 import JobQueuedTab from './state-tabs/JobQueuedTab.vue';
 import JobRunningTab from './state-tabs/JobRunningTab.vue';
@@ -64,7 +64,6 @@ import NotFoundView from '@/components/utils/NotFoundView.vue';
 import Logger from 'js-logger';
 import ToolCitationInfo from '@/components/jobs/ToolCitationInfo.vue';
 import { lazyLoadView } from '@/router/routes';
-import EventBus from '@/util/EventBus';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
@@ -72,6 +71,8 @@ import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { DateTime } from 'luxon';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
+import { useRoute } from 'vue-router';
 
 const logger = Logger.get('JobView');
 
@@ -111,7 +112,13 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+
+        const route = useRoute();
+        const jobID = computed(() => route.params.jobID as string);
+
+        const toolTabActivatedBus = useEventBus<string>('tool-tab-activated');
+
+        return { alert, jobID, toolTabActivatedBus };
     },
     data() {
         return {
@@ -120,9 +127,6 @@ export default defineComponent({
         };
     },
     computed: {
-        jobID(): string {
-            return this.$route.params.jobID;
-        },
         dateCreated(): string {
             return (
                 DateTime.fromMillis(this.job.dateCreated ?? 0).toRelative({
@@ -192,7 +196,7 @@ export default defineComponent({
             this.$router.push(`/jobs/${this.job.parentID}`);
         },
         tabActivated(jobView: string): void {
-            EventBus.$emit('tool-tab-activated', jobView);
+            this.toolTabActivatedBus.emit(jobView);
         },
     },
 });

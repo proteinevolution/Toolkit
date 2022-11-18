@@ -38,17 +38,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import EventBus from '@/util/EventBus';
 import { authService } from '@/services/AuthService';
 import { AuthMessage, SignUpData } from '@/types/toolkit/auth';
 import { TranslateResult } from 'vue-i18n';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'RegisterForm',
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { alert, showModalsBus };
     },
     data() {
         return {
@@ -122,7 +124,7 @@ export default defineComponent({
             }
         },
         openPrivacyPolicy() {
-            EventBus.$emit('show-modal', { id: 'footerLink', props: { modal: 'privacy' } });
+            this.showModalsBus.emit({ id: 'footerLink', props: { modal: 'privacy' } });
         },
     },
 });

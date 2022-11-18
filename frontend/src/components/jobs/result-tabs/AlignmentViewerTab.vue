@@ -5,14 +5,18 @@
 <script lang="ts">
 import ResultTabMixin from '@/mixins/ResultTabMixin';
 import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
-import EventBus from '@/util/EventBus';
 import { AlignmentItem } from '@/types/toolkit/results';
 import { resultsService } from '@/services/ResultsService';
+import { useEventBus } from '@vueuse/core';
 
 export default ResultTabMixin.extend({
     name: 'AlignmentViewerTab',
     components: {
         AlignmentViewer,
+    },
+    setup() {
+        const alignmentViewerResizeBus = useEventBus<boolean>('alignment-viewer-resize');
+        return { alignmentViewerResizeBus };
     },
     data() {
         return {
@@ -29,7 +33,7 @@ export default ResultTabMixin.extend({
         fullScreen: {
             immediate: true,
             handler(value: boolean): void {
-                EventBus.$emit('alignment-viewer-resize', value);
+                this.alignmentViewerResizeBus.emit(value);
             },
         },
     },

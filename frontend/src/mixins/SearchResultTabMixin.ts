@@ -1,4 +1,3 @@
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
 import { HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse } from '@/types/toolkit/results';
 import { colorSequence, ssColorSequence } from '@/util/SequenceUtils';
@@ -6,10 +5,17 @@ import ResultTabMixin from '@/mixins/ResultTabMixin';
 import { resultsService } from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
 import { debounce } from 'lodash-es';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('SearchResultTabMixin');
 
 const SearchResultTabMixin = ResultTabMixin.extend({
+    setup() {
+        const resubmitSectionBus = useEventBus<string>('resubmit-section');
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { resubmitSectionBus, showModalsBus };
+    },
     data() {
         return {
             total: 100,
@@ -89,7 +95,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         },
         displayTemplateAlignment(accession: string): void {
             if (this.tool.parameters) {
-                EventBus.$emit('show-modal', {
+                this.showModalsBus.emit({
                     id: 'templateAlignmentModal',
                     props: {
                         jobID: this.job.jobID,
@@ -103,7 +109,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         },
         forward(disableSequenceLengthSelect: boolean = false): void {
             if (this.tool.parameters) {
-                EventBus.$emit('show-modal', {
+                this.showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
                         forwardingJobID: this.job.jobID,
@@ -120,7 +126,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
         },
         async forwardQueryA3M() {
             const a3mData: any = await resultsService.getFile(this.job.jobID, 'reduced.a3m');
-            EventBus.$emit('show-modal', {
+            this.showModalsBus.emit({
                 id: 'forwardingModal',
                 props: {
                     forwardingJobID: this.job.jobID,
@@ -136,7 +142,7 @@ const SearchResultTabMixin = ResultTabMixin.extend({
                 return;
             }
             const section: string = '>' + this.info.query.accession + '\n' + this.info.query.seq.slice(start - 1, end);
-            EventBus.$emit('resubmit-section', section);
+            this.resubmitSectionBus.emit(section);
         },
         toggleAllSelected(): void {
             if (!this.total) {

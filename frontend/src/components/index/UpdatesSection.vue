@@ -32,11 +32,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import updates from '@/i18n/lang/updates';
-import EventBus from '@/util/EventBus';
 import { DateTime } from 'luxon';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 export default defineComponent({
     name: 'UpdatesSection',
+    setup() {
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { showModalsBus };
+    },
     data() {
         return {
             quickLinks: [
@@ -86,7 +91,7 @@ export default defineComponent({
     },
     methods: {
         launchUpdatesModal() {
-            EventBus.$emit('show-modal', { id: 'updates' });
+            this.showModalsBus.emit({ id: 'updates' });
         },
         formatDate(dateString: string): string {
             return DateTime.fromISO(dateString).toLocaleString(DateTime.DATE_FULL);

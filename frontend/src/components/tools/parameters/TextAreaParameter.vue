@@ -23,14 +23,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { onMounted } from 'vue';
 import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
 import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import ToolParameterMixin from '@/mixins/ToolParameterMixin';
 import { ValidationResult } from '@/types/toolkit/validation';
-import EventBus from '@/util/EventBus';
+import { useEventBus } from '@vueuse/core';
 
 export default ToolParameterMixin.extend({
     name: 'TextAreaParameter',
@@ -48,6 +48,18 @@ export default ToolParameterMixin.extend({
         validationParams: Object as () => ValidationParams,
         validationErrors: Object,
         submission: Object,
+    },
+    setup() {
+        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+        onMounted(() => {
+            pasteAreaLoadedBus.emit();
+        });
+
+        const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
+        const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled');
+
+        // Cannot handle completely with setup yet, since still using Mixin
+        return { forwardDataBus, secondTextAreaEnabledBus };
     },
     data() {
         return {
@@ -89,11 +101,10 @@ export default ToolParameterMixin.extend({
         },
     },
     mounted() {
-        EventBus.$on('forward-data', this.acceptForwardData);
-        EventBus.$emit('paste-area-loaded');
+        this.forwardDataBus.on(this.acceptForwardData);
     },
     beforeDestroy() {
-        EventBus.$off('forward-data', this.acceptForwardData);
+        this.forwardDataBus.off(this.acceptForwardData);
     },
     watch: {
         secondTextAreaEnabledInternal(value: boolean) {
@@ -101,7 +112,7 @@ export default ToolParameterMixin.extend({
                 this.submissionValueTwo = '';
                 Vue.delete(this.validationErrors, this.parameterNameTwo);
             }
-            EventBus.$emit('second-text-area-enabled', value);
+            this.secondTextAreaEnabledBus.emit(value);
         },
     },
     methods: {

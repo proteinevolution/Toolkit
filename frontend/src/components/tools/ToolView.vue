@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { computed, defineComponent } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref, set } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -120,7 +120,6 @@ import LoadingWrapper from '@/components/utils/LoadingWrapper.vue';
 import { jobService } from '@/services/JobService';
 import { authService } from '@/services/AuthService';
 import Logger from 'js-logger';
-import EventBus from '@/util/EventBus';
 import { CustomJobIdValidationResult, Job } from '@/types/toolkit/jobs';
 import Loading from '@/components/utils/Loading.vue';
 import { parameterRememberService } from '@/services/ParameterRememberService';
@@ -128,9 +127,11 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import { useAuthStore } from '@/stores/auth';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import useToolkitTitle from '@/composables/useToolkitTitle';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { useEventBus } from '@vueuse/core';
+import { ModalParams } from '@/types/toolkit/utils';
 
 const logger = Logger.get('ToolView');
 
@@ -161,6 +162,18 @@ export default defineComponent({
     },
     setup(props) {
         const route = useRoute();
+        const router = useRouter();
+        const toolsStore = useToolsStore();
+
+        const submission = reactive({});
+        const tabIndex = ref(0);
+        const fullScreen = ref(false);
+
+        const changeToolTabBus = useEventBus<number>('change-tool-tab');
+        const changeTab = (index: number): void => {
+            tabIndex.value = index;
+        };
+        const unsubscribeChangeToolTab = changeToolTabBus.on(changeTab);
 
         const toolName = computed<string>(() => {
             const { isJobView, job } = props;
@@ -170,7 +183,36 @@ export default defineComponent({
             return route.params.toolName as string;
         });
 
-        const toolsStore = useToolsStore();
+        const loadParameterRemember = (toolName: string): void => {
+            logger.debug(`loading remembered parameters for ${toolName}`);
+            // We override all properties of the submission object with the remembered parameters
+            Object.assign(submission, parameterRememberService.load(toolName));
+        };
+        const loadToolParameters = async (toolName: string): Promise<void> => {
+            await toolsStore.fetchToolParametersIfNotPresent(toolName);
+            // wait until parameters are loaded before trying to load remembered values
+            if (!props.job) {
+                if (parameterRememberService.has(toolName)) {
+                    loadParameterRemember(toolName);
+                }
+            }
+        };
+        // tool view is never reused (see App.vue), therefore loading parameters in setup only is sufficient
+        loadToolParameters(toolName.value);
+
+        const refresh = (): void => {
+            if (route.name === 'tools') {
+                getCurrentInstance()?.emit('refresh');
+            } else {
+                router.push('/tools/' + toolName.value);
+            }
+        };
+
+        const clearParameterRemember = (): void => {
+            parameterRememberService.reset(toolName.value);
+            loadToolParameters(toolName.value);
+            refresh();
+        };
 
         const tool = computed<Tool>(() => toolsStore.tools.find((tool: Tool) => tool.name === toolName.value) as Tool);
 
@@ -178,19 +220,70 @@ export default defineComponent({
 
         const { alert } = useToolkitNotifications();
 
-        return { alert, tool, toolName };
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        const launchHelpModal = (): void => {
+            showModalsBus.emit({ id: 'helpModal', props: { toolName: toolName.value } });
+        };
+
+        const resubmitSectionBus = useEventBus<string>('resubmit-section');
+        const resubmitSectionReceive = (section: string): void => {
+            set(submission, 'alignment', section);
+            tabIndex.value = 0;
+        };
+        const unsubscribeResubmitSection = resubmitSectionBus.on(resubmitSectionReceive);
+
+        const alignmentViewerResizeBus = useEventBus<boolean>('alignment-viewer-resize');
+
+        // hack to show the alignment viewer tool results
+        const alignmentViewerSequences = ref('');
+        const alignmentViewerFormat = ref('');
+        const alignmentViewerResultOpenBus = useEventBus<{ sequences: string; format: string }>(
+            'alignment-viewer-result-open'
+        );
+        const openAlignmentViewerResults = ({ sequences, format }: { sequences: string; format: string }): void => {
+            alignmentViewerSequences.value = sequences;
+            alignmentViewerFormat.value = format;
+            setTimeout(() => {
+                tabIndex.value = 1;
+                alignmentViewerResizeBus.emit(fullScreen.value);
+            }, 100);
+        };
+        const unsubscribeAlignmentViewerResult = alignmentViewerResultOpenBus.on(openAlignmentViewerResults);
+
+        const toggleFullScreen = (): void => {
+            fullScreen.value = !fullScreen.value;
+            if (alignmentViewerSequences.value !== '') {
+                alignmentViewerResizeBus.emit(fullScreen.value);
+            }
+        };
+
+        onBeforeUnmount(() => {
+            unsubscribeChangeToolTab();
+            unsubscribeResubmitSection();
+            unsubscribeAlignmentViewerResult();
+        });
+
+        return {
+            alert,
+            alignmentViewerFormat,
+            alignmentViewerSequences,
+            clearParameterRemember,
+            fullScreen,
+            launchHelpModal,
+            loadToolParameters,
+            submission,
+            tabIndex,
+            toggleFullScreen,
+            tool,
+            toolName,
+            toolsStore,
+        };
     },
     data() {
         return {
             submitLoading: false,
-            tabIndex: 0,
-            fullScreen: false,
             validationErrors: {},
-            submission: {} as any,
             rememberParams: {} as any,
-            // hack to show the alignment viewer tool results
-            alignmentViewerSequences: '',
-            alignmentViewerFormat: '',
         };
     },
     computed: {
@@ -215,7 +308,7 @@ export default defineComponent({
         hasRememberedParameters(): boolean {
             return Object.keys(this.rememberParams).length > 0;
         },
-        ...mapStores(useRootStore, useAuthStore, useToolsStore),
+        ...mapStores(useRootStore, useAuthStore),
     },
     watch: {
         job: {
@@ -223,7 +316,7 @@ export default defineComponent({
             handler(value: Job | undefined) {
                 if (value) {
                     this.submission = { ...value.paramValues };
-                    Vue.set(this.submission, 'parentID', value.jobID);
+                    set(this.submission, 'parentID', value.jobID);
                     // Take the suggested Job ID immediately when loading existing job parameters into the tool
                     this.checkJobId(value.jobID);
                 }
@@ -237,51 +330,10 @@ export default defineComponent({
             },
         },
     },
-    created() {
-        // tool view is never reused (see App.vue), therefore loading parameters in created hook only is sufficient
-        this.loadToolParameters(this.toolName);
-        EventBus.$on('alignment-viewer-result-open', this.openAlignmentViewerResults);
-        EventBus.$on('resubmit-section', this.resubmitSectionReceive);
-        EventBus.$on('change-tool-tab', this.changeTab);
-    },
-    beforeDestroy() {
-        EventBus.$off('alignment-viewer-result-open', this.openAlignmentViewerResults);
-        EventBus.$off('resubmit-section', this.resubmitSectionReceive);
-        EventBus.$off('change-tool-tab', this.changeTab);
-    },
     methods: {
-        async loadToolParameters(toolName: string): Promise<void> {
-            await this.toolsStore.fetchToolParametersIfNotPresent(toolName);
-            // wait until parameters are loaded before trying to load remembered values
-            if (!this.job) {
-                if (parameterRememberService.has(this.toolName)) {
-                    this.loadParameterRemember(toolName);
-                }
-            }
-        },
-        loadParameterRemember(toolName: string): void {
-            logger.debug(`loading remembered parameters for ${toolName}`);
-            // We need to create a fresh object here to trigger the correct reactivity
-            // (see https://vuejs.org/v2/guide/reactivity.html)
-            this.submission = Object.assign({}, this.submission, parameterRememberService.load(toolName));
-        },
         saveParametersToRemember(toolName: string): void {
             if (Object.keys(this.rememberParams).length > 0) {
                 parameterRememberService.save(toolName, this.rememberParams);
-            }
-        },
-        clearParameterRemember(): void {
-            parameterRememberService.reset(this.toolName);
-            this.loadToolParameters(this.toolName);
-            this.refresh();
-        },
-        changeTab(index: number): void {
-            this.tabIndex = index;
-        },
-        toggleFullScreen(): void {
-            this.fullScreen = !this.fullScreen;
-            if (this.alignmentViewerSequences) {
-                EventBus.$emit('alignment-viewer-resize', this.fullScreen);
             }
         },
         submitJob(): void {
@@ -304,32 +356,10 @@ export default defineComponent({
                     this.alert(this.$t('errors.general'), 'danger');
                 });
         },
-        openAlignmentViewerResults({ sequences, format }: { sequences: string; format: string }): void {
-            this.alignmentViewerSequences = sequences;
-            this.alignmentViewerFormat = format;
-            setTimeout(() => {
-                this.tabIndex = 1;
-                EventBus.$emit('alignment-viewer-resize', this.fullScreen);
-            }, 100);
-        },
-        resubmitSectionReceive(section: string): void {
-            Vue.set(this.submission, 'alignment', section);
-            this.tabIndex = 0;
-        },
-        launchHelpModal(): void {
-            EventBus.$emit('show-modal', { id: 'helpModal', props: { toolName: this.toolName } });
-        },
-        refresh(): void {
-            if (this.$route.name === 'tools') {
-                this.$emit('refresh');
-            } else {
-                this.$router.push('/tools/' + this.toolName);
-            }
-        },
         checkJobId(jobId: string): void {
             authService.validateJobId(jobId).then((result: CustomJobIdValidationResult) => {
                 if (result.suggested) {
-                    Vue.set(this.submission, 'jobID', result.suggested);
+                    set(this.submission, 'jobID', result.suggested);
                 }
             });
         },

@@ -16,26 +16,21 @@
     </footer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import EventBus from '@/util/EventBus';
+<script setup lang="ts">
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
-export default defineComponent({
-    name: 'Footer',
-    data() {
-        return {
-            simpleModals: ['help', 'faq', 'privacy', 'imprint', 'contact', 'cite'],
-        };
-    },
-    methods: {
-        launchHelpModal(modal: string): void {
-            EventBus.$emit('show-modal', { id: 'footerLink', props: { modal } });
-        },
-        launchUpdatesModal(): void {
-            EventBus.$emit('show-modal', { id: 'updates' });
-        },
-    },
-});
+const simpleModals = ['help', 'faq', 'privacy', 'imprint', 'contact', 'cite'];
+
+const showModalsBus = useEventBus<ModalParams>('show-modal');
+
+function launchHelpModal(modal: string): void {
+    showModalsBus.emit({ id: 'footerLink', props: { modal } });
+}
+
+function launchUpdatesModal(): void {
+    showModalsBus.emit({ id: 'updates' });
+}
 </script>
 
 <style lang="scss" scoped>

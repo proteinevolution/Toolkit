@@ -1,12 +1,12 @@
-import Vue from 'vue';
+import { defineComponent, onBeforeUnmount, ref } from 'vue';
 import { Tool } from '@/types/toolkit/tools';
 import { Job, JobViewOptions } from '@/types/toolkit/jobs';
-import EventBus from '@/util/EventBus';
 import Logger from 'js-logger';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('ResultTabMixin');
 
-const ResultTabMixin = Vue.extend({
+const ResultTabMixin = defineComponent({
     props: {
         job: {
             type: Object as () => Job,
@@ -36,42 +36,46 @@ const ResultTabMixin = Vue.extend({
             default: true,
         },
     },
-    data() {
-        return {
-            loading: false,
-            initialized: false,
-        };
-    },
-    created() {
-        if (this.renderOnCreate) {
-            this.internalInit();
-        }
-        EventBus.$on('tool-tab-activated', (jobView: string) => {
-            if (jobView === this.resultTabName) {
-                this.internalInit();
-            }
-        });
-    },
-    beforeDestroy() {
-        EventBus.$off('tool-tab-activated');
-    },
-    methods: {
-        async internalInit() {
-            if (!this.initialized) {
-                this.loading = true;
-                try {
-                    await this.init();
-                    this.initialized = true;
-                } catch (e) {
-                    logger.error(this.resultTabName, e);
-                }
-                this.loading = false;
-            }
-        },
+    setup(props) {
+        const loading = ref(false);
+        let initialized = false;
+
         // init gets called only on first render
-        async init() {
-            logger.debug('uncaught init called for ' + this.resultTabName);
-        },
+        const init = async () => {
+            logger.debug('uncaught init called for ' + props.resultTabName);
+        };
+
+        const internalInit = async () => {
+            if (!initialized) {
+                loading.value = true;
+                try {
+                    await init();
+                    initialized = true;
+                } catch (e) {
+                    logger.error(props.resultTabName, e);
+                }
+                loading.value = false;
+            }
+        };
+
+        if (props.renderOnCreate) {
+            // noinspection JSIgnoredPromiseFromCall
+            internalInit();
+        }
+
+        const toolTabActivatedBus = useEventBus<string>('tool-tab-activated');
+        const handleToolTabActivated = async (jobView: string) => {
+            if (jobView === props.resultTabName) {
+                await internalInit();
+            }
+        };
+        const unsubscribeToolTabActivated = toolTabActivatedBus.on(handleToolTabActivated);
+
+        onBeforeUnmount(() => {
+            unsubscribeToolTabActivated();
+        });
+
+        return { init, loading };
     },
 });
 

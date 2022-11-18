@@ -35,7 +35,8 @@ import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
 import { PatsearchHit, PatsearchMatch, PatsearchResults } from '@/types/toolkit/results';
 import { patsearchColor } from '@/util/SequenceUtils';
-import EventBus from '@/util/EventBus';
+import { ModalParams } from '@/types/toolkit/utils';
+import { useEventBus } from '@vueuse/core';
 
 const logger = Logger.get('PatsearchResultsTab');
 
@@ -43,6 +44,10 @@ export default ResultTabMixin.extend({
     name: 'PatsearchResultsTab',
     components: {
         Loading,
+    },
+    setup() {
+        const showModalsBus = useEventBus<ModalParams>('show-modal');
+        return { showModalsBus };
     },
     data() {
         return {
@@ -73,7 +78,7 @@ export default ResultTabMixin.extend({
         },
         forwardAll(): void {
             if (this.tool.parameters && this.results) {
-                EventBus.$emit('show-modal', {
+                this.showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
                         forwardingJobID: this.job.jobID,
