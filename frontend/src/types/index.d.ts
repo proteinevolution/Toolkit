@@ -1,4 +1,3 @@
-declare module 'vue-multiselect';
 declare module 'velocity-animate';
 declare module 'vue-simple-spinner';
 declare module 'vue-switches';

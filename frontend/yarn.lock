@@ -719,6 +719,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@suadelabs/vue3-multiselect@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@suadelabs/vue3-multiselect/-/vue3-multiselect-1.0.2.tgz#ba9bdb1a47c76ce47b30bb9025d9647ddc8dcaf9"
+  integrity sha512-bRe5SOAkY/egKC4yMQ1lXg3BTlnulA+0CXbl9yM0X7oMh8oavJUlSgb7WV7EXyOzIH2Ot0k28hdF3/K6D/YEFA==
+
 "@tootallnate/once@2":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@tootallnate/once/-/once-2.0.0.tgz#f544a148d3ab35801c1f633a7441fd87c2e484bf"
@@ -6378,11 +6383,6 @@ vue-i18n@^9.2.2:
     "@intlify/shared" "9.2.2"
     "@intlify/vue-devtools" "9.2.2"
     "@vue/devtools-api" "^6.2.1"
-
-vue-multiselect@^2.1.6:
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/vue-multiselect/-/vue-multiselect-2.1.6.tgz#5be5d811a224804a15c43a4edbb7485028a89c7f"
-  integrity sha512-s7jmZPlm9FeueJg1RwJtnE9KNPtME/7C8uRWSfp9/yEN4M8XcS/d+bddoyVwVnvFyRh9msFo0HWeW0vTL8Qv+w==
 
 vue-native-websocket@^2.0.15:
   version "2.0.15"

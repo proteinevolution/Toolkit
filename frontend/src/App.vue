@@ -298,7 +298,7 @@ export default defineComponent({
 @import './assets/scss/reset';
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-vue/dist/bootstrap-vue.css';
-@import 'vue-multiselect/dist/vue-multiselect.min.css';
+@import '@suadelabs/vue3-multiselect/dist/vue3-multiselect.css';
 @import 'v3-tour/dist/vue-tour.css';
 @import './assets/scss/form-elements';
 @import './assets/scss/modals';

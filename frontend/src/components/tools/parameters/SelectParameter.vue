@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import Multiselect from 'vue-multiselect';
+import Multiselect from '@suadelabs/vue3-multiselect';
 import { SelectOption, SelectParameter } from '@/types/toolkit/tools';
 import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
 import EventBus from '@/util/EventBus';

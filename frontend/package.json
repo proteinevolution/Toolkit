@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.6.1",
+    "@suadelabs/vue3-multiselect": "^1.0.2",
     "@vue/compat": "^3.2.45",
     "@vueuse/core": "^9.5.0",
     "axios": "^1.1.3",
@@ -34,7 +35,6 @@
     "vue": "^3.2.45",
     "vue-cookie-accept-decline": "^6.1.0",
     "vue-i18n": "^9.2.2",
-    "vue-multiselect": "^2.1.6",
     "vue-native-websocket": "^2.0.15",
     "vue-router": "^4.1.6",
     "vue-simple-spinner": "^1.2.10",
