@@ -110,7 +110,7 @@ class ResultsService {
 
     private static getResponseFilename(response: AxiosResponse): string | undefined {
         if ('content-disposition' in response.headers) {
-            const header: string = response.headers['content-disposition'];
+            const header = response.headers['content-disposition'] ?? '';
             const filenameIndex = header.indexOf('filename=');
             if (filenameIndex === -1) {
                 return undefined;

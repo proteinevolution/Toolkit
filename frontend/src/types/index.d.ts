@@ -35,6 +35,8 @@ declare module 'vue' {
     const Vue: CompatVue;
     export default Vue;
     export * from '@vue/runtime-dom';
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const { configureCompat } = Vue;
     export { configureCompat };
 }

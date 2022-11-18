@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { backendService } from '@/services/BackendService';
 import Loading from '@/components/utils/Loading.vue';
 import Switches from 'vue-switches';
@@ -51,7 +51,7 @@ import useToolkitTitle from '@/hooks/useToolkitTitle';
 useToolkitTitle('Admin Page');
 
 const { maintenance: storedMaintenance } = useRootStore();
-const maintenance = ref({
+let maintenance = reactive({
     message: storedMaintenance.message,
     submitBlocked: storedMaintenance.submitBlocked,
 });
@@ -59,12 +59,12 @@ const maintenanceStateLoading = ref(false);
 
 const setMaintenanceState = async () => {
     maintenanceStateLoading.value = true;
-    await backendService.setMaintenanceState(maintenance.value);
+    await backendService.setMaintenanceState(maintenance);
     maintenanceStateLoading.value = false;
 };
 
 const resetMaintenanceState = () => {
-    maintenance.value = {
+    maintenance = {
         message: '',
         submitBlocked: false,
     };

@@ -1,7 +1,7 @@
 import { defineConfig, loadEnv } from 'vite';
-import vue from '@vitejs/plugin-vue2';
+import vue from '@vitejs/plugin-vue';
 import viteImagemin from 'vite-plugin-imagemin';
-import path from 'path';
+import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
         ],
         resolve: {
             alias: {
-                '@': path.resolve(__dirname, './src'),
+                '@': resolve(__dirname, './src'),
                 vue: '@vue/compat',
             },
         },

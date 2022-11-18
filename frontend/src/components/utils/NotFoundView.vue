@@ -13,7 +13,6 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue';
 import useToolkitTitle from '../../hooks/useToolkitTitle';
 import { colorSequence } from '@/util/SequenceUtils';
 

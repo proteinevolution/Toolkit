@@ -1,11 +1,11 @@
 <template>
     <div class="autocomplete">
         <input
+            v-bind="$attrs"
             ref="searchInput"
             v-model.trim="search"
             class="form-control search-field"
             :class="targetClass"
-            v-bind="$attrs"
             @input="onChange"
             @keydown.down="onArrowDown"
             @keydown.up="onArrowUp"
