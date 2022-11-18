@@ -19,7 +19,7 @@
             <div class="tk-modal-header">
                 <span class="tk-modal-title" v-html="title"></span>
 
-                <span class="tk-modal-close" @click="$root.$emit('bv::hide::modal', id)"> &times; </span>
+                <span class="tk-modal-close" @click="$root?.$emit('bv::hide::modal', id)"> &times; </span>
             </div>
         </slot>
         <slot name="body">

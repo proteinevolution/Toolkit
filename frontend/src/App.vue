@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -103,12 +103,12 @@ import ResetPasswordModal from '@/components/modals/ResetPasswordModal.vue';
 import VueCookieAcceptDecline from 'vue-cookie-accept-decline';
 import ScrollTopButton from '@/components/utils/ScrollTopButton.vue';
 import OffscreenMenu from '@/components/navigation/OffscreenMenu.vue';
-import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { Tour } from 'v3-tour';
+import { useRoute } from 'vue-router';
 import { useGlobalTitleState } from '@/composables/useToolkitTitle';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useToolkitTour from '@/composables/useToolkitTour';
@@ -139,7 +139,17 @@ export default defineComponent({
     setup() {
         const { alert } = useToolkitNotifications();
         const { options, steps } = useToolkitTour();
-        return { alert, options, steps };
+
+        const route = useRoute();
+        const showJobList = computed(() => route.meta.showJobList);
+        const openJobId = computed(() => route.params.jobID);
+
+        const rootStore = useRootStore();
+        const authStore = useAuthStore();
+        const toolsStore = useToolsStore();
+        const jobsStore = useJobsStore();
+
+        return { alert, options, steps, showJobList, openJobId, rootStore, authStore, toolsStore, jobsStore };
     },
     data() {
         return {
@@ -164,16 +174,9 @@ export default defineComponent({
         };
     },
     computed: {
-        showJobList(): boolean {
-            return this.$route.meta.showJobList;
-        },
-        openJobId(): string {
-            return this.$route.params.jobID;
-        },
         tour(): Tour {
             return this.$tours['toolkitTour'];
         },
-        ...mapStores(useRootStore, useAuthStore, useToolsStore, useJobsStore),
     },
     // Only used for tour
     watch: {
@@ -276,10 +279,10 @@ export default defineComponent({
             if (params.props) {
                 Object.assign(this.modalProps, params.props);
             }
-            this.$root.$emit('bv::show::modal', params.id);
+            this.$root?.$emit('bv::show::modal', params.id);
         },
         hideModal(id: string) {
-            this.$root.$emit('bv::hide::modal', id);
+            this.$root?.$emit('bv::hide::modal', id);
         },
         clearForwardingModalData(): void {
             this.modalProps.forwardingApiOptions = undefined;
