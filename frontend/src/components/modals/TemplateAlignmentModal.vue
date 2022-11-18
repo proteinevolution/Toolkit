@@ -30,7 +30,7 @@ import { ForwardingMode, Tool } from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TemplateAlignmentModal');
 

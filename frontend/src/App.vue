@@ -110,7 +110,7 @@ import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { Tour } from 'v3-tour';
 import { useGlobalTitleState } from '@/composables/useToolkitTitle';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useToolkitTour from '@/composables/useToolkitTour';
 
 const logger = Logger.get('App');

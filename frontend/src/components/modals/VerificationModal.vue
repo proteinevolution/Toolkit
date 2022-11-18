@@ -12,7 +12,7 @@ import { TranslateResult } from 'vue-i18n';
 import Loading from '@/components/utils/Loading.vue';
 import { authService } from '@/services/AuthService';
 import { AuthMessage } from '@/types/toolkit/auth';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 export default defineComponent({
     name: 'VerificationModal',

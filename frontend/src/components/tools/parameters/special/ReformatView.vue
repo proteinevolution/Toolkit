@@ -80,7 +80,7 @@ import { jobService } from '@/services/JobService';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ReformatView');
 

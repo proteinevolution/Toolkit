@@ -81,7 +81,7 @@ import { ForwardHitsMode, SequenceLengthMode } from '@/types/toolkit/enums';
 import { AlignmentItem } from '@/types/toolkit/results';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ForwardingModal');
 

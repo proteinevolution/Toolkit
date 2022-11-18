@@ -62,7 +62,7 @@ import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TextAreaSubComponent');
 

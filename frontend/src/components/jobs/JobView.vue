@@ -71,7 +71,7 @@ import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { DateTime } from 'luxon';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('JobView');
 

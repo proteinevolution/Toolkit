@@ -23,7 +23,7 @@ import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import { Stage } from 'ngl';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TemplateStructureModal');
 

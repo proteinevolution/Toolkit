@@ -49,7 +49,7 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 export default defineComponent({
     name: 'LoginForm',

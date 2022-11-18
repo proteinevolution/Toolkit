@@ -56,7 +56,7 @@ import { authService } from '@/services/AuthService';
 import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const options = countries.map((value: string[]) => ({ value: value[0], text: value[1] }));
 

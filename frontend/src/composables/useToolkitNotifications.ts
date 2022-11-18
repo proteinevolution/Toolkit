@@ -9,7 +9,7 @@ interface TKNotificationsOptions extends NotificationsOptions {
     onClick?: () => void;
 }
 
-export function useToolkitNotifications() {
+export default function useToolkitNotifications() {
     const { notify } = useNotification();
 
     const alert = (options: TKNotificationsOptions | string, type?: string) => {

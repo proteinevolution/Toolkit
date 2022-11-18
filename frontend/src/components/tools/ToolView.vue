@@ -130,7 +130,7 @@ import { useToolsStore } from '@/stores/tools';
 import { useAuthStore } from '@/stores/auth';
 import { useRoute } from 'vue-router';
 import useToolkitTitle from '@/composables/useToolkitTitle';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ToolView');
 

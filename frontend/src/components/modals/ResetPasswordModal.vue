@@ -32,7 +32,7 @@ import EventBus from '@/util/EventBus';
 import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 export default defineComponent({
     name: 'ResetPasswordModal',

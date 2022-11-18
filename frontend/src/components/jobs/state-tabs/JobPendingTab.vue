@@ -25,7 +25,7 @@ import { mapStores } from 'pinia';
 import { useJobsStore } from '@/stores/jobs';
 import { DateTime } from 'luxon';
 import { useRootStore } from '@/stores/root';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('JobPendingTab');
 

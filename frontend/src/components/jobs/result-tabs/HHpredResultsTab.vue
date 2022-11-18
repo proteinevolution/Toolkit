@@ -204,7 +204,7 @@ import EventBus from '@/util/EventBus';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 import { jobService } from '@/services/JobService';
 import { resultsService } from '@/services/ResultsService';
-import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
+import useToolkitNotifications from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('HHpredResultsTab');
 
