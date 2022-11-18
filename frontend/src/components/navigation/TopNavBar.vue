@@ -101,12 +101,17 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TopNavBar');
 
 export default defineComponent({
     name: 'TopNavBar',
     components: { MaintenanceMessage },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
+    },
     computed: {
         reconnecting(): boolean {
             return this.rootStore.reconnecting;
@@ -142,12 +147,12 @@ export default defineComponent({
                 const msg: AuthMessage = await authService.logout();
                 if (msg.successful) {
                     this.authStore.user = null;
-                    this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
+                    this.alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
                     // sync jobs
                     await this.jobsStore.fetchAllJobs();
                 }
             } catch (error) {
-                this.$alert(error.message, 'danger');
+                this.alert(error.message, 'danger');
             }
             this.rootStore.loading.logout = false;
         },

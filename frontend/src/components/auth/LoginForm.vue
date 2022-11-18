@@ -49,11 +49,16 @@ import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 export default defineComponent({
     name: 'LoginForm',
     components: {
         ExpandHeight,
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -87,14 +92,14 @@ export default defineComponent({
                 if (msg.successful) {
                     this.authStore.user = msg.user;
                     EventBus.$emit('hide-modal', 'auth');
-                    this.$alert(message);
+                    this.alert(message);
                     // get jobs of user
                     await this.jobsStore.fetchAllJobs();
                 }
                 this.message = message;
             } catch (error) {
                 this.message = '';
-                this.$alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
+                this.alert(this.$t('auth.responses.' + error.messageKey, error.messageArguments), 'danger');
             }
             this.rootStore.loading.login = false;
         },

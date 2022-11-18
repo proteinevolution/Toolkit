@@ -25,6 +25,7 @@ import { mapStores } from 'pinia';
 import { useJobsStore } from '@/stores/jobs';
 import { DateTime } from 'luxon';
 import { useRootStore } from '@/stores/root';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('JobPendingTab');
 
@@ -35,6 +36,10 @@ export default defineComponent({
             type: Object,
             required: true,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -55,14 +60,14 @@ export default defineComponent({
             })
             .catch(() => {
                 logger.error('No similar job returned');
-                this.$alert(this.$t('errors.general'), 'danger');
+                this.alert(this.$t('errors.general'), 'danger');
             });
     },
     methods: {
         startJob() {
             jobService.startJob(this.job.jobID).catch(() => {
                 logger.error('Could not start job!');
-                this.$alert(this.$t('errors.general'), 'danger');
+                this.alert(this.$t('errors.general'), 'danger');
             });
         },
         loadExistingJobAndDelete() {
@@ -76,7 +81,7 @@ export default defineComponent({
                 })
                 .catch(() => {
                     logger.error('Could not delete old job!');
-                    this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
+                    this.alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
         fromNow(date: number): string {

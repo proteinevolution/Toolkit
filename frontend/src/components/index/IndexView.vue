@@ -21,7 +21,7 @@ import { watchEffect } from 'vue';
 import { useRoute } from 'vue-router';
 import ToolFinder from './ToolFinder.vue';
 import UpdatesSection from './UpdatesSection.vue';
-import useToolkitTitle from '@/hooks/useToolkitTitle';
+import useToolkitTitle from '@/composables/useToolkitTitle';
 import EventBus from '@/util/EventBus';
 
 useToolkitTitle();

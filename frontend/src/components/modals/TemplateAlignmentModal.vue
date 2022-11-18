@@ -30,6 +30,7 @@ import { ForwardingMode, Tool } from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TemplateAlignmentModal');
 
@@ -52,6 +53,10 @@ export default defineComponent({
             type: Object as () => ForwardingMode,
             required: true,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -122,7 +127,7 @@ export default defineComponent({
             await resultsService.generateTemplateAlignment(this.jobID, this.accession);
             this.data = await resultsService.getFile(this.jobID, this.accession);
             if (!this.data) {
-                this.$alert(this.$t('errors.templateAlignmentFailed'), 'danger');
+                this.alert(this.$t('errors.templateAlignmentFailed'), 'danger');
             }
             this.loading = false;
         },

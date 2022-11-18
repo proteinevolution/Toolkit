@@ -56,6 +56,7 @@ import { authService } from '@/services/AuthService';
 import { TranslateResult } from 'vue-i18n';
 import { mapStores } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const options = countries.map((value: string[]) => ({ value: value[0], text: value[1] }));
 
@@ -63,6 +64,10 @@ export default defineComponent({
     name: 'Profile',
     components: {
         ExpandHeight,
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -166,7 +171,7 @@ export default defineComponent({
                     if (msg.user !== null) {
                         this.authStore.user = msg.user;
                     }
-                    this.$alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
+                    this.alert(this.$t('auth.responses.' + msg.messageKey, msg.messageArguments));
                 } else {
                     this.message = this.$t('auth.responses.' + msg.messageKey, msg.messageArguments);
                 }

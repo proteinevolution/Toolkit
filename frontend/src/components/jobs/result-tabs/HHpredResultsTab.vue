@@ -204,6 +204,7 @@ import EventBus from '@/util/EventBus';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 import { jobService } from '@/services/JobService';
 import { resultsService } from '@/services/ResultsService';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('HHpredResultsTab');
 
@@ -214,6 +215,10 @@ export default SearchResultTabMixin.extend({
         HitListTable,
         HitMap,
         IntersectionObserver,
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -301,7 +306,7 @@ export default SearchResultTabMixin.extend({
             const selected: number[] = Array.from(this.selectedItems);
             if (selected.length < 1) {
                 selected.push(this.alignments[0].num);
-                this.$alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
+                this.alert(this.$t('jobs.results.hhpred.modelUsingFirst'), 'warning');
             }
 
             if (this.info) {
@@ -317,7 +322,7 @@ export default SearchResultTabMixin.extend({
                     })
                     .catch((response) => {
                         logger.error('Could not submit job', response);
-                        this.$alert(this.$t('errors.general'), 'danger');
+                        this.alert(this.$t('errors.general'), 'danger');
                     });
             }
         },

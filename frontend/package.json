@@ -11,6 +11,7 @@
     "test:unit": "jest tests"
   },
   "dependencies": {
+    "@kyvg/vue3-notification": "^2.6.1",
     "@vue/compat": "^3.2.45",
     "@vueuse/core": "^9.5.0",
     "axios": "^1.1.3",
@@ -36,7 +37,6 @@
     "vue-i18n-bridge": "^9.2.2",
     "vue-multiselect": "^2.1.6",
     "vue-native-websocket": "^2.0.15",
-    "vue-notification": "^1.3.20",
     "vue-router": "^4.1.6",
     "vue-simple-spinner": "^1.2.10",
     "vue-slider-component": "^3.2.23",

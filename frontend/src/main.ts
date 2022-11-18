@@ -9,7 +9,8 @@ import Logger from 'js-logger';
 import { pinia } from '@/stores';
 import { useRootStoreWithout } from '@/stores/root';
 import BootstrapVue from 'bootstrap-vue';
-import Notifications from '@/modules/notifications';
+import Notifications from '@kyvg/vue3-notification';
+import velocity from 'velocity-animate';
 import VueTour from 'v3-tour';
 
 const app = createApp(App);
@@ -58,13 +59,7 @@ app.use(pinia);
 app.use(i18n);
 
 app.use(BootstrapVue);
-app.use(Notifications, {
-    browserNotifications: {
-        enabled: true,
-        timeout: 5000,
-        onlyIfHidden: true,
-    },
-});
+app.use(Notifications, { velocity });
 app.use(VueTour);
 
 app.mount('#app');

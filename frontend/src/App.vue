@@ -84,7 +84,6 @@ import VelocityFade from '@/transitions/VelocityFade.vue';
 import LoadingView from '@/components/utils/LoadingView.vue';
 import { Job } from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
-import { TKNotificationOptions } from '@/modules/notifications/types';
 import { ForwardingApiOptions, ForwardingApiOptionsAlignment, Tool } from '@/types/toolkit/tools';
 import EventBus from '@/util/EventBus';
 import FooterLinkModal from '@/components/modals/FooterLinkModal.vue';
@@ -106,7 +105,8 @@ import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { Tour } from 'v3-tour';
-import { useGlobalTitleState } from '@/hooks/useToolkitTitle';
+import { useGlobalTitleState } from '@/composables/useToolkitTitle';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('App');
 
@@ -130,6 +130,10 @@ export default defineComponent({
         AuthModal,
         CookieLaw,
         ScrollTopButton,
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -410,11 +414,11 @@ export default defineComponent({
             switch (json.mutation) {
                 case 'SOCKET_MaintenanceAlert':
                     if (json.submitBlocked) {
-                        this.$alert({
+                        this.alert({
                             title: this.$t('maintenance.notificationTitle'),
                             text: this.$t('maintenance.notificationBody'),
                             useBrowserNotifications: false,
-                        } as TKNotificationOptions);
+                        });
                     }
                     break;
                 case 'SOCKET_ShowNotification':
@@ -425,14 +429,14 @@ export default defineComponent({
                     break;
                 case 'SOCKET_Logout':
                     if (!this.rootStore.loading.logout) {
-                        this.$alert(this.$t('auth.loggedOutByWS'));
+                        this.alert(this.$t('auth.loggedOutByWS'));
                         this.jobsStore.fetchAllJobs();
                         this.authStore.user = null;
                     }
                     break;
                 case 'SOCKET_Login':
                     if (!this.rootStore.loading.login) {
-                        this.$alert(this.$t('auth.loggedInByWS'));
+                        this.alert(this.$t('auth.loggedInByWS'));
                         this.jobsStore.fetchAllJobs();
                         this.authStore.fetchUserData();
                     }
@@ -474,11 +478,11 @@ export default defineComponent({
         },
         showNotification(title: string, text: string, args: any): void {
             logger.debug('Notification received.', title, text, args);
-            this.$alert({
+            this.alert({
                 title: this.$t(title, args),
                 text: this.$t(text, args),
                 useBrowserNotifications: true,
-            } as TKNotificationOptions);
+            });
         },
         showModal(params: ModalParams) {
             if (params.props) {

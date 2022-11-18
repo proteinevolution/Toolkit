@@ -71,6 +71,7 @@ import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { DateTime } from 'luxon';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('JobView');
 
@@ -107,6 +108,10 @@ export default defineComponent({
         treeView: () => lazyLoadView(import('./result-tabs/TreeTab.vue')),
         dataView: () => lazyLoadView(import('./result-tabs/DataTab.vue')),
         templateSelection: () => lazyLoadView(import('./result-tabs/TemplateSelectionViewTab.vue')),
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -170,7 +175,7 @@ export default defineComponent({
                     this.jobsStore.removeJob(oldJobID);
                 })
                 .catch(() => {
-                    this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
+                    this.alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
         loadJobDetails(jobID: string): Promise<void> {

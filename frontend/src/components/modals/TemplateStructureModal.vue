@@ -23,6 +23,7 @@ import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import { Stage } from 'ngl';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TemplateStructureModal');
 
@@ -37,6 +38,10 @@ export default defineComponent({
             type: String,
             required: true,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -79,7 +84,7 @@ export default defineComponent({
                 const response = await resultsService.getStructureFile(this.accession);
                 if (!response.filename) {
                     logger.error("Filename couldn't be read from axios response.");
-                    this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
+                    this.alert(this.$t('errors.templateStructureFailed'), 'danger');
                     return;
                 }
                 this.file = response.data;
@@ -100,7 +105,7 @@ export default defineComponent({
                 window.addEventListener('resize', this.resize);
                 this.resize();
             } catch (err) {
-                this.$alert(this.$t('errors.templateStructureFailed'), 'danger');
+                this.alert(this.$t('errors.templateStructureFailed'), 'danger');
                 (this.$refs.viewport as HTMLElement).innerHTML = this.$t('errors.templateStructureFailed').toString();
             }
             this.loading = false;

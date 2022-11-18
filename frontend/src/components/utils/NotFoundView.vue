@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import useToolkitTitle from '../../hooks/useToolkitTitle';
+import useToolkitTitle from '../../composables/useToolkitTitle';
 import { colorSequence } from '@/util/SequenceUtils';
 
 const props = defineProps({

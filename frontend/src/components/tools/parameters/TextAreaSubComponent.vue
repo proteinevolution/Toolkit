@@ -62,6 +62,7 @@ import { sampleSeqService } from '@/services/SampleSeqService';
 import Loading from '@/components/utils/Loading.vue';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('TextAreaSubComponent');
 
@@ -91,6 +92,10 @@ export default defineComponent({
             required: false,
             default: false,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -178,7 +183,7 @@ export default defineComponent({
                 };
                 reader.onloadend = () => {
                     setTimeout(() => {
-                        this.$alert(this.$t('tools.parameters.textArea.uploadedFile'));
+                        this.alert(this.$t('tools.parameters.textArea.uploadedFile'));
                         this.uploadingFile = false;
                     }, 500);
                 };
@@ -197,12 +202,12 @@ export default defineComponent({
             if (error) {
                 switch (error.code) {
                     case error.NOT_FOUND_ERR:
-                        this.$alert(this.$t('errors.fileNotFound'), 'danger');
+                        this.alert(this.$t('errors.fileNotFound'), 'danger');
                         break;
                     case error.ABORT_ERR:
                         break; // noop
                     default:
-                        this.$alert(this.$t('errors.fileUnreadable'), 'danger');
+                        this.alert(this.$t('errors.fileUnreadable'), 'danger');
                 }
             }
         },

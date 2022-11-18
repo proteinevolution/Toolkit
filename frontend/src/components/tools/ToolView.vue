@@ -129,7 +129,8 @@ import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import { useAuthStore } from '@/stores/auth';
 import { useRoute } from 'vue-router';
-import useToolkitTitle from '@/hooks/useToolkitTitle';
+import useToolkitTitle from '@/composables/useToolkitTitle';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ToolView');
 
@@ -175,7 +176,9 @@ export default defineComponent({
 
         useToolkitTitle(computed<string>(() => tool.value.longname));
 
-        return { tool, toolName };
+        const { alert } = useToolkitNotifications();
+
+        return { alert, tool, toolName };
     },
     data() {
         return {
@@ -298,7 +301,7 @@ export default defineComponent({
                 .catch((response) => {
                     this.submitLoading = false;
                     logger.error('Could not submit job', response);
-                    this.$alert(this.$t('errors.general'), 'danger');
+                    this.alert(this.$t('errors.general'), 'danger');
                 });
         },
         openAlignmentViewerResults({ sequences, format }: { sequences: string; format: string }): void {

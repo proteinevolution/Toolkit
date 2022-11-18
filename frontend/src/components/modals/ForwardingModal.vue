@@ -81,6 +81,7 @@ import { ForwardHitsMode, SequenceLengthMode } from '@/types/toolkit/enums';
 import { AlignmentItem } from '@/types/toolkit/results';
 import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ForwardingModal');
 
@@ -111,6 +112,10 @@ export default defineComponent({
             type: String,
             required: true,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -222,7 +227,7 @@ export default defineComponent({
                     }
                 } catch (e) {
                     logger.error(e);
-                    this.$alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
+                    this.alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
                     this.loading = false;
                     return;
                 }
@@ -234,7 +239,7 @@ export default defineComponent({
                     EventBus.$emit('hide-modal', 'forwardingModal');
                     this.resetData();
                 } else {
-                    this.$alert(this.$t('jobs.forwarding.noData'), 'danger');
+                    this.alert(this.$t('jobs.forwarding.noData'), 'danger');
                 }
                 this.loading = false;
             } else {

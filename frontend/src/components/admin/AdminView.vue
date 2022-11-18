@@ -46,7 +46,7 @@ import Switches from 'vue-switches';
 import AdminStatistics from './AdminStatistics.vue';
 import { useRootStore } from '@/stores/root';
 import { useAuthStore } from '@/stores/auth';
-import useToolkitTitle from '@/hooks/useToolkitTitle';
+import useToolkitTitle from '@/composables/useToolkitTitle';
 
 useToolkitTitle('Admin Page');
 

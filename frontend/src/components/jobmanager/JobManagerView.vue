@@ -85,7 +85,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import useToolkitTitle from '@/hooks/useToolkitTitle';
+import useToolkitTitle from '@/composables/useToolkitTitle';
 import { Job } from '@/types/toolkit/jobs';
 import { Tool } from '@/types/toolkit/tools';
 import { jobService } from '@/services/JobService';
@@ -95,11 +95,15 @@ import { useRootStore } from '@/stores/root';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { DateTime } from 'luxon';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 export default defineComponent({
     name: 'JobManagerView',
     setup() {
         useToolkitTitle('Jobmanager');
+
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -176,7 +180,7 @@ export default defineComponent({
                     this.totalRows = this.jobs.length;
                 })
                 .catch(() => {
-                    this.$alert(this.$t('errors.couldNotDeleteJob'), 'danger');
+                    this.alert(this.$t('errors.couldNotDeleteJob'), 'danger');
                 });
         },
         setPublic(jobID: string, isPublic: boolean): void {

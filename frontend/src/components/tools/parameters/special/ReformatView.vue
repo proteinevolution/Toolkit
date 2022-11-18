@@ -80,6 +80,7 @@ import { jobService } from '@/services/JobService';
 import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
+import { useToolkitNotifications } from '@/composables/useToolkitNotifications';
 
 const logger = Logger.get('ReformatView');
 
@@ -94,6 +95,10 @@ export default defineComponent({
             type: Object as () => FrontendToolParameter,
             default: undefined,
         },
+    },
+    setup() {
+        const { alert } = useToolkitNotifications();
+        return { alert };
     },
     data() {
         return {
@@ -198,9 +203,9 @@ export default defineComponent({
         async copyToClipboard() {
             try {
                 await navigator.clipboard.writeText(this.output);
-                this.$alert(this.$t('tools.reformat.copySuccess'));
+                this.alert(this.$t('tools.reformat.copySuccess'));
             } catch (e) {
-                this.$alert(this.$t('tools.reformat.copyFailure'));
+                this.alert(this.$t('tools.reformat.copyFailure'));
             }
         },
     },
