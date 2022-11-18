@@ -10,6 +10,7 @@ Settings.defaultLocale = defaultLanguage;
 const logger = Logger.get('i18n');
 
 const i18n = createI18n({
+    legacy: false,
     locale: localStorage.getItem('tk-locale') || defaultLanguage, // set locale
     fallbackLocale: defaultLanguage,
     messages, // set locale messages
@@ -37,7 +38,7 @@ function setI18nLanguage(lang: PossibleLanguage) {
 }
 
 export function loadLanguageAsync(lang: string): Promise<string> {
-    if (i18n.global.locale !== lang && isPossibleLanguage(lang)) {
+    if (i18n.global.locale.value !== lang && isPossibleLanguage(lang)) {
         if (!loadedLanguages.includes(lang)) {
             return import(`./lang/${lang}.ts`).then((msgs) => {
                 i18n.global.setLocaleMessage(lang, msgs.default[lang]);
