@@ -60,9 +60,9 @@
 
         <notifications animation-type="velocity" />
 
-        <vue-cookie-accept-decline type="bar">
+        <vue-cookie-accept-decline element-id="cookieBanner" type="bar" :disable-decline="true">
             <template #message>
-                <i18n-t keypath="cookieLaw.message" tag="div" class="Cookie__content">
+                <i18n-t keypath="cookieLaw.message" tag="span">
                     <b
                         class="cursor-pointer"
                         @click="showModal({ id: 'footerLink', props: { modal: 'privacy' } })"
@@ -71,9 +71,7 @@
             </template>
 
             <template #acceptContent>
-                <div class="Cookie__buttons">
-                    <button class="Cookie__button" @click="props.accept" v-text="$t('cookieLaw.accept')"></button>
-                </div>
+                {{ $t('cookieLaw.accept') }}
             </template>
         </vue-cookie-accept-decline>
     </div>
@@ -413,24 +411,36 @@ body {
     position: absolute;
 }
 
-.Cookie--toolkit {
+#cookieBanner {
     background: $primary;
     color: $white;
     padding: 1.25em 2em;
-}
+    position: fixed;
+    bottom: 0;
+    z-index: 1500;
+    left: 0;
+    right: 0;
 
-.Cookie--toolkit .Cookie__button {
-    background: $tk-dark-green;
-    color: $white;
-    padding: 0.625em 3.125em;
-    border-radius: $global-radius;
-    border: 0;
-    font-size: 1em;
-    margin: 0;
-}
+    .cookie__bar__wrap {
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.Cookie--toolkit .Cookie__button:hover {
-    background: $tk-darker-green;
+    .cookie__bar__buttons__button {
+        background: $tk-dark-green;
+        color: $white;
+        padding: 0.625em 3.125em;
+        border-radius: $global-radius;
+        border: 0;
+        font-size: 1em;
+        margin: 0;
+    }
+
+    .cookie__bar__buttons__button:hover {
+        background: $tk-darker-green;
+    }
 }
 
 .pagination-container {
