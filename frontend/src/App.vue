@@ -80,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, getCurrentInstance, onMounted, reactive } from 'vue';
+import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -112,6 +112,8 @@ import { useEventBus } from '@vueuse/core';
 import { useGlobalTitleState } from '@/composables/useToolkitTitle';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useToolkitTour from '@/composables/useToolkitTour';
+import useToolkitWebsocket from './composables/useToolkitWebsocket';
+import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('App');
 
@@ -138,16 +140,41 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        const { options, steps } = useToolkitTour();
-
-        const route = useRoute();
-        const showJobList = computed(() => route.meta.showJobList);
-        const openJobId = computed(() => route.params.jobID);
-
+        const { t } = useI18n();
         const rootStore = useRootStore();
         const authStore = useAuthStore();
         const toolsStore = useToolsStore();
         const jobsStore = useJobsStore();
+        const { options, steps, setTourFinished } = useToolkitTour();
+        const route = useRoute();
+
+        rootStore.fetchMaintenance();
+        toolsStore.fetchAllTools();
+        jobsStore.fetchAllJobs();
+        // this also makes sure the session id is set
+        authStore.fetchUserData();
+
+        const showJobList = computed(() => route.meta.showJobList);
+        const openJobId = computed(() => route.params.jobID);
+
+        const showNotification = (title: string, text: string, args: any): void => {
+            logger.debug('Notification received.', title, text, args);
+            alert({
+                title: t(title, args),
+                text: t(text, args),
+                useBrowserNotifications: true,
+            });
+        };
+
+        const showJobNotification = (jobID: string, title: string, body: string): void => {
+            if (jobID === openJobId.value) {
+                const job = jobsStore.jobs.find((j: Job) => j.jobID === jobID) as Job;
+                const tool = toolsStore.tools.find((t: Tool) => t.name === job.tool) as Tool;
+                showNotification(title, body, { tool: tool.longname });
+                const { alert } = useGlobalTitleState();
+                alert.value = true;
+            }
+        };
 
         // Modals logic
         const root = getCurrentInstance();
@@ -188,33 +215,71 @@ export default defineComponent({
          programmatically. The props are passed to the modal via data attributes of the App-component.
 
          They are hidden with hideModalsBus.emit(<MODAL_ID>). */
-
             showModalsBus.on(showModal);
             hideModalsBus.on((id: string) => {
                 root?.emit('bv::hide::modal', id);
             });
         });
 
+        // UI related websocket methods, others can be found in rootStore
+        const { data } = useToolkitWebsocket();
+        watch(data, (json) => {
+            switch (json.mutation) {
+                case 'SOCKET_MaintenanceAlert':
+                    if (json.submitBlocked) {
+                        alert({
+                            title: t('maintenance.notificationTitle'),
+                            text: t('maintenance.notificationBody'),
+                            useBrowserNotifications: false,
+                        });
+                    }
+                    break;
+                case 'SOCKET_ShowNotification':
+                    showNotification(json.title, json.body, json.arguments);
+                    break;
+                case 'SOCKET_ShowJobNotification':
+                    showJobNotification(json.jobID, json.title, json.body);
+                    break;
+                case 'SOCKET_Logout':
+                    if (!rootStore.loading.logout) {
+                        alert(t('auth.loggedOutByWS'));
+                        jobsStore.fetchAllJobs();
+                        authStore.user = null;
+                    }
+                    break;
+                case 'SOCKET_Login':
+                    if (!rootStore.loading.login) {
+                        alert(t('auth.loggedInByWS'));
+                        jobsStore.fetchAllJobs();
+                        authStore.fetchUserData();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        // allow for update of human-readable time by updating reference point in store
+        const refreshInterval = setInterval(() => {
+            rootStore.now = Date.now();
+        }, 10000);
+
+        onBeforeUnmount(() => {
+            clearInterval(refreshInterval);
+        });
+
+        const refreshCounter = ref(0);
+
         return {
-            alert,
             options,
             steps,
+            setTourFinished,
             showJobList,
-            openJobId,
+            refreshCounter,
             rootStore,
-            authStore,
-            toolsStore,
-            jobsStore,
             modalProps,
             showModal,
             clearForwardingModalData,
-        };
-    },
-    data() {
-        return {
-            // allow for update of human-readable time by updating reference point in store
-            refreshInterval: null as any,
-            refreshCounter: 0,
         };
     },
     computed: {
@@ -234,83 +299,6 @@ export default defineComponent({
             } else {
                 this.tour.stop();
             }
-        },
-    },
-    created() {
-        this.rootStore.fetchMaintenance();
-        this.toolsStore.fetchAllTools();
-        this.jobsStore.fetchAllJobs();
-        // this also makes sure the session id is set
-        this.authStore.fetchUserData();
-
-        // handle websocket messages which depend on the ui
-        (this.$options as any).sockets.onmessage = (response: any) => {
-            const json = JSON.parse(response.data);
-            switch (json.mutation) {
-                case 'SOCKET_MaintenanceAlert':
-                    if (json.submitBlocked) {
-                        this.alert({
-                            title: this.$t('maintenance.notificationTitle'),
-                            text: this.$t('maintenance.notificationBody'),
-                            useBrowserNotifications: false,
-                        });
-                    }
-                    break;
-                case 'SOCKET_ShowNotification':
-                    this.showNotification(json.title, json.body, json.arguments);
-                    break;
-                case 'SOCKET_ShowJobNotification':
-                    this.showJobNotification(json.jobID, json.title, json.body);
-                    break;
-                case 'SOCKET_Logout':
-                    if (!this.rootStore.loading.logout) {
-                        this.alert(this.$t('auth.loggedOutByWS'));
-                        this.jobsStore.fetchAllJobs();
-                        this.authStore.user = null;
-                    }
-                    break;
-                case 'SOCKET_Login':
-                    if (!this.rootStore.loading.login) {
-                        this.alert(this.$t('auth.loggedInByWS'));
-                        this.jobsStore.fetchAllJobs();
-                        this.authStore.fetchUserData();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        };
-
-        this.refreshInterval = setInterval(() => {
-            this.rootStore.now = Date.now();
-        }, 10000);
-    },
-    destroyed(): void {
-        delete (this.$options as any).sockets.onmessage;
-        if (this.refreshInterval) {
-            clearInterval(this.refreshInterval);
-        }
-    },
-    methods: {
-        showJobNotification(jobID: string, title: string, body: string): void {
-            if (jobID === this.openJobId) {
-                const job = this.jobsStore.jobs.find((j: Job) => j.jobID === jobID) as Job;
-                const tool = this.toolsStore.tools.find((t: Tool) => t.name === job.tool) as Tool;
-                this.showNotification(title, body, { tool: tool.longname });
-                const { alert } = useGlobalTitleState();
-                alert.value = true;
-            }
-        },
-        showNotification(title: string, text: string, args: any): void {
-            logger.debug('Notification received.', title, text, args);
-            this.alert({
-                title: this.$t(title, args),
-                text: this.$t(text, args),
-                useBrowserNotifications: true,
-            });
-        },
-        setTourFinished(): void {
-            this.rootStore.tourFinished = true;
         },
     },
 });

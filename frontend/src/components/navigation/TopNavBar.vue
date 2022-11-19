@@ -6,15 +6,15 @@
                     <div class="social-nav">
                         <b-dropdown v-if="false" no-caret class="lang-dropdown">
                             <template #button-content>
-                                <img :src="require('../../assets/images/flag-' + $i18n.locale + '.png')" alt="" />
+                                <img :src="'../../assets/images/flag-' + $i18n.locale + '.png'" alt="" />
                                 <span class="sr-only" v-text="$t('language.lang')"></span>
                             </template>
                             <b-dropdown-item @click="changeLanguage('en')">
-                                <img :src="require('../../assets/images/flag-en.png')" class="mr-2" alt="" />
+                                <img src="../../assets/images/flag-en.png" class="mr-2" alt="" />
                                 <span v-text="$t('language.en')"></span>
                             </b-dropdown-item>
                             <b-dropdown-item @click="changeLanguage('de')">
-                                <img :src="require('../../assets/images/flag-de.png')" class="mr-2" alt="" />
+                                <img src="../../assets/images/flag-de.png" class="mr-2" alt="" />
                                 <span v-text="$t('language.de')"></span>
                             </b-dropdown-item>
                         </b-dropdown>
@@ -71,7 +71,7 @@
                 </div>
 
                 <router-link to="/" class="small-logo-link d-md-none mx-auto">
-                    <img :src="require('../../assets/images/minlogo.svg')" alt="MPI Bioinformatics Toolkit" />
+                    <img src="../../assets/images/minlogo.svg" alt="MPI Bioinformatics Toolkit" />
                 </router-link>
 
                 <b-navbar-toggle class="d-lg-none mr-auto" target="offscreenMenu" @click="toggleOffscreenMenu" />

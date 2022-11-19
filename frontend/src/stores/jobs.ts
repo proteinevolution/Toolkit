@@ -7,6 +7,7 @@ import { jobService } from '@/services/JobService';
 import { WebSocketActions } from '@/types/toolkit/enums';
 import Logger from 'js-logger';
 import { maxBy } from 'lodash-es';
+import useToolkitWebsocket from '@/composables/useToolkitWebsocket';
 
 const logger = Logger.get('JobStore');
 
@@ -41,7 +42,8 @@ export const useJobsStore = defineStore('jobs', {
             rootStore.loading.jobDetails = true;
             const job: Job = await jobService.fetchJob(jobID);
             this.setJob(jobID, job);
-            Vue.prototype.$socket.sendObj({
+            const { send } = useToolkitWebsocket();
+            send({
                 type: WebSocketActions.SET_JOB_WATCHED,
                 jobID,
                 watched: true,
@@ -53,7 +55,8 @@ export const useJobsStore = defineStore('jobs', {
             await jobService.setJobPublic(jobID, isPublic);
         },
         setJobWatched(jobID: string, watched: boolean) {
-            Vue.prototype.$socket.sendObj({
+            const { send } = useToolkitWebsocket();
+            send({
                 type: WebSocketActions.SET_JOB_WATCHED,
                 jobID,
                 watched,

@@ -1,8 +1,8 @@
 <template>
     <div>
-        <h3 class="mb-3 h5" v-text="$t('jobs.stateMessages.running')"></h3>
-        <p v-html="$t('jobs.citationInfo', { tool: tool.longname })"></p>
-        <p class="mb-3" v-text="$t('jobs.jobIDDetails', job)"></p>
+        <h3 class="mb-3 h5" v-text="t('jobs.stateMessages.running')"></h3>
+        <p v-html="t('jobs.citationInfo', { tool: tool.longname })"></p>
+        <p class="mb-3" v-text="t('jobs.jobIDDetails', job)"></p>
         <table v-for="logElem in runningLog" :key="logElem.text" class="job-log-element mb-2">
             <tr>
                 <td>
@@ -14,41 +14,35 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref, Ref, watch } from 'vue';
 import { parseProcessLog } from '@/util/Utils';
 import { ProcessLogItem } from '@/types/toolkit/jobs';
+import useToolkitWebsocket from '@/composables/useToolkitWebsocket';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'JobRunningTab',
-    props: {
-        job: {
-            type: Object,
-            required: true,
-        },
-        tool: {
-            type: Object,
-            required: true,
-        },
+const props = defineProps({
+    job: {
+        type: Object,
+        required: true,
     },
-    data() {
-        return {
-            runningLog: [] as ProcessLogItem[],
-        };
+    tool: {
+        type: Object,
+        required: true,
     },
-    created() {
-        (this.$options as any).sockets.onmessage = (response: any) => {
-            const json = JSON.parse(response.data);
-            if (json.mutation === 'SOCKET_WatchLogFile') {
-                if (json.jobID === this.job.jobID) {
-                    this.runningLog = parseProcessLog(json.lines);
-                }
-            }
-        };
-    },
-    destroyed(): void {
-        delete (this.$options as any).sockets.onmessage;
-    },
+});
+
+const { t } = useI18n();
+
+const runningLog: Ref<ProcessLogItem[]> = ref([]);
+
+const { data } = useToolkitWebsocket();
+watch(data, (json) => {
+    if (json.mutation === 'SOCKET_WatchLogFile') {
+        if (json.jobID === props.job.jobID) {
+            runningLog.value = parseProcessLog(json.lines);
+        }
+    }
 });
 </script>
 

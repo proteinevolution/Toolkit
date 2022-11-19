@@ -1,6 +1,7 @@
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useEventBus } from '@vueuse/core';
+import { useRootStore } from '@/stores/root';
 
 export default function useToolkitTour() {
     const { t } = useI18n();
@@ -229,5 +230,10 @@ export default function useToolkitTour() {
         },
     };
 
-    return { options, steps };
+    const rootStore = useRootStore();
+    const setTourFinished = (): void => {
+        rootStore.tourFinished = true;
+    };
+
+    return { options, steps, setTourFinished };
 }
