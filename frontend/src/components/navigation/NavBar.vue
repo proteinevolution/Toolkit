@@ -8,11 +8,11 @@
                             <b-nav-item
                                 v-for="section in sections"
                                 :key="section"
-                                :class="[section === selectedSection && $route.name !== 'admin' ? 'active' : '']"
+                                :class="[section === selectedSection && route.name !== 'admin' ? 'active' : '']"
                                 @click="selectSection(section)">
-                                {{ $t(`tools.sections.${section}.title`) }}
+                                {{ t(`tools.sections.${section}.title`) }}
                             </b-nav-item>
-                            <b-nav-item v-if="isAdmin" :class="[$route.name === 'admin' ? 'active' : '']" to="/admin">
+                            <b-nav-item v-if="isAdmin" :class="[route.name === 'admin' ? 'active' : '']" to="/admin">
                                 Admin
                             </b-nav-item>
                         </b-navbar-nav>
@@ -41,103 +41,78 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { Tool } from '@/types/toolkit/tools';
 import { Job } from '@/types/toolkit/jobs';
 import { sectionColors, sections } from '@/conf/ToolSections';
-import { User } from '@/types/toolkit/auth';
-import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { useEventBus } from '@vueuse/core';
+import { useRoute } from 'vue-router';
+import { isNonNullable } from '@/util/nullability-helpers';
+import { useI18n } from 'vue-i18n';
 
-export default defineComponent({
-    name: 'NavBar',
-    setup() {
-        const selectNavBarSectionBus = useEventBus<string>('select-nav-bar-section');
-        return { selectNavBarSectionBus };
-    },
-    data() {
-        return {
-            userSelectedSection: '',
-            defaultSelectedSection: sections[0],
-            sectionColors,
-            sections,
-        };
-    },
-    computed: {
-        displayedTools(): Tool[] {
-            return this.tools.filter((tool: Tool) => tool.section === this.selectedSection);
-        },
-        tools(): Tool[] {
-            return this.toolsStore.tools;
-        },
-        jobs(): Job[] {
-            return this.jobsStore.jobs;
-        },
-        sectionColor(): string {
-            const index = this.sections.indexOf(this.selectedSection) % this.sections.length;
-            return this.sectionColors[index];
-        },
-        selectedSection(): string {
-            return this.userSelectedSection ? this.userSelectedSection : this.defaultSelectedSection;
-        },
-        user(): User | null {
-            return this.authStore.user;
-        },
-        isAdmin(): boolean {
-            return this.user !== null && this.user.isAdmin;
-        },
-        ...mapStores(useAuthStore, useToolsStore, useJobsStore),
-    },
-    watch: {
-        '$route.params': {
-            immediate: true,
-            deep: true,
-            handler() {
-                // clear user selection to select correct tool/group upon programmatic routing
-                this.userSelectedSection = '';
-                let toolName = '';
-                if (this.$route.params.toolName) {
-                    toolName = this.$route.params.toolName as string;
-                } else {
-                    const currentJob: Job | undefined = this.jobs.find(
-                        (job: Job) => job.jobID === this.$route.params.jobID
-                    );
-                    if (currentJob) {
-                        toolName = currentJob.tool;
-                    }
-                }
-                if (toolName) {
-                    const matchingTools = this.tools.filter(
-                        (tool: Tool) => tool.name === toolName && sections.includes(tool.section)
-                    );
-                    if (matchingTools.length > 0) {
-                        this.defaultSelectedSection = matchingTools[0].section;
-                    } else {
-                        this.defaultSelectedSection = sections[0];
-                    }
-                }
-            },
-        },
-    },
-    mounted() {
-        this.selectNavBarSectionBus.on(this.selectSection);
-    },
-    beforeDestroy() {
-        this.selectNavBarSectionBus.off(this.selectSection);
-    },
-    methods: {
-        selectSection(section: string): void {
-            this.userSelectedSection = section;
-        },
-    },
+const { t } = useI18n();
+
+const userSelectedSection = ref('');
+const defaultSelectedSection = ref(sections[0]);
+const selectedSection = computed(() => userSelectedSection.value || defaultSelectedSection.value);
+const sectionColor = computed(() => {
+    const index = sections.indexOf(selectedSection.value) % sections.length;
+    return sectionColors[index];
 });
+
+function selectSection(section: string): void {
+    userSelectedSection.value = section;
+}
+
+const selectNavBarSectionBus = useEventBus<string>('select-nav-bar-section');
+onMounted(() => selectNavBarSectionBus.on(selectSection));
+onBeforeUnmount(() => selectNavBarSectionBus.off(selectSection));
+
+const jobsStore = useJobsStore();
+const toolsStore = useToolsStore();
+const authStore = useAuthStore();
+const isAdmin = computed(() => authStore.user?.isAdmin ?? false);
+
+const jobs = computed(() => jobsStore.jobs);
+const tools = computed(() => toolsStore.tools);
+const displayedTools = computed(() => tools.value.filter((tool: Tool) => tool.section === selectedSection.value));
+
+const route = useRoute();
+watch(
+    route.params,
+    () => {
+        // clear user selection to select correct tool/group upon programmatic routing
+        userSelectedSection.value = '';
+        let toolName = '';
+        if (isNonNullable(route.params.toolName)) {
+            toolName = route.params.toolName as string;
+        } else {
+            const currentJob: Job | undefined = jobs.value.find((job: Job) => job.jobID === route.params.jobID);
+            if (isNonNullable(currentJob)) {
+                toolName = currentJob.tool;
+            }
+        }
+        if (toolName !== '') {
+            const matchingTools = tools.value.filter(
+                (tool: Tool) => tool.name === toolName && sections.includes(tool.section)
+            );
+            if (matchingTools.length > 0) {
+                defaultSelectedSection.value = matchingTools[0].section;
+            } else {
+                defaultSelectedSection.value = sections[0];
+            }
+        }
+    },
+    { deep: true, immediate: true }
+);
 </script>
 
-<style lang="scss" scoped>
+<!-- TODO Add "scoped" attribute to limit CSS to this component only. Figure out how to not need :deep. -->
+<style lang="scss">
 .navbar-container .navbar {
     padding-left: 0;
 

@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref, set } from 'vue';
+import Vue, { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref, set } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -227,7 +227,7 @@ export default defineComponent({
 
         const resubmitSectionBus = useEventBus<string>('resubmit-section');
         const resubmitSectionReceive = (section: string): void => {
-            set(submission, 'alignment', section);
+            Vue.set(submission, 'alignment', section);
             tabIndex.value = 0;
         };
         const unsubscribeResubmitSection = resubmitSectionBus.on(resubmitSectionReceive);
@@ -317,7 +317,7 @@ export default defineComponent({
             handler(value: Job | undefined) {
                 if (value) {
                     this.submission = { ...value.paramValues };
-                    set(this.submission, 'parentID', value.jobID);
+                    Vue.set(this.submission, 'parentID', value.jobID);
                     // Take the suggested Job ID immediately when loading existing job parameters into the tool
                     this.checkJobId(value.jobID);
                 }
@@ -360,7 +360,7 @@ export default defineComponent({
         checkJobId(jobId: string): void {
             authService.validateJobId(jobId).then((result: CustomJobIdValidationResult) => {
                 if (result.suggested) {
-                    set(this.submission, 'jobID', result.suggested);
+                    Vue.set(this.submission, 'jobID', result.suggested);
                 }
             });
         },
