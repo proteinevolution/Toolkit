@@ -65,6 +65,7 @@ export default defineComponent({
     watch: {
         seqs: {
             immediate: true,
+            deep: true,
             handler(seqs: MSAViewerSeq[] | undefined): void {
                 if (!seqs) {
                     return;

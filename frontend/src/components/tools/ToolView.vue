@@ -313,6 +313,7 @@ export default defineComponent({
     watch: {
         job: {
             immediate: true,
+            deep: true,
             handler(value: Job | undefined) {
                 if (value) {
                     this.submission = { ...value.paramValues };

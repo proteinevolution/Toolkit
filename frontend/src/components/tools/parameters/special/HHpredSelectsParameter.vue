@@ -129,6 +129,7 @@ export default defineComponent({
     watch: {
         validationError: {
             immediate: true,
+            deep: true,
             handler(value: ConstraintError | undefined) {
                 if (value) {
                     Vue.set(this.validationErrors, this.parameter.name, value);

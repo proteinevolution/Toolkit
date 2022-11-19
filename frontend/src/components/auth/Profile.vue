@@ -119,6 +119,7 @@ export default defineComponent({
     watch: {
         user: {
             immediate: true,
+            deep: true,
             handler() {
                 this.resetValues();
             },

@@ -223,41 +223,45 @@ export default defineComponent({
 
         // UI related websocket methods, others can be found in rootStore
         const { data } = useToolkitWebsocket();
-        watch(data, (json) => {
-            switch (json.mutation) {
-                case 'SOCKET_MaintenanceAlert':
-                    if (json.submitBlocked) {
-                        alert({
-                            title: t('maintenance.notificationTitle'),
-                            text: t('maintenance.notificationBody'),
-                            useBrowserNotifications: false,
-                        });
-                    }
-                    break;
-                case 'SOCKET_ShowNotification':
-                    showNotification(json.title, json.body, json.arguments);
-                    break;
-                case 'SOCKET_ShowJobNotification':
-                    showJobNotification(json.jobID, json.title, json.body);
-                    break;
-                case 'SOCKET_Logout':
-                    if (!rootStore.loading.logout) {
-                        alert(t('auth.loggedOutByWS'));
-                        jobsStore.fetchAllJobs();
-                        authStore.user = null;
-                    }
-                    break;
-                case 'SOCKET_Login':
-                    if (!rootStore.loading.login) {
-                        alert(t('auth.loggedInByWS'));
-                        jobsStore.fetchAllJobs();
-                        authStore.fetchUserData();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
+        watch(
+            data,
+            (json) => {
+                switch (json.mutation) {
+                    case 'SOCKET_MaintenanceAlert':
+                        if (json.submitBlocked) {
+                            alert({
+                                title: t('maintenance.notificationTitle'),
+                                text: t('maintenance.notificationBody'),
+                                useBrowserNotifications: false,
+                            });
+                        }
+                        break;
+                    case 'SOCKET_ShowNotification':
+                        showNotification(json.title, json.body, json.arguments);
+                        break;
+                    case 'SOCKET_ShowJobNotification':
+                        showJobNotification(json.jobID, json.title, json.body);
+                        break;
+                    case 'SOCKET_Logout':
+                        if (!rootStore.loading.logout) {
+                            alert(t('auth.loggedOutByWS'));
+                            jobsStore.fetchAllJobs();
+                            authStore.user = null;
+                        }
+                        break;
+                    case 'SOCKET_Login':
+                        if (!rootStore.loading.login) {
+                            alert(t('auth.loggedInByWS'));
+                            jobsStore.fetchAllJobs();
+                            authStore.fetchUserData();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            },
+            { deep: false }
+        );
 
         // allow for update of human-readable time by updating reference point in store
         const refreshInterval = setInterval(() => {

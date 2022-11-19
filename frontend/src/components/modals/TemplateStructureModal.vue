@@ -17,13 +17,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, onBeforeUnmount, ref, Ref } from 'vue';
 import BaseModal from './BaseModal.vue';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import { Stage } from 'ngl';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
+import { isNullable } from '@/util/nullability-helpers';
 
 const logger = Logger.get('TemplateStructureModal');
 
@@ -41,17 +42,36 @@ export default defineComponent({
     },
     setup() {
         const { alert } = useToolkitNotifications();
-        return { alert };
+
+        const stage: any = undefined;
+        const viewport: Ref<HTMLElement | null> = ref(null);
+
+        function resize(): void {
+            if (isNullable(viewport.value) || isNullable(stage)) {
+                return;
+            }
+            const width: number = (viewport.value.parentElement as HTMLElement).clientWidth;
+            const height = 500;
+            viewport.value.style.height = height + 'px';
+            viewport.value.style.width = width + 'px';
+            stage.setSize(width, height);
+        }
+
+        function resetView(): void {
+            (viewport.value as HTMLElement).innerHTML = '';
+        }
+
+        onBeforeUnmount(() => {
+            window.removeEventListener('resize', resize);
+        });
+
+        return { alert, resize, resetView, stage, viewport };
     },
     data() {
         return {
             loading: true,
-            stage: undefined as any,
             file: '',
         };
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.resize);
     },
     methods: {
         onShow(): void {
@@ -60,20 +80,6 @@ export default defineComponent({
         },
         getExtension(filename: string): string {
             return filename.split('.').reverse()[0];
-        },
-        resize(): void {
-            const viewport: HTMLElement = this.$refs.viewport as HTMLElement;
-            if (!viewport || !this.stage) {
-                return;
-            }
-            const width: number = (viewport.parentElement as HTMLElement).clientWidth;
-            const height = 500;
-            viewport.style.height = height + 'px';
-            viewport.style.width = width + 'px';
-            this.stage.setSize(width, height);
-        },
-        resetView(): void {
-            (this.$refs.viewport as HTMLElement).innerHTML = '';
         },
         download(): void {
             resultsService.downloadAsFile(this.file, `${this.accession}.pdb`);

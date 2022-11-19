@@ -37,13 +37,17 @@ const { t } = useI18n();
 const runningLog: Ref<ProcessLogItem[]> = ref([]);
 
 const { data } = useToolkitWebsocket();
-watch(data, (json) => {
-    if (json.mutation === 'SOCKET_WatchLogFile') {
-        if (json.jobID === props.job.jobID) {
-            runningLog.value = parseProcessLog(json.lines);
+watch(
+    data,
+    (json) => {
+        if (json.mutation === 'SOCKET_WatchLogFile') {
+            if (json.jobID === props.job.jobID) {
+                runningLog.value = parseProcessLog(json.lines);
+            }
         }
-    }
-});
+    },
+    { deep: false }
+);
 </script>
 
 <style lang="scss" scoped>

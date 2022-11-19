@@ -17,6 +17,7 @@ const ParameterRememberMixin = ToolParameterMixin.extend({
     watch: {
         submissionValue: {
             immediate: true,
+            deep: true,
             handler(value: any) {
                 if (!this.disableRemember) {
                     if (this.isNonDefaultValue) {

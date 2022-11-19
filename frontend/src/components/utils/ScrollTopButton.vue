@@ -2,43 +2,31 @@
     <div v-show="display" ref="scrollTop" class="scroll-top-button" @click="scrollTop"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onBeforeUnmount, ref } from 'vue';
 import { throttle } from 'lodash-es';
 
-export default defineComponent({
-    name: 'ScrollTopButton',
-    data() {
-        return {
-            display: false,
-            scrollThreshold: 200,
-            throttleDelay: 100,
-            throttleScroll: undefined as any,
-        };
-    },
-    created() {
-        this.throttleScroll = throttle(this.handleScroll, this.throttleDelay);
-        window.addEventListener('scroll', this.throttleScroll);
-        this.throttleScroll();
-    },
-    beforeDestroy() {
-        if (this.throttleScroll) {
-            window.removeEventListener('scroll', this.throttleScroll);
-        }
-    },
-    methods: {
-        handleScroll(): void {
-            this.display = window.pageYOffset > this.scrollThreshold;
-        },
-        scrollTop(): void {
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: 'smooth',
-            });
-        },
-    },
+const display = ref(false);
+
+function handleScroll(scrollThreshold = 200): void {
+    display.value = window.pageYOffset > scrollThreshold;
+}
+
+const throttleScroll = throttle(handleScroll, 300) as () => void;
+throttleScroll();
+
+window.addEventListener('scroll', throttleScroll);
+onBeforeUnmount(() => {
+    window.removeEventListener('scroll', throttleScroll);
 });
+
+function scrollTop(): void {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+    });
+}
 </script>
 
 <style lang="scss" scoped>

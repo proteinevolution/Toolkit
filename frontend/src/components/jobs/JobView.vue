@@ -147,8 +147,11 @@ export default defineComponent({
     },
     watch: {
         // Use a watcher here - component cannot use 'beforeRouteUpdate' because of lazy loading
-        $route(to) {
-            this.loadJobDetails(to.params.jobID);
+        $route: {
+            deep: true,
+            handler(to) {
+                this.loadJobDetails(to.params.jobID);
+            },
         },
         loggedIn(login) {
             if (login) {

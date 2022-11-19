@@ -42,33 +42,37 @@ export const useRootStore = defineStore('root', () => {
     const jobsStore = useJobsStore();
     const { data, status } = useToolkitWebsocket();
     const reconnecting = computed(() => status.value !== 'OPEN');
-    watch(data, (json) => {
-        switch (json.mutation) {
-            case 'SOCKET_UpdateLoad':
-                clusterWorkload.value = json.load;
-                break;
-            case 'SOCKET_MaintenanceAlert':
-                Object.assign(maintenance, json.maintenanceState);
-                break;
-            case 'SOCKET_ClearJob':
-                jobsStore.jobs = jobsStore.jobs.filter((job: Job) => job.jobID !== json.jobID);
-                break;
-            case 'SOCKET_UpdateJob': {
-                const { job } = json;
-                const index: number = jobsStore.jobs.findIndex((j) => j.jobID === job.jobID);
-                if (index < 0) {
-                    jobsStore.jobs.push(job);
-                } else {
-                    // the websocket does not push paramValues
-                    if (!job.paramValues && jobsStore.jobs[index].paramValues) {
-                        job.paramValues = jobsStore.jobs[index].paramValues;
+    watch(
+        data,
+        (json) => {
+            switch (json.mutation) {
+                case 'SOCKET_UpdateLoad':
+                    clusterWorkload.value = json.load;
+                    break;
+                case 'SOCKET_MaintenanceAlert':
+                    Object.assign(maintenance, json.maintenanceState);
+                    break;
+                case 'SOCKET_ClearJob':
+                    jobsStore.jobs = jobsStore.jobs.filter((job: Job) => job.jobID !== json.jobID);
+                    break;
+                case 'SOCKET_UpdateJob': {
+                    const { job } = json;
+                    const index: number = jobsStore.jobs.findIndex((j) => j.jobID === job.jobID);
+                    if (index < 0) {
+                        jobsStore.jobs.push(job);
+                    } else {
+                        // the websocket does not push paramValues
+                        if (!job.paramValues && jobsStore.jobs[index].paramValues) {
+                            job.paramValues = jobsStore.jobs[index].paramValues;
+                        }
+                        Vue.set(jobsStore.jobs, index, job);
                     }
-                    Vue.set(jobsStore.jobs, index, job);
+                    break;
                 }
-                break;
             }
-        }
-    });
+        },
+        { deep: false }
+    );
 
     return {
         loading,

@@ -95,12 +95,13 @@ export default defineComponent({
     watch: {
         '$route.params': {
             immediate: true,
+            deep: true,
             handler() {
                 // clear user selection to select correct tool/group upon programmatic routing
                 this.userSelectedSection = '';
                 let toolName = '';
                 if (this.$route.params.toolName) {
-                    toolName = this.$route.params.toolName;
+                    toolName = this.$route.params.toolName as string;
                 } else {
                     const currentJob: Job | undefined = this.jobs.find(
                         (job: Job) => job.jobID === this.$route.params.jobID
