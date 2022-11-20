@@ -5,37 +5,6 @@ import Logger from 'js-logger';
 import { useEventBus } from '@vueuse/core';
 import { isNonNullable } from '@/util/nullability-helpers';
 
-/** @deprecated **/
-export const resultTabProps = {
-    job: {
-        type: Object as () => Job,
-        required: true,
-    },
-    tool: {
-        type: Object as () => Tool,
-        required: true,
-    },
-    fullScreen: {
-        type: Boolean,
-        required: false,
-        default: false,
-    },
-    viewOptions: {
-        type: Object as () => JobViewOptions,
-        required: false,
-    },
-    resultTabName: {
-        type: String,
-        required: false,
-        default: '',
-    },
-    renderOnCreate: {
-        type: Boolean,
-        required: false,
-        default: true,
-    },
-};
-
 interface ResultTabProps {
     job: Job;
     tool: Tool;

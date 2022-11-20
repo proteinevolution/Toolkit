@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import { defineResultTabProps } from '@/composables/useResultTab';
 import { AlignmentItem } from '@/types/toolkit/results';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
@@ -63,7 +63,7 @@ import { colorSequence } from '@/util/SequenceUtils';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 import { isNullable } from '@/util/nullability-helpers';
 import { useI18n } from 'vue-i18n';
-import useAlignmentResults from '@/composables/useAlignmentResults';
+import useAlignmentResultTab from '@/composables/useAlignmentResultTab';
 
 const logger = Logger.get('ClustalAlignmentTab');
 
@@ -72,7 +72,6 @@ const { t } = useI18n();
 const props = defineResultTabProps();
 
 const {
-    init,
     intersected,
     alignments,
     selected,
@@ -80,11 +79,16 @@ const {
     selectedChanged,
     toggleAllSelected,
     total,
+    loading,
     loadingMore,
     forwardSelected,
-} = useAlignmentResults({ logger, jobID: props.job.jobID, toolParameters: props.tool.parameters });
-
-const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+} = useAlignmentResultTab({
+    logger,
+    jobID: props.job.jobID,
+    toolParameters: props.tool.parameters,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
+});
 
 const color = ref(false);
 

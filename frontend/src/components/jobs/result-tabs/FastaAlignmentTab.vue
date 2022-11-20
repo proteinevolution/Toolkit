@@ -63,12 +63,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import useAlignmentResults from '@/composables/useAlignmentResults';
+import useAlignmentResultTab from '@/composables/useAlignmentResultTab';
 import { useI18n } from 'vue-i18n';
 import { isNullable } from '@/util/nullability-helpers';
 
@@ -82,7 +82,6 @@ const viewOptions = props.viewOptions;
 const resultField = computed(() => viewOptions?.resultField ?? 'alignment');
 
 const {
-    init,
     intersected,
     alignments,
     selected,
@@ -90,11 +89,17 @@ const {
     selectedChanged,
     toggleAllSelected,
     total,
+    loading,
     loadingMore,
     forwardSelected,
-} = useAlignmentResults({ logger, jobID: props.job.jobID, toolParameters: props.tool.parameters, resultField });
-
-const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+} = useAlignmentResultTab({
+    logger,
+    jobID: props.job.jobID,
+    toolParameters: props.tool.parameters,
+    resultField,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
+});
 
 const downloadMSAFile = 'alignment.fas';
 const downloadMSAFileDownloadPath = computed(() =>

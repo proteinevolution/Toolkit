@@ -7,15 +7,18 @@ import { range } from 'lodash-es';
 import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
 import { ToolParameters } from '@/types/toolkit/tools';
+import useResultTab from '@/composables/useResultTab';
 
 interface UseAlignmentResultsArguments {
     logger: ILogger;
     jobID: string;
     toolParameters: ToolParameters | undefined;
     resultField?: Ref<string>;
+    resultTabName: string;
+    renderOnCreate: boolean;
 }
 
-export default function useAlignmentResults(args: UseAlignmentResultsArguments) {
+export default function useAlignmentResultTab(args: UseAlignmentResultsArguments) {
     const alignments = ref<AlignmentItem[] | undefined>(undefined);
     const selected = ref<number[]>([]);
     const perPage = 50;
@@ -67,6 +70,8 @@ export default function useAlignmentResults(args: UseAlignmentResultsArguments) 
         await loadHits(0, perPage);
     }
 
+    const { loading } = useResultTab({ init, resultTabName: args.resultTabName, renderOnCreate: args.renderOnCreate });
+
     async function intersected() {
         if (!loadingMore.value && isNonNullable(alignments.value) && alignments.value.length < total.value) {
             loadingMore.value = true;
@@ -102,7 +107,6 @@ export default function useAlignmentResults(args: UseAlignmentResultsArguments) 
     }
 
     return {
-        init,
         intersected,
         alignments,
         selected,
@@ -110,6 +114,7 @@ export default function useAlignmentResults(args: UseAlignmentResultsArguments) 
         selectedChanged,
         toggleAllSelected,
         total,
+        loading,
         loadingMore,
         forwardSelected,
     };
