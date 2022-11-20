@@ -7,7 +7,7 @@
                         {{ tool.longname }}
                     </a>
                     <b-link class="help-icon" data-v-step="help-modal" @click="launchHelpModal">
-                        <i class="far fa-question-circle" :title="$t('jobs.help')"></i>
+                        <i class="far fa-question-circle" :title="t('jobs.help')"></i>
                     </b-link>
                 </h1>
                 <div class="job-details ml-auto text-muted mb-2">
@@ -36,7 +36,7 @@
 
                                 <b-form-group v-if="showSubmitButtons" class="submit-buttons pt-4">
                                     <b-btn
-                                        v-b-tooltip="submitBlocked ? $t('maintenance.blockSubmit') : null"
+                                        v-b-tooltip="submitBlocked ? t('maintenance.blockSubmit') : null"
                                         class="submit-button"
                                         :class="{ margin: loggedIn, maintenance: submitBlocked }"
                                         :disabled="preventSubmit"
@@ -45,11 +45,11 @@
                                         @click="submitJob">
                                         <loading
                                             v-if="submitLoading"
-                                            :message="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
+                                            :message="t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"
                                             :size="20" />
                                         <span
                                             v-else
-                                            v-text="$t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
+                                            v-text="t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
                                     </b-btn>
                                     <custom-job-id-input
                                         data-v-step="job-id"
@@ -59,9 +59,9 @@
                                         v-if="hasRememberedParameters"
                                         class="reset-params-button"
                                         variant="secondary"
-                                        :title="$t('jobs.resetParamsTitle')"
+                                        :title="t('jobs.resetParamsTitle')"
                                         @click="clearParameterRemember"
-                                        v-text="$t('jobs.resetParams')" />
+                                        v-text="t('jobs.resetParams')" />
                                     <email-notification-switch
                                         v-if="loggedIn"
                                         :validation-errors="validationErrors"
@@ -74,7 +74,7 @@
                             <slot name="job-tabs" :full-screen="fullScreen"></slot>
 
                             <!-- hack to show the alignment viewer tool results -->
-                            <b-tab v-if="alignmentViewerSequences" :title="$t('tools.alignmentViewer.visualization')">
+                            <b-tab v-if="alignmentViewerSequences" :title="t('tools.alignmentViewer.visualization')">
                                 <alignment-viewer
                                     :sequences="alignmentViewerSequences"
                                     :format="alignmentViewerFormat" />
@@ -89,11 +89,11 @@
                                     <i
                                         v-if="job && !job.foreign"
                                         class="tool-action tool-action-push-up fa fa-trash mr-4"
-                                        :title="$t('jobs.delete')"
+                                        :title="t('jobs.delete')"
                                         @click="$emit('delete-job')"></i>
                                     <i
                                         class="tool-action tool-action-lg fa mr-1"
-                                        :title="$t('jobs.toggleFullscreen')"
+                                        :title="t('jobs.toggleFullscreen')"
                                         :class="[fullScreen ? 'fa-compress' : 'fa-expand']"
                                         @click="toggleFullScreen"></i>
                                 </div>
@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref, set } from 'vue';
+import Vue, { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -123,7 +123,6 @@ import Logger from 'js-logger';
 import { CustomJobIdValidationResult, Job } from '@/types/toolkit/jobs';
 import Loading from '@/components/utils/Loading.vue';
 import { parameterRememberService } from '@/services/ParameterRememberService';
-import { mapStores } from 'pinia';
 import { useRootStore } from '@/stores/root';
 import { useToolsStore } from '@/stores/tools';
 import { useAuthStore } from '@/stores/auth';
@@ -132,6 +131,7 @@ import useToolkitTitle from '@/composables/useToolkitTitle';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import { useEventBus } from '@vueuse/core';
 import { ModalParams } from '@/types/toolkit/utils';
+import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('ToolView');
 
@@ -164,15 +164,21 @@ export default defineComponent({
         const route = useRoute();
         const router = useRouter();
         const toolsStore = useToolsStore();
+        const rootStore = useRootStore();
+        const authStore = useAuthStore();
+
+        const { t } = useI18n();
 
         const submission = reactive({});
         const tabIndex = ref(0);
         const fullScreen = ref(false);
 
         const changeToolTabBus = useEventBus<number>('change-tool-tab');
-        const changeTab = (index: number): void => {
+
+        function changeTab(index: number): void {
             tabIndex.value = index;
-        };
+        }
+
         const unsubscribeChangeToolTab = changeToolTabBus.on(changeTab);
 
         const toolName = computed<string>(() => {
@@ -183,12 +189,13 @@ export default defineComponent({
             return route.params.toolName as string;
         });
 
-        const loadParameterRemember = (toolName: string): void => {
+        function loadParameterRemember(toolName: string): void {
             logger.debug(`loading remembered parameters for ${toolName}`);
             // We override all properties of the submission object with the remembered parameters
             Object.assign(submission, parameterRememberService.load(toolName));
-        };
-        const loadToolParameters = async (toolName: string): Promise<void> => {
+        }
+
+        async function loadToolParameters(toolName: string): Promise<void> {
             await toolsStore.fetchToolParametersIfNotPresent(toolName);
             // wait until parameters are loaded before trying to load remembered values
             if (!props.job) {
@@ -196,40 +203,44 @@ export default defineComponent({
                     loadParameterRemember(toolName);
                 }
             }
-        };
+        }
+
         // tool view is never reused (see App.vue), therefore loading parameters in setup only is sufficient
         loadToolParameters(toolName.value);
 
-        const refresh = (): void => {
+        function refresh(): void {
             if (route.name === 'tools') {
                 getCurrentInstance()?.emit('refresh');
             } else {
                 router.push('/tools/' + toolName.value);
             }
-        };
+        }
 
-        const clearParameterRemember = (): void => {
+        function clearParameterRemember(): void {
             parameterRememberService.reset(toolName.value);
             loadToolParameters(toolName.value);
             refresh();
-        };
+        }
 
-        const tool = computed<Tool>(() => toolsStore.tools.find((tool: Tool) => tool.name === toolName.value) as Tool);
+        const tool = computed(() => toolsStore.tools.find((tool: Tool) => tool.name === toolName.value));
 
-        useToolkitTitle(computed<string>(() => tool.value.longname));
+        useToolkitTitle(computed(() => tool.value?.longname));
 
         const { alert } = useToolkitNotifications();
 
         const showModalsBus = useEventBus<ModalParams>('show-modal');
-        const launchHelpModal = (): void => {
+
+        function launchHelpModal(): void {
             showModalsBus.emit({ id: 'helpModal', props: { toolName: toolName.value } });
-        };
+        }
 
         const resubmitSectionBus = useEventBus<string>('resubmit-section');
-        const resubmitSectionReceive = (section: string): void => {
+
+        function resubmitSectionReceive(section: string): void {
             Vue.set(submission, 'alignment', section);
             tabIndex.value = 0;
-        };
+        }
+
         const unsubscribeResubmitSection = resubmitSectionBus.on(resubmitSectionReceive);
 
         const alignmentViewerResizeBus = useEventBus<boolean>('alignment-viewer-resize');
@@ -240,22 +251,24 @@ export default defineComponent({
         const alignmentViewerResultOpenBus = useEventBus<{ sequences: string; format: string }>(
             'alignment-viewer-result-open'
         );
-        const openAlignmentViewerResults = ({ sequences, format }: { sequences: string; format: string }): void => {
+
+        function openAlignmentViewerResults({ sequences, format }: { sequences: string; format: string }): void {
             alignmentViewerSequences.value = sequences;
             alignmentViewerFormat.value = format;
             setTimeout(() => {
                 tabIndex.value = 1;
                 alignmentViewerResizeBus.emit(fullScreen.value);
             }, 100);
-        };
+        }
+
         const unsubscribeAlignmentViewerResult = alignmentViewerResultOpenBus.on(openAlignmentViewerResults);
 
-        const toggleFullScreen = (): void => {
+        function toggleFullScreen(): void {
             fullScreen.value = !fullScreen.value;
             if (alignmentViewerSequences.value !== '') {
                 alignmentViewerResizeBus.emit(fullScreen.value);
             }
-        };
+        }
 
         onBeforeUnmount(() => {
             unsubscribeChangeToolTab();
@@ -277,6 +290,10 @@ export default defineComponent({
             tool,
             toolName,
             toolsStore,
+            refresh,
+            t,
+            rootStore,
+            authStore,
         };
     },
     data() {
@@ -294,7 +311,7 @@ export default defineComponent({
             return this.tool.parameters.sections.filter((section: ParameterSection) => section.parameters.length > 0);
         },
         showSubmitButtons(): boolean {
-            return this.tool.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
+            return this.tool?.parameters !== undefined && !this.tool.parameters.hideSubmitButtons;
         },
         submitBlocked(): boolean {
             return this.rootStore.maintenance.submitBlocked;
@@ -308,7 +325,6 @@ export default defineComponent({
         hasRememberedParameters(): boolean {
             return Object.keys(this.rememberParams).length > 0;
         },
-        ...mapStores(useRootStore, useAuthStore),
     },
     watch: {
         job: {
