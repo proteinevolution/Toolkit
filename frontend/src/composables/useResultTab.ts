@@ -14,7 +14,12 @@ interface ResultTabProps {
     renderOnCreate?: boolean;
 }
 
-export function defineResultTabProps() {
+export interface ResultTabPropsWithDefaults extends ResultTabProps {
+    resultTabName: string;
+    renderOnCreate: boolean;
+}
+
+export function defineResultTabProps(): ResultTabPropsWithDefaults {
     return withDefaults(defineProps<ResultTabProps>(), {
         resultTabName: '',
         renderOnCreate: true,

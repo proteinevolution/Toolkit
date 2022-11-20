@@ -92,14 +92,7 @@ const {
     loading,
     loadingMore,
     forwardSelected,
-} = useAlignmentResultTab({
-    logger,
-    jobID: props.job.jobID,
-    toolParameters: props.tool.parameters,
-    resultField,
-    resultTabName: props.resultTabName,
-    renderOnCreate: props.renderOnCreate,
-});
+} = useAlignmentResultTab({ logger, props, resultField });
 
 const downloadMSAFile = 'alignment.fas';
 const downloadMSAFileDownloadPath = computed(() =>

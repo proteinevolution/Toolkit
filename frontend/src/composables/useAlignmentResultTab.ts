@@ -6,19 +6,16 @@ import { resultsService } from '@/services/ResultsService';
 import { range } from 'lodash-es';
 import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
-import { ToolParameters } from '@/types/toolkit/tools';
-import useResultTab from '@/composables/useResultTab';
+import useResultTab, { ResultTabPropsWithDefaults } from '@/composables/useResultTab';
 
-interface UseAlignmentResultsArguments {
+interface UseAlignmentResultTabArguments {
     logger: ILogger;
-    jobID: string;
-    toolParameters: ToolParameters | undefined;
+    // We want to pass through the props themselves because they are reactive
+    props: Readonly<ResultTabPropsWithDefaults>;
     resultField?: Ref<string>;
-    resultTabName: string;
-    renderOnCreate: boolean;
 }
 
-export default function useAlignmentResultTab(args: UseAlignmentResultsArguments) {
+export default function useAlignmentResultTab({ logger, props, resultField }: UseAlignmentResultTabArguments) {
     const alignments = ref<AlignmentItem[] | undefined>(undefined);
     const selected = ref<number[]>([]);
     const perPage = 50;
@@ -53,10 +50,10 @@ export default function useAlignmentResultTab(args: UseAlignmentResultsArguments
 
     async function loadHits(start: number, end: number) {
         const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(
-            args.jobID,
+            props.job.jobID,
             start,
             end,
-            args.resultField?.value
+            resultField?.value
         );
         total.value = res.total;
         if (isNullable(alignments.value)) {
@@ -70,7 +67,11 @@ export default function useAlignmentResultTab(args: UseAlignmentResultsArguments
         await loadHits(0, perPage);
     }
 
-    const { loading } = useResultTab({ init, resultTabName: args.resultTabName, renderOnCreate: args.renderOnCreate });
+    const { loading } = useResultTab({
+        init,
+        resultTabName: props.resultTabName,
+        renderOnCreate: props.renderOnCreate,
+    });
 
     async function intersected() {
         if (!loadingMore.value && isNonNullable(alignments.value) && alignments.value.length < total.value) {
@@ -78,7 +79,7 @@ export default function useAlignmentResultTab(args: UseAlignmentResultsArguments
             try {
                 await loadHits(alignments.value.length, alignments.value.length + perPage);
             } catch (e) {
-                args.logger.error(e);
+                logger.error(e);
             }
             loadingMore.value = false;
         }
@@ -88,20 +89,20 @@ export default function useAlignmentResultTab(args: UseAlignmentResultsArguments
 
     function forwardSelected(): void {
         if (selected.value.length > 0) {
-            if (isNonNullable(args.toolParameters) && isNonNullable(alignments.value)) {
+            if (isNonNullable(props.tool.parameters) && isNonNullable(alignments.value)) {
                 showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
-                        forwardingJobID: args.jobID,
+                        forwardingJobID: props.job.jobID,
                         forwardingApiOptionsAlignment: {
                             selectedItems: selected.value,
-                            resultField: args.resultField?.value ?? 'alignment',
+                            resultField: resultField?.value ?? 'alignment',
                         },
-                        forwardingMode: args.toolParameters.forwarding,
+                        forwardingMode: props.tool.parameters.forwarding,
                     },
                 });
             } else {
-                args.logger.error('tool parameters not loaded. Cannot forward');
+                logger.error('tool parameters not loaded. Cannot forward');
             }
         }
     }
