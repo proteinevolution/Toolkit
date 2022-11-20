@@ -10,47 +10,45 @@
     </transition>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Velocity from 'velocity-animate';
-import { defineComponent } from 'vue';
 
-export default defineComponent({
-    name: 'VelocityFade',
-    props: {
-        duration: {
-            type: Number,
-            default: 500,
-        },
-    },
-    methods: {
-        beforeEnter(el: HTMLElement): void {
-            el.style.opacity = '0';
-        },
-        enter(el: HTMLElement, done: () => void): void {
-            Velocity(
-                el,
-                { opacity: 1 },
-                {
-                    duration: this.duration,
-                    easing: [0.39, 0.67, 0.04, 0.98],
-                    complete: done,
-                }
-            );
-        },
-        beforeLeave(el: HTMLElement): void {
-            el.style.opacity = '1';
-        },
-        leave(el: HTMLElement, done: () => void): void {
-            Velocity(
-                el,
-                { opacity: 0 },
-                {
-                    duration: this.duration,
-                    easing: [0.39, 0.67, 0.04, 0.98],
-                    complete: done,
-                }
-            );
-        },
+const props = defineProps({
+    duration: {
+        type: Number,
+        default: 500,
     },
 });
+
+function beforeEnter(el: HTMLElement): void {
+    el.style.opacity = '0';
+}
+
+function enter(el: HTMLElement, done: () => void): void {
+    Velocity(
+        el,
+        { opacity: 1 },
+        {
+            duration: props.duration,
+            easing: [0.39, 0.67, 0.04, 0.98],
+            complete: done,
+        }
+    );
+}
+
+function beforeLeave(el: HTMLElement): void {
+    el.style.opacity = '1';
+}
+
+function leave(el: HTMLElement, done: () => void): void {
+    Velocity(
+        el,
+        { opacity: 0 },
+        {
+            duration: props.duration,
+            easing: [0.39, 0.67, 0.04, 0.98],
+            complete: done,
+        }
+    );
+}
 </script>
