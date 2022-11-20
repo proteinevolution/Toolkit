@@ -1,7 +1,7 @@
 import Logger from 'js-logger';
 import { HHInfoResult, SearchAlignmentItem, SearchAlignmentsResponse } from '@/types/toolkit/results';
 import { colorSequence, ssColorSequence } from '@/util/SequenceUtils';
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+import ResultTabMixin from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
 import { debounce } from 'lodash-es';

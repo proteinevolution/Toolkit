@@ -1,5 +1,5 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else>
         <h5>Protein ID: {{ header }}</h5>
 
@@ -51,96 +51,99 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
+import { useI18n } from 'vue-i18n';
 import { Quick2dResults } from '@/types/toolkit/results';
 import { quick2dColor } from '@/util/SequenceUtils';
+import { isNullable } from '@/util/nullability-helpers';
 
-export default ResultTabMixin.extend({
-    name: 'Quick2DResultsTab',
-    components: {
-        Loading,
-    },
-    data() {
-        return {
-            results: undefined as Quick2dResults | undefined,
-            breakAfter: 85,
-            subTools: {
-                psipred: 'SS_PSIPRED',
-                spider: 'SS_SPIDER3',
-                psspred: 'SS_PSSPRED4',
-                deepcnf: 'SS_DEEPCNF',
-                netsurfpss: 'SS_NETSURFP2',
-                pipred: 'SS_PIPRED',
-                marcoil: 'CC_MARCOIL',
-                coils_w28: 'CC_COILS_W28',
-                pcoils_w28: 'CC_PCOILS_W28',
-                tmhmm: 'TM_TMHMM',
-                phobius: 'TM_PHOBIUS',
-                polyphobius: 'TM_POLYPHOBIUS',
-                netsurfpd: 'DO_NETSURFPD2',
-                disopred: 'DO_DISOPRED',
-                'spot-d': 'DO_SPOTD',
-                iupred: 'DO_IUPRED',
-            },
-        };
-    },
-    computed: {
-        header(): string {
-            if (!this.results) {
-                return '';
-            }
-            return this.results.query.header.slice(1, 50);
-        },
-        filteredSubTools(): Record<string, string> {
-            return Object.fromEntries(Object.entries(this.subTools).filter(([k]) => k in this.brokenResults));
-        },
-        brokenQuery(): string[] {
-            if (!this.results) {
-                return [];
-            }
-            const res: string[] = [];
-            let breakIt = 0;
-            const value: string = this.results.query.sequence;
-            while (breakIt * this.breakAfter < value.length) {
-                res.push(value.slice(breakIt * this.breakAfter, (breakIt + 1) * this.breakAfter));
-                breakIt++;
-            }
-            return res;
-        },
-        brokenResults(): { [key: string]: string[] } {
-            if (!this.results) {
-                return {};
-            }
-            // alignments need to be broken into pieces
-            const res: { [key: string]: string[] } = {};
-            for (const key in this.subTools) {
-                if (key in this.results.results && this.results.results[key].length > 0) {
-                    res[key] = [];
-                    let breakIt = 0;
-                    const value: string = this.results.results[key];
-                    while (breakIt < value.length) {
-                        const cut: string = value.slice(breakIt, breakIt + this.breakAfter);
-                        const colored: string = quick2dColor(key, cut);
-                        res[key].push(colored);
-                        breakIt += this.breakAfter;
-                    }
-                }
-            }
-            return res;
-        },
-    },
-    methods: {
-        async init() {
-            this.results = await resultsService.fetchResults(this.job.jobID);
-        },
-        min(a: number, b: number): number {
-            return Math.min(a, b);
-        },
-    },
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const results = ref<Quick2dResults | undefined>(undefined);
+
+const header = computed(() => {
+    if (isNullable(results.value)) {
+        return '';
+    }
+    return results.value.query.header.slice(1, 50);
 });
+
+async function init() {
+    results.value = await resultsService.fetchResults(props.job.jobID);
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+function min(a: number, b: number): number {
+    return Math.min(a, b);
+}
+
+const breakAfter = 85;
+
+const brokenQuery = computed<string[]>(() => {
+    if (isNullable(results.value)) {
+        return [];
+    }
+    const res: string[] = [];
+    let breakIt = 0;
+    const value: string = results.value.query.sequence;
+    while (breakIt * breakAfter < value.length) {
+        res.push(value.slice(breakIt * breakAfter, (breakIt + 1) * breakAfter));
+        breakIt++;
+    }
+    return res;
+});
+
+const subTools = {
+    psipred: 'SS_PSIPRED',
+    spider: 'SS_SPIDER3',
+    psspred: 'SS_PSSPRED4',
+    deepcnf: 'SS_DEEPCNF',
+    netsurfpss: 'SS_NETSURFP2',
+    pipred: 'SS_PIPRED',
+    marcoil: 'CC_MARCOIL',
+    coils_w28: 'CC_COILS_W28',
+    pcoils_w28: 'CC_PCOILS_W28',
+    tmhmm: 'TM_TMHMM',
+    phobius: 'TM_PHOBIUS',
+    polyphobius: 'TM_POLYPHOBIUS',
+    netsurfpd: 'DO_NETSURFPD2',
+    disopred: 'DO_DISOPRED',
+    'spot-d': 'DO_SPOTD',
+    iupred: 'DO_IUPRED',
+};
+
+const brokenResults = computed<{ [key: string]: string[] }>(() => {
+    if (isNullable(results.value)) {
+        return {};
+    }
+    // alignments need to be broken into pieces
+    const res: { [key: string]: string[] } = {};
+    for (const key in subTools) {
+        if (key in results.value.results && results.value.results[key].length > 0) {
+            res[key] = [];
+            let breakIt = 0;
+            const value: string = results.value.results[key];
+            while (breakIt < value.length) {
+                const cut: string = value.slice(breakIt, breakIt + breakAfter);
+                const colored: string = quick2dColor(key, cut);
+                res[key].push(colored);
+                breakIt += breakAfter;
+            }
+        }
+    }
+    return res;
+});
+
+const filteredSubTools = computed<Record<string, string>>(() =>
+    Object.fromEntries(Object.entries(subTools).filter(([k]) => k in brokenResults.value))
+);
 </script>
 
 <style lang="scss" scoped>

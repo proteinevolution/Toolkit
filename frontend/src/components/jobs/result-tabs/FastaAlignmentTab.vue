@@ -1,29 +1,29 @@
 <template>
-    <Loading v-if="loading || !alignments" :message="$t('jobs.results.alignment.loadingHits')" />
+    <Loading v-if="loading || !alignments" :message="t('jobs.results.alignment.loadingHits')" />
     <div v-else>
         <div class="result-options">
             <a :class="{ active: allSelected }" @click="toggleAllSelected">
-                {{ $t('jobs.results.actions.selectAll') }}</a
+                {{ t('jobs.results.actions.selectAll') }}</a
             >
             <a :disabled="selected.length === 0" @click="forwardSelected">
-                {{ $t('jobs.results.actions.forwardSelected') }}</a
+                {{ t('jobs.results.actions.forwardSelected') }}</a
             >
-            <a v-if="!isReduced" @click="download(downloadFilenameMSA, downloadFileMSA)">
-                {{ $t('jobs.results.actions.downloadMSA') }}</a
+            <a v-if="!isReduced" @click="download(downloadMSAFilename, downloadMSAFile)">
+                {{ t('jobs.results.actions.downloadMSA') }}</a
             >
-            <a v-if="isReduced" @click="download(downloadFilenameReducedA3M, downloadFileReducedA3M)">
-                {{ $t('jobs.results.actions.downloadReducedA3M') }}</a
+            <a v-if="isReduced" @click="download(downloadReducedA3MFilename, downloadReducedA3MFile)">
+                {{ t('jobs.results.actions.downloadReducedA3M') }}</a
             >
-            <a v-if="isReduced" @click="download(downloadFilenameFullA3M, downloadFileFullA3M)">
-                {{ $t('jobs.results.actions.downloadFullA3M') }}</a
+            <a v-if="isReduced" @click="download(downloadFullA3MFilename, downloadFullA3MFile)">
+                {{ t('jobs.results.actions.downloadFullA3M') }}</a
             >
-            <a v-if="!isReduced" :href="downloadMSAFilePath" target="_blank">
-                {{ $t('jobs.results.actions.exportMSA') }}</a
+            <a v-if="!isReduced" :href="downloadMSAFileDownloadPath" target="_blank">
+                {{ t('jobs.results.actions.exportMSA') }}</a
             >
         </div>
 
         <div class="alignment-results mb-4">
-            <p v-html="$t(alignmentNumTextKey, { num: total, reduced: viewOptions.reduced })"></p>
+            <p v-html="t(alignmentNumTextKey, { num: total, reduced: viewOptions.reduced })"></p>
             <div class="table-responsive">
                 <table>
                     <tbody>
@@ -52,7 +52,7 @@
             <div v-if="alignments.length !== total">
                 <Loading
                     v-if="loadingMore"
-                    :message="$t('jobs.results.alignment.loadingHits')"
+                    :message="t('jobs.results.alignment.loadingHits')"
                     justify="center"
                     class="mt-4" />
                 <intersection-observer @intersect="intersected" />
@@ -61,146 +61,63 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
-import { AlignmentItem, AlignmentResultResponse } from '@/types/toolkit/results';
+<script setup lang="ts">
+import { computed } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
-import { range } from 'lodash-es';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import { ModalParams } from '@/types/toolkit/utils';
-import { useEventBus } from '@vueuse/core';
+import useAlignmentResults from '@/composables/useAlignmentResults';
+import { useI18n } from 'vue-i18n';
+import { isNullable } from '@/util/nullability-helpers';
 
 const logger = Logger.get('FastaAlignmentTab');
 
-export default ResultTabMixin.extend({
-    name: 'FastaAlignmentTab',
-    components: {
-        Loading,
-        IntersectionObserver,
-    },
-    setup() {
-        const showModalsBus = useEventBus<ModalParams>('show-modal');
-        return { showModalsBus };
-    },
-    data() {
-        return {
-            alignments: undefined as AlignmentItem[] | undefined,
-            selected: [] as number[],
-            loadingMore: false,
-            perPage: 50,
-            total: 0,
-            downloadFileMSA: 'alignment.fas',
-        };
-    },
-    computed: {
-        resultField(): string {
-            return this.viewOptions.resultField ? this.viewOptions.resultField : 'alignment';
-        },
-        allSelected(): boolean {
-            if (!this.alignments) {
-                return false;
-            }
-            return this.alignments.length > 0 && this.selected.length === this.total;
-        },
-        downloadMSAFilePath(): string {
-            return resultsService.getDownloadFilePath(this.job.jobID, this.downloadFileMSA);
-        },
-        downloadFilenameMSA(): string {
-            return `${this.tool.name}_${this.resultField}_${this.job.jobID}.fasta`;
-        },
-        downloadFileReducedA3M(): string {
-            return this.viewOptions.reducedFilename + '.a3m' || '';
-        },
-        downloadFilenameReducedA3M(): string {
-            return `${this.tool.name}_${this.viewOptions.reducedFilename || ''}_${this.job.jobID}.a3m`;
-        },
-        downloadFileFullA3M(): string {
-            return this.viewOptions.fullFilename + '.a3m' || '';
-        },
-        downloadFilenameFullA3M(): string {
-            return `${this.tool.name}_${this.viewOptions.fullFilename || ''}_${this.job.jobID}.a3m`;
-        },
-        isReduced(): boolean {
-            return Boolean(this.viewOptions.reduced);
-        },
-        alignmentNumTextKey(): string {
-            return `jobs.results.alignment.numSeqs${this.isReduced ? 'Reduced' : ''}`;
-        },
-    },
-    methods: {
-        async init() {
-            await this.loadHits(0, this.perPage);
-        },
-        async intersected() {
-            if (!this.loadingMore && this.alignments && this.alignments.length < this.total) {
-                this.loadingMore = true;
-                try {
-                    await this.loadHits(this.alignments.length, this.alignments.length + this.perPage);
-                } catch (e) {
-                    logger.error(e);
-                }
-                this.loadingMore = false;
-            }
-        },
-        async loadHits(start: number, end: number) {
-            const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(
-                this.job.jobID,
-                start,
-                end,
-                this.resultField
-            );
-            this.total = res.total;
-            if (!this.alignments) {
-                this.alignments = res.alignments;
-            } else {
-                this.alignments.push(...res.alignments);
-            }
-        },
-        selectedChanged(num: number): void {
-            if (this.selected.includes(num)) {
-                this.selected = this.selected.filter((n: number) => num !== n);
-            } else {
-                this.selected.push(num);
-            }
-        },
-        toggleAllSelected(): void {
-            if (!this.alignments) {
-                return;
-            }
-            if (this.allSelected) {
-                this.selected = [];
-            } else {
-                this.selected = range(1, this.total + 1); // numbers are one-based
-            }
-        },
-        download(downloadFilename: string, file: string): void {
-            resultsService.downloadFile(this.job.jobID, file, downloadFilename).catch((e) => {
-                logger.error(e);
-            });
-        },
-        forwardSelected(): void {
-            if (this.selected.length > 0) {
-                if (this.tool.parameters && this.alignments) {
-                    this.showModalsBus.emit({
-                        id: 'forwardingModal',
-                        props: {
-                            forwardingJobID: this.job.jobID,
-                            forwardingApiOptionsAlignment: {
-                                selectedItems: this.selected,
-                                resultField: this.resultField,
-                            },
-                            forwardingMode: this.tool.parameters.forwarding,
-                        },
-                    });
-                } else {
-                    logger.error('tool parameters not loaded. Cannot forward');
-                }
-            }
-        },
-    },
-});
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+const viewOptions = props.viewOptions;
+
+const resultField = computed(() => viewOptions?.resultField ?? 'alignment');
+
+const {
+    init,
+    intersected,
+    alignments,
+    selected,
+    allSelected,
+    selectedChanged,
+    toggleAllSelected,
+    total,
+    loadingMore,
+    forwardSelected,
+} = useAlignmentResults({ logger, jobID: props.job.jobID, toolParameters: props.tool.parameters, resultField });
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+const downloadMSAFile = 'alignment.fas';
+const downloadMSAFileDownloadPath = computed(() =>
+    resultsService.getDownloadFilePath(props.job.jobID, downloadMSAFile)
+);
+const downloadMSAFilename = computed(() => `${props.tool.name}_${resultField.value}_${props.job.jobID}.fasta`);
+
+const downloadReducedA3MFile = computed(() => (isNullable(viewOptions) ? '' : viewOptions.reducedFilename + '.a3m'));
+const downloadReducedA3MFilename = computed(
+    () => `${props.tool.name}_${viewOptions?.reducedFilename ?? ''}_${props.job.jobID}.a3m`
+);
+const downloadFullA3MFile = computed(() => (isNullable(viewOptions) ? '' : viewOptions.fullFilename + '.a3m'));
+const downloadFullA3MFilename = computed(
+    () => `${props.tool.name}_${viewOptions?.fullFilename ?? ''}_${props.job.jobID}.a3m`
+);
+const isReduced = computed(() => viewOptions?.reduced);
+const alignmentNumTextKey = computed(() => `jobs.results.alignment.numSeqs${isReduced.value ? 'Reduced' : ''}`);
+
+function download(downloadFilename: string, path: string): void {
+    resultsService.downloadFile(props.job.jobID, path, downloadFilename).catch((e) => {
+        logger.error(e);
+    });
+}
 </script>
 
 <style lang="scss" scoped>

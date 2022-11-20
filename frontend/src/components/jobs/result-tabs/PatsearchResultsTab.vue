@@ -1,14 +1,14 @@
 <template>
-    <Loading v-if="loading || !results" :message="$t('loading')" />
+    <Loading v-if="loading || !results" :message="t('loading')" />
     <div v-else class="font-small">
-        <b v-if="results.results.hits.length === 0" v-text="$t('jobs.results.patsearch.noResults')"></b>
+        <b v-if="results.results.hits.length === 0" v-text="t('jobs.results.patsearch.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="download">{{ $t('jobs.results.actions.downloadHits') }}</a>
-                <a @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
+                <a @click="download">{{ t('jobs.results.actions.downloadHits') }}</a>
+                <a @click="forwardAll">{{ t('jobs.results.actions.forwardAll') }}</a>
             </div>
 
-            <span v-html="$t('jobs.results.alignment.numSeqs', { num: results.results.hits.length })"></span>
+            <span v-html="t('jobs.results.alignment.numSeqs', { num: results.results.hits.length })"></span>
 
             <table class="alignment-table mt-3">
                 <tbody>
@@ -19,7 +19,7 @@
                             </td>
                         </tr>
                         <tr :key="'hit-seq-' + i">
-                            <td class="sequence-alignment" v-html="colorHits(hit.seq, hit.matches)"></td>
+                            <td class="sequence-alignment" v-html="patsearchColor(hit.seq, hit.matches)"></td>
                         </tr>
                     </template>
                 </tbody>
@@ -28,73 +28,68 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
-import { PatsearchHit, PatsearchMatch, PatsearchResults } from '@/types/toolkit/results';
+import { PatsearchHit, PatsearchResults } from '@/types/toolkit/results';
 import { patsearchColor } from '@/util/SequenceUtils';
 import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+import { isNonNullable, isNullable } from '@/util/nullability-helpers';
 
 const logger = Logger.get('PatsearchResultsTab');
 
-export default ResultTabMixin.extend({
-    name: 'PatsearchResultsTab',
-    components: {
-        Loading,
-    },
-    setup() {
-        const showModalsBus = useEventBus<ModalParams>('show-modal');
-        return { showModalsBus };
-    },
-    data() {
-        return {
-            results: undefined as PatsearchResults | undefined,
-        };
-    },
-    computed: {
-        filename(): string {
-            if (!this.viewOptions.filename) {
-                return '';
-            }
-            return this.viewOptions.filename.replace(':jobID', this.job.jobID);
-        },
-    },
-    methods: {
-        async init() {
-            this.results = await resultsService.fetchResults(this.job.jobID);
-        },
-        colorHits(seq: string, matches: PatsearchMatch[]): string {
-            return patsearchColor(seq, matches);
-        },
-        download(): void {
-            const toolName = this.tool.name;
-            const downloadFilename = `${toolName}_${this.job.jobID}.fas`;
-            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename).catch((e) => {
-                logger.error(e);
-            });
-        },
-        forwardAll(): void {
-            if (this.tool.parameters && this.results) {
-                this.showModalsBus.emit({
-                    id: 'forwardingModal',
-                    props: {
-                        forwardingJobID: this.job.jobID,
-                        forwardingData: this.results.results.hits.reduce(
-                            (acc: string, cur: PatsearchHit) => acc + cur.name + '\n' + cur.seq + '\n',
-                            ''
-                        ),
-                        forwardingMode: this.tool.parameters.forwarding,
-                    },
-                });
-            } else {
-                logger.error('tool parameters not loaded. Cannot forward');
-            }
-        },
-    },
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const results = ref<PatsearchResults | undefined>(undefined);
+
+async function init() {
+    results.value = await resultsService.fetchResults(props.job.jobID);
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+const filename = computed(() => {
+    const name = props.viewOptions?.filename;
+    if (isNullable(name)) {
+        return '';
+    }
+    return name.replace(':jobID', props.job.jobID);
 });
+
+function download(): void {
+    const toolName = props.tool.name;
+    const downloadFilename = `${toolName}_${props.job.jobID}.fas`;
+    resultsService.downloadFile(props.job.jobID, filename.value, downloadFilename).catch((e) => {
+        logger.error(e);
+    });
+}
+
+const showModalsBus = useEventBus<ModalParams>('show-modal');
+
+function forwardAll(): void {
+    if (isNonNullable(props.tool.parameters) && isNonNullable(results.value)) {
+        showModalsBus.emit({
+            id: 'forwardingModal',
+            props: {
+                forwardingJobID: props.job.jobID,
+                forwardingData: results.value.results.hits.reduce(
+                    (acc: string, cur: PatsearchHit) => acc + cur.name + '\n' + cur.seq + '\n',
+                    ''
+                ),
+                forwardingMode: props.tool.parameters.forwarding,
+            },
+        });
+    } else {
+        logger.error('tool parameters not loaded. Cannot forward');
+    }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,93 +1,89 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else>
         <div v-if="downloadEnabled || forwardingEnabled" class="result-options">
-            <a v-if="downloadEnabled" @click="download">{{ $t('jobs.results.actions.download') }}</a>
-            <a v-if="forwardingEnabled" @click="forwardAll">{{ $t('jobs.results.actions.forwardAll') }}</a>
+            <a v-if="downloadEnabled" @click="download">{{ t('jobs.results.actions.download') }}</a>
+            <a v-if="forwardingEnabled" @click="forwardAll">{{ t('jobs.results.actions.forwardAll') }}</a>
         </div>
 
         <pre class="file-view" v-html="file"></pre>
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import Logger from 'js-logger';
 import { resultsService } from '@/services/ResultsService';
 import { timeout } from '@/util/Utils';
 import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
+import { isNonNullable, isNullable } from '@/util/nullability-helpers';
+import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('DataTab');
+const { t } = useI18n();
 
-export default ResultTabMixin.extend({
-    name: 'DataTab',
-    components: {
-        Loading,
-    },
-    setup() {
-        const showModalsBus = useEventBus<ModalParams>('show-modal');
-        return { showModalsBus };
-    },
-    data() {
-        return {
-            file: '',
-            maxTries: 50,
-            tries: 0,
-        };
-    },
-    computed: {
-        filename(): string {
-            if (!this.viewOptions.filename) {
-                return '';
-            }
-            return this.viewOptions.filename.replace(':jobID', this.job.jobID);
-        },
-        downloadEnabled(): boolean {
-            return 'download' in this.viewOptions;
-        },
-        forwardingEnabled(): boolean {
-            return 'forwarding' in this.viewOptions;
-        },
-    },
-    methods: {
-        async init() {
-            this.file = await resultsService.getFile(this.job.jobID, this.filename);
-            if (!this.file) {
-                ++this.tries;
-                if (this.tries === this.maxTries) {
-                    logger.info("Couldn't fetch files.");
-                    return;
-                }
-                await timeout(300);
-                await this.init();
-            }
-        },
-        download(): void {
-            const toolName = this.tool.name;
-            const ending = toolName === 'hhpred' || toolName === 'hhomp' ? 'hhr' : 'out';
-            const downloadFilename = `${toolName}_${this.job.jobID}.${ending}`;
-            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename).catch((e) => {
-                logger.error(e);
-            });
-        },
-        forwardAll(): void {
-            if (this.tool.parameters) {
-                this.showModalsBus.emit({
-                    id: 'forwardingModal',
-                    props: {
-                        forwardingJobID: this.job.jobID,
-                        forwardingData: this.file,
-                        forwardingMode: this.tool.parameters.forwarding,
-                    },
-                });
-            } else {
-                logger.error('tool parameters not loaded. Cannot forward');
-            }
-        },
-    },
+const props = defineResultTabProps();
+
+const downloadEnabled = computed<boolean>(() => isNonNullable(props.viewOptions) && 'download' in props.viewOptions);
+const forwardingEnabled = computed<boolean>(
+    () => isNonNullable(props.viewOptions) && 'forwarding' in props.viewOptions
+);
+
+const file = ref('');
+const maxTries = 50;
+const tries = ref(0);
+
+const filename = computed<string>(() => {
+    const name = props.viewOptions?.filename;
+    if (isNullable(name)) {
+        return '';
+    }
+    return name.replace(':jobID', props.job.jobID);
 });
+
+async function init() {
+    file.value = await resultsService.getFile(props.job.jobID, filename.value);
+    if (isNonNullable(file.value)) {
+        ++tries.value;
+        if (tries.value === maxTries) {
+            logger.info("Couldn't fetch files.");
+            return;
+        }
+        await timeout(300);
+        await init();
+    }
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+function download(): void {
+    const toolName = props.tool.name;
+    const ending = toolName === 'hhpred' || toolName === 'hhomp' ? 'hhr' : 'out';
+    const downloadFilename = `${toolName}_${props.job.jobID}.${ending}`;
+    resultsService.downloadFile(props.job.jobID, filename.value, downloadFilename).catch((e) => {
+        logger.error(e);
+    });
+}
+
+const showModalsBus = useEventBus<ModalParams>('show-modal');
+
+function forwardAll(): void {
+    if (props.tool.parameters) {
+        showModalsBus.emit({
+            id: 'forwardingModal',
+            props: {
+                forwardingJobID: props.job.jobID,
+                forwardingData: file.value,
+                forwardingMode: props.tool.parameters.forwarding,
+            },
+        });
+    } else {
+        logger.error('tool parameters not loaded. Cannot forward');
+    }
+}
 </script>
 
 <style lang="scss" scoped>

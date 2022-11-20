@@ -83,7 +83,7 @@ const displayedTools = computed(() => tools.value.filter((tool: Tool) => tool.se
 
 const route = useRoute();
 watch(
-    route.params,
+    () => route.params,
     () => {
         // clear user selection to select correct tool/group upon programmatic routing
         userSelectedSection.value = '';

@@ -1,7 +1,7 @@
 <template>
-    <Loading v-if="loading || !results" :message="$t('loading')" />
+    <Loading v-if="loading || !results" :message="t('loading')" />
     <div v-else class="font-small">
-        <b v-if="results.results.hits.length === 0" v-text="$t('jobs.results.tprpred.noResults')"></b>
+        <b v-if="results.results.hits.length === 0" v-text="t('jobs.results.tprpred.noResults')"></b>
         <div v-else>
             <br />
             <div v-for="(hit, hidx) in results.results.desc" :key="hidx" class="tpr-info">
@@ -23,7 +23,7 @@
                         <tr :key="'tr' + hidx" class="sequence-alignment">
                             <td v-text="hit[1]"></td>
                             <td v-text="hit[2]"></td>
-                            <td class="tpr-hit" v-html="coloredSeq(hit[0])"></td>
+                            <td class="tpr-hit" v-html="colorSequence(hit[0])"></td>
                             <td v-text="hit[3]"></td>
                             <td v-text="hit[4]"></td>
                         </tr>
@@ -35,46 +35,42 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { ref } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
 import { colorSequence } from '@/util/SequenceUtils';
+import { useI18n } from 'vue-i18n';
 import { TprpredResults } from '@/types/toolkit/results';
 import { timeout } from '@/util/Utils';
 
 const logger = Logger.get('TprpredResultsTab');
 
-export default ResultTabMixin.extend({
-    name: 'TprpredResultsTab',
-    components: {
-        Loading,
-    },
-    data() {
-        return {
-            results: undefined as TprpredResults | undefined,
-            maxTries: 50,
-            tries: 0,
-        };
-    },
-    methods: {
-        async init() {
-            try {
-                this.results = await resultsService.fetchResults(this.job.jobID);
-            } catch (e) {
-                ++this.tries;
-                if (this.tries === this.maxTries) {
-                    logger.info("Couldn't fetch files.");
-                    return;
-                }
-                await timeout(300);
-                await this.init();
-            }
-        },
-        coloredSeq: colorSequence,
-    },
-});
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const results = ref<TprpredResults | undefined>(undefined);
+const maxTries = 50;
+const tries = ref(0);
+
+async function init() {
+    try {
+        results.value = await resultsService.fetchResults(props.job.jobID);
+    } catch (e) {
+        ++tries.value;
+        if (tries.value === maxTries) {
+            logger.info("Couldn't fetch files.");
+            return;
+        }
+        await timeout(300);
+        await init();
+    }
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
 </script>
 
 <style lang="scss" scoped>

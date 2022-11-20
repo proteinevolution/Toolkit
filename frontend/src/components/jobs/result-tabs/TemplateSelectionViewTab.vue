@@ -1,56 +1,49 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else>
         <pre class="file-view" v-html="file"></pre>
         <div class="result-options">
             <b-btn type="button" variant="primary" class="submit-button float-right" @click="forwardToModeller">
-                {{ $t('jobs.results.actions.forwardToModeller') }}
+                {{ t('jobs.results.actions.forwardToModeller') }}
             </b-btn>
         </div>
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { ref } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useEventBus } from '@vueuse/core';
 
-export default ResultTabMixin.extend({
-    name: 'TemplateSelectionViewTab',
-    components: {
-        Loading,
-    },
-    setup() {
-        const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
-        const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
-        return { forwardDataBus, pasteAreaLoadedBus };
-    },
-    data() {
-        return {
-            file: '',
-        };
-    },
-    computed: {
-        filename(): string {
-            return 'tomodel.pir';
-        },
-    },
-    methods: {
-        async init() {
-            this.file = await resultsService.getFile(this.job.jobID, this.filename);
-        },
-        forwardToModeller(): void {
-            this.$router.push('/tools/modeller', () => {
-                this.pasteAreaLoadedBus.on(this.pasteForwardData);
-            });
-        },
-        pasteForwardData(): void {
-            this.pasteAreaLoadedBus.off(this.pasteForwardData);
-            this.forwardDataBus.emit({ data: this.file, jobID: this.job.jobID });
-        },
-    },
-});
+const { t } = useI18n();
+const router = useRouter();
+
+const props = defineResultTabProps();
+
+const file = ref('');
+
+async function init() {
+    file.value = await resultsService.getFile(props.job.jobID, 'tomodel.pir');
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
+const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
+
+function pasteForwardData(): void {
+    pasteAreaLoadedBus.off(pasteForwardData);
+    forwardDataBus.emit({ data: file.value, jobID: props.job.jobID });
+}
+
+function forwardToModeller(): void {
+    router.push('/tools/modeller');
+    pasteAreaLoadedBus.on(pasteForwardData);
+}
 </script>
 
 <style lang="scss" scoped>

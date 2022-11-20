@@ -13,36 +13,40 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { defineResultTabProps } from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
+import { isNullable } from '@/util/nullability-helpers';
+import { useI18n } from 'vue-i18n';
 
-export default ResultTabMixin.extend({
-    name: 'ImagesViewTab',
-    computed: {
-        images(): string[] {
-            if (!this.viewOptions.files) {
-                return [];
-            }
-            const jobID: string = this.job.jobID;
-            const files: string[] = this.viewOptions.files.split(';');
-            return files.map((f: string) => resultsService.getDownloadFilePath(jobID, f));
-        },
-        labels(): string[] {
-            if (!this.viewOptions.labels) {
-                return [];
-            }
-            return this.viewOptions.labels.split(';');
-        },
-        altTexts(): string[] {
-            if (!this.viewOptions.altTexts) {
-                return [];
-            }
-            return this.viewOptions.altTexts
-                .split(';')
-                .map((key: string) => (key ? (this.$t('jobs.results.imagesView.' + key) as string) : ''));
-        },
-    },
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const images = computed(() => {
+    const filesString = props.viewOptions?.files;
+    if (isNullable(filesString)) {
+        return [];
+    }
+    const jobID: string = props.job.jobID;
+    return filesString.split(';').map((f: string) => resultsService.getDownloadFilePath(jobID, f));
+});
+
+const labels = computed(() => {
+    const labelsString = props.viewOptions?.labels;
+    if (isNullable(labelsString)) {
+        return [];
+    }
+    return labelsString.split(';');
+});
+
+const altTexts = computed(() => {
+    const altTextsString = props.viewOptions?.altTexts;
+    if (isNullable(altTextsString)) {
+        return [];
+    }
+    return altTextsString.split(';').map((key: string) => (key ? (t('jobs.results.imagesView.' + key) as string) : ''));
 });
 </script>
 

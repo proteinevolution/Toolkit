@@ -148,6 +148,7 @@ export interface HhrepidReptypes {
 }
 
 export interface HhrepidReptype {
+    id: string;
     prob: string;
     pval: string;
     loc: string;

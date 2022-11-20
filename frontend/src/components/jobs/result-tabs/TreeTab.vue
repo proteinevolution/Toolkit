@@ -1,9 +1,9 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else>
         <div class="result-options d-flex align-items-center">
             <b-form inline>
-                <label class="mr-sm-2" for="layoutSelect">{{ $t('jobs.results.tree.layout') }}</label>
+                <label class="mr-sm-2" for="layoutSelect">{{ t('jobs.results.tree.layout') }}</label>
                 <b-form-select
                     id="layoutSelect"
                     v-model="layout"
@@ -13,7 +13,7 @@
                     @input="handleRadialChanged" />
 
                 <label class="mr-sm-2 ml-sm-3" for="hStretchSlider">{{
-                    $t('jobs.results.tree.horizontalStretch')
+                    t('jobs.results.tree.horizontalStretch')
                 }}</label>
                 <vue-slider
                     id="hStretchSlider"
@@ -46,11 +46,13 @@
     </div>
 </template>
 
-<script lang="ts">
-import ResultTabMixin from '@/mixins/ResultTabMixin';
+<script setup lang="ts">
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
+import { useI18n } from 'vue-i18n';
 import { TidyTree } from 'tidytree';
 import { select } from 'd3-selection';
 import VueSlider from 'vue-slider-component';
@@ -58,94 +60,85 @@ import { debounce } from 'lodash-es';
 
 const logger = Logger.get('TreeTab');
 
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
 const hStretchDefault = 0.8;
 const vStretchCircularDefault = 0.8;
 const vStretchHorizontalDefault = 1;
+const hStretch = ref(hStretchDefault);
+const vStretch = ref(vStretchCircularDefault);
 
-export default ResultTabMixin.extend({
-    name: 'TreeTab',
-    components: {
-        Loading,
-        VueSlider,
-    },
-    data() {
-        return {
-            tree: undefined as any,
-            hStretch: hStretchDefault,
-            vStretch: vStretchCircularDefault,
-            layout: 'circular',
-            layoutOptions: [
-                { value: 'circular', text: this.$t('jobs.results.tree.circular') },
-                { value: 'horizontal', text: this.$t('jobs.results.tree.horizontal') },
-            ],
-        };
-    },
-    computed: {
-        downloadFilePath(): string {
-            return resultsService.getDownloadFilePath(this.job.jobID, this.filename);
-        },
-        filename(): string {
-            return `${this.job.jobID}.tree`;
-        },
-    },
-    beforeDestroy() {
-        window.removeEventListener('resize', this.handleWindowResize);
-    },
-    methods: {
-        async init() {
-            const data = await resultsService.getFile<string>(this.job.jobID, this.filename);
-            this.loading = false;
-            this.$nextTick(() => {
-                this.tree = new TidyTree(data, {
-                    parent: '#treeContainer',
-                    type: 'dendrogram',
-                    mode: 'square',
-                    leafLabels: true,
-                    branchNodes: true,
-                    hStretch: this.hStretch,
-                    vStretch: this.vStretch,
-                    layout: this.layout,
-                    margin: [20, 20, 0, 0],
-                });
-                const nodeStyler = (node: any) => select(node).attr('r', 4).style('fill', '#2E8C81');
-                this.tree.eachLeafNode(nodeStyler);
-                this.tree.eachBranchNode(nodeStyler);
-                window.addEventListener('resize', this.handleWindowResize);
-            });
-        },
-        handleWindowResize: debounce(function (this: any) {
-            this.tree?.redraw().recenter();
-        }, 200),
-        handleRadialChanged(): void {
-            const defaultVStretch = this.layout == 'circular' ? vStretchCircularDefault : vStretchHorizontalDefault;
-            if (this.vStretch != defaultVStretch) {
-                this.vStretch = defaultVStretch;
-                this.handleVStretchChanged();
-            }
-            if (this.hStretch != hStretchDefault) {
-                this.hStretch = hStretchDefault;
-                this.handleHStretchChanged();
-            }
-            this.tree?.setLayout(this.layout).recenter();
-        },
-        handleHStretchChanged(): void {
-            this.tree?.setHStretch(this.hStretch);
-        },
-        handleVStretchChanged(): void {
-            this.tree?.setVStretch(this.vStretch);
-        },
-        download(): void {
-            const downloadFilename = `${this.tool.name}_${this.job.jobID}.tree`;
-            resultsService.downloadFile(this.job.jobID, this.filename, downloadFilename).catch((e) => {
-                logger.error(e);
-            });
-        },
-    },
-    watch: {
-        fullScreen() {
-            this.handleWindowResize();
-        },
-    },
+type LayoutOption = 'circular' | 'horizontal';
+const layout = ref<LayoutOption>('circular');
+const layoutOptions = [
+    { value: 'circular', text: t('jobs.results.tree.circular') },
+    { value: 'horizontal', text: t('jobs.results.tree.horizontal') },
+];
+
+const tree = ref<any | undefined>(undefined);
+const filename = computed(() => `${props.job.jobID}.tree`);
+
+function handleRadialChanged(): void {
+    const defaultVStretch = layout.value === 'circular' ? vStretchCircularDefault : vStretchHorizontalDefault;
+    if (vStretch.value != defaultVStretch) {
+        vStretch.value = defaultVStretch;
+        handleVStretchChanged();
+    }
+    if (hStretch.value != hStretchDefault) {
+        hStretch.value = hStretchDefault;
+        handleHStretchChanged();
+    }
+    tree.value?.setLayout(layout.value).recenter();
+}
+
+function handleHStretchChanged(): void {
+    tree.value?.setHStretch(hStretch.value);
+}
+
+function handleVStretchChanged(): void {
+    tree.value?.setVStretch(vStretch.value);
+}
+
+const handleWindowResize = debounce(function (this: any) {
+    this.tree?.redraw().recenter();
+}, 200);
+
+watch(() => props.fullScreen, handleWindowResize);
+
+async function init() {
+    const data = await resultsService.getFile<string>(props.job.jobID, filename.value);
+    loading.value = false;
+    await nextTick();
+    tree.value = new TidyTree(data, {
+        parent: '#treeContainer',
+        type: 'dendrogram',
+        mode: 'square',
+        leafLabels: true,
+        branchNodes: true,
+        hStretch: hStretch.value,
+        vStretch: vStretch.value,
+        layout: layout.value,
+        margin: [20, 20, 0, 0],
+    });
+    const nodeStyler = (node: any) => select(node).attr('r', 4).style('fill', '#2E8C81');
+    tree.value.eachLeafNode(nodeStyler);
+    tree.value.eachBranchNode(nodeStyler);
+    window.addEventListener('resize', handleWindowResize);
+}
+
+const { loading } = useResultTab({ init, resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
+
+function download(): void {
+    const downloadFilename = `${props.tool.name}_${props.job.jobID}.tree`;
+    resultsService.downloadFile(props.job.jobID, filename.value, downloadFilename).catch((e) => {
+        logger.error(e);
+    });
+}
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', handleWindowResize);
 });
 </script>
 
