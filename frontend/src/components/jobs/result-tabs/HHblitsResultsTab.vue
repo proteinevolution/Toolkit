@@ -1,39 +1,39 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else class="font-small">
-        <b v-if="total === 0" v-text="$t('jobs.results.hhblits.noResults')"></b>
+        <b v-if="total === 0" v-text="t('jobs.results.hhblits.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
-                <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="mr-4" @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a @click="scrollTo('visualization')">{{ t('jobs.results.hitlist.visLink') }}</a>
+                <a @click="scrollTo('hits')">{{ t('jobs.results.hitlist.hitsLink') }}</a>
+                <a class="mr-4" @click="scrollTo('alignments')">{{ t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
                 <a :class="{ active: allSelected }" @click="toggleAllSelected">
-                    {{ $t('jobs.results.actions.selectAll') }}</a
+                    {{ t('jobs.results.actions.selectAll') }}</a
                 >
-                <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
-                <a @click="forwardQueryA3M">{{ $t('jobs.results.actions.forwardQueryA3M') }}</a>
-                <a :class="{ active: color }" @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-                <a :class="{ active: wrap }" @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+                <a @click="forward(false)">{{ t('jobs.results.actions.forward') }}</a>
+                <a @click="forwardQueryA3M">{{ t('jobs.results.actions.forwardQueryA3M') }}</a>
+                <a :class="{ active: color }" @click="toggleColor">{{ t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{ active: wrap }" @click="toggleWrap">{{ t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hhblits.numHits', { num: info.num_hits })"></div>
+            <div v-html="t('jobs.results.hhblits.numHits', { num: info.num_hits })"></div>
 
             <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'" class="mt-2">
-                {{ $t('jobs.results.sequenceFeatures.header') }}
-                <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm > '0'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
-                <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+                {{ t('jobs.results.sequenceFeatures.header') }}
+                <b v-if="info.coil === '0'" v-html="t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm > '0'" v-html="t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'" v-html="t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
-            <div ref="visualization" class="result-section">
-                <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
+            <div :ref="registerScrollRef('visualization')" class="result-section">
+                <h4>{{ t('jobs.results.hitlist.vis') }}</h4>
                 <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
             </div>
 
-            <div ref="hits" class="result-section">
+            <div :ref="registerScrollRef('hits')" class="result-section">
                 <h4 class="mb-4">
-                    {{ $t('jobs.results.hitlist.hits') }}
+                    {{ t('jobs.results.hitlist.hits') }}
                 </h4>
                 <hit-list-table
                     :job="job"
@@ -42,14 +42,17 @@
                     @elem-clicked="scrollToElem" />
             </div>
 
-            <div ref="alignments" class="result-section">
-                <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
+            <div :ref="registerScrollRef('alignments')" class="result-section">
+                <h4>{{ t('jobs.results.hitlist.aln') }}</h4>
 
                 <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
                             <template v-for="(al, i) in alignments">
-                                <tr :key="'alignment-' + al.num" :ref="'alignment-' + al.num" class="blank-row">
+                                <tr
+                                    :key="'alignment-' + al.num"
+                                    :ref="registerScrollRef('alignment-' + al.num)"
+                                    class="blank-row">
                                     <td colspan="4">
                                         <hr v-if="i !== 0" />
                                     </td>
@@ -59,7 +62,7 @@
                                     <td colspan="3">
                                         <a
                                             @click="displayTemplateAlignment(al.template.accession)"
-                                            v-text="$t('jobs.results.hhblits.templateAlignment')"></a>
+                                            v-text="t('jobs.results.hhblits.templateAlignment')"></a>
                                     </td>
                                 </tr>
                                 <tr :key="'select-alignment-' + al.num" class="font-weight-bold">
@@ -74,7 +77,7 @@
                                 </tr>
                                 <tr :key="'alignment-info-' + al.num">
                                     <td></td>
-                                    <td colspan="3" v-html="$t('jobs.results.hhblits.alignmentInfo', al)"></td>
+                                    <td colspan="3" v-html="t('jobs.results.hhblits.alignmentInfo', al)"></td>
                                 </tr>
 
                                 <template v-for="(alPart, pi) in wrapAlignments(al)">
@@ -130,7 +133,7 @@
                                 <td colspan="4">
                                     <Loading
                                         v-if="loadingMore"
-                                        :message="$t('jobs.results.alignment.loadingHits')"
+                                        :message="t('jobs.results.alignment.loadingHits')"
                                         justify="center"
                                         class="mt-4" />
                                     <intersection-observer @intersect="intersected" />
@@ -144,108 +147,131 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 import { HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
-import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
+import useSearchResultTab from '@/composables/useSearchResultTab';
+import Logger from 'js-logger';
+import { defineResultTabProps } from '@/composables/useResultTab';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-export default SearchResultTabMixin.extend({
-    name: 'HHblitsResultsTab',
-    components: {
-        Loading,
-        HitListTable,
-        HitMap,
-        IntersectionObserver,
+const logger = Logger.get('HHblitsResultsTab');
+
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const job = computed(() => props.job);
+
+const {
+    alignments,
+    info,
+    total,
+    loading,
+    loadingMore,
+    selectedItems,
+    allSelected,
+    toggleAllSelected,
+    intersected,
+    check,
+    wrap,
+    toggleWrap,
+    color,
+    toggleColor,
+    coloredSeq,
+    alEndRef,
+    registerScrollRef,
+    scrollTo,
+    scrollToElem,
+    resubmitSection,
+    displayTemplateAlignment,
+    forward,
+    forwardQueryA3M,
+} = useSearchResultTab<HHblitsAlignmentItem, HHblitsHHInfoResult>({ logger, props });
+
+const hitListFields = [
+    {
+        key: 'numCheck',
+        label: t('jobs.results.hhblits.table.num'),
+        sortable: true,
     },
-    data() {
-        return {
-            alignments: undefined as HHblitsAlignmentItem[] | undefined,
-            info: undefined as HHblitsHHInfoResult | undefined,
-            breakAfter: 85,
-            hitListFields: [
-                {
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.hhblits.table.num'),
-                    sortable: true,
-                },
-                {
-                    key: 'acc',
-                    label: this.$t('jobs.results.hhblits.table.hit'),
-                    sortable: true,
-                },
-                {
-                    key: 'name',
-                    label: this.$t('jobs.results.hhblits.table.name'),
-                    sortable: true,
-                },
-                {
-                    key: 'probab',
-                    label: this.$t('jobs.results.hhblits.table.probHits'),
-                    sortable: true,
-                },
-                {
-                    key: 'eval',
-                    label: this.$t('jobs.results.hhblits.table.eVal'),
-                    class: 'no-wrap',
-                    sortable: true,
-                },
-                {
-                    key: 'alignedCols',
-                    label: this.$t('jobs.results.hhblits.table.cols'),
-                    sortable: true,
-                },
-                {
-                    key: 'templateRef',
-                    label: this.$t('jobs.results.hhblits.table.targetLength'),
-                    sortable: true,
-                },
-            ],
-        };
+    {
+        key: 'acc',
+        label: t('jobs.results.hhblits.table.hit'),
+        sortable: true,
     },
-    methods: {
-        wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
-            if (this.wrap) {
-                const res: SearchAlignmentItemRender[] = [];
-                let qStart: number = al.query.start;
-                let tStart: number = al.template.start;
-                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                    const end: number = start + this.breakAfter;
-                    const qSeq: string = al.query.seq.slice(start, end);
-                    const tSeq: string = al.template.seq.slice(start, end);
-                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                    res.push({
-                        agree: al.agree.slice(start, end),
-                        query: {
-                            consensus: al.query.consensus.slice(start, end),
-                            end: qEnd,
-                            name: al.query.name,
-                            ref: al.query.ref,
-                            seq: qSeq,
-                            start: qStart,
-                        },
-                        template: {
-                            accession: al.template.accession,
-                            consensus: al.template.consensus.slice(start, end),
-                            end: tEnd,
-                            ref: al.template.ref,
-                            seq: tSeq,
-                            start: tStart,
-                        },
-                    });
-                    qStart = qEnd + 1;
-                    tStart = tEnd + 1;
-                }
-                return res;
-            } else {
-                return [al];
-            }
-        },
+    {
+        key: 'name',
+        label: t('jobs.results.hhblits.table.name'),
+        sortable: true,
     },
-});
+    {
+        key: 'probab',
+        label: t('jobs.results.hhblits.table.probHits'),
+        sortable: true,
+    },
+    {
+        key: 'eval',
+        label: t('jobs.results.hhblits.table.eVal'),
+        class: 'no-wrap',
+        sortable: true,
+    },
+    {
+        key: 'alignedCols',
+        label: t('jobs.results.hhblits.table.cols'),
+        sortable: true,
+    },
+    {
+        key: 'templateRef',
+        label: t('jobs.results.hhblits.table.targetLength'),
+        sortable: true,
+    },
+];
+
+const breakAfter = 85;
+
+function wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
+    if (wrap.value) {
+        const res: SearchAlignmentItemRender[] = [];
+        let qStart: number = al.query.start;
+        let tStart: number = al.template.start;
+        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
+            const end: number = start + breakAfter;
+            const qSeq: string = al.query.seq.slice(start, end);
+            const tSeq: string = al.template.seq.slice(start, end);
+            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+            res.push({
+                agree: al.agree.slice(start, end),
+                query: {
+                    consensus: al.query.consensus.slice(start, end),
+                    end: qEnd,
+                    name: al.query.name,
+                    ref: al.query.ref,
+                    seq: qSeq,
+                    start: qStart,
+                },
+                template: {
+                    accession: al.template.accession,
+                    consensus: al.template.consensus.slice(start, end),
+                    end: tEnd,
+                    ref: al.template.ref,
+                    seq: tSeq,
+                    start: tStart,
+                },
+            });
+            qStart = qEnd + 1;
+            tStart = tEnd + 1;
+        }
+        return res;
+    } else {
+        return [al];
+    }
+}
 </script>
 
 <style lang="scss" scoped>

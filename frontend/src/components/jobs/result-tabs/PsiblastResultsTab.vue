@@ -1,39 +1,39 @@
 <template>
-    <Loading v-if="loading" :message="$t('loading')" />
+    <Loading v-if="loading" :message="t('loading')" />
     <div v-else class="font-small">
-        <b v-if="total === 0" v-text="$t('jobs.results.psiblast.noResults')"></b>
+        <b v-if="total === 0" v-text="t('jobs.results.psiblast.noResults')"></b>
         <div v-else>
             <div class="result-options">
-                <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
-                <a @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="mr-4" @click="scrollTo('alignments')">{{ $t('jobs.results.hitlist.alnLink') }}</a>
+                <a @click="scrollTo('visualization')">{{ t('jobs.results.hitlist.visLink') }}</a>
+                <a @click="scrollTo('hits')">{{ t('jobs.results.hitlist.hitsLink') }}</a>
+                <a class="mr-4" @click="scrollTo('alignments')">{{ t('jobs.results.hitlist.alnLink') }}</a>
                 <a class="border-right mr-4"></a>
                 <a :class="{ active: allSelected }" @click="toggleAllSelected">
-                    {{ $t('jobs.results.actions.selectAll') }}</a
+                    {{ t('jobs.results.actions.selectAll') }}</a
                 >
-                <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
-                <a @click="download">{{ $t('jobs.results.actions.downloadMSA') }}</a>
-                <a :class="{ active: color }" @click="toggleColor">{{ $t('jobs.results.actions.colorSeqs') }}</a>
-                <a :class="{ active: wrap }" @click="toggleWrap">{{ $t('jobs.results.actions.wrapSeqs') }}</a>
+                <a @click="forward(false)">{{ t('jobs.results.actions.forward') }}</a>
+                <a @click="download">{{ t('jobs.results.actions.downloadMSA') }}</a>
+                <a :class="{ active: color }" @click="toggleColor">{{ t('jobs.results.actions.colorSeqs') }}</a>
+                <a :class="{ active: wrap }" @click="toggleWrap">{{ t('jobs.results.actions.wrapSeqs') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.psiblast.numHits', { num: info.num_hits })"></div>
+            <div v-html="t('jobs.results.psiblast.numHits', { num: info.num_hits })"></div>
 
             <div v-if="info.coil === '0' || info.tm > '0' || info.signal === '1'" class="mt-2">
-                {{ $t('jobs.results.sequenceFeatures.header') }}
-                <b v-if="info.coil === '0'" v-html="$t('jobs.results.sequenceFeatures.coil')"></b>
-                <b v-if="info.tm > '0'" v-html="$t('jobs.results.sequenceFeatures.tm')"></b>
-                <b v-if="info.signal === '1'" v-html="$t('jobs.results.sequenceFeatures.signal')"></b>
+                {{ t('jobs.results.sequenceFeatures.header') }}
+                <b v-if="info.coil === '0'" v-html="t('jobs.results.sequenceFeatures.coil')"></b>
+                <b v-if="info.tm > '0'" v-html="t('jobs.results.sequenceFeatures.tm')"></b>
+                <b v-if="info.signal === '1'" v-html="t('jobs.results.sequenceFeatures.signal')"></b>
             </div>
 
-            <div ref="visualization" class="result-section">
-                <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
+            <div :ref="registerScrollRef('visualization')" class="result-section">
+                <h4>{{ t('jobs.results.hitlist.vis') }}</h4>
                 <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
             </div>
 
-            <div ref="hits" class="result-section">
+            <div :ref="registerScrollRef('hits')" class="result-section">
                 <h4 class="mb-4">
-                    {{ $t('jobs.results.hitlist.hits') }}
+                    {{ t('jobs.results.hitlist.hits') }}
                 </h4>
                 <hit-list-table
                     :job="job"
@@ -42,14 +42,17 @@
                     @elem-clicked="scrollToElem" />
             </div>
 
-            <div ref="alignments" class="result-section">
-                <h4>{{ $t('jobs.results.hitlist.aln') }}</h4>
+            <div :ref="registerScrollRef('alignments')" class="result-section">
+                <h4>{{ t('jobs.results.hitlist.aln') }}</h4>
 
                 <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
                             <template v-for="(al, i) in alignments">
-                                <tr :key="'alignment-' + al.num" :ref="'alignment-' + al.num" class="blank-row">
+                                <tr
+                                    :key="'alignment-' + al.num"
+                                    :ref="registerScrollRef('alignment-' + al.num)"
+                                    class="blank-row">
                                     <td colspan="4">
                                         <hr v-if="i !== 0" />
                                     </td>
@@ -70,7 +73,7 @@
                                 </tr>
                                 <tr :key="'alignment-info-' + i">
                                     <td></td>
-                                    <td colspan="3" v-html="$t('jobs.results.psiblast.alignmentInfo', al)"></td>
+                                    <td colspan="3" v-html="t('jobs.results.psiblast.alignmentInfo', al)"></td>
                                 </tr>
 
                                 <template v-for="(alPart, alIdx) in wrapAlignments(al)">
@@ -114,7 +117,7 @@
                                 <td colspan="4">
                                     <Loading
                                         v-if="loadingMore"
-                                        :message="$t('jobs.results.alignment.loadingHits')"
+                                        :message="t('jobs.results.alignment.loadingHits')"
                                         justify="center"
                                         class="mt-4" />
                                     <intersection-observer @intersect="intersected" />
@@ -128,123 +131,144 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import Loading from '@/components/utils/Loading.vue';
-import Logger from 'js-logger';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
 import { PSIBLASTAlignmentItem, PsiblastHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
-import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
 import { resultsService } from '@/services/ResultsService';
+import useSearchResultTab from '@/composables/useSearchResultTab';
+import Logger from 'js-logger';
+import { defineResultTabProps } from '@/composables/useResultTab';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { isNonNullable } from '@/util/nullability-helpers';
 
 const logger = Logger.get('PsiblastResultsTab');
 
-export default SearchResultTabMixin.extend({
-    name: 'PsiblastResultsTab',
-    components: {
-        Loading,
-        HitListTable,
-        HitMap,
-        IntersectionObserver,
+const { t } = useI18n();
+
+const props = defineResultTabProps();
+
+const job = computed(() => props.job);
+
+function onInitialized(): void {
+    if (info.value) {
+        for (let i = 1; i <= info.value.belowEvalThreshold; i++) {
+            selectedItems.value.push(i);
+        }
+    }
+}
+
+const {
+    alignments,
+    info,
+    total,
+    loading,
+    loadingMore,
+    selectedItems,
+    allSelected,
+    toggleAllSelected,
+    intersected,
+    check,
+    wrap,
+    toggleWrap,
+    color,
+    toggleColor,
+    coloredSeq,
+    alEnd,
+    registerScrollRef,
+    scrollTo,
+    scrollToElem,
+    resubmitSection,
+    forward,
+} = useSearchResultTab<PSIBLASTAlignmentItem, PsiblastHHInfoResult>({ logger, props, onInitialized });
+
+const hitListFields = [
+    {
+        key: 'numCheck',
+        label: t('jobs.results.psiblast.table.num'),
+        sortable: true,
     },
-    data() {
-        return {
-            alignments: undefined as PSIBLASTAlignmentItem[] | undefined,
-            info: undefined as PsiblastHHInfoResult | undefined,
-            breakAfter: 90,
-            hitListFields: [
-                {
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.psiblast.table.num'),
-                    sortable: true,
-                },
-                {
-                    key: 'acc',
-                    label: this.$t('jobs.results.psiblast.table.accession'),
-                    sortable: true,
-                },
-                {
-                    key: 'name',
-                    label: this.$t('jobs.results.psiblast.table.description'),
-                    sortable: true,
-                },
-                {
-                    key: 'eval',
-                    label: this.$t('jobs.results.psiblast.table.eValue'),
-                    class: 'no-wrap',
-                    sortable: true,
-                },
-                {
-                    key: 'bitScore',
-                    label: this.$t('jobs.results.psiblast.table.bitscore'),
-                    sortable: true,
-                },
-                {
-                    key: 'refLen',
-                    label: this.$t('jobs.results.psiblast.table.ref_len'),
-                    sortable: true,
-                },
-                {
-                    key: 'hitLen',
-                    label: this.$t('jobs.results.psiblast.table.hit_len'),
-                    sortable: true,
-                },
-            ],
-        };
+    {
+        key: 'acc',
+        label: t('jobs.results.psiblast.table.accession'),
+        sortable: true,
     },
-    methods: {
-        async init(): Promise<void> {
-            await this.loadAlignments(0, this.perPage);
-            if (this.info) {
-                for (let i = 1; i <= this.info.belowEvalThreshold; i++) {
-                    this.selectedItems.push(i);
-                }
-            }
-        },
-        wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
-            if (this.wrap) {
-                const res: SearchAlignmentItemRender[] = [];
-                let qStart: number = al.query.start;
-                let tStart: number = al.template.start;
-                for (let start = 0; start < al.query.seq.length; start += this.breakAfter) {
-                    const end: number = start + this.breakAfter;
-                    const qSeq: string = al.query.seq.slice(start, end);
-                    const tSeq: string = al.template.seq.slice(start, end);
-                    const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-                    const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-                    res.push({
-                        agree: al.agree.slice(start, end),
-                        query: {
-                            end: qEnd,
-                            seq: qSeq,
-                            start: qStart,
-                        },
-                        template: {
-                            end: tEnd,
-                            seq: tSeq,
-                            start: tStart,
-                        },
-                    });
-                    qStart = qEnd + 1;
-                    tStart = tEnd + 1;
-                }
-                return res;
-            } else {
-                return [al];
-            }
-        },
-        download(): void {
-            if (this.viewOptions.filename) {
-                const toolName = this.tool.name;
-                const downloadFilename = `${toolName}_${this.job.jobID}.aln`;
-                resultsService.downloadFile(this.job.jobID, this.viewOptions.filename, downloadFilename).catch((e) => {
-                    logger.error(e);
-                });
-            }
-        },
+    {
+        key: 'name',
+        label: t('jobs.results.psiblast.table.description'),
+        sortable: true,
     },
-});
+    {
+        key: 'eval',
+        label: t('jobs.results.psiblast.table.eValue'),
+        class: 'no-wrap',
+        sortable: true,
+    },
+    {
+        key: 'bitScore',
+        label: t('jobs.results.psiblast.table.bitscore'),
+        sortable: true,
+    },
+    {
+        key: 'refLen',
+        label: t('jobs.results.psiblast.table.ref_len'),
+        sortable: true,
+    },
+    {
+        key: 'hitLen',
+        label: t('jobs.results.psiblast.table.hit_len'),
+        sortable: true,
+    },
+];
+
+const breakAfter = 90;
+
+function wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
+    if (wrap.value) {
+        const res: SearchAlignmentItemRender[] = [];
+        let qStart: number = al.query.start;
+        let tStart: number = al.template.start;
+        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
+            const end: number = start + breakAfter;
+            const qSeq: string = al.query.seq.slice(start, end);
+            const tSeq: string = al.template.seq.slice(start, end);
+            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+            res.push({
+                agree: al.agree.slice(start, end),
+                query: {
+                    end: qEnd,
+                    seq: qSeq,
+                    start: qStart,
+                },
+                template: {
+                    end: tEnd,
+                    seq: tSeq,
+                    start: tStart,
+                },
+            });
+            qStart = qEnd + 1;
+            tStart = tEnd + 1;
+        }
+        return res;
+    } else {
+        return [al];
+    }
+}
+
+function download(): void {
+    const name = props.viewOptions?.filename;
+    if (isNonNullable(name)) {
+        const toolName = props.tool.name;
+        const downloadFilename = `${toolName}_${props.job.jobID}.aln`;
+        resultsService.downloadFile(props.job.jobID, name, downloadFilename).catch((e) => {
+            logger.error(e);
+        });
+    }
+}
 </script>
 
 <style lang="scss" scoped>
