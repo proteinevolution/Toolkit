@@ -209,11 +209,11 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import { HHompAlignmentItem, HHompHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
+import { HHompAlignmentItem, HHompHHInfoResult } from '@/types/toolkit/results';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
 import { defineResultTabProps } from '@/composables/useResultTab';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('HHompResultsTab');
@@ -224,6 +224,46 @@ const props = defineResultTabProps();
 
 const job = computed(() => props.job);
 
+function alignmentItemToRenderInfo(
+    al: HHompAlignmentItem,
+    start: number,
+    end: number,
+    qStart: number,
+    qEnd: number,
+    tStart: number,
+    tEnd: number,
+    qSeq: string,
+    tSeq: string
+) {
+    return {
+        agree: al.agree.slice(start, end),
+        query: {
+            consensus: al.query.consensus.slice(start, end),
+            end: qEnd,
+            name: al.query.name,
+            ref: al.query.ref,
+            seq: qSeq,
+            ss_conf: al.query.ss_conf.slice(start, end),
+            ss_dssp: al.query.ss_dssp.slice(start, end),
+            ss_pred: al.query.ss_pred.slice(start, end),
+            start: qStart,
+        },
+        template: {
+            accession: al.template.accession,
+            bb_conf: al.template.bb_conf.slice(start, end),
+            bb_pred: al.template.bb_pred.slice(start, end),
+            consensus: al.template.consensus.slice(start, end),
+            end: tEnd,
+            ref: al.template.ref,
+            seq: tSeq,
+            ss_conf: al.template.ss_conf.slice(start, end),
+            ss_dssp: al.template.ss_dssp.slice(start, end),
+            ss_pred: al.template.ss_pred.slice(start, end),
+            start: tStart,
+        },
+    };
+}
+
 const {
     alignments,
     info,
@@ -233,6 +273,7 @@ const {
     intersected,
     wrap,
     toggleWrap,
+    wrapAlignments,
     color,
     toggleColor,
     coloredSeq,
@@ -244,7 +285,12 @@ const {
     resubmitSection,
     displayTemplateAlignment,
     forwardQueryA3M,
-} = useSearchResultTab<HHompAlignmentItem, HHompHHInfoResult>({ logger, props });
+} = useSearchResultTab<HHompAlignmentItem, HHompHHInfoResult>({
+    logger,
+    props,
+    breakAfter: 70,
+    alignmentItemToRenderInfo,
+});
 
 const hitListFields = [
     {
@@ -294,55 +340,6 @@ const hitListFields = [
         sortable: true,
     },
 ];
-
-const breakAfter = 70;
-
-function wrapAlignments(al: HHompAlignmentItem): SearchAlignmentItemRender[] {
-    if (wrap.value) {
-        const res: SearchAlignmentItemRender[] = [];
-        let qStart: number = al.query.start;
-        let tStart: number = al.template.start;
-        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
-            const end: number = start + breakAfter;
-            const qSeq: string = al.query.seq.slice(start, end);
-            const tSeq: string = al.template.seq.slice(start, end);
-            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-            res.push({
-                agree: al.agree.slice(start, end),
-                query: {
-                    consensus: al.query.consensus.slice(start, end),
-                    end: qEnd,
-                    name: al.query.name,
-                    ref: al.query.ref,
-                    seq: qSeq,
-                    ss_conf: al.query.ss_conf.slice(start, end),
-                    ss_dssp: al.query.ss_dssp.slice(start, end),
-                    ss_pred: al.query.ss_pred.slice(start, end),
-                    start: qStart,
-                },
-                template: {
-                    accession: al.template.accession,
-                    bb_conf: al.template.bb_conf.slice(start, end),
-                    bb_pred: al.template.bb_pred.slice(start, end),
-                    consensus: al.template.consensus.slice(start, end),
-                    end: tEnd,
-                    ref: al.template.ref,
-                    seq: tSeq,
-                    ss_conf: al.template.ss_conf.slice(start, end),
-                    ss_dssp: al.template.ss_dssp.slice(start, end),
-                    ss_pred: al.template.ss_pred.slice(start, end),
-                    start: tStart,
-                },
-            });
-            qStart = qEnd + 1;
-            tStart = tEnd + 1;
-        }
-        return res;
-    } else {
-        return [al];
-    }
-}
 </script>
 
 <style lang="scss" scoped>

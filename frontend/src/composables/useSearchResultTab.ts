@@ -1,5 +1,5 @@
 import { ILogger } from 'js-logger';
-import { HHInfoResult, SearchAlignmentItem } from '@/types/toolkit/results';
+import { HHInfoResult, SearchAlignmentItem, SearchAlignmentItemRender } from '@/types/toolkit/results';
 import { colorSequence, ssColorSequence } from '@/util/SequenceUtils';
 import useResultTab, { ResultTabPropsWithDefaults } from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
@@ -10,10 +10,24 @@ import { useEventBus } from '@vueuse/core';
 import { computed, nextTick, onBeforeUnmount, ref, Ref } from 'vue';
 import { isNonNullable, isNullable } from '@/util/nullability-helpers';
 
-interface UseSearchResultTabArguments {
+type AlignmentItemRenderer<T> = (
+    item: T,
+    start: number,
+    end: number,
+    qStart: number,
+    qEnd: number,
+    tStart: number,
+    tEnd: number,
+    qSeq: string,
+    tSeq: string
+) => SearchAlignmentItemRender;
+
+interface UseSearchResultTabArguments<T> {
     logger: ILogger;
     // We want to pass through the props themselves because they are reactive
     props: Readonly<ResultTabPropsWithDefaults>;
+    breakAfter: number;
+    alignmentItemToRenderInfo: AlignmentItemRenderer<T>;
     onInitialized?: () => void;
     initialColor?: boolean;
 }
@@ -21,17 +35,17 @@ interface UseSearchResultTabArguments {
 export default function useSearchResultTab<T extends SearchAlignmentItem, S extends HHInfoResult>({
     logger,
     props,
+    breakAfter,
+    alignmentItemToRenderInfo,
     onInitialized,
     initialColor = false,
-}: UseSearchResultTabArguments) {
+}: UseSearchResultTabArguments<T>) {
     const alignments = ref<T[] | undefined>(undefined) as Ref<T[] | undefined>;
     const info = ref<S | undefined>(undefined) as Ref<S | undefined>;
     const selectedItems = ref<number[]>([]);
     const perPage = 50;
     const total = ref(100);
     const loadingMore = ref(false);
-    const color = ref(initialColor);
-    const wrap = ref(true);
 
     const allSelected = computed(() => {
         if (isNullable(alignments.value)) {
@@ -139,11 +153,36 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
         }
     }
 
+    const wrap = ref(true);
+
     async function toggleWrap(): Promise<void> {
         wrap.value = !wrap.value;
         await nextTick();
         updateHandyScroll();
     }
+
+    function wrapAlignments(al: T): SearchAlignmentItemRender[] {
+        if (wrap.value) {
+            const res: SearchAlignmentItemRender[] = [];
+            let qStart: number = al.query.start;
+            let tStart: number = al.template.start;
+            for (let start = 0; start < al.query.seq.length; start += breakAfter) {
+                const end: number = start + breakAfter;
+                const qSeq: string = al.query.seq.slice(start, end);
+                const tSeq: string = al.template.seq.slice(start, end);
+                const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
+                const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
+                res.push(alignmentItemToRenderInfo(al, start, end, qStart, qEnd, tStart, tEnd, qSeq, tSeq));
+                qStart = qEnd + 1;
+                tStart = tEnd + 1;
+            }
+            return res;
+        } else {
+            return [al];
+        }
+    }
+
+    const color = ref(initialColor);
 
     function toggleColor(): void {
         color.value = !color.value;
@@ -237,6 +276,7 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
         check,
         wrap,
         toggleWrap,
+        wrapAlignments,
         color,
         toggleColor,
         coloredSeq,

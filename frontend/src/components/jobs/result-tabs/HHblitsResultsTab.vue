@@ -152,7 +152,7 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import { HHblitsAlignmentItem, HHblitsHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
+import { HHblitsAlignmentItem, HHblitsHHInfoResult } from '@/types/toolkit/results';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
 import { defineResultTabProps } from '@/composables/useResultTab';
@@ -167,6 +167,38 @@ const props = defineResultTabProps();
 
 const job = computed(() => props.job);
 
+function alignmentItemToRenderInfo(
+    al: HHblitsAlignmentItem,
+    start: number,
+    end: number,
+    qStart: number,
+    qEnd: number,
+    tStart: number,
+    tEnd: number,
+    qSeq: string,
+    tSeq: string
+) {
+    return {
+        agree: al.agree.slice(start, end),
+        query: {
+            consensus: al.query.consensus.slice(start, end),
+            end: qEnd,
+            name: al.query.name,
+            ref: al.query.ref,
+            seq: qSeq,
+            start: qStart,
+        },
+        template: {
+            accession: al.template.accession,
+            consensus: al.template.consensus.slice(start, end),
+            end: tEnd,
+            ref: al.template.ref,
+            seq: tSeq,
+            start: tStart,
+        },
+    };
+}
+
 const {
     alignments,
     info,
@@ -180,6 +212,7 @@ const {
     check,
     wrap,
     toggleWrap,
+    wrapAlignments,
     color,
     toggleColor,
     coloredSeq,
@@ -191,7 +224,12 @@ const {
     displayTemplateAlignment,
     forward,
     forwardQueryA3M,
-} = useSearchResultTab<HHblitsAlignmentItem, HHblitsHHInfoResult>({ logger, props });
+} = useSearchResultTab<HHblitsAlignmentItem, HHblitsHHInfoResult>({
+    logger,
+    props,
+    breakAfter: 85,
+    alignmentItemToRenderInfo,
+});
 
 const hitListFields = [
     {
@@ -231,47 +269,6 @@ const hitListFields = [
         sortable: true,
     },
 ];
-
-const breakAfter = 85;
-
-function wrapAlignments(al: HHblitsAlignmentItem): SearchAlignmentItemRender[] {
-    if (wrap.value) {
-        const res: SearchAlignmentItemRender[] = [];
-        let qStart: number = al.query.start;
-        let tStart: number = al.template.start;
-        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
-            const end: number = start + breakAfter;
-            const qSeq: string = al.query.seq.slice(start, end);
-            const tSeq: string = al.template.seq.slice(start, end);
-            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-            res.push({
-                agree: al.agree.slice(start, end),
-                query: {
-                    consensus: al.query.consensus.slice(start, end),
-                    end: qEnd,
-                    name: al.query.name,
-                    ref: al.query.ref,
-                    seq: qSeq,
-                    start: qStart,
-                },
-                template: {
-                    accession: al.template.accession,
-                    consensus: al.template.consensus.slice(start, end),
-                    end: tEnd,
-                    ref: al.template.ref,
-                    seq: tSeq,
-                    start: tStart,
-                },
-            });
-            qStart = qEnd + 1;
-            tStart = tEnd + 1;
-        }
-        return res;
-    } else {
-        return [al];
-    }
-}
 </script>
 
 <style lang="scss" scoped>

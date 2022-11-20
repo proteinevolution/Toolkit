@@ -136,7 +136,7 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import { PSIBLASTAlignmentItem, PsiblastHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
+import { PSIBLASTAlignmentItem, PsiblastHHInfoResult } from '@/types/toolkit/results';
 import { resultsService } from '@/services/ResultsService';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
@@ -152,6 +152,32 @@ const { t } = useI18n();
 const props = defineResultTabProps();
 
 const job = computed(() => props.job);
+
+function alignmentItemToRenderInfo(
+    al: PSIBLASTAlignmentItem,
+    start: number,
+    end: number,
+    qStart: number,
+    qEnd: number,
+    tStart: number,
+    tEnd: number,
+    qSeq: string,
+    tSeq: string
+) {
+    return {
+        agree: al.agree.slice(start, end),
+        query: {
+            end: qEnd,
+            seq: qSeq,
+            start: qStart,
+        },
+        template: {
+            end: tEnd,
+            seq: tSeq,
+            start: tStart,
+        },
+    };
+}
 
 function onInitialized(): void {
     if (info.value) {
@@ -174,6 +200,7 @@ const {
     check,
     wrap,
     toggleWrap,
+    wrapAlignments,
     color,
     toggleColor,
     coloredSeq,
@@ -183,7 +210,13 @@ const {
     scrollToElem,
     resubmitSection,
     forward,
-} = useSearchResultTab<PSIBLASTAlignmentItem, PsiblastHHInfoResult>({ logger, props, onInitialized });
+} = useSearchResultTab<PSIBLASTAlignmentItem, PsiblastHHInfoResult>({
+    logger,
+    props,
+    breakAfter: 90,
+    alignmentItemToRenderInfo,
+    onInitialized,
+});
 
 const hitListFields = [
     {
@@ -223,41 +256,6 @@ const hitListFields = [
         sortable: true,
     },
 ];
-
-const breakAfter = 90;
-
-function wrapAlignments(al: PSIBLASTAlignmentItem): SearchAlignmentItemRender[] {
-    if (wrap.value) {
-        const res: SearchAlignmentItemRender[] = [];
-        let qStart: number = al.query.start;
-        let tStart: number = al.template.start;
-        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
-            const end: number = start + breakAfter;
-            const qSeq: string = al.query.seq.slice(start, end);
-            const tSeq: string = al.template.seq.slice(start, end);
-            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-            res.push({
-                agree: al.agree.slice(start, end),
-                query: {
-                    end: qEnd,
-                    seq: qSeq,
-                    start: qStart,
-                },
-                template: {
-                    end: tEnd,
-                    seq: tSeq,
-                    start: tStart,
-                },
-            });
-            qStart = qEnd + 1;
-            tStart = tEnd + 1;
-        }
-        return res;
-    } else {
-        return [al];
-    }
-}
 
 function download(): void {
     const name = props.viewOptions?.filename;

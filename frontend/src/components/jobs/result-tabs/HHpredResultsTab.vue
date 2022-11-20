@@ -201,7 +201,7 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import IntersectionObserver from '@/components/utils/IntersectionObserver.vue';
-import { HHpredAlignmentItem, HHpredHHInfoResult, SearchAlignmentItemRender } from '@/types/toolkit/results';
+import { HHpredAlignmentItem, HHpredHHInfoResult } from '@/types/toolkit/results';
 import { jobService } from '@/services/JobService';
 import { resultsService } from '@/services/ResultsService';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
@@ -222,6 +222,42 @@ const props = defineResultTabProps();
 
 const job = computed(() => props.job);
 
+function alignmentItemToRenderInfo(
+    al: HHpredAlignmentItem,
+    start: number,
+    end: number,
+    qStart: number,
+    qEnd: number,
+    tStart: number,
+    tEnd: number,
+    qSeq: string,
+    tSeq: string
+) {
+    return {
+        agree: al.agree.slice(start, end),
+        query: {
+            consensus: al.query.consensus.slice(start, end),
+            end: qEnd,
+            name: al.query.name,
+            ref: al.query.ref,
+            seq: qSeq,
+            ss_dssp: al.query.ss_dssp.slice(start, end),
+            ss_pred: al.query.ss_pred.slice(start, end),
+            start: qStart,
+        },
+        template: {
+            accession: al.template.accession,
+            consensus: al.template.consensus.slice(start, end),
+            end: tEnd,
+            ref: al.template.ref,
+            seq: tSeq,
+            ss_dssp: al.template.ss_dssp.slice(start, end),
+            ss_pred: al.template.ss_pred.slice(start, end),
+            start: tStart,
+        },
+    };
+}
+
 const {
     alignments,
     info,
@@ -235,6 +271,7 @@ const {
     check,
     wrap,
     toggleWrap,
+    wrapAlignments,
     color,
     toggleColor,
     coloredSeq,
@@ -248,7 +285,13 @@ const {
     forward,
     forwardQueryA3M,
     showModalsBus,
-} = useSearchResultTab<HHpredAlignmentItem, HHpredHHInfoResult>({ logger, props, initialColor: true });
+} = useSearchResultTab<HHpredAlignmentItem, HHpredHHInfoResult>({
+    logger,
+    props,
+    breakAfter: 80,
+    alignmentItemToRenderInfo,
+    initialColor: true,
+});
 
 const hitListFields = [
     {
@@ -298,51 +341,6 @@ const hitListFields = [
         sortable: true,
     },
 ];
-
-const breakAfter = 80;
-
-function wrapAlignments(al: HHpredAlignmentItem): SearchAlignmentItemRender[] {
-    if (wrap.value) {
-        const res: SearchAlignmentItemRender[] = [];
-        let qStart: number = al.query.start;
-        let tStart: number = al.template.start;
-        for (let start = 0; start < al.query.seq.length; start += breakAfter) {
-            const end: number = start + breakAfter;
-            const qSeq: string = al.query.seq.slice(start, end);
-            const tSeq: string = al.template.seq.slice(start, end);
-            const qEnd: number = qStart + qSeq.length - (qSeq.match(/[-.]/g) || []).length - 1;
-            const tEnd: number = tStart + tSeq.length - (tSeq.match(/[-.]/g) || []).length - 1;
-            res.push({
-                agree: al.agree.slice(start, end),
-                query: {
-                    consensus: al.query.consensus.slice(start, end),
-                    end: qEnd,
-                    name: al.query.name,
-                    ref: al.query.ref,
-                    seq: qSeq,
-                    ss_dssp: al.query.ss_dssp.slice(start, end),
-                    ss_pred: al.query.ss_pred.slice(start, end),
-                    start: qStart,
-                },
-                template: {
-                    accession: al.template.accession,
-                    consensus: al.template.consensus.slice(start, end),
-                    end: tEnd,
-                    ref: al.template.ref,
-                    seq: tSeq,
-                    ss_dssp: al.template.ss_dssp.slice(start, end),
-                    ss_pred: al.template.ss_pred.slice(start, end),
-                    start: tStart,
-                },
-            });
-            qStart = qEnd + 1;
-            tStart = tEnd + 1;
-        }
-        return res;
-    } else {
-        return [al];
-    }
-}
 
 function displayTemplateStructure(accession: string): void {
     showModalsBus.emit({
