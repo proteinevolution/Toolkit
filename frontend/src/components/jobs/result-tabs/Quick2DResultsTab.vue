@@ -14,7 +14,7 @@
         <div class="table-responsive">
             <table class="alignment-table">
                 <tbody>
-                    <template v-for="i in brokenQuery.length">
+                    <template v-for="i in brokenQuery.length" :key="'rows-' + i">
                         <tr :key="'1-' + i">
                             <td>AA_QUERY</td>
                             <td v-text="(i - 1) * breakAfter + 1"></td>

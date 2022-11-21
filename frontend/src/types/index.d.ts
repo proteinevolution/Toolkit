@@ -29,9 +29,11 @@ declare const msa: any;
 // Provide vue typings for Vue2 compatibility since they will no longer be present with Vue3
 // https://v3-migration.vuejs.org/migration-build.html#upgrade-workflow
 declare module 'vue' {
+    // eslint-disable-next-line vue/prefer-import-from-vue
     import { CompatVue } from '@vue/runtime-dom';
     const Vue: CompatVue;
     export default Vue;
+    // eslint-disable-next-line vue/prefer-import-from-vue
     export * from '@vue/runtime-dom';
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

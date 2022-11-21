@@ -63,6 +63,7 @@ export default defineComponent({
             required: true,
         },
     },
+    emits: ['elem-clicked', 'resubmit-section'],
     data() {
         return {
             resubmitSelection: [1, 1],

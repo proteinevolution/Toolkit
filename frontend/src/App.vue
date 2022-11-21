@@ -78,7 +78,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, getCurrentInstance, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import Header from '@/components/navigation/Header.vue';
 import Footer from '@/components/navigation/Footer.vue';
 import SideBar from '@/components/sidebar/SideBar.vue';
@@ -136,7 +136,8 @@ export default defineComponent({
         VueCookieAcceptDecline,
         ScrollTopButton,
     },
-    setup() {
+    emits: ['bv::show::modal', 'bv::hide::modal'],
+    setup(props, { emit }) {
         const { alert } = useToolkitNotifications();
         const { t } = useI18n();
         const rootStore = useRootStore();
@@ -175,7 +176,6 @@ export default defineComponent({
         };
 
         // Modals logic
-        const root = getCurrentInstance();
         const modalProps = reactive({
             modal: 'help', // for Simple Modal
             toolName: '', // for Help Modal
@@ -198,7 +198,7 @@ export default defineComponent({
             if (params.props) {
                 Object.assign(modalProps, params.props);
             }
-            root?.emit('bv::show::modal', params.id);
+            emit('bv::show::modal', params.id);
         };
 
         const clearForwardingModalData = (): void => {
@@ -215,7 +215,7 @@ export default defineComponent({
          They are hidden with hideModalsBus.emit(<MODAL_ID>). */
             showModalsBus.on(showModal);
             hideModalsBus.on((id: string) => {
-                root?.emit('bv::hide::modal', id);
+                emit('bv::hide::modal', id);
             });
         });
 

@@ -48,7 +48,7 @@
                 <div ref="scrollElem" class="table-responsive">
                     <table class="alignments-table">
                         <tbody>
-                            <template v-for="(al, i) in alignments">
+                            <template v-for="(al, i) in alignments" :key="'rows-' + al.num">
                                 <tr
                                     :key="'alignment-' + al.num"
                                     :ref="registerScrollRef('alignment-' + al.num)"
@@ -80,7 +80,9 @@
                                     <td colspan="3" v-html="t('jobs.results.hhblits.alignmentInfo', al)"></td>
                                 </tr>
 
-                                <template v-for="(alPart, pi) in wrapAlignments(al)">
+                                <template
+                                    v-for="(alPart, pi) in wrapAlignments(al)"
+                                    :key="'alignment-rows-' + i + '-' + pi">
                                     <tr :key="'alignment-part-' + i + '-' + pi" class="blank-row">
                                         <td></td>
                                     </tr>

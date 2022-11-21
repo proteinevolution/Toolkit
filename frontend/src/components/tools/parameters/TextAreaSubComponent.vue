@@ -94,6 +94,7 @@ export default defineComponent({
             default: false,
         },
     },
+    emits: ['input', 'validation'],
     setup() {
         const rootStore = useRootStore();
         const { alert } = useToolkitNotifications();

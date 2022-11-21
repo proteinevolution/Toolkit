@@ -86,7 +86,7 @@ export default defineComponent({
             this.buildMSAViewer(this.seqs);
         }
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.alignmentViewerResizeBus.off(this.handleAlignmentViewerResize);
         window.removeEventListener('resize', this.autoResize);
     },

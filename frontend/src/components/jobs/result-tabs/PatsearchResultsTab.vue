@@ -12,7 +12,7 @@
 
             <table class="alignment-table mt-3">
                 <tbody>
-                    <template v-for="(hit, i) in results.results.hits">
+                    <template v-for="(hit, i) in results.results.hits" :key="'rows-' + i">
                         <tr :key="'hit-name-' + i">
                             <td>
                                 <b v-text="hit.name"></b>

@@ -6,7 +6,7 @@
             <div class="result-options">
                 <a @click="forwardQueryA3M">{{ t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
-            <template v-for="(hit, i) in results.results.reptypes">
+            <template v-for="(hit, i) in results.results.reptypes" :key="'hit-results-' + i">
                 <h4
                     :key="'hit-' + i"
                     class="mb-4"
@@ -37,7 +37,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <template v-for="hitIdx in breakIndices(hit.len)">
+                        <template
+                            v-for="hitIdx in breakIndices(hit.len)"
+                            :key="'hit-' + i + '-rows-' + hitIdx + '-' + rep.id">
                             <tr
                                 v-for="rep in hit.reps"
                                 :key="'hit-' + i + '-seqal-' + hitIdx + '-' + rep.id"

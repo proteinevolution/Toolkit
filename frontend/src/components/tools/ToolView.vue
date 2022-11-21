@@ -108,7 +108,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { computed, defineComponent, getCurrentInstance, onBeforeUnmount, reactive, ref } from 'vue';
+import Vue, { computed, defineComponent, onBeforeUnmount, reactive, ref } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -160,7 +160,8 @@ export default defineComponent({
             default: undefined,
         },
     },
-    setup(props) {
+    emits: ['delete-job', 'refresh'],
+    setup(props, { emit }) {
         const route = useRoute();
         const router = useRouter();
         const toolsStore = useToolsStore();
@@ -210,7 +211,7 @@ export default defineComponent({
 
         function refresh(): void {
             if (route.name === 'tools') {
-                getCurrentInstance()?.emit('refresh');
+                emit('refresh');
             } else {
                 router.push('/tools/' + toolName.value);
             }
@@ -283,7 +284,6 @@ export default defineComponent({
             clearParameterRemember,
             fullScreen,
             launchHelpModal,
-            loadToolParameters,
             submission,
             tabIndex,
             toggleFullScreen,

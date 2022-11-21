@@ -113,6 +113,7 @@ export default defineComponent({
             required: true,
         },
     },
+    emits: ['hidden'],
     setup() {
         const { alert } = useToolkitNotifications();
         const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');

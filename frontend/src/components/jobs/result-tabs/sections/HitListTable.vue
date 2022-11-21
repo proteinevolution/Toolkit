@@ -91,6 +91,7 @@ export default defineComponent({
             required: true,
         },
     },
+    emits: ['elem-clicked'],
     data() {
         return {
             isBusy: false,

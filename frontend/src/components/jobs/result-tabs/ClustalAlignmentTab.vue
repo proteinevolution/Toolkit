@@ -18,7 +18,7 @@
             <div class="table-responsive">
                 <table>
                     <tbody>
-                        <template v-for="(group, groupI) in brokenAlignments">
+                        <template v-for="(group, groupI) in brokenAlignments" :key="groupI + '-rows'">
                             <tr v-for="elem in group" :key="groupI + '-' + elem.num">
                                 <td>
                                     <b-form-checkbox

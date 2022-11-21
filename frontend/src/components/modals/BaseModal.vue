@@ -65,6 +65,7 @@ export default defineComponent({
             default: false,
         },
     },
+    emits: ['show', 'hide', 'shown', 'hidden'],
 });
 </script>
 

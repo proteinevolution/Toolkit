@@ -19,6 +19,7 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const jobsStore = useJobsStore();
 
+// TODO: relax props
 const props = defineProps<ToolParameterProps & { job?: Job }>();
 
 const parameterName = ref('isPublic');

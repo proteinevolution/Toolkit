@@ -61,6 +61,7 @@ import { DateTime } from 'luxon';
 
 export default defineComponent({
     name: 'JobList',
+    emits: ['click'],
     data() {
         return {
             sortColumns: [

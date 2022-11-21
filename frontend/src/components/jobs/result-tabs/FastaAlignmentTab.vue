@@ -27,7 +27,7 @@
             <div class="table-responsive">
                 <table>
                     <tbody>
-                        <template v-for="(elem, index) in alignments">
+                        <template v-for="(elem, index) in alignments" :key="'rows' + elem.num">
                             <tr :key="'header' + elem.num">
                                 <td class="d-flex align-items-center">
                                     <b-form-checkbox

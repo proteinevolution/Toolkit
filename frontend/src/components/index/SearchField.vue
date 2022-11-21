@@ -79,6 +79,7 @@ export default defineComponent({
             required: false,
         },
     },
+    emits: ['input'],
     data() {
         return {
             search: '',
@@ -101,7 +102,7 @@ export default defineComponent({
     mounted() {
         document.addEventListener('click', this.handleClickOutside);
     },
-    destroyed() {
+    beforeUnmount() {
         document.removeEventListener('click', this.handleClickOutside);
     },
     methods: {

@@ -19,7 +19,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <template v-for="(hit, hidx) in results.results.hits">
+                    <template v-for="(hit, hidx) in results.results.hits" :key="'rows' + hidx">
                         <tr :key="'tr' + hidx" class="sequence-alignment">
                             <td v-text="hit[1]"></td>
                             <td v-text="hit[2]"></td>

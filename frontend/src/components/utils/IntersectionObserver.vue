@@ -1,35 +1,33 @@
 <template>
-    <div class="observer"></div>
+    <div ref="el" class="observer"></div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 
-export default defineComponent({
-    name: 'IntersectionObserver',
-    props: {
-        options: {
-            type: Object,
-            required: false,
-            default: () => ({}),
-        },
+const props = defineProps({
+    options: {
+        type: Object,
+        required: false,
+        default: () => ({}),
     },
-    data() {
-        return {
-            observer: null as any,
-        };
-    },
-    mounted() {
-        this.observer = new IntersectionObserver(([entry]: any) => {
-            if (entry && entry.isIntersecting) {
-                this.$emit('intersect');
-            }
-        }, this.options);
+});
+const emit = defineEmits(['intersect']);
 
-        this.observer.observe(this.$el);
-    },
-    destroyed() {
-        this.observer.disconnect();
-    },
+const observer = ref<IntersectionObserver | null>(null);
+const el = ref();
+
+onMounted(() => {
+    observer.value = new IntersectionObserver(([entry]: any) => {
+        if (entry && entry.isIntersecting) {
+            emit('intersect');
+        }
+    }, props.options);
+
+    observer.value.observe(el.value);
+});
+
+onBeforeUnmount(() => {
+    observer.value?.disconnect();
 });
 </script>
