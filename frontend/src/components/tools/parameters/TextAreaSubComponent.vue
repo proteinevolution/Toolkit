@@ -78,9 +78,11 @@ export default defineComponent({
          */
         parameter: {
             type: Object as () => TextAreaParameter,
+            required: true,
         },
         validationParams: {
             type: Object as () => ValidationParams,
+            required: true,
         },
         value: {
             type: String,
@@ -142,7 +144,7 @@ export default defineComponent({
         (this as any).boundDragOver = this.handleDragOver.bind(this);
         document.addEventListener('dragover', (this as any).boundDragOver);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         document.removeEventListener('dragover', (this as any).boundDragOver);
         this.remoteTriggerPasteExampleBus.off(this.handlePasteExample);
     },

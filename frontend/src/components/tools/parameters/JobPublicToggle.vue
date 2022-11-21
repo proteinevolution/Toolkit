@@ -2,59 +2,51 @@
     <i
         class="tool-action tool-action-push-up fa mr-4 hover-unlock"
         :class="[isPublic ? 'fa-lock-open' : 'fa-lock']"
-        :title="$t('tools.parameters.isPublic.' + isPublic)"
+        :title="t('tools.parameters.isPublic.' + isPublic)"
         @click="togglePublic"></i>
 </template>
 
-<script lang="ts">
-import Switches from 'vue-switches';
-import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { Job } from '@/types/toolkit/jobs';
-import { mapStores } from 'pinia';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
+import { useI18n } from 'vue-i18n';
+import { isNonNullable } from '@/util/nullability-helpers';
 
-export default ToolParameterMixin.extend({
-    name: 'JobPublicToggle',
-    components: { Switches },
-    props: {
-        job: {
-            type: Object as () => Job,
-            required: false,
-            default: undefined,
-        },
-    },
-    computed: {
-        parameterName() {
-            // override mixin value
-            return 'isPublic';
-        },
-        defaultSubmissionValue(): boolean {
-            // if logged in then default is private, else public
-            return !this.authStore.loggedIn;
-        },
-        isPublic(): boolean {
-            if (this.job) {
-                return this.job.isPublic;
-            } else {
-                return this.submissionValue;
-            }
-        },
-        ...mapStores(useAuthStore, useJobsStore),
-    },
-    methods: {
-        togglePublic(): void {
-            if (this.job) {
-                this.jobsStore.setJobPublic(this.job.jobID, !this.isPublic);
-            } else {
-                this.submissionValue = !this.isPublic;
-            }
-        },
-        submissionValueFromString(value: string): boolean {
-            return value === 'true';
-        },
-    },
+const { t } = useI18n();
+const authStore = useAuthStore();
+const jobsStore = useJobsStore();
+
+const props = defineProps<ToolParameterProps & { job?: Job }>();
+
+const parameterName = ref('isPublic');
+// default is private if logged in else public
+const defaultSubmissionValue = computed(() => !authStore.loggedIn);
+
+const { submissionValue } = useToolParameter({
+    props,
+    overrideParameterName: parameterName,
+    defaultSubmissionValue,
+    submissionValueFromString: (value: string): boolean => value === 'true',
 });
+
+const isPublic = computed(() => {
+    if (isNonNullable(props.job)) {
+        return props.job.isPublic;
+    } else {
+        return submissionValue;
+    }
+});
+
+function togglePublic(): void {
+    if (isNonNullable(props.job)) {
+        jobsStore.setJobPublic(props.job.jobID, !isPublic.value);
+    } else {
+        submissionValue.value = !isPublic.value;
+    }
+}
 </script>
 
 <style lang="scss" scoped>

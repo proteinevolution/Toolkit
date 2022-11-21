@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+import ToolParameterMixin from '@/composables/useToolParameter';
 
 const ParameterRememberMixin = ToolParameterMixin.extend({
     props: {

@@ -2,8 +2,8 @@
     <div class="custom-job-id">
         <b-form-input
             v-model="customJobId"
-            v-b-tooltip.hover="$t('constraints.customerJobIdTooShort')"
-            :placeholder="$t('tools.parameters.customJobId.placeholder')"
+            v-b-tooltip.hover="t('constraints.customerJobIdTooShort')"
+            :placeholder="t('tools.parameters.customJobId.placeholder')"
             aria-describedby="custom-job-id-invalid"
             :state="valid"
             @input="inputChanged" />
@@ -15,86 +15,83 @@
     </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue';
+<script setup lang="ts">
+import Vue, { computed, ref } from 'vue';
 import { authService } from '@/services/AuthService';
-import ToolParameterMixin from '@/mixins/ToolParameterMixin';
+import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
 import { debounce } from 'lodash-es';
+import { useI18n } from 'vue-i18n';
 
-export default ToolParameterMixin.extend({
-    name: 'CustomJobIdInput',
-    data() {
-        return {
-            suggestion: '' as string,
-        };
+const { t } = useI18n();
+
+const props = defineToolParameterProps();
+
+const suggestion = ref('');
+const parameterName = ref('jobID');
+
+const { error, hasError, setError } = useToolParameter({ props, overrideParameterName: parameterName });
+
+const customJobId = computed({
+    // handle submission manually (not via ToolParameterMixin) to exclude empty strings
+    get(): string {
+        if (!(parameterName.value in props.submission)) {
+            return '';
+        }
+        return props.submission[parameterName.value];
     },
-    computed: {
-        parameterName() {
-            // override mixin value
-            return 'jobID';
-        },
-        customJobId: {
-            // handle submission manually (not via ToolParameterMixin) to exclude empty strings
-            get(): string {
-                if (!(this.parameterName in this.submission)) {
-                    return '';
-                }
-                return this.submission[this.parameterName];
-            },
-            set(value: string) {
-                // don't set submission if its empty
-                if (value) {
-                    Vue.set(this.submission, this.parameterName, value);
-                } else {
-                    Vue.delete(this.submission, this.parameterName);
-                }
-            },
-        },
-        valid(): boolean | null {
-            if (this.customJobId.length === 0) {
-                return null;
-            }
-            return !this.hasError;
-        },
-    },
-    created() {
-        (this as any).debouncedValidateCustomJobId = debounce(this.validateCustomJobId, 400);
-    },
-    methods: {
-        inputChanged(value: string) {
-            if (value.length === 0) {
-                this.setError(undefined);
-                return;
-            } else if (value.length < 3) {
-                this.setError({
-                    textKey: 'constraints.customerJobIdTooShort',
-                });
-                return;
-            }
-            (this as any).debouncedValidateCustomJobId(value);
-        },
-        validateCustomJobId(value: string) {
-            authService.validateJobId(value).then((result: CustomJobIdValidationResult) => {
-                if (this.customJobId === value) {
-                    // only update the error if value hasn't changed since api call
-                    const error: ConstraintError | undefined = !result.exists
-                        ? undefined
-                        : {
-                              textKey: 'constraints.invalidCustomJobId',
-                          };
-                    this.setError(error);
-                    this.suggestion = result.suggested ? result.suggested : '';
-                }
-            });
-        },
-        takeSuggestion() {
-            this.customJobId = this.suggestion;
-            this.validateCustomJobId(this.customJobId);
-        },
+    set(value: string) {
+        // don't set submission if its empty
+        if (value !== '') {
+            Vue.set(props.submission, parameterName.value, value);
+        } else {
+            Vue.delete(props.submission, parameterName.value);
+        }
     },
 });
+
+const valid = computed<boolean | null>(() => {
+    if (customJobId.value.length === 0) {
+        return null;
+    }
+    return !hasError;
+});
+
+function validateCustomJobId(value: string) {
+    authService.validateJobId(value).then((result: CustomJobIdValidationResult) => {
+        if (customJobId.value === value) {
+            // only update the error if value hasn't changed since api call
+            const error: ConstraintError | undefined = !result.exists
+                ? undefined
+                : {
+                      textKey: 'constraints.invalidCustomJobId',
+                  };
+            setError(error);
+            suggestion.value = result.suggested ? result.suggested : '';
+        }
+    });
+}
+
+const debouncedValidateCustomJobId = debounce(validateCustomJobId, 400);
+
+function inputChanged(value: string) {
+    if (value.length === 0) {
+        setError(undefined);
+        return;
+    } else if (value.length < 3) {
+        setError({
+            textKey: 'constraints.customerJobIdTooShort',
+        });
+        return;
+    }
+    debouncedValidateCustomJobId(value);
+}
+
+function takeSuggestion() {
+    customJobId.value = suggestion.value;
+    validateCustomJobId(customJobId.value);
+}
 </script>
 
 <style lang="scss" scoped>
