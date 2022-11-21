@@ -4,7 +4,7 @@ module.exports = {
         browser: true,
         es2021: true,
     },
-    extends: ['plugin:vue/recommended', 'eslint:recommended', '@vue/typescript/recommended', 'prettier'],
+    extends: ['plugin:vue/vue3-recommended', 'eslint:recommended', '@vue/typescript/recommended', 'prettier'],
     ignorePatterns: ['**/*.min.js'],
     parserOptions: {
         ecmaVersion: 2020,

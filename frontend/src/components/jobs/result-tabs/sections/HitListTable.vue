@@ -20,7 +20,7 @@
 
         <b-table
             id="hitListTable"
-            :busy.sync="isBusy"
+            v-model:busy="isBusy"
             :items="hitsProvider"
             :fields="fields"
             :current-page="currentPage"
