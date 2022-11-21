@@ -1,4 +1,4 @@
-import Vue, { computed, Ref } from 'vue';
+import Vue, { computed, Ref, watch } from 'vue';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { TranslateResult, useI18n } from 'vue-i18n';
 import { Parameter, ValidationParams } from '@/types/toolkit/tools';
@@ -9,28 +9,32 @@ export interface ToolParameterProps<PARAM extends Parameter = Parameter> {
     validationParams: ValidationParams;
     validationErrors: Record<string, ConstraintError>;
     submission: any;
+    rememberParams: any;
 }
 
 export function defineToolParameterProps<PARAM extends Parameter = Parameter>(): ToolParameterProps<PARAM> {
     return defineProps<ToolParameterProps<PARAM>>();
 }
 
-interface UseToolParameterArguments {
+interface UseToolParameterArguments<T> {
     props: ToolParameterProps;
-    defaultSubmissionValue?: Ref<any>;
+    defaultSubmissionValue: Ref<T>;
     // can be overridden in the component depending on the parameter type
     overrideParameterName?: Ref<string>;
-    submissionValueFromString?: (value: string) => any;
-    submissionValueToString?: (value: any) => string;
+    submissionValueFromString?: (value: string) => T;
+    submissionValueToString?: (value: T) => string;
+    // Enable parameter remembering
+    rememberParameters?: Ref<boolean>;
 }
 
-export default function useToolParameter({
+export default function useToolParameter<T>({
     props,
     defaultSubmissionValue,
     overrideParameterName,
     submissionValueFromString,
     submissionValueToString,
-}: UseToolParameterArguments) {
+    rememberParameters,
+}: UseToolParameterArguments<T>) {
     const { t } = useI18n();
 
     const parameterName = overrideParameterName ?? computed(() => props.parameter.name);
@@ -52,21 +56,40 @@ export default function useToolParameter({
         }
     }
 
-    function setSubmissionValue(value: any) {
-        Vue.set(props.submission, parameterName.value, (submissionValueToString ?? ((v) => String(v)))(value));
+    const valueFromString = submissionValueFromString ?? ((v) => v as T);
+    const valueToString = submissionValueToString ?? ((v) => String(v));
+
+    function setSubmissionValue(value: T) {
+        Vue.set(props.submission, parameterName.value, valueToString(value));
     }
 
     const submissionValue = computed({
-        get(): any {
+        get(): T {
             if (!(parameterName.value in props.submission)) {
-                setSubmissionValue(defaultSubmissionValue?.value);
+                setSubmissionValue(defaultSubmissionValue.value);
             }
-            return (submissionValueFromString ?? ((v) => v))(props.submission[parameterName.value]);
+            return valueFromString(props.submission[parameterName.value]);
         },
-        set(value: any) {
+        set(value: T) {
             setSubmissionValue(value);
         },
     });
 
-    return { parameterName, submissionValue, error, hasError, errorMessage, setError };
+    const isNonDefaultValue = computed(() => submissionValue.value == defaultSubmissionValue.value);
+
+    watch(
+        submissionValue,
+        (value) => {
+            if (rememberParameters?.value ?? false) {
+                if (isNonDefaultValue.value) {
+                    Vue.set(props.rememberParams, parameterName.value, valueToString(value));
+                } else {
+                    Vue.delete(props.rememberParams, parameterName.value);
+                }
+            }
+        },
+        { deep: true, immediate: true }
+    );
+
+    return { parameterName, submissionValue, isNonDefaultValue, error, hasError, errorMessage, setError };
 }

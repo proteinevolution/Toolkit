@@ -1,80 +1,73 @@
 <template>
-    <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
+    <b-form-group :label="t('tools.parameters.labels.' + parameter.name)">
         <b-form-input
             v-model="submissionValue"
             :placeholder="parameter.inputPlaceholder"
             :state="state"
-            :class="{ nonDefault: !disableRemember && isNonDefaultValue }"
+            :class="{ nonDefault: rememberParameters && isNonDefaultValue }"
             type="text"
             size="sm"
             required />
     </b-form-group>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed, onMounted, ref, watch } from 'vue';
 import { TextInputParameter } from '@/types/toolkit/tools';
-import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
 import { useEventBus } from '@vueuse/core';
+import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import { useI18n } from 'vue-i18n';
+import { isNonNullable } from '@/util/nullability-helpers';
 
-export default ParameterRememberMixin.extend({
-    name: 'TextInputParameter',
-    props: {
-        /*
-         Simply stating the interface type doesn't work, this is a workaround. See
-         https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-         */
-        parameter: Object as () => TextInputParameter,
-    },
-    setup() {
-        const pasteExampleBus = useEventBus<void>('paste-example');
-        return { pasteExampleBus };
-    },
-    mounted() {
-        this.pasteExampleBus.on(this.handlePasteExample);
-    },
-    computed: {
-        defaultSubmissionValue(): any {
-            // overrides the property in ToolParameterMixin
-            return '';
-        },
-        disableRemember(): boolean {
-            // overrides property in ParameterRememberMixin
-            return this.parameter.disableRemember || false;
-        },
-        state() {
-            if (this.submissionValue.length === 0) {
-                return null;
-            } else if (this.hasError) {
-                return false;
-            } else if (this.parameter.regex) {
-                return true;
-            }
-            return null;
-        },
-        regex(): RegExp | null {
-            return this.parameter.regex ? new RegExp(this.parameter.regex) : null;
-        },
-    },
-    watch: {
-        submissionValue: {
-            immediate: true,
-            handler(value: string) {
-                if (this.regex && !this.regex.test(value)) {
-                    this.setError({ textKey: 'constraints.format' });
-                } else {
-                    this.setError(undefined);
-                }
-            },
-        },
-    },
-    methods: {
-        handlePasteExample() {
-            if (this.parameter.sampleInput) {
-                this.submissionValue = this.parameter.sampleInput;
-            }
-        },
-    },
+const { t } = useI18n();
+
+const props = defineToolParameterProps<TextInputParameter>();
+const parameter = computed(() => props.parameter);
+const rememberParameters = computed(() => !(parameter.value.disableRemember ?? false));
+
+const defaultSubmissionValue = ref('');
+
+const { submissionValue, isNonDefaultValue, hasError, setError } = useToolParameter({
+    props,
+    defaultSubmissionValue,
+    rememberParameters,
 });
+
+const state = computed<boolean | null>(() => {
+    if (submissionValue.value.length === 0) {
+        return null;
+    } else if (hasError) {
+        return false;
+    } else if (parameter.value.regex) {
+        return true;
+    }
+    return null;
+});
+
+const regex = computed<RegExp | null>(() =>
+    isNonNullable(parameter.value.regex) ? new RegExp(parameter.value.regex) : null
+);
+
+watch(
+    submissionValue,
+    (value: string) => {
+        if (isNonNullable(regex.value) && !regex.value.test(value)) {
+            setError({ textKey: 'constraints.format' });
+        } else {
+            setError(undefined);
+        }
+    },
+    { immediate: true }
+);
+
+function handlePasteExample() {
+    if (parameter.value.sampleInput) {
+        submissionValue.value = parameter.value.sampleInput;
+    }
+}
+
+const pasteExampleBus = useEventBus<void>('paste-example');
+onMounted(() => pasteExampleBus.on(handlePasteExample));
 </script>
 
 <style lang="scss" scoped>

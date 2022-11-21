@@ -31,7 +31,11 @@ const props = defineToolParameterProps();
 const suggestion = ref('');
 const parameterName = ref('jobID');
 
-const { error, hasError, setError } = useToolParameter({ props, overrideParameterName: parameterName });
+const { error, hasError, setError } = useToolParameter({
+    props,
+    overrideParameterName: parameterName,
+    defaultSubmissionValue: ref(''),
+});
 
 const customJobId = computed({
     // handle submission manually (not via ToolParameterMixin) to exclude empty strings

@@ -1,5 +1,5 @@
 <template>
-    <b-form-group :label="$t('tools.parameters.labels.' + parameter.name)">
+    <b-form-group :label="t('tools.parameters.labels.' + parameter.name)">
         <b-form-input
             v-model.number="submissionValue"
             type="number"
@@ -17,56 +17,51 @@
     </b-form-group>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
 import { NumberParameter } from '@/types/toolkit/tools';
 import { ConstraintError } from '@/types/toolkit/validation';
-import ParameterRememberMixin from '@/mixins/ParameterRememberMixin';
+import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import { useI18n } from 'vue-i18n';
 
-export default ParameterRememberMixin.extend({
-    name: 'NumberParameter',
-    props: {
-        /*
-         Simply stating the interface type doesn't work, this is a workaround. See
-         https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-         */
-        parameter: Object as () => NumberParameter,
-    },
-    computed: {
-        defaultSubmissionValue(): any {
-            // overrides property in ToolParameterMixin
-            return this.parameter.default || 0;
-        },
-    },
-    watch: {
-        submissionValue: {
-            immediate: true,
-            handler(value: number) {
-                const error: ConstraintError | undefined = this.validate(value);
-                this.setError(error);
-            },
-        },
-    },
-    methods: {
-        validate(value: number): ConstraintError | undefined {
-            if (!value && value !== 0) {
-                return {
-                    textKey: 'constraints.notEmpty',
-                };
-            } else if (
-                (this.parameter.min && value < this.parameter.min) ||
-                (this.parameter.max && value > this.parameter.max)
-            ) {
-                return {
-                    textKey: 'constraints.range',
-                    textKeyParams: { min: this.parameter.min, max: this.parameter.max },
-                };
-            }
-        },
-        submissionValueFromString(value: string): number {
-            return parseFloat(value);
-        },
-    },
+const { t } = useI18n();
+
+const props = defineToolParameterProps<NumberParameter>();
+const parameter = computed(() => props.parameter);
+
+const defaultSubmissionValue = computed(() => props.parameter.default ?? 0);
+
+const { submissionValue, isNonDefaultValue, errorMessage, hasError, setError } = useToolParameter({
+    props,
+    defaultSubmissionValue,
+    submissionValueFromString: (value: string): number => parseFloat(value),
+    rememberParameters: ref(true),
 });
+
+function validate(value: number): ConstraintError | undefined {
+    if (!value && value !== 0) {
+        return {
+            textKey: 'constraints.notEmpty',
+        };
+    } else if (
+        (props.parameter.min && value < props.parameter.min) ||
+        (props.parameter.max && value > props.parameter.max)
+    ) {
+        return {
+            textKey: 'constraints.range',
+            textKeyParams: { min: props.parameter.min, max: props.parameter.max },
+        };
+    }
+}
+
+watch(
+    submissionValue,
+    (value: number) => {
+        const error: ConstraintError | undefined = validate(value);
+        setError(error);
+    },
+    { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>

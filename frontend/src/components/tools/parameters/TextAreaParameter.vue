@@ -46,7 +46,6 @@ const defaultSubmissionValue = computed(() => route.params.input ?? '');
 const { parameterName, submissionValue, setError } = useToolParameter({
     props,
     defaultSubmissionValue,
-    submissionValueFromString: (value: string): boolean => value === 'true',
 });
 
 const parameterNameTwo = computed(() => parameterName.value + '_two');
