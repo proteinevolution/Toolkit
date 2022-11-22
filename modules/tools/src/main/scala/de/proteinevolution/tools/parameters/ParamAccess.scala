@@ -69,7 +69,7 @@ class ParamAccess @Inject() (tel: TEL) {
 
     // Common
     case "ALIGNMENT"         => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
-    case "STANDARD_DB"       => select("standarddb", default = Some("alphafold_uniprot50"))
+    case "STANDARD_DB"       => select("standarddb", default = Some("proteasome_homologs"))
     case "PMIN"              => select("pmin", default = Some("20"))
     case "DESC"              => select("desc", default = Some("250"))
     case "MAXROUNDS"         => select("maxrounds", default = Some("1"))
@@ -83,6 +83,13 @@ class ParamAccess @Inject() (tel: TEL) {
     case "HHBLITSDB" => select("hhblitsdb", default = Some("UniRef30"))
     case "HHBLITS_INCL_EVAL" =>
       select("hhblits_incl_eval", default = Some("1e-3"))
+
+    // pLM-BLAST
+    case "PLMBLASTDB"               => select("plmblastdb", default = Some("ECOD50"))
+    case "COSINE_PERCENTILE_CUTOFF" => select("cosine_percentile_cutoff", default = Some("99"))
+    case "ALIGNMENT_CUTOFF"         => select("alignment_cutoff", default = Some("0.35"))
+    case "WIN_LEN"                  => select("win_len", default = Some("1"))
+    case "MERGE_HITS"               => select("merge_hits", default = Some("1"))
 
     // HHpred
     case "TWOTEXTALIGNMENT" =>
@@ -283,6 +290,7 @@ class ParamAccess @Inject() (tel: TEL) {
       getParam("STANDARD_DB").name,
       getParam("HHPRED_DB_PROTEOMES").name,
       getParam("HHBLITSDB").name,
+      getParam("PLMBLASTDB").name,
       getParam("HHOMPDB").name,
       getParam("HMMER_DB").name,
       getParam("PATSEARCH_DB").name,

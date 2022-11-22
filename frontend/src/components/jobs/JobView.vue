@@ -96,6 +96,7 @@ export default Vue.extend({
         hhpredResults: () => lazyLoadView(import('./result-tabs/HHpredResultsTab.vue')),
         psiblastResults: () => lazyLoadView(import('./result-tabs/PsiblastResultsTab.vue')),
         hmmerResults: () => lazyLoadView(import('./result-tabs/HmmerResultsTab.vue')),
+        plmblastResults: () => lazyLoadView(import('./result-tabs/PLMBlastResultsTab.vue')),
         clansResults: () => lazyLoadView(import('./result-tabs/ClansResultsTab.vue')),
         patsearchResults: () => lazyLoadView(import('./result-tabs/PatsearchResultsTab.vue')),
         plotView: () => lazyLoadView(import('./result-tabs/PlotTab.vue')),

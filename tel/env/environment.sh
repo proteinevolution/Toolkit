@@ -68,6 +68,8 @@ export MARCOILMTK="${BIOPROGS}/tools/marcoil/R5.MTK"
 export MARCOILINPUT="${BIOPROGS}/tools/marcoil/Inputs"
 # PYTHONPATH FOR PDBX AND MODELLER
 export PYTHONPATH="${BIOPROGS}/tools/modeller/modlib/:${BIOPROGS}/dependencies/pdbx"
+# pLM-BLAST
+export PLMBLASTPATH="${BIOPROGS}/tools/pLM-BLAST"
 # Setup PHYLIP (needed by the Perl Script of Phylip)
 export PHYLIPBIN="${BIOPROGS}/tools/phylip/current/bin64"
 # Reformat version with PHYLIP Support (new reformat.pl does not have this support)

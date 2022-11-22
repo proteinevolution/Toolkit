@@ -49,6 +49,7 @@ export default {
         },
         labels: {
             standarddb: 'Select target database',
+            plmblastdb: 'Select target database',
             pmin: 'Min probability in hitlist (%)',
             desc: 'Max target hits',
             maxrounds: 'Number of iterations',
@@ -126,6 +127,10 @@ export default {
             max_seqid: 'Maximal Sequence Identity (%)',
             min_query_cov: 'Minimal coverage with query (%)',
             num_seqs_extract: 'No. of most dissimilar sequences to extract',
+            cosine_percentile_cutoff: 'Cosine similarity percentile cut-off',
+            alignment_cutoff: 'Alignment score cut-off',
+            win_len: 'Window length',
+            merge_hits: 'Merge hits',
         },
     },
     inputPlaceholder: {

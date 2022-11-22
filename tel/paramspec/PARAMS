@@ -42,6 +42,7 @@ blast_incl_eval GEN blast_incl_eval.prop
 pcoils_input_mode GEN pcoils_input_mode.prop
 pcoils_weighting GEN pcoils_weighting.prop
 pcoils_matrix GEN pcoils_matrix.prop
+plmblastdb  GEN plmblastdb.py
 evalue GEN evalue.prop
 no_replicates GEN no_replicates.prop
 samcc_periodicity GEN samcc_periodicity.prop
@@ -57,3 +58,7 @@ desc GEN desc.prop
 clustering_mode GEN clustering_mode.prop
 pmin GEN pmin.prop
 min_seqid_query GEN min_seqid_query.prop
+cosine_percentile_cutoff GEN  cosine_percentile_cutoff.prop
+alignment_cutoff GEN alignment_cutoff.prop
+merge_hits GEN merge_hits.prop
+win_len GEN win_len.prop

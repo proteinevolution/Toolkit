@@ -68,6 +68,14 @@ export interface HMMERAlignmentItem extends SearchAlignmentItem {
     observedDomains: number;
 }
 
+export interface PLMBLASTAlignmentItem extends SearchAlignmentItem {
+    fastaLink: string;
+    eval: number;
+    bitScore: number;
+    hitLen: number;
+}
+
+
 export interface PSIBLASTAlignmentItem extends SearchAlignmentItem {
     fastaLink: string;
     eval: number;
@@ -200,6 +208,10 @@ export interface HMMERHHInfoResult extends HHInfoResult {
     tm: number;
     coil: number;
     signal: string;
+}
+
+export interface PLMBLASTHHInfoResult extends HHInfoResult {
+    db: string;
 }
 
 export interface HHompHHInfoResult extends HHInfoResult {
