@@ -217,6 +217,26 @@ export default {
                 'Score: {bitScore},&emsp;Aligned positions: {hitLen},&emsp;' +
                 'Observed domains: {observedDomains}',
         },
+        plmblast: {
+            noResults:
+                'No hits found! Please re-run pLM-BLAST with a custom-built multiple sequence alignment as input ' +
+                '(set "MSA enrichment iterations using HHblits" to 0). You could also consider picking a different ' +
+                'target database and/or using different parameters.',
+            numHits: 'Number of Hits: <b>{num}</b>',
+            table: {
+                num: 'Nr',
+                accession: 'ID',
+                description: 'Title',
+                full_evalue: 'E-value',
+                eValue: 'Ind. E-value',
+                bitscore: 'Bitscore',
+                hit_len: 'Aligned Positions',
+            },
+            alignmentInfo:
+                'E-value: {fullEval},&emsp;Ind. E-value: {eval},&emsp;' +
+                'Score: {bitScore},&emsp;Aligned positions: {hitLen},&emsp;' +
+                'Observed domains: {observedDomains}',
+        },
         imagesView: {
             noPeriodicity: 'No periodicity spectrum found!',
             noRepeats: 'No significant repeats found for given values!',

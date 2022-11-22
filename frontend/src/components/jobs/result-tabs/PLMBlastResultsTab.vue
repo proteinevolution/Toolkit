@@ -1,14 +1,14 @@
 <template>
     <Loading v-if="loading" :message="$t('loading')" />
     <div v-else class="font-small">
-        <b v-if="total === 0" v-text="$t('jobs.results.hmmer.noResults')"></b>
+        <b v-if="total === 0" v-text="$t('jobs.results.plmblast.noResults')"></b>
         <div v-else>
             <div class="result-options">
                 <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
                 <a class="mr-4" @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
             </div>
 
-            <div v-html="$t('jobs.results.hmmer.numHits', { num: total })"></div>
+            <div v-html="$t('jobs.results.plmblast.numHits', { num: total })"></div>
 
             <div ref="visualization" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
@@ -43,33 +43,33 @@ export default SearchResultTabMixin.extend({
             hitListFields: [
                 {
                     key: 'num',
-                    label: this.$t('jobs.results.hmmer.table.num'),
+                    label: this.$t('jobs.results.plmblast.table.num'),
                     sortable: true,
                 },
                 {
                     key: 'acc',
-                    label: this.$t('jobs.results.hmmer.table.accession'),
+                    label: this.$t('jobs.results.plmblast.table.accession'),
                     sortable: true,
                 },
                 {
                     key: 'name',
-                    label: this.$t('jobs.results.hmmer.table.description'),
+                    label: this.$t('jobs.results.plmblast.table.description'),
                     sortable: true,
                 },
                 {
                     key: 'eval',
-                    label: this.$t('jobs.results.hmmer.table.eValue'),
+                    label: this.$t('jobs.results.plmblast.table.eValue'),
                     class: 'no-wrap',
                     sortable: true,
                 },
                 {
                     key: 'bitScore',
-                    label: this.$t('jobs.results.hmmer.table.bitscore'),
+                    label: this.$t('jobs.results.plmblast.table.bitscore'),
                     sortable: true,
                 },
                 {
                     key: 'hitLen',
-                    label: this.$t('jobs.results.hmmer.table.hit_len'),
+                    label: this.$t('jobs.results.plmblast.table.hit_len'),
                     sortable: true,
                 },
             ],
