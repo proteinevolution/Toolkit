@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
 import { TextAreaParameter } from '@/types/toolkit/tools';
@@ -37,8 +37,7 @@ import { useRoute } from 'vue-router';
 const { t } = useI18n();
 
 const props = defineToolParameterProps<TextAreaParameter>();
-const parameter = computed(() => props.parameter);
-const validationParams = computed(() => props.validationParams);
+const { parameter, submission, validationParams } = toRefs(props);
 
 const route = useRoute();
 const defaultSubmissionValue = computed(() => route.params.input ?? '');
@@ -52,17 +51,17 @@ const parameterNameTwo = computed(() => parameterName.value + '_two');
 const submissionValueTwo = computed({
     // has to be handled manually, not covered by the ToolParameterMixin
     get(): string {
-        if (!(parameterNameTwo.value in props.submission)) {
+        if (!(parameterNameTwo.value in submission.value)) {
             return '';
         }
-        return props.submission[parameterNameTwo.value];
+        return submission.value[parameterNameTwo.value];
     },
     set(value: string) {
         // don't set submission for second text area if its empty
         if (value) {
-            props.submission[parameterNameTwo.value] = value;
+            submission.value[parameterNameTwo.value] = value;
         } else {
-            delete props.submission[parameterNameTwo.value];
+            delete submission.value[parameterNameTwo.value];
         }
     },
 });
@@ -83,7 +82,7 @@ watch(secondTextAreaEnabledInternal, (value: boolean) => {
 
 function acceptForwardData({ data, jobID }: { data: string; jobID: string }): void {
     submissionValue.value = data;
-    props.submission.parentID = jobID;
+    submission.value.parentID = jobID;
 }
 
 const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');

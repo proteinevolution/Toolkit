@@ -183,7 +183,7 @@ import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
 import { defineResultTabProps } from '@/composables/useResultTab';
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable, isNullable } from '@/util/nullability-helpers';
 import { useRouter } from 'vue-router';
@@ -194,8 +194,7 @@ const { t } = useI18n();
 const { alert } = useToolkitNotifications();
 
 const props = defineResultTabProps();
-
-const job = computed(() => props.job);
+const job = toRef(props, 'job');
 
 function alignmentItemToRenderInfo(
     al: HHpredAlignmentItem,

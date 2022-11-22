@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 import { authService } from '@/services/AuthService';
 import { debounce } from 'lodash-es';
 import { ConstraintError } from '@/types/toolkit/validation';
@@ -25,7 +25,7 @@ import { isNonNullable } from '@/util/nullability-helpers';
 const { t } = useI18n();
 
 const props = defineToolParameterProps();
-const parameter = computed(() => props.parameter);
+const parameter = toRef(props, 'parameter');
 
 const defaultSubmissionValue = ref('');
 

@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, toRef, watch } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -143,7 +143,7 @@ interface ToolViewProps {
 }
 
 const props = defineProps<ToolViewProps>();
-const job = computed(() => props.job);
+const job = toRef(props, 'job');
 
 const emit = defineEmits(['delete-job', 'refresh']);
 

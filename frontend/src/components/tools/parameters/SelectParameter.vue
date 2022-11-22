@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue';
 import Multiselect from '@suadelabs/vue3-multiselect';
 import { SelectOption, SelectParameter } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
@@ -57,9 +57,7 @@ const props = withDefaults(
         forceSelectNone: false,
     }
 );
-
-const disabled = computed(() => props.disabled);
-const parameter = computed(() => props.parameter);
+const { disabled, parameter, forceSelectNone } = toRefs(props);
 
 const isMulti = computed(() => parameter.value.forceMulti || parameter.value.maxSelectedOptions > 1);
 const optionsLimit = computed(() => {
@@ -75,7 +73,7 @@ const defaultSubmissionValue = computed(() => parameter.value.default || '');
 const { submissionValue, isNonDefaultValue } = useToolParameter({
     props,
     defaultSubmissionValue,
-    rememberParameters: computed(() => !props.disabled),
+    rememberParameters: computed(() => !disabled.value),
 });
 
 const selected = computed({
@@ -94,7 +92,7 @@ const selected = computed({
 });
 
 watch(
-    () => props.forceSelectNone,
+    forceSelectNone,
     (value: boolean) => {
         if (value) {
             selected.value = [];

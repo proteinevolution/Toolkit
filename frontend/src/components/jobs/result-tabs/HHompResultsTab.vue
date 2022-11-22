@@ -165,6 +165,7 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from 'vue';
 import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
@@ -173,7 +174,6 @@ import { HHompAlignmentItem, HHompHHInfoResult } from '@/types/toolkit/results';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
 import { defineResultTabProps } from '@/composables/useResultTab';
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('HHompResultsTab');
@@ -181,8 +181,7 @@ const logger = Logger.get('HHompResultsTab');
 const { t } = useI18n();
 
 const props = defineResultTabProps();
-
-const job = computed(() => props.job);
+const job = toRef(props, 'job');
 
 function alignmentItemToRenderInfo(
     al: HHompAlignmentItem,

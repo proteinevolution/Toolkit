@@ -8,8 +8,8 @@ export interface ToolParameterProps<PARAM extends Parameter = Parameter> {
     parameter: PARAM;
     validationParams: ValidationParams;
     validationErrors: Record<string, ConstraintError>;
-    submission: any;
-    rememberParams: any;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
 }
 
 export function defineToolParameterProps<PARAM extends Parameter = Parameter>(): ToolParameterProps<PARAM> {

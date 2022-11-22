@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 import { defineResultTabProps } from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
@@ -77,9 +77,9 @@ const logger = Logger.get('FastaAlignmentTab');
 const { t } = useI18n();
 
 const props = defineResultTabProps();
-const viewOptions = props.viewOptions;
+const viewOptions = toRef(props, 'viewOptions');
 
-const resultField = computed(() => viewOptions?.resultField ?? 'alignment');
+const resultField = computed(() => viewOptions.value?.resultField ?? 'alignment');
 
 const {
     intersected,
@@ -100,15 +100,19 @@ const downloadMSAFileDownloadPath = computed(() =>
 );
 const downloadMSAFilename = computed(() => `${props.tool.name}_${resultField.value}_${props.job.jobID}.fasta`);
 
-const downloadReducedA3MFile = computed(() => (isNullable(viewOptions) ? '' : viewOptions.reducedFilename + '.a3m'));
+const downloadReducedA3MFile = computed(() =>
+    isNullable(viewOptions.value) ? '' : viewOptions.value.reducedFilename + '.a3m'
+);
 const downloadReducedA3MFilename = computed(
-    () => `${props.tool.name}_${viewOptions?.reducedFilename ?? ''}_${props.job.jobID}.a3m`
+    () => `${props.tool.name}_${viewOptions.value?.reducedFilename ?? ''}_${props.job.jobID}.a3m`
 );
-const downloadFullA3MFile = computed(() => (isNullable(viewOptions) ? '' : viewOptions.fullFilename + '.a3m'));
+const downloadFullA3MFile = computed(() =>
+    isNullable(viewOptions.value) ? '' : viewOptions.value.fullFilename + '.a3m'
+);
 const downloadFullA3MFilename = computed(
-    () => `${props.tool.name}_${viewOptions?.fullFilename ?? ''}_${props.job.jobID}.a3m`
+    () => `${props.tool.name}_${viewOptions.value?.fullFilename ?? ''}_${props.job.jobID}.a3m`
 );
-const isReduced = computed(() => viewOptions?.reduced);
+const isReduced = computed(() => viewOptions.value?.reduced);
 const alignmentNumTextKey = computed(() => `jobs.results.alignment.numSeqs${isReduced.value ? 'Reduced' : ''}`);
 
 function download(downloadFilename: string, path: string): void {

@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 import { TextInputParameter } from '@/types/toolkit/tools';
 import { useEventBus } from '@vueuse/core';
 import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
@@ -22,7 +22,7 @@ import { isNonNullable } from '@/util/nullability-helpers';
 const { t } = useI18n();
 
 const props = defineToolParameterProps<TextInputParameter>();
-const parameter = computed(() => props.parameter);
+const parameter = toRef(props, 'parameter');
 const rememberParameters = computed(() => !(parameter.value.disableRemember ?? false));
 
 const defaultSubmissionValue = ref('');

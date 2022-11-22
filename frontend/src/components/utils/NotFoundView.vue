@@ -2,7 +2,7 @@
     <div v-if="errorMessage" class="page-not-found">
         <div class="error-message border text-muted mt-5">
             <i class="fas fa-exclamation-triangle pl-3"></i>
-            <span class="ml-2" v-html="$t(errorMessage)"></span>
+            <span class="ml-2" v-html="t(errorMessage)"></span>
         </div>
         <div class="border banner-area text-center scrolling-wrapper">
             <span v-html="alignment"></span>
@@ -12,9 +12,13 @@
     </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
+import { toRef } from 'vue';
 import useToolkitTitle from '../../composables/useToolkitTitle';
 import { colorSequence } from '@/util/SequenceUtils';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     errorMessage: {
@@ -22,10 +26,15 @@ const props = defineProps({
         required: false,
         default: 'errors.PageNotFound',
     },
-    title: String,
+    title: {
+        type: String,
+        required: false,
+        default: '404',
+    },
 });
+const title = toRef(props, 'title');
 
-useToolkitTitle(props.title ?? '404');
+useToolkitTitle(title);
 
 const aminoAcids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y'];
 

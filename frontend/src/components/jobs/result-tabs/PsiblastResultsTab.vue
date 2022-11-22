@@ -122,6 +122,7 @@
 </template>
 
 <script setup lang="ts">
+import { toRef } from 'vue';
 import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
@@ -131,7 +132,6 @@ import { resultsService } from '@/services/ResultsService';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
 import { defineResultTabProps } from '@/composables/useResultTab';
-import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
 
@@ -140,8 +140,7 @@ const logger = Logger.get('PsiblastResultsTab');
 const { t } = useI18n();
 
 const props = defineResultTabProps();
-
-const job = computed(() => props.job);
+const job = toRef(props, 'job');
 
 function alignmentItemToRenderInfo(
     al: PSIBLASTAlignmentItem,

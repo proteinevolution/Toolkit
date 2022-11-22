@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, toRef, watch } from 'vue';
 import { NumberParameter } from '@/types/toolkit/tools';
 import { ConstraintError } from '@/types/toolkit/validation';
 import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
@@ -27,9 +27,9 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineToolParameterProps<NumberParameter>();
-const parameter = computed(() => props.parameter);
+const parameter = toRef(props, 'parameter');
 
-const defaultSubmissionValue = computed(() => props.parameter.default ?? 0);
+const defaultSubmissionValue = computed(() => parameter.value.default ?? 0);
 
 const { submissionValue, isNonDefaultValue, errorMessage, hasError, setError } = useToolParameter({
     props,
@@ -44,12 +44,12 @@ function validate(value: number): ConstraintError | undefined {
             textKey: 'constraints.notEmpty',
         };
     } else if (
-        (props.parameter.min && value < props.parameter.min) ||
-        (props.parameter.max && value > props.parameter.max)
+        (parameter.value.min && value < parameter.value.min) ||
+        (parameter.value.max && value > parameter.value.max)
     ) {
         return {
             textKey: 'constraints.range',
-            textKeyParams: { min: props.parameter.min, max: props.parameter.max },
+            textKeyParams: { min: parameter.value.min, max: parameter.value.max },
         };
     }
 }
