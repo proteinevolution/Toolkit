@@ -42,6 +42,11 @@ export default SearchResultTabMixin.extend({
         return {
             hitListFields: [
                 {
+                    key: 'num',
+                    label: this.$t('jobs.results.hmmer.table.num'),
+                    sortable: true,
+                },
+                {
                     key: 'acc',
                     label: this.$t('jobs.results.hmmer.table.accession'),
                     sortable: true,
