@@ -21,12 +21,13 @@
 import { computed, ref, toRef, watch } from 'vue';
 import { NumberParameter } from '@/types/toolkit/tools';
 import { ConstraintError } from '@/types/toolkit/validation';
-import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineToolParameterProps<NumberParameter>();
+type NumberParameterProps = ToolParameterProps<NumberParameter>;
+const props = defineProps<NumberParameterProps>();
 const parameter = toRef(props, 'parameter');
 
 const defaultSubmissionValue = computed(() => parameter.value.default ?? 0);

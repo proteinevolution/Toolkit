@@ -43,20 +43,17 @@ const logger = Logger.get('SelectParameter');
 
 const { t } = useI18n();
 
-const props = withDefaults(
-    defineProps<
-        ToolParameterProps<SelectParameter> & {
-            maxElementTextKey?: string;
-            disabled?: boolean;
-            forceSelectNone?: boolean;
-        }
-    >(),
-    {
-        maxElementTextKey: 'tools.parameters.select.maxElements',
-        disabled: false,
-        forceSelectNone: false,
-    }
-);
+interface SelectParameterProps extends ToolParameterProps<SelectParameter> {
+    maxElementTextKey?: string;
+    disabled?: boolean;
+    forceSelectNone?: boolean;
+}
+
+const props = withDefaults(defineProps<SelectParameterProps>(), {
+    maxElementTextKey: 'tools.parameters.select.maxElements',
+    disabled: false,
+    forceSelectNone: false,
+});
 const { disabled, parameter, forceSelectNone } = toRefs(props);
 
 const isMulti = computed(() => parameter.value.forceMulti || parameter.value.maxSelectedOptions > 1);

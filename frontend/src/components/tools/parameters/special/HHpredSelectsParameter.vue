@@ -37,11 +37,12 @@ import SelectParameterComponent from '@/components/tools/parameters/SelectParame
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { useEventBus } from '@vueuse/core';
-import { defineToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps } from '@/composables/useToolParameter';
 import { isNullable } from '@/util/nullability-helpers';
 
-const props = defineToolParameterProps<HHpredSelectsParameter>();
-const { validationParams, validationErrors, submission, parameter, rememberParams } = toRefs(props);
+type HHpredSelectsParameterProps = ToolParameterProps<HHpredSelectsParameter>;
+const props = defineProps<HHpredSelectsParameterProps>();
+const { validationErrors, submission, parameter } = toRefs(props);
 
 const disabled = ref(false);
 

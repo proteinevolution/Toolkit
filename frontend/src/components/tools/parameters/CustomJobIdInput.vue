@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { authService } from '@/services/AuthService';
-import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
 import { debounce } from 'lodash-es';
@@ -26,7 +26,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineToolParameterProps();
+const props = defineProps<ToolParameterProps>();
 
 const suggestion = ref('');
 const parameterName = ref('jobID');

@@ -12,10 +12,6 @@ export interface ToolParameterProps<PARAM extends Parameter = Parameter> {
     rememberParams: Record<string, any>;
 }
 
-export function defineToolParameterProps<PARAM extends Parameter = Parameter>(): ToolParameterProps<PARAM> {
-    return defineProps<ToolParameterProps<PARAM>>();
-}
-
 interface UseToolParameterArguments<T> {
     props: ToolParameterProps;
     defaultSubmissionValue: Ref<T>;

@@ -28,7 +28,7 @@ import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
 import { TextAreaParameter } from '@/types/toolkit/tools';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
-import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { ValidationResult } from '@/types/toolkit/validation';
 import { useEventBus } from '@vueuse/core';
@@ -36,8 +36,9 @@ import { useRoute } from 'vue-router';
 
 const { t } = useI18n();
 
-const props = defineToolParameterProps<TextAreaParameter>();
-const { parameter, submission, validationParams } = toRefs(props);
+type TextAreaParameterProps = ToolParameterProps<TextAreaParameter>;
+const props = defineProps<TextAreaParameterProps>();
+const { parameter, submission, validationErrors } = toRefs(props);
 
 const route = useRoute();
 const defaultSubmissionValue = computed(() => route.params.input ?? '');
@@ -75,7 +76,7 @@ const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled'
 watch(secondTextAreaEnabledInternal, (value: boolean) => {
     if (!value) {
         submissionValueTwo.value = '';
-        delete props.validationErrors[parameterNameTwo.value];
+        delete validationErrors.value[parameterNameTwo.value];
     }
     secondTextAreaEnabledBus.emit(value);
 });
@@ -109,14 +110,14 @@ function handleValidation(val: ValidationResult) {
 
 function handleValidationSecond(val: ValidationResult) {
     if (val.failed) {
-        props.validationErrors[parameterNameTwo.value] = {
+        validationErrors.value[parameterNameTwo.value] = {
             textKey: val.textKey,
             textKeyParams: val.textKeyParams,
         };
     } else if (submissionValueTwo.value === '') {
-        props.validationErrors[parameterNameTwo.value] = { textKey: 'constraints.notEmpty' };
+        validationErrors.value[parameterNameTwo.value] = { textKey: 'constraints.notEmpty' };
     } else {
-        delete props.validationErrors[parameterNameTwo.value];
+        delete validationErrors.value[parameterNameTwo.value];
     }
 }
 </script>

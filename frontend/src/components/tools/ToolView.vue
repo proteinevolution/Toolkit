@@ -167,6 +167,8 @@ const toolName = computed<string>(() => {
     return route.params.toolName as string;
 });
 
+const toolsStore = useToolsStore();
+
 const tool = computed(() => toolsStore.tools.find((tool) => tool.name === toolName.value));
 
 const parameterSections = computed<ParameterSection[] | undefined>(() =>
@@ -190,8 +192,6 @@ const rememberParams = computed<Record<string, any>>({
     },
 });
 const hasRememberedParameters = computed(() => Object.keys(rememberParams.value).length > 0);
-
-const toolsStore = useToolsStore();
 
 async function loadToolParameters(toolName: string): Promise<void> {
     await toolsStore.fetchToolParametersIfNotPresent(toolName);

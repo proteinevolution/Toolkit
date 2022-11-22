@@ -19,8 +19,12 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const jobsStore = useJobsStore();
 
-// TODO: relax props
-const props = defineProps<ToolParameterProps & { job?: Job }>();
+// TODO: relax props (restructure useToolParameter to make validation optional)
+interface JobPublicToggleProps extends ToolParameterProps {
+    job?: Job;
+}
+
+const props = defineProps<JobPublicToggleProps>();
 
 const parameterName = ref('isPublic');
 // default is private if logged in else public

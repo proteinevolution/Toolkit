@@ -13,7 +13,11 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineProps<ToolParameterProps<BooleanParameter> & { enabledOverride: boolean }>();
+interface BooleanParameterProps extends ToolParameterProps<BooleanParameter> {
+    enabledOverride: boolean;
+}
+
+const props = defineProps<BooleanParameterProps>();
 
 watch(
     () => props.enabledOverride,

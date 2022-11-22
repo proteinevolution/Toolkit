@@ -15,13 +15,14 @@
 import { computed, onMounted, ref, toRef, watch } from 'vue';
 import { TextInputParameter } from '@/types/toolkit/tools';
 import { useEventBus } from '@vueuse/core';
-import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
 
 const { t } = useI18n();
 
-const props = defineToolParameterProps<TextInputParameter>();
+type TextInputParameterProps = ToolParameterProps<TextInputParameter>;
+const props = defineProps<TextInputParameterProps>();
 const parameter = toRef(props, 'parameter');
 const rememberParameters = computed(() => !(parameter.value.disableRemember ?? false));
 

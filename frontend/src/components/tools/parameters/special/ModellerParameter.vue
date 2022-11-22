@@ -17,14 +17,14 @@ import { computed, ref, toRef, watch } from 'vue';
 import { authService } from '@/services/AuthService';
 import { debounce } from 'lodash-es';
 import { ConstraintError } from '@/types/toolkit/validation';
-import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
+import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
 
 const { t } = useI18n();
 
-const props = defineToolParameterProps();
+const props = defineProps<ToolParameterProps>();
 const parameter = toRef(props, 'parameter');
 
 const defaultSubmissionValue = ref('');
