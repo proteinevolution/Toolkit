@@ -1,4 +1,4 @@
-import Vue, { computed, Ref, watch } from 'vue';
+import { computed, Ref, watch } from 'vue';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { TranslateResult, useI18n } from 'vue-i18n';
 import { Parameter, ValidationParams } from '@/types/toolkit/tools';
@@ -50,9 +50,9 @@ export default function useToolParameter<T>({
 
     function setError(error?: ConstraintError) {
         if (error) {
-            Vue.set(props.validationErrors, parameterName.value, error);
+            props.validationErrors[parameterName.value] = error;
         } else {
-            Vue.delete(props.validationErrors, parameterName.value);
+            delete props.validationErrors[parameterName.value];
         }
     }
 
@@ -60,7 +60,7 @@ export default function useToolParameter<T>({
     const valueToString = submissionValueToString ?? ((v) => String(v));
 
     function setSubmissionValue(value: T) {
-        Vue.set(props.submission, parameterName.value, valueToString(value));
+        props.submission[parameterName.value] = valueToString(value);
     }
 
     const submissionValue = computed({
@@ -82,9 +82,9 @@ export default function useToolParameter<T>({
         (value) => {
             if (rememberParameters?.value ?? false) {
                 if (isNonDefaultValue.value) {
-                    Vue.set(props.rememberParams, parameterName.value, valueToString(value));
+                    props.rememberParams[parameterName.value] = valueToString(value);
                 } else {
-                    Vue.delete(props.rememberParams, parameterName.value);
+                    delete props.rememberParams[parameterName.value];
                 }
             }
         },

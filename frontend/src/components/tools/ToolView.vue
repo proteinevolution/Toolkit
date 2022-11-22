@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import Vue, { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, watch } from 'vue';
 import Section from '@/components/tools/parameters/Section.vue';
 import CustomJobIdInput from '@/components/tools/parameters/CustomJobIdInput.vue';
 import EmailNotificationSwitch from '@/components/tools/parameters/EmailNotificationSwitch.vue';
@@ -152,7 +152,7 @@ const router = useRouter();
 
 const { t } = useI18n();
 
-const submission = ref({});
+const submission = ref<Record<string, any>>({});
 const submitLoading = ref(false);
 const validationErrors = ref({});
 
@@ -260,7 +260,7 @@ function launchHelpModal(): void {
 }
 
 function resubmitSectionReceive(section: string): void {
-    Vue.set(submission.value, 'alignment', section);
+    submission.value.alignment = section;
     tabIndex.value = 0;
 }
 
@@ -303,7 +303,7 @@ onBeforeUnmount(() => {
 async function checkJobId(jobId: string): Promise<void> {
     const result = await authService.validateJobId(jobId);
     if (result.suggested) {
-        Vue.set(submission.value, 'jobID', result.suggested);
+        submission.value.jobID = result.suggested;
     }
 }
 
@@ -311,8 +311,7 @@ watch(
     job,
     (value: Job | undefined) => {
         if (isNonNullable(value)) {
-            submission.value = { ...value.paramValues };
-            Vue.set(submission.value, 'parentID', value.jobID);
+            submission.value = { ...value.paramValues, parentID: value.jobID };
             // Take the suggested Job ID immediately when loading existing job parameters into the tool
             checkJobId(value.jobID);
         }

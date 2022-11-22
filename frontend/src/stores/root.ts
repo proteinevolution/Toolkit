@@ -2,7 +2,7 @@ import { MaintenanceState } from '@/types/toolkit/auth';
 import { defineStore } from 'pinia';
 import { backendService } from '@/services/BackendService';
 import { useStorage } from '@vueuse/core';
-import Vue, { computed, reactive, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import useToolkitWebsocket from '@/composables/useToolkitWebsocket';
 import { Job } from '@/types/toolkit/jobs';
 import { useJobsStore } from '@/stores/jobs';
@@ -65,7 +65,7 @@ export const useRootStore = defineStore('root', () => {
                         if (!job.paramValues && jobsStore.jobs[index].paramValues) {
                             job.paramValues = jobsStore.jobs[index].paramValues;
                         }
-                        Vue.set(jobsStore.jobs, index, job);
+                        jobsStore.jobs[index] = job;
                     }
                     break;
                 }

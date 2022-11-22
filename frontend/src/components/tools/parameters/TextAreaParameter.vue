@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import Vue, { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
 import { TextAreaParameter } from '@/types/toolkit/tools';
@@ -60,9 +60,9 @@ const submissionValueTwo = computed({
     set(value: string) {
         // don't set submission for second text area if its empty
         if (value) {
-            Vue.set(props.submission, parameterNameTwo.value, value);
+            props.submission[parameterNameTwo.value] = value;
         } else {
-            Vue.delete(props.submission, parameterNameTwo.value);
+            delete props.submission[parameterNameTwo.value];
         }
     },
 });
@@ -76,14 +76,14 @@ const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled'
 watch(secondTextAreaEnabledInternal, (value: boolean) => {
     if (!value) {
         submissionValueTwo.value = '';
-        Vue.delete(props.validationErrors, parameterNameTwo.value);
+        delete props.validationErrors[parameterNameTwo.value];
     }
     secondTextAreaEnabledBus.emit(value);
 });
 
 function acceptForwardData({ data, jobID }: { data: string; jobID: string }): void {
     submissionValue.value = data;
-    Vue.set(props.submission, 'parentID', jobID);
+    props.submission.parentID = jobID;
 }
 
 const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
@@ -110,14 +110,14 @@ function handleValidation(val: ValidationResult) {
 
 function handleValidationSecond(val: ValidationResult) {
     if (val.failed) {
-        Vue.set(props.validationErrors, parameterNameTwo.value, {
+        props.validationErrors[parameterNameTwo.value] = {
             textKey: val.textKey,
             textKeyParams: val.textKeyParams,
-        });
+        };
     } else if (submissionValueTwo.value === '') {
-        Vue.set(props.validationErrors, parameterNameTwo.value, { textKey: 'constraints.notEmpty' });
+        props.validationErrors[parameterNameTwo.value] = { textKey: 'constraints.notEmpty' };
     } else {
-        Vue.delete(props.validationErrors, parameterNameTwo.value);
+        delete props.validationErrors[parameterNameTwo.value];
     }
 }
 </script>

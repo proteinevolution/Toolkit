@@ -2,7 +2,6 @@ import { Job } from '@/types/toolkit/jobs';
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import { useRootStore } from '@/stores/root';
-import Vue from 'vue';
 import { jobService } from '@/services/JobService';
 import { WebSocketActions } from '@/types/toolkit/enums';
 import Logger from 'js-logger';
@@ -72,7 +71,7 @@ export const useJobsStore = defineStore('jobs', {
             if (index < 0) {
                 this.jobs.push(job);
             } else {
-                Vue.set(this.jobs, index, job);
+                this.jobs[index] = job;
             }
         },
         removeJob(jobID: string) {

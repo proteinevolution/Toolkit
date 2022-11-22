@@ -2,7 +2,6 @@ import { Tool, ToolParameters } from '@/types/toolkit/tools';
 import { defineStore } from 'pinia';
 import { toolService } from '@/services/ToolService';
 import { AlignmentViewer, Reformat } from '@/conf/FrontendTools';
-import Vue from 'vue';
 import { useStorage } from '@vueuse/core';
 import { useRootStore } from '@/stores/root';
 
@@ -47,7 +46,7 @@ export const useToolsStore = defineStore('tools', {
                         // Parameters for frontend tools are not fetched
                         parameters = await toolService.fetchToolParameters(toolName);
                 }
-                Vue.set(this.tools.filter((tool: Tool) => tool.name === toolName)[0], 'parameters', parameters);
+                this.tools.filter((tool: Tool) => tool.name === toolName)[0].parameters = parameters;
                 rootStore.loading.toolParameters = false;
             }
         },

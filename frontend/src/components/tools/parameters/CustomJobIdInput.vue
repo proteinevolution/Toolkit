@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import Vue, { computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { authService } from '@/services/AuthService';
 import useToolParameter, { defineToolParameterProps } from '@/composables/useToolParameter';
 import { ConstraintError } from '@/types/toolkit/validation';
@@ -48,9 +48,9 @@ const customJobId = computed({
     set(value: string) {
         // don't set submission if its empty
         if (value !== '') {
-            Vue.set(props.submission, parameterName.value, value);
+            props.submission[parameterName.value] = value;
         } else {
-            Vue.delete(props.submission, parameterName.value);
+            delete props.submission[parameterName.value];
         }
     },
 });

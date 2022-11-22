@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, onBeforeUnmount, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, ref } from 'vue';
 import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
@@ -132,9 +132,9 @@ export default defineComponent({
             deep: true,
             handler(value: ConstraintError | undefined) {
                 if (value) {
-                    Vue.set(this.validationErrors, this.parameter.name, value);
+                    this.validationErrors[this.parameter.name] = value;
                 } else {
-                    Vue.delete(this.validationErrors, this.parameter.name);
+                    delete this.validationErrors[this.parameter.name];
                 }
             },
         },
