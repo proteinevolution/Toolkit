@@ -6,29 +6,20 @@
             <div class="result-options">
                 <a @click="scrollTo('visualization')">{{ $t('jobs.results.hitlist.visLink') }}</a>
                 <a class="mr-4" @click="scrollTo('hits')">{{ $t('jobs.results.hitlist.hitsLink') }}</a>
-                <a class="border-right mr-4"></a>
-                <a :class="{ active: allSelected }" @click="toggleAllSelected">
-                    {{ $t('jobs.results.actions.selectAll') }}</a
-                >
-                <a @click="forward(false)">{{ $t('jobs.results.actions.forward') }}</a>
             </div>
 
             <div v-html="$t('jobs.results.hmmer.numHits', { num: total })"></div>
 
             <div ref="visualization" class="result-section">
                 <h4>{{ $t('jobs.results.hitlist.vis') }}</h4>
-                <hit-map :job="job" @elem-clicked="scrollToElem" @resubmit-section="resubmitSection" />
+                <hit-map :job="job" @resubmit-section="resubmitSection" />
             </div>
 
             <div ref="hits" class="result-section">
                 <h4 class="mb-4">
                     {{ $t('jobs.results.hitlist.hits') }}
                 </h4>
-                <hit-list-table
-                    :job="job"
-                    :fields="hitListFields"
-                    :selected-items="selectedItems"
-                    @elem-clicked="scrollToElem" />
+                <hit-list-table :job="job" :fields="hitListFields" />
             </div>
         </div>
     </div>
@@ -50,11 +41,6 @@ export default SearchResultTabMixin.extend({
     data() {
         return {
             hitListFields: [
-                {
-                    key: 'numCheck',
-                    label: this.$t('jobs.results.hmmer.table.num'),
-                    sortable: true,
-                },
                 {
                     key: 'acc',
                     label: this.$t('jobs.results.hmmer.table.accession'),
