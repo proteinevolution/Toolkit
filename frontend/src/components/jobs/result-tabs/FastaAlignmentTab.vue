@@ -28,7 +28,7 @@
                 <table>
                     <tbody>
                         <template v-for="(elem, index) in alignments" :key="'rows' + elem.num">
-                            <tr :key="'header' + elem.num">
+                            <tr>
                                 <td class="d-flex align-items-center">
                                     <b-form-checkbox
                                         :checked="selected.includes(elem.num)"

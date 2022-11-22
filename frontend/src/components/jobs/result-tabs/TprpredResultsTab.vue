@@ -20,7 +20,7 @@
                 </thead>
                 <tbody>
                     <template v-for="(hit, hidx) in results.results.hits" :key="'rows' + hidx">
-                        <tr :key="'tr' + hidx" class="sequence-alignment">
+                        <tr class="sequence-alignment">
                             <td v-text="hit[1]"></td>
                             <td v-text="hit[2]"></td>
                             <td class="tpr-hit" v-html="colorSequence(hit[0])"></td>

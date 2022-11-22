@@ -7,13 +7,10 @@
                 <a @click="forwardQueryA3M">{{ t('jobs.results.actions.forwardQueryA3M') }}</a>
             </div>
             <template v-for="(hit, i) in results.results.reptypes" :key="'hit-results-' + i">
-                <h4
-                    :key="'hit-' + i"
-                    class="mb-4"
-                    v-text="t('jobs.results.hhrepid.resultsForType', { type: hit.typ })"></h4>
-                <img :key="hit.typ" :src="getFilePath(hit.typ)" class="mb-3" alt="" />
+                <h4 class="mb-4" v-text="t('jobs.results.hhrepid.resultsForType', { type: hit.typ })"></h4>
+                <img :src="getFilePath(hit.typ)" class="mb-3" alt="" />
 
-                <table :key="'hit-table-' + i" class="alignment-table mt-2">
+                <table class="alignment-table mt-2">
                     <tbody>
                         <tr>
                             <td v-text="t('jobs.results.hhrepid.numResults', { num: hit.num })"></td>
@@ -26,7 +23,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <table :key="'hit-table2-' + i" class="alignment-table mt-4">
+                <table class="alignment-table mt-4">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -50,11 +47,11 @@
                                 <td v-text="rep.loc"></td>
                                 <td v-html="colorSequence(rep.seq.slice(hitIdx, hitIdx + breakAfter))"></td>
                             </tr>
-                            <tr :key="'br-' + hitIdx" class="empty-row"></tr>
+                            <tr class="empty-row"></tr>
                         </template>
                     </tbody>
                 </table>
-                <br :key="'hit-br-' + i" />
+                <br />
             </template>
         </div>
     </div>

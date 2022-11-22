@@ -2,12 +2,7 @@
     <div class="text-center img-container">
         <div v-for="(img, index) in images" :key="'img-' + index">
             <div v-if="labels[index]" class="text-left border-bottom mb-3" v-text="labels[index]"></div>
-            <img
-                :key="'img' + index"
-                :src="img"
-                class="plot-img"
-                alt=""
-                onerror="this.parentNode.classList.add('img-broken');" />
+            <img :src="img" class="plot-img" alt="" onerror="this.parentNode.classList.add('img-broken');" />
             <span class="plot-img-alt" v-text="altTexts[index]"></span>
         </div>
     </div>

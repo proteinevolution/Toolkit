@@ -30,7 +30,7 @@
                                 </td>
                                 <td class="sequence" v-html="coloredSeq(elem.seq)"></td>
                             </tr>
-                            <tr :key="'hits-' + groupI">
+                            <tr>
                                 <td v-if="groupI === 0 && alignments.length !== total" colspan="3">
                                     <Loading
                                         v-if="loadingMore"
@@ -41,7 +41,7 @@
                                 </td>
                             </tr>
 
-                            <tr v-if="groupI < brokenAlignments.length - 1" :key="'blank-' + groupI" class="blank-row">
+                            <tr v-if="groupI < brokenAlignments.length - 1" class="blank-row">
                                 <td colspan="3"></td>
                             </tr>
                         </template>

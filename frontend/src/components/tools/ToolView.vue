@@ -1,6 +1,6 @@
 <template>
     <VelocityFade :duration="100">
-        <div v-if="tool" :key="toolName + 'view'" class="tool-view">
+        <div v-if="tool" class="tool-view">
             <div class="tool-header d-flex align-items-baseline">
                 <h1 class="no-wrap mr-3">
                     <a class="cursor-pointer mr-1" @click="refresh">

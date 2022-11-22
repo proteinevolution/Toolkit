@@ -15,7 +15,7 @@
             <table class="alignment-table">
                 <tbody>
                     <template v-for="i in brokenQuery.length" :key="'rows-' + i">
-                        <tr :key="'1-' + i">
+                        <tr>
                             <td>AA_QUERY</td>
                             <td v-text="(i - 1) * breakAfter + 1"></td>
                             <td>
@@ -29,7 +29,7 @@
                             <td v-html="brokenResults[key][i - 1]"></td>
                             <td></td>
                         </tr>
-                        <tr :key="'3-' + i" class="empty-row">
+                        <tr class="empty-row">
                             <td colspan="4"></td>
                         </tr>
                     </template>

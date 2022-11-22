@@ -13,12 +13,12 @@
             <table class="alignment-table mt-3">
                 <tbody>
                     <template v-for="(hit, i) in results.results.hits" :key="'rows-' + i">
-                        <tr :key="'hit-name-' + i">
+                        <tr>
                             <td>
                                 <b v-text="hit.name"></b>
                             </td>
                         </tr>
-                        <tr :key="'hit-seq-' + i">
+                        <tr>
                             <td class="sequence-alignment" v-html="patsearchColor(hit.seq, hit.matches)"></td>
                         </tr>
                     </template>

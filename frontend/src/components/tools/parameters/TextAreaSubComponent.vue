@@ -30,17 +30,11 @@
         </b-button-group>
         <!-- TODO: Vue3 migration https://v3-migration.vuejs.org/breaking-changes/transition-as-root.html -->
         <VelocityFade v-if="value">
-            <b-alert
-                v-if="autoTransformedParams"
-                key="autoTransformMessage"
-                :show="true"
-                variant="success"
-                class="validation-alert mb-0 mr-2">
+            <b-alert v-if="autoTransformedParams" :show="true" variant="success" class="validation-alert mb-0 mr-2">
                 {{ $t('tools.validation.autoTransformedToFasta', autoTransformedParams) }}
             </b-alert>
             <b-alert
                 v-if="validation.cssClass && !autoTransformedParams"
-                key="validationMessage"
                 :show="true"
                 :variant="validation.cssClass"
                 class="validation-alert mb-0">

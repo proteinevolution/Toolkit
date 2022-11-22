@@ -6,7 +6,7 @@
         <transition name="slide">
             <div v-if="isOpen" class="offscreen-menu">
                 <transition mode="out-in">
-                    <b-nav v-if="!selectedSection" key="top-level" vertical class="mt-2">
+                    <b-nav v-if="!selectedSection" vertical class="mt-2">
                         <b-nav-item key="home" to="/" @click="close"> Home </b-nav-item>
                         <b-nav-item v-if="isAdmin" class="section-link" @click="switchToAdminView()">
                             Admin
@@ -21,7 +21,7 @@
                             <i class="fa fa-angle-right" :style="{ color: sectionColors[i] }"></i>
                         </b-nav-item>
                     </b-nav>
-                    <b-nav v-else key="bottom-level" vertical class="mt-2">
+                    <b-nav v-else vertical class="mt-2">
                         <b-nav-item key="back" @click="selectedSection = ''">
                             <i class="fa fa-angle-left mr-2"></i>
                             {{ $t(`back`) }}
