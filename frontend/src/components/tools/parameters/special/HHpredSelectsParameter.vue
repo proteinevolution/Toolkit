@@ -30,114 +30,101 @@
     </b-row>
 </template>
 
-<script lang="ts">
-import { defineComponent, onBeforeUnmount, ref } from 'vue';
-import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
+import { HHpredSelectsParameter, SelectParameter } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { useEventBus } from '@vueuse/core';
+import { defineToolParameterProps } from '@/composables/useToolParameter';
+import { isNullable } from '@/util/nullability-helpers';
 
-export default defineComponent({
-    name: 'HHpredSelectsParameter',
-    components: {
-        SelectParameterComponent,
-    },
-    props: {
-        validationParams: Object as () => ValidationParams,
-        validationErrors: Object,
-        submission: Object,
-        rememberParams: Object,
-        /*
-         Simply stating the interface type doesn't work, this is a workaround. See
-         https://frontendsociety.com/using-a-typescript-interfaces-and-types-as-a-prop-type-in-vuejs-508ab3f83480
-         */
-        parameter: Object as () => HHpredSelectsParameter,
-    },
-    setup() {
-        const disabled = ref(false);
+const props = defineToolParameterProps<HHpredSelectsParameter>();
+const { validationParams, validationErrors, submission, parameter, rememberParams } = toRefs(props);
 
-        const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled');
-        const onSecondTextAreaEnabled = (enabled: boolean): void => {
-            disabled.value = enabled;
+const disabled = ref(false);
+
+const selectedOptionsHHSuite = computed<number>(() => {
+    if (submission.value[parameter.value.name]) {
+        return submission.value[parameter.value.name].split(' ').length;
+    }
+    return 0;
+});
+
+const selectedOptionsProteomes = computed<number>(() => {
+    if (submission.value[parameter.value.nameProteomes]) {
+        return submission.value[parameter.value.nameProteomes].split(' ').length;
+    }
+    return 0;
+});
+
+const maxSelectedOptionsHHSuite = computed<number>(
+    () => parameter.value.maxSelectedOptions - selectedOptionsProteomes.value
+);
+
+const maxSelectedOptionsProteomes = computed<number>(
+    () => parameter.value.maxSelectedOptions - selectedOptionsHHSuite.value
+);
+
+const hhsuiteDBParameter = computed<SelectParameter | null>(() => {
+    if (isNullable(parameter.value)) {
+        return null;
+    }
+    return {
+        name: parameter.value.name,
+        options: parameter.value.options,
+        default: parameter.value.default,
+        parameterType: ParameterType.SelectParameter,
+        maxSelectedOptions: maxSelectedOptionsHHSuite.value,
+        forceMulti: true,
+    };
+});
+
+const proteomesParameter = computed<SelectParameter | null>(() => {
+    if (isNullable(parameter.value)) {
+        return null;
+    }
+    return {
+        name: parameter.value.nameProteomes,
+        options: parameter.value.optionsProteomes,
+        default: parameter.value.defaultProteomes,
+        parameterType: ParameterType.SelectParameter,
+        maxSelectedOptions: maxSelectedOptionsProteomes.value,
+        forceMulti: true,
+    };
+});
+
+const totalSelectedOptions = computed<number>(() => selectedOptionsHHSuite.value + selectedOptionsProteomes.value);
+
+const validationError = computed<ConstraintError | undefined>(() => {
+    if (totalSelectedOptions.value === 0 && !disabled.value) {
+        return {
+            textKey: 'constraints.notEmpty',
         };
-        const unsubscribeSecondTextAreaEnabled = secondTextAreaEnabledBus.on(onSecondTextAreaEnabled);
+    }
+    return undefined;
+});
 
-        onBeforeUnmount(() => {
-            unsubscribeSecondTextAreaEnabled();
-        });
+watch(
+    validationError,
+    (value: ConstraintError | undefined) => {
+        if (value) {
+            validationErrors.value[parameter.value.name] = value;
+        } else {
+            delete validationErrors.value[parameter.value.name];
+        }
+    },
+    { deep: true, immediate: true }
+);
 
-        return { disabled };
-    },
-    computed: {
-        selectedOptionsHHSuite(): number {
-            if (this.submission[this.parameter.name]) {
-                return this.submission[this.parameter.name].split(' ').length;
-            }
-            return 0;
-        },
-        maxSelectedOptionsHHSuite(): number {
-            return this.parameter.maxSelectedOptions - this.selectedOptionsProteomes;
-        },
-        hhsuiteDBParameter(): SelectParameter | null {
-            if (!this.parameter) {
-                return null;
-            }
-            return {
-                name: this.parameter.name,
-                options: this.parameter.options,
-                default: this.parameter.default,
-                parameterType: ParameterType.SelectParameter,
-                maxSelectedOptions: this.maxSelectedOptionsHHSuite,
-                forceMulti: true,
-            };
-        },
-        selectedOptionsProteomes(): number {
-            if (this.submission[this.parameter.nameProteomes]) {
-                return this.submission[this.parameter.nameProteomes].split(' ').length;
-            }
-            return 0;
-        },
-        maxSelectedOptionsProteomes(): number {
-            return this.parameter.maxSelectedOptions - this.selectedOptionsHHSuite;
-        },
-        proteomesParameter(): SelectParameter | null {
-            if (!this.parameter) {
-                return null;
-            }
-            return {
-                name: this.parameter.nameProteomes,
-                options: this.parameter.optionsProteomes,
-                default: this.parameter.defaultProteomes,
-                parameterType: ParameterType.SelectParameter,
-                maxSelectedOptions: this.maxSelectedOptionsProteomes,
-                forceMulti: true,
-            };
-        },
-        totalSelectedOptions(): number {
-            return this.selectedOptionsHHSuite + this.selectedOptionsProteomes;
-        },
-        validationError(): ConstraintError | undefined {
-            if (this.totalSelectedOptions === 0 && !this.disabled) {
-                return {
-                    textKey: 'constraints.notEmpty',
-                };
-            }
-            return undefined;
-        },
-    },
-    watch: {
-        validationError: {
-            immediate: true,
-            deep: true,
-            handler(value: ConstraintError | undefined) {
-                if (value) {
-                    this.validationErrors[this.parameter.name] = value;
-                } else {
-                    delete this.validationErrors[this.parameter.name];
-                }
-            },
-        },
-    },
+const onSecondTextAreaEnabled = (enabled: boolean): void => {
+    disabled.value = enabled;
+};
+const secondTextAreaEnabledBus = useEventBus<boolean>('second-text-area-enabled');
+const unsubscribeSecondTextAreaEnabled = secondTextAreaEnabledBus.on(onSecondTextAreaEnabled);
+
+onBeforeUnmount(() => {
+    unsubscribeSecondTextAreaEnabled();
 });
 </script>
