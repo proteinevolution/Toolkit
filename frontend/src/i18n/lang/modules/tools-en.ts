@@ -49,6 +49,7 @@ export default {
         },
         labels: {
             standarddb: 'Select target database',
+            plmblastdb: 'Select target database',
             pmin: 'Min probability in hitlist (%)',
             desc: 'Max target hits',
             maxrounds: 'Number of iterations',
@@ -126,6 +127,10 @@ export default {
             max_seqid: 'Maximal Sequence Identity (%)',
             min_query_cov: 'Minimal coverage with query (%)',
             num_seqs_extract: 'No. of most dissimilar sequences to extract',
+            cosine_percentile_cutoff: 'Cosine similarity percentile cut-off',
+            alignment_cutoff: 'Alignment score cut-off',
+            win_len: 'Window length',
+            merge_hits: 'Merge hits',
         },
     },
     inputPlaceholder: {
@@ -465,5 +470,7 @@ export default {
             '<a href="https://doi.org/10.1093/nar/gkaa1079" target="_blank" rel="noopener">' +
             'Nucleic Acids Res. 2021;49(D1):D266-D273</a>.<br><br>',
         hhpred_manual: '',
+        plmblast: 'pLM-BLAST – distant homology detection based on direct comparison of sequence representations from ' +
+            'protein language models.<br> Kaminski K, Ludwiczak K, Alva V, Dunin-Horkawicz S. bioRxiv. 2022.',
     },
 };

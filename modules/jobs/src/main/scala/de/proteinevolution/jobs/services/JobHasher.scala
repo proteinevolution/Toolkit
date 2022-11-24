@@ -88,6 +88,10 @@ final class JobHasher @Inject() (
 
       case p if p.isDefinedAt("hhblitsdb") =>
         ("hhblitsdb", config.get[String]("tel.env.HHBLITS").toFile.lastModifiedTime.toString)
+
+      case p if p.isDefinedAt("plmblastdb") =>
+        ("plmblastdb", config.get[String]("tel.env.PLMBLAST").toFile.lastModifiedTime.toString)
+
       case _ => ("", "")
     }
 

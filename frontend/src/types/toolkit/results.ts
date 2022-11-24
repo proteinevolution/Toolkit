@@ -68,6 +68,16 @@ export interface HMMERAlignmentItem extends SearchAlignmentItem {
     observedDomains: number;
 }
 
+export interface PLMBLASTAlignmentItem extends SearchAlignmentItem {
+    fastaLink: string;
+    fullEval: number;
+    eval: number;
+    bitScore: number;
+    hitLen: number;
+    matchLen: number;
+}
+
+
 export interface PSIBLASTAlignmentItem extends SearchAlignmentItem {
     fastaLink: string;
     eval: number;
