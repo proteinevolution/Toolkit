@@ -69,7 +69,7 @@ class ParamAccess @Inject() (tel: TEL) {
 
     // Common
     case "ALIGNMENT"         => TextAreaParameter("alignment", alignmentInputType, placeholderKey, sampleInputKey)
-    case "STANDARD_DB"       => select("standarddb", default = Some("proteasome_homologs"))
+    case "STANDARD_DB"       => select("standarddb", default = Some("alphafold_uniprot50"))
     case "PMIN"              => select("pmin", default = Some("20"))
     case "DESC"              => select("desc", default = Some("250"))
     case "MAXROUNDS"         => select("maxrounds", default = Some("1"))
