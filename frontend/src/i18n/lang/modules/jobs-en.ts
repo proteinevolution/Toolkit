@@ -52,6 +52,7 @@ export default {
             structure3d: '3D Structure',
             plots: 'Plots',
             ccProb: 'CC-Prob',
+            hitMap: 'Hit Map',
         },
         actions: {
             selectAll: 'Select All',
@@ -66,6 +67,7 @@ export default {
             downloadReducedA3M: 'Download Reduced A3M',
             downloadFullA3M: 'Download Full A3M',
             downloadHHR: 'Download HHR',
+            downloadCSV: 'Download CSV',
             exportMSA: 'Export MSA',
             colorMSA: 'Color MSA',
             colorSeqs: 'Color Seqs',
@@ -225,12 +227,12 @@ export default {
             numHits: 'Number of Hits: <b>{num}</b>',
             table: {
                 num: 'Nr',
-                accession: 'ID',
-                description: 'Title',
-                full_evalue: 'E-value',
-                eValue: 'Ind. E-value',
-                bitscore: 'Bitscore',
-                hit_len: 'Aligned Positions',
+                accession: 'Accession',
+                description: 'Description',
+                eValue: 'Score',
+                bitscore: 'Identity',
+                hit_len: 'Acc. Len',
+                match_len: 'Match Len',
             },
             alignmentInfo:
                 'E-value: {fullEval},&emsp;Ind. E-value: {eval},&emsp;' +

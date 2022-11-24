@@ -33,8 +33,9 @@ case class PLMBlastResult(
       case "acc"      => HSPS.sortBy(_.accession)
       case "name"     => HSPS.sortBy(_.description)
       case "eval"     => HSPS.sortBy(_.eValue)
-      case "bitScore" => HSPS.sortBy(_.simScore)
+      case "bitScore" => HSPS.sortBy(_.identScore)
       case "hitLen"   => HSPS.sortBy(_.hit_len)
+      case "matchLen" => HSPS.sortBy(_.match_len)
       case _          => HSPS.sortBy(_.num)
     }
     if (desc) l.reverse else l
@@ -50,8 +51,6 @@ case class PLMBlastResult(
 }
 
 object PLMBlastResult {
-
-  println("here==============================================================")
 
   implicit val plmblastResultDecoder: Decoder[PLMBlastResult] = (c: HCursor) =>
     for {

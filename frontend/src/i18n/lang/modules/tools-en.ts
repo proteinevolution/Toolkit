@@ -470,5 +470,7 @@ export default {
             '<a href="https://doi.org/10.1093/nar/gkaa1079" target="_blank" rel="noopener">' +
             'Nucleic Acids Res. 2021;49(D1):D266-D273</a>.<br><br>',
         hhpred_manual: '',
+        plmblast: 'pLM-BLAST – distant homology detection based on direct comparison of sequence representations from ' +
+            'protein language models.<br> Kaminski K, Ludwiczak K, Alva V, Dunin-Horkawicz S. bioRxiv. 2022.',
     },
 };

@@ -36,6 +36,7 @@ class HHService @Inject() (
     extends Logging {
 
   private def getResults(jobID: String): EitherT[Future, DecodingFailure, SearchResult[HSP]] = {
+
     EitherT((for {
       json <- resultFiles.getResults(jobID)
       tool <- toolFinder.getTool(jobID)
@@ -74,10 +75,12 @@ class HHService @Inject() (
   }
 
   def loadAlignments(jobID: String, start: Option[Int], end: Option[Int]): EitherT[Future, DecodingFailure, Json] = {
+
     getResults(jobID).subflatMap { result =>
       val l = result.HSPS.length
       val s = Math.max(start.getOrElse(0), 0)
       val e = Math.min(end.getOrElse(l), l)
+
       Right(
         JsonObject(
           "total"      -> l.asJson,

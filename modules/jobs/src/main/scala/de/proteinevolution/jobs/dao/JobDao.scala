@@ -277,13 +277,13 @@ class JobDao @Inject() (
         _.find(
           BSONDocument(
             JobEventLog.EVENTS ->
+            BSONDocument(
+              "$elemMatch" ->
               BSONDocument(
-                "$elemMatch" ->
-                  BSONDocument(
-                    JobEvent.TIMESTAMP ->
-                      BSONDocument("$lt" -> BSONDateTime(instant))
-                  )
+                JobEvent.TIMESTAMP ->
+                BSONDocument("$lt" -> BSONDateTime(instant))
               )
+            )
           ),
           Option.empty[BSONDocument]
         ).cursor[JobEventLog]()
@@ -295,7 +295,8 @@ class JobDao @Inject() (
     eventLogCollection
       .map(
         _.find(
-          BSONDocument(), Option.empty[BSONDocument]
+          BSONDocument(),
+          Option.empty[BSONDocument]
         ).cursor[JobEventLog]()
       )
       .flatMap(_.collect[List](-1, Cursor.FailOnError[List[JobEventLog]]()))

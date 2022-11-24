@@ -22,9 +22,10 @@ import io.circe.{ Decoder, HCursor, Json }
 case class PLMBlastHSP(
     num: Int,
     eValue: Double,
-    simScore: Double,
+    identScore: Double,
     hit_start: Int,
     hit_end: Int,
+    match_len: Int,
     query_start: Int,
     query_end: Int,
     hit_len: Int,
@@ -34,24 +35,24 @@ case class PLMBlastHSP(
 
   def toTableJson(db: String): Json = {
     Map[String, Json](
-      "numCheck" -> num.asJson,
-      "acc"      -> LinkUtil.getSingleLinkDB(db, accession).asJson,
-      "name"     -> description.slice(0, 84).asJson,
+      "num"      -> num.asJson,
+      "acc"      -> LinkUtil.getSingleLink(accession).asJson,
+      "name"     -> description.slice(0, 300).asJson,
       "eval"     -> eValue.asJson,
-      "simScore" -> simScore.asJson,
-      "hitLen"   -> hit_len.asJson
+      "bitScore" -> ((identScore * 100).round.toString + "%").asJson,
+      "hitLen"   -> hit_len.asJson,
+      "matchLen" -> match_len.asJson
     ).asJson
   }
 
   def toAlignmentSectionJson(db: String): Json = {
     Map[String, Json](
-      "num"       -> num.asJson,
-      "acc"       -> LinkUtil.getSingleLinkDB(db, accession).asJson,
-      "fastaLink" -> LinkUtil.getLinksDB(db, accession).asJson,
-      "name"      -> description.asJson,
-      "eval"      -> eValue.asJson,
-      "bitScore"  -> simScore.asJson,
-      "hitLen"    -> hit_len.asJson,
+      "num"      -> num.asJson,
+      "acc"      -> LinkUtil.getSingleLink(accession).asJson,
+      "name"     -> description.asJson,
+      "eval"     -> eValue.asJson,
+      "bitScore" -> (identScore * 100).round.asJson,
+      "hitLen"   -> hit_len.asJson,
       "query" -> Map(
         "start" -> query_start.asJson,
         "end"   -> query_end.asJson
@@ -72,9 +73,10 @@ object PLMBlastHSP {
       for {
         num         <- c.downField("index").as[Int]
         evalue      <- c.downField("score").as[Double]
-        simScore    <- c.downField("similarity").as[Double]
+        identScore  <- c.downField("ident").as[Double]
         hit_start   <- c.downField("tstart").as[Int]
         hit_end     <- c.downField("tend").as[Int]
+        match_len   <- c.downField("match_len").as[Int]
         query_start <- c.downField("qstart").as[Int]
         query_end   <- c.downField("qend").as[Int]
         hit_len     <- c.downField("tlen").as[Int]
@@ -85,9 +87,10 @@ object PLMBlastHSP {
         new PLMBlastHSP(
           num,
           evalue,
-          simScore,
+          identScore,
           hit_start,
           hit_end,
+          match_len,
           query_start,
           query_end,
           hit_len,

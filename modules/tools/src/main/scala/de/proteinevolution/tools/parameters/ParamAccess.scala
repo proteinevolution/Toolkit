@@ -85,8 +85,8 @@ class ParamAccess @Inject() (tel: TEL) {
       select("hhblits_incl_eval", default = Some("1e-3"))
 
     // pLM-BLAST
-    case "PLMBLASTDB"               => select("plmblastdb", default = Some("ECOD50"))
-    case "COSINE_PERCENTILE_CUTOFF" => select("cosine_percentile_cutoff", default = Some("99"))
+    case "PLMBLASTDB"               => select("plmblastdb", default = Some("ECOD30"))
+    case "COSINE_PERCENTILE_CUTOFF" => select("cosine_percentile_cutoff", default = Some("95"))
     case "ALIGNMENT_CUTOFF"         => select("alignment_cutoff", default = Some("0.35"))
     case "WIN_LEN"                  => select("win_len", default = Some("1"))
     case "MERGE_HITS"               => select("merge_hits", default = Some("1"))

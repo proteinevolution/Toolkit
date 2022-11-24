@@ -66,7 +66,8 @@ object ToolName {
       "hhfilter"  -> "HHfilter",
       "retseq"    -> "RetrieveSeq",
       "seq2id"    -> "Seq2ID",
-      "reformat"  -> "Reformat"
+      "reformat"  -> "Reformat",
+      "plmblast"  -> "pLM-BLAST"
     )
     .withDefaultValue("")
 
@@ -108,5 +109,6 @@ object ToolName {
   final val PATSEARCH           = ToolName("patsearch")
   final val HHOMP               = ToolName("hhomp")
   final val FORMATSEQ           = ToolName("formatseq")
+  final val PLMBLAST            = ToolName("plmblast")
 
 }

@@ -20,13 +20,14 @@ import java.io.FileNotFoundException
 
 import better.files._
 import de.proteinevolution.common.models.{ ConstantsV2, ToolName }
-import de.proteinevolution.common.models.ToolName.{ HHBLITS, HHOMP, HHPRED, HMMER, PSIBLAST }
+import de.proteinevolution.common.models.ToolName.{ HHBLITS, HHOMP, HHPRED, HMMER, PLMBLAST, PSIBLAST }
 import de.proteinevolution.jobs.results.{
   HHBlitsResult,
   HHPredResult,
   HHompResult,
   HSP,
   HmmerResult,
+  PLMBlastResult,
   PSIBlastResult,
   SearchResult
 }
@@ -55,6 +56,7 @@ final class ResultFileAccessor @Inject() (
         val files: List[File] =
           File(s"${constants.jobPath}/$jobID/results").list.withFilter(_.extension.contains(".json")).toList
         logger.info(s"Loading files for $jobID: ${files.map(_.name).mkString(",")}")
+        println(files.map(_.name).mkString(","))
         Future {
           files
             .map { file =>
@@ -83,6 +85,7 @@ final class ResultFileAccessor @Inject() (
       case HHOMP    => json.as[HHompResult]
       case HMMER    => json.as[HmmerResult]
       case PSIBLAST => json.as[PSIBlastResult]
+      case PLMBLAST => json.as[PLMBlastResult]
       case _        => throw new IllegalArgumentException("tool has no hitlist")
     }
   }

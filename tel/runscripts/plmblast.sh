@@ -4,11 +4,13 @@ CHAR_COUNT=$(grep -v '>' ../results/${JOBID}.fas | wc -m)
 
 if [[ ${CHAR_COUNT} -gt "1000" ]] ; then
       echo "#Input may not contain more than 1000 characters." >> ../results/process.log
+      echo "done" >> ../results/process.log
       false
 fi
 
 if [[ ${FORMAT} = "1" ]] || [[ ${SEQ_COUNT} -gt "1" ]] ; then
       echo "#Input is a multiple sequence alignment; expecting a single protein sequence." >> ../results/process.log
+      echo "done" >> ../results/process.log
       false
 fi
 
@@ -20,6 +22,7 @@ if [[ ${SEQ_COUNT} = "0" ]] ; then
 
       if [[ ${CHAR_COUNT} -gt "1000" ]] ; then
             echo "#Input may not contain more than 1000 characters." >> ../results/process.log
+            echo "done" >> ../results/process.log
             false
       else
             sed -i "1 i\>${JOBID}" ../results/${JOBID}.fas
@@ -28,7 +31,7 @@ fi
 source ${BIOPROGS}/dependencies/anaconda3/etc/profile.d/conda.sh
 conda activate plm-blast
 
-echo "#Calculating query embeddings." >> ../results/process.log
+echo "#Calculating embedding for query sequence." >> ../results/process.log
 
 # calculate query embedding
 python3.9 $PLMBLASTPATH/scripts/query_emb.py \
@@ -36,8 +39,6 @@ python3.9 $PLMBLASTPATH/scripts/query_emb.py \
           ../results/${JOBID}.pt_emb.p \
           ../results/${JOBID}.csv
 echo "done" >> ../results/process.log
-
-
 
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
@@ -53,7 +54,6 @@ python3.9 $PLMBLASTPATH/scripts/plm_blast.py %PLMBLAST/%plmblastdb.content \
                                              -alignment_cutoff %alignment_cutoff.content \
                                              -max_targets %desc.content \
                                              -workers %THREADS
-
 echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
@@ -69,27 +69,14 @@ mv ../results/${JOBID}.hits_merged.csv ../results/${JOBID}.hits.csv
 
 fi
 
+python3.9 $PLMBLASTPATH/scripts/csv2nice.py ../results/${JOBID}.hits.csv > ../results/${JOBID}.hits.txt
+
 plmblast_csv_to_json.py ../results/${JOBID}.hits.csv ../results/results.json
 
 # add DB to json
 manipulate_json.py -k 'db' -v '%plmblastdb.content' ../results/results.json
 
-# plot hits
-python3.9 $PLMBLASTPATH/scripts/plot.py ../results/${JOBID}.hits.csv \
-                                        ../results/${JOBID}.csv \
-                                        ../results/score.png \
-                                        -mode score \
-                                        -maxseqs %desc.content \
-                                        -ecod
-
-python3.9 $PLMBLASTPATH/scripts/plot.py ../results/${JOBID}.hits.csv \
-                                        ../results/${JOBID}.csv \
-                                        ../results/qend.png \
-                                        -maxseqs %desc.content \
-                                        -mode qend -ecod
-
 plmblastviz.pl ${JOBID} ../results/ ../results/
-
 
 # Generate Query in JSON
 sed 's/[\.\-]//g' ../results/${JOBID}.fas > ../results/query.fas
