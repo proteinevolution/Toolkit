@@ -19,14 +19,22 @@
 
 <script setup lang="ts">
 import { computed, ref, toRef, watch } from 'vue';
-import { NumberParameter } from '@/types/toolkit/tools';
+import { NumberParameter, ValidationParams } from '@/types/toolkit/tools';
 import { ConstraintError } from '@/types/toolkit/validation';
 import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-type NumberParameterProps = ToolParameterProps<NumberParameter>;
+// We need to manually declare the props here because of how defineProps is defined
+interface NumberParameterProps extends ToolParameterProps<NumberParameter> {
+    parameter: NumberParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
 const props = defineProps<NumberParameterProps>();
 const parameter = toRef(props, 'parameter');
 

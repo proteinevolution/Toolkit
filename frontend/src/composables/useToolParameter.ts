@@ -4,6 +4,8 @@ import { TranslateResult, useI18n } from 'vue-i18n';
 import { Parameter, ValidationParams } from '@/types/toolkit/tools';
 import { isNonNullable } from '@/util/nullability-helpers';
 
+// Because of limitations around the defineProps function, we cannot use the imported type directly
+// and will need to copy it into the component files.
 export interface ToolParameterProps<PARAM extends Parameter = Parameter> {
     parameter: PARAM;
     validationParams: ValidationParams;

@@ -17,20 +17,17 @@
 <script setup lang="ts">
 import { ref, Ref, watch } from 'vue';
 import { parseProcessLog } from '@/util/Utils';
-import { ProcessLogItem } from '@/types/toolkit/jobs';
+import { Job, ProcessLogItem } from '@/types/toolkit/jobs';
 import useToolkitWebsocket from '@/composables/useToolkitWebsocket';
 import { useI18n } from 'vue-i18n';
+import { Tool } from '@/types/toolkit/tools';
 
-const props = defineProps({
-    job: {
-        type: Object,
-        required: true,
-    },
-    tool: {
-        type: Object,
-        required: true,
-    },
-});
+interface JobRunningTabProps {
+    job: Job;
+    tool: Tool;
+}
+
+const props = defineProps<JobRunningTabProps>();
 
 const { t } = useI18n();
 

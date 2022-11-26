@@ -32,18 +32,25 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, toRefs, watch } from 'vue';
 import Multiselect from '@suadelabs/vue3-multiselect';
-import { SelectOption, SelectParameter } from '@/types/toolkit/tools';
+import { SelectOption, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
 import { useEventBus } from '@vueuse/core';
 import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { isNullable } from '@/util/nullability-helpers';
+import { ConstraintError } from '@/types/toolkit/validation';
 
 const logger = Logger.get('SelectParameter');
 
 const { t } = useI18n();
 
 interface SelectParameterProps extends ToolParameterProps<SelectParameter> {
+    parameter: SelectParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+    // Custom props
     maxElementTextKey?: string;
     disabled?: boolean;
     forceSelectNone?: boolean;

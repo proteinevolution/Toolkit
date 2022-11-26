@@ -13,15 +13,24 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, toRef, watch } from 'vue';
-import { TextInputParameter } from '@/types/toolkit/tools';
+import { TextInputParameter, ValidationParams } from '@/types/toolkit/tools';
 import { useEventBus } from '@vueuse/core';
 import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
+import { ConstraintError } from '@/types/toolkit/validation';
 
 const { t } = useI18n();
 
-type TextInputParameterProps = ToolParameterProps<TextInputParameter>;
+// We need to manually declare the props here because of how defineProps is defined
+interface TextInputParameterProps extends ToolParameterProps<TextInputParameter> {
+    parameter: TextInputParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
 const props = defineProps<TextInputParameterProps>();
 const parameter = toRef(props, 'parameter');
 const rememberParameters = computed(() => !(parameter.value.disableRemember ?? false));

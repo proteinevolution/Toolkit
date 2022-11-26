@@ -26,17 +26,25 @@
 import { computed, onBeforeUnmount, onMounted, ref, toRefs, watch } from 'vue';
 import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
-import { TextAreaParameter } from '@/types/toolkit/tools';
+import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
 import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
-import { ValidationResult } from '@/types/toolkit/validation';
+import { ConstraintError, ValidationResult } from '@/types/toolkit/validation';
 import { useEventBus } from '@vueuse/core';
 import { useRoute } from 'vue-router';
 
 const { t } = useI18n();
 
-type TextAreaParameterProps = ToolParameterProps<TextAreaParameter>;
+// We need to manually declare the props here because of how defineProps is defined
+interface TextAreaParameterProps extends ToolParameterProps<TextAreaParameter> {
+    parameter: TextAreaParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
 const props = defineProps<TextAreaParameterProps>();
 const { parameter, submission, validationErrors } = toRefs(props);
 

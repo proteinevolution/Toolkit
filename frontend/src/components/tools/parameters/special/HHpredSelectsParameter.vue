@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
-import { HHpredSelectsParameter, SelectParameter } from '@/types/toolkit/tools';
+import { HHpredSelectsParameter, SelectParameter, TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
@@ -40,7 +40,15 @@ import { useEventBus } from '@vueuse/core';
 import { ToolParameterProps } from '@/composables/useToolParameter';
 import { isNullable } from '@/util/nullability-helpers';
 
-type HHpredSelectsParameterProps = ToolParameterProps<HHpredSelectsParameter>;
+// We need to manually declare the props here because of how defineProps is defined
+interface HHpredSelectsParameterProps extends ToolParameterProps<HHpredSelectsParameter> {
+    parameter: HHpredSelectsParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
 const props = defineProps<HHpredSelectsParameterProps>();
 const { validationErrors, submission, parameter } = toRefs(props);
 

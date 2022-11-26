@@ -7,13 +7,21 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import Switches from 'vue-switches';
-import { BooleanParameter } from '@/types/toolkit/tools';
+import { BooleanParameter, ValidationParams } from '@/types/toolkit/tools';
 import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
+import { ConstraintError } from '@/types/toolkit/validation';
 
 const { t } = useI18n();
 
+// We need to manually declare the props here because of how defineProps is defined
 interface BooleanParameterProps extends ToolParameterProps<BooleanParameter> {
+    parameter: BooleanParameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+    // Custom props
     enabledOverride: boolean;
 }
 

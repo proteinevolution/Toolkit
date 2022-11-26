@@ -21,10 +21,20 @@ import useToolParameter, { ToolParameterProps } from '@/composables/useToolParam
 import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
+import { Parameter, ValidationParams } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
-const props = defineProps<ToolParameterProps>();
+// We need to manually declare the props here because of how defineProps is defined
+interface ModellerParameterProps extends ToolParameterProps {
+    parameter: Parameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
+const props = defineProps<ModellerParameterProps>();
 const parameter = toRef(props, 'parameter');
 
 const defaultSubmissionValue = ref('');

@@ -23,10 +23,20 @@ import { ConstraintError } from '@/types/toolkit/validation';
 import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
 import { debounce } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
+import { Parameter, ValidationParams } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
-const props = defineProps<ToolParameterProps>();
+// We need to manually declare the props here because of how defineProps is defined
+interface CustomJobIdInputProps extends ToolParameterProps {
+    parameter: Parameter;
+    validationParams: ValidationParams;
+    validationErrors: Record<string, ConstraintError>;
+    submission: Record<string, any>;
+    rememberParams: Record<string, any>;
+}
+
+const props = defineProps<CustomJobIdInputProps>();
 
 const suggestion = ref('');
 const parameterName = ref('jobID');
