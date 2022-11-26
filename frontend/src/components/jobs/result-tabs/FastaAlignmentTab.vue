@@ -62,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRef } from 'vue';
+import { computed, toRefs } from 'vue';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
@@ -90,9 +90,11 @@ const props = withDefaults(defineProps<ResultTabProps>(), {
     resultTabName: '',
     renderOnCreate: true,
 });
-const viewOptions = toRef(props, 'viewOptions');
+const { job, tool, viewOptions } = toRefs(props);
+const jobID = computed(() => job.value.jobID);
+const toolParameters = computed(() => tool.value.parameters);
 
-const resultField = computed(() => viewOptions.value?.resultField ?? 'alignment');
+const resultField = computed(() => viewOptions?.value?.resultField ?? 'alignment');
 
 const {
     intersected,
@@ -105,7 +107,14 @@ const {
     loading,
     loadingMore,
     forwardSelected,
-} = useAlignmentResultTab({ logger, props, resultField });
+} = useAlignmentResultTab({
+    logger,
+    jobID,
+    toolParameters,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
+    resultField,
+});
 
 const downloadMSAFile = 'alignment.fas';
 const downloadMSAFileDownloadPath = computed(() =>
@@ -114,18 +123,18 @@ const downloadMSAFileDownloadPath = computed(() =>
 const downloadMSAFilename = computed(() => `${props.tool.name}_${resultField.value}_${props.job.jobID}.fasta`);
 
 const downloadReducedA3MFile = computed(() =>
-    isNullable(viewOptions.value) ? '' : viewOptions.value.reducedFilename + '.a3m'
+    isNullable(viewOptions?.value) ? '' : viewOptions?.value.reducedFilename + '.a3m'
 );
 const downloadReducedA3MFilename = computed(
-    () => `${props.tool.name}_${viewOptions.value?.reducedFilename ?? ''}_${props.job.jobID}.a3m`
+    () => `${props.tool.name}_${viewOptions?.value?.reducedFilename ?? ''}_${props.job.jobID}.a3m`
 );
 const downloadFullA3MFile = computed(() =>
-    isNullable(viewOptions.value) ? '' : viewOptions.value.fullFilename + '.a3m'
+    isNullable(viewOptions?.value) ? '' : viewOptions?.value.fullFilename + '.a3m'
 );
 const downloadFullA3MFilename = computed(
-    () => `${props.tool.name}_${viewOptions.value?.fullFilename ?? ''}_${props.job.jobID}.a3m`
+    () => `${props.tool.name}_${viewOptions?.value?.fullFilename ?? ''}_${props.job.jobID}.a3m`
 );
-const isReduced = computed(() => viewOptions.value?.reduced);
+const isReduced = computed(() => viewOptions?.value?.reduced);
 const alignmentNumTextKey = computed(() => `jobs.results.alignment.numSeqs${isReduced.value ? 'Reduced' : ''}`);
 
 function download(downloadFilename: string, path: string): void {

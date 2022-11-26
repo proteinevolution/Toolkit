@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 import { AlignmentItem } from '@/types/toolkit/results';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
@@ -83,6 +83,9 @@ const props = withDefaults(defineProps<ResultTabProps>(), {
     resultTabName: '',
     renderOnCreate: true,
 });
+const { job, tool } = toRefs(props);
+const jobID = computed(() => job.value.jobID);
+const toolParameters = computed(() => tool.value.parameters);
 
 const {
     intersected,
@@ -95,7 +98,13 @@ const {
     loading,
     loadingMore,
     forwardSelected,
-} = useAlignmentResultTab({ logger, props });
+} = useAlignmentResultTab({
+    logger,
+    jobID,
+    toolParameters,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
+});
 
 const color = ref(false);
 

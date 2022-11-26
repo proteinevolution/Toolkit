@@ -6,16 +6,26 @@ import { resultsService } from '@/services/ResultsService';
 import { range } from 'lodash-es';
 import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
-import useResultTab, { ResultTabPropsWithDefaults } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
+import { ToolParameters } from '@/types/toolkit/tools';
 
 interface UseAlignmentResultTabArguments {
     logger: ILogger;
-    // We want to pass through the props themselves because they are reactive
-    props: Readonly<ResultTabPropsWithDefaults>;
+    jobID: Ref<string>;
+    toolParameters: Ref<ToolParameters | undefined>;
+    resultTabName: string;
+    renderOnCreate: boolean;
     resultField?: Ref<string>;
 }
 
-export default function useAlignmentResultTab({ logger, props, resultField }: UseAlignmentResultTabArguments) {
+export default function useAlignmentResultTab({
+    logger,
+    jobID,
+    toolParameters,
+    resultTabName,
+    renderOnCreate,
+    resultField,
+}: UseAlignmentResultTabArguments) {
     const alignments = ref<AlignmentItem[] | undefined>(undefined);
     const selected = ref<number[]>([]);
     const perPage = 50;
@@ -50,7 +60,7 @@ export default function useAlignmentResultTab({ logger, props, resultField }: Us
 
     async function loadHits(start: number, end: number) {
         const res: AlignmentResultResponse = await resultsService.fetchAlignmentResults(
-            props.job.jobID,
+            jobID.value,
             start,
             end,
             resultField?.value
@@ -69,8 +79,8 @@ export default function useAlignmentResultTab({ logger, props, resultField }: Us
 
     const { loading } = useResultTab({
         init,
-        resultTabName: props.resultTabName,
-        renderOnCreate: props.renderOnCreate,
+        resultTabName,
+        renderOnCreate,
     });
 
     async function intersected() {
@@ -89,16 +99,16 @@ export default function useAlignmentResultTab({ logger, props, resultField }: Us
 
     function forwardSelected(): void {
         if (selected.value.length > 0) {
-            if (isNonNullable(props.tool.parameters) && isNonNullable(alignments.value)) {
+            if (isNonNullable(toolParameters.value) && isNonNullable(alignments.value)) {
                 showModalsBus.emit({
                     id: 'forwardingModal',
                     props: {
-                        forwardingJobID: props.job.jobID,
+                        forwardingJobID: jobID.value,
                         forwardingApiOptionsAlignment: {
                             selectedItems: selected.value,
                             resultField: resultField?.value ?? 'alignment',
                         },
-                        forwardingMode: props.tool.parameters.forwarding,
+                        forwardingMode: toolParameters.value.forwarding,
                     },
                 });
             } else {
