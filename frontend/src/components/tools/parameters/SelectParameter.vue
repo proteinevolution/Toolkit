@@ -1,7 +1,8 @@
 <template>
     <b-form-group :label="t('tools.parameters.labels.' + parameter.name)">
+        <!-- 'model-value' should actually not be necessary -->
         <multiselect
-            v-model="selected"
+            v-model:model-value="selected"
             :multiple="isMulti"
             :max="isMulti ? parameter.maxSelectedOptions : null"
             :allow-empty="isMulti"
