@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="t('tools.parameters.labels.' + parameter.name)">
-        <!-- 'model-value' should actually not be necessary -->
+        <!-- TODO: 'model-value' should actually not be necessary -->
         <multiselect
             v-model:model-value="selected"
             :multiple="isMulti"

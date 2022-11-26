@@ -21,7 +21,7 @@
             v-html="$t('tools.reformat.detectedFormat', { format: detectedFormat })" />
         <b-row align-h="center" class="my-2">
             <b-col cols="12" md="4">
-                <!-- 'model-value' should actually not be necessary -->
+                <!-- TODO: 'model-value' should actually not be necessary -->
                 <multiselect
                     v-model:model-value="selectedOutputFormat"
                     :allow-empty="true"

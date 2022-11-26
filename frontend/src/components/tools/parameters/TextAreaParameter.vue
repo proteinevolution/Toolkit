@@ -1,16 +1,18 @@
 <template>
     <div>
         <ExpandHeight>
+            <!-- TODO: 'model-value' should actually not be necessary -->
             <TextAreaSubComponent
-                v-model:value="submissionValue"
+                v-model:model-value="submissionValue"
                 :parameter="parameter"
                 :validation-params="validationParams"
                 @validation="handleValidation" />
         </ExpandHeight>
         <ExpandHeight>
+            <!-- TODO: 'model-value' should actually not be necessary -->
             <TextAreaSubComponent
                 v-if="secondTextAreaEnabled"
-                v-model:value="submissionValueTwo"
+                v-model:model-value="submissionValueTwo"
                 :second="true"
                 :parameter="parameter"
                 :validation-params="validationParams"

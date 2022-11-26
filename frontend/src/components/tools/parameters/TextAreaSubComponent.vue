@@ -3,7 +3,7 @@
         <b-form-textarea
             class="textarea-alignment break-all"
             :placeholder="$t('tools.inputPlaceholder.' + parameter.placeholderKey)"
-            :value="value"
+            :value="modelValue"
             data-v-step="input"
             cols="70"
             spellcheck="false"
@@ -29,7 +29,7 @@
                 v-text="$t('tools.parameters.textArea.uploadFile')"></label>
         </b-button-group>
         <!-- TODO: Vue3 migration https://v3-migration.vuejs.org/breaking-changes/transition-as-root.html -->
-        <VelocityFade v-if="value">
+        <VelocityFade v-if="modelValue">
             <b-alert v-if="autoTransformedParams" :show="true" variant="success" class="validation-alert mb-0 mr-2">
                 {{ $t('tools.validation.autoTransformedToFasta', autoTransformedParams) }}
             </b-alert>
@@ -78,7 +78,7 @@ export default defineComponent({
             type: Object as () => ValidationParams,
             required: true,
         },
-        value: {
+        modelValue: {
             type: String,
             required: true,
         },
@@ -88,7 +88,7 @@ export default defineComponent({
             default: false,
         },
     },
-    emits: ['input', 'validation'],
+    emits: ['update:modelValue', 'validation'],
     setup() {
         const rootStore = useRootStore();
         const { alert } = useToolkitNotifications();
@@ -109,7 +109,7 @@ export default defineComponent({
         };
     },
     watch: {
-        value: {
+        modelValue: {
             immediate: true,
             handler(value: string) {
                 // validate in watcher since somehow computed properties don't update on empty strings
@@ -226,7 +226,7 @@ export default defineComponent({
                 });
         },
         handleInput(value: string): void {
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
         },
     },
 });
