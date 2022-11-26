@@ -144,7 +144,7 @@ interface ToolViewProps {
 const props = defineProps<ToolViewProps>();
 const job = toRef(props, 'job');
 
-const emit = defineEmits(['delete-job', 'refresh']);
+const emit = defineEmits(['delete-job']);
 
 const route = useRoute();
 const router = useRouter();
@@ -207,7 +207,7 @@ loadToolParameters(toolName.value);
 
 function refresh(): void {
     if (route.name === 'tools') {
-        emit('refresh');
+        useEventBus<void>('refresh').emit();
     } else {
         router.push('/tools/' + toolName.value);
     }

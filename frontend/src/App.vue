@@ -12,10 +12,7 @@
                         <SideBar />
                     </b-col>
                     <b-col :class="[showJobList ? 'col-lg-9 col-xl-10' : '']">
-                        <router-view
-                            :key="$route.fullPath + refreshCounter"
-                            v-slot="{ Component }"
-                            @refresh="refreshCounter++">
+                        <router-view :key="$route.fullPath + refreshCounter" v-slot="{ Component }">
                             <VelocityFade :duration="1000">
                                 <component :is="Component" />
                             </VelocityFade>
@@ -271,6 +268,7 @@ export default defineComponent({
         });
 
         const refreshCounter = ref(0);
+        useEventBus<void>('refresh').on(() => refreshCounter.value++);
 
         return {
             options,

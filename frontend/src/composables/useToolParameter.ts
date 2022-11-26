@@ -139,7 +139,7 @@ export function useToolParameterWithRemember<T>({
         }
     );
 
-    const isNonDefaultValue = computed(() => submissionValue.value == defaultSubmissionValue.value);
+    const isNonDefaultValue = computed(() => submissionValue.value !== defaultSubmissionValue.value);
 
     watch(
         submissionValue,
