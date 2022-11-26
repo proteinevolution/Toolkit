@@ -8,26 +8,19 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { SimpleToolParameterProps, useSimpleToolParameter } from '@/composables/useToolParameter';
 import { Job } from '@/types/toolkit/jobs';
 import { useJobsStore } from '@/stores/jobs';
 import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
-import { Parameter, ValidationParams } from '@/types/toolkit/tools';
-import { ConstraintError } from '@/types/toolkit/validation';
 
 const { t } = useI18n();
 const authStore = useAuthStore();
 const jobsStore = useJobsStore();
 
-// TODO: relax props (restructure useToolParameter to make validation optional)
-interface JobPublicToggleProps extends ToolParameterProps {
-    parameter: Parameter;
-    validationParams: ValidationParams;
-    validationErrors: Record<string, ConstraintError>;
+interface JobPublicToggleProps extends SimpleToolParameterProps {
     submission: Record<string, any>;
-    rememberParams: Record<string, any>;
     // Custom props
     job?: Job;
 }
@@ -38,9 +31,9 @@ const parameterName = ref('isPublic');
 // default is private if logged in else public
 const defaultSubmissionValue = computed(() => !authStore.loggedIn);
 
-const { submissionValue } = useToolParameter({
+const { submissionValue } = useSimpleToolParameter({
     props,
-    overrideParameterName: parameterName,
+    parameterName,
     defaultSubmissionValue,
     submissionValueFromString: (value: string): boolean => value === 'true',
 });

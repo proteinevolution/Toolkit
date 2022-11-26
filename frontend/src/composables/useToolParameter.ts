@@ -6,21 +6,60 @@ import { isNonNullable } from '@/util/nullability-helpers';
 
 // Because of limitations around the defineProps function, we cannot use the imported type directly
 // and will need to copy it into the component files.
-export interface ToolParameterProps<PARAM extends Parameter = Parameter> {
+export interface SimpleToolParameterProps {
+    submission: Record<string, any>;
+}
+
+interface UseSimpleToolParameterArguments<T> {
+    props: SimpleToolParameterProps;
+    defaultSubmissionValue: Ref<T>;
+    parameterName: Ref<string>;
+    submissionValueFromString?: (value: string) => T;
+    submissionValueToString?: (value: T) => string;
+}
+
+export function useSimpleToolParameter<T>({
+    props,
+    defaultSubmissionValue,
+    parameterName,
+    submissionValueFromString,
+    submissionValueToString,
+}: UseSimpleToolParameterArguments<T>) {
+    const valueFromString = submissionValueFromString ?? ((v) => v as T);
+    const valueToString = submissionValueToString ?? ((v) => String(v));
+
+    function setSubmissionValue(value: T) {
+        props.submission[parameterName.value] = valueToString(value);
+    }
+
+    const submissionValue = computed({
+        get(): T {
+            if (!(parameterName.value in props.submission)) {
+                setSubmissionValue(defaultSubmissionValue.value);
+            }
+            return valueFromString(props.submission[parameterName.value]);
+        },
+        set(value: T) {
+            setSubmissionValue(value);
+        },
+    });
+
+    return { submissionValue, valueToString };
+}
+
+// Because of limitations around the defineProps function, we cannot use the imported type directly
+// and will need to copy it into the component files.
+export interface ToolParameterProps<PARAM extends Parameter = Parameter> extends SimpleToolParameterProps {
     parameter: PARAM;
     validationParams: ValidationParams;
     validationErrors: Record<string, ConstraintError>;
-    submission: Record<string, any>;
     rememberParams: Record<string, any>;
 }
 
-interface UseToolParameterArguments<T> {
+interface UseToolParameterArguments<T> extends Omit<UseSimpleToolParameterArguments<T>, 'parameterName'> {
     props: ToolParameterProps;
-    defaultSubmissionValue: Ref<T>;
     // can be overridden in the component depending on the parameter type
     overrideParameterName?: Ref<string>;
-    submissionValueFromString?: (value: string) => T;
-    submissionValueToString?: (value: T) => string;
     // Enable parameter remembering
     rememberParameters?: Ref<boolean>;
 }
@@ -54,23 +93,12 @@ export default function useToolParameter<T>({
         }
     }
 
-    const valueFromString = submissionValueFromString ?? ((v) => v as T);
-    const valueToString = submissionValueToString ?? ((v) => String(v));
-
-    function setSubmissionValue(value: T) {
-        props.submission[parameterName.value] = valueToString(value);
-    }
-
-    const submissionValue = computed({
-        get(): T {
-            if (!(parameterName.value in props.submission)) {
-                setSubmissionValue(defaultSubmissionValue.value);
-            }
-            return valueFromString(props.submission[parameterName.value]);
-        },
-        set(value: T) {
-            setSubmissionValue(value);
-        },
+    const { submissionValue, valueToString } = useSimpleToolParameter({
+        props,
+        defaultSubmissionValue,
+        parameterName,
+        submissionValueFromString,
+        submissionValueToString,
     });
 
     const isNonDefaultValue = computed(() => submissionValue.value == defaultSubmissionValue.value);

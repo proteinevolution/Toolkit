@@ -51,7 +51,7 @@
                                             v-else
                                             v-text="t(isJobView ? 'jobs.resubmitJob' : 'jobs.submitJob')"></span>
                                     </b-btn>
-                                    <custom-job-id-input
+                                    <CustomJobIdInput
                                         data-v-step="job-id"
                                         :validation-errors="validationErrors"
                                         :submission="submission" />
@@ -62,9 +62,8 @@
                                         :title="t('jobs.resetParamsTitle')"
                                         @click="clearParameterRemember"
                                         v-text="t('jobs.resetParams')" />
-                                    <email-notification-switch
+                                    <EmailNotificationSwitch
                                         v-if="loggedIn"
-                                        :validation-errors="validationErrors"
                                         :submission="submission"
                                         class="pull-left" />
                                 </b-form-group>
@@ -82,7 +81,7 @@
 
                             <template #tabs-end>
                                 <div class="ml-auto">
-                                    <job-public-toggle
+                                    <JobPublicToggle
                                         v-if="loggedIn && (!isJobView || !job.foreign)"
                                         :job="job"
                                         :submission="submission" />
