@@ -8,9 +8,23 @@ import AlignmentViewer from '@/components/tools/AlignmentViewer.vue';
 import { AlignmentItem } from '@/types/toolkit/results';
 import { resultsService } from '@/services/ResultsService';
 import { useEventBus } from '@vueuse/core';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 const alignments: Ref<AlignmentItem[] | undefined> = ref(undefined);
 

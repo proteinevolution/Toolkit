@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import Logger from 'js-logger';
@@ -57,12 +57,26 @@ import { TidyTree } from 'tidytree';
 import { select } from 'd3-selection';
 import VueSlider from 'vue-slider-component';
 import { debounce } from 'lodash-es';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
 const logger = Logger.get('TreeTab');
 
 const { t } = useI18n();
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 const hStretchDefault = 0.8;
 const vStretchCircularDefault = 0.8;

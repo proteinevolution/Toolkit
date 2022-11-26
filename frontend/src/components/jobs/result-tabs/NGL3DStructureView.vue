@@ -14,16 +14,30 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
 import { useI18n } from 'vue-i18n';
 import { Stage } from 'ngl';
 import { isNonNullable, isNullable } from '@/util/nullability-helpers';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 const viewport = ref<HTMLElement | null>(null);
 const stage = ref<Stage | undefined>(undefined);

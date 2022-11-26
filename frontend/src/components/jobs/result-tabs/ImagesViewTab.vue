@@ -10,14 +10,27 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { defineResultTabProps } from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
 import { isNullable } from '@/util/nullability-helpers';
 import { useI18n } from 'vue-i18n';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 const images = computed(() => {
     const filesString = props.viewOptions?.files;

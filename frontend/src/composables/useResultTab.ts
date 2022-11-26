@@ -1,30 +1,7 @@
 import { onBeforeUnmount, ref, Ref } from 'vue';
-import { Tool } from '@/types/toolkit/tools';
-import { Job, JobViewOptions } from '@/types/toolkit/jobs';
 import Logger from 'js-logger';
 import { useEventBus } from '@vueuse/core';
 import { isNonNullable } from '@/util/nullability-helpers';
-
-interface ResultTabProps {
-    job: Job;
-    tool: Tool;
-    fullScreen?: boolean;
-    viewOptions?: JobViewOptions;
-    resultTabName?: string;
-    renderOnCreate?: boolean;
-}
-
-export interface ResultTabPropsWithDefaults extends ResultTabProps {
-    resultTabName: string;
-    renderOnCreate: boolean;
-}
-
-export function defineResultTabProps(): ResultTabPropsWithDefaults {
-    return withDefaults(defineProps<ResultTabProps>(), {
-        resultTabName: '',
-        renderOnCreate: true,
-    });
-}
 
 interface UseResultTabArguments {
     // init gets called only on first render

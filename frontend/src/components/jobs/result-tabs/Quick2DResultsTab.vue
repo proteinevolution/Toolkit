@@ -53,17 +53,31 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
 import Loading from '@/components/utils/Loading.vue';
 import { resultsService } from '@/services/ResultsService';
 import { useI18n } from 'vue-i18n';
 import { Quick2dResults } from '@/types/toolkit/results';
 import { quick2dColor } from '@/util/SequenceUtils';
 import { isNullable } from '@/util/nullability-helpers';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 const results = ref<Quick2dResults | undefined>(undefined);
 

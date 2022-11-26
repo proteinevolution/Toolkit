@@ -24,10 +24,24 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import useResultTab, { defineResultTabProps } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 
 useResultTab({ resultTabName: props.resultTabName, renderOnCreate: props.renderOnCreate });
 

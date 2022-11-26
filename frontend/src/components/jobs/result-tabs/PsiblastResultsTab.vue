@@ -131,15 +131,28 @@ import { PSIBLASTAlignmentItem, PsiblastHHInfoResult } from '@/types/toolkit/res
 import { resultsService } from '@/services/ResultsService';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
-import { defineResultTabProps } from '@/composables/useResultTab';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
+import { Job, JobViewOptions } from '@/types/toolkit/jobs';
+import { Tool } from '@/types/toolkit/tools';
 
 const logger = Logger.get('PsiblastResultsTab');
 
 const { t } = useI18n();
 
-const props = defineResultTabProps();
+interface ResultTabProps {
+    job: Job;
+    tool: Tool;
+    fullScreen?: boolean;
+    viewOptions?: JobViewOptions;
+    resultTabName?: string;
+    renderOnCreate?: boolean;
+}
+
+const props = withDefaults(defineProps<ResultTabProps>(), {
+    resultTabName: '',
+    renderOnCreate: true,
+});
 const job = toRef(props, 'job');
 
 function alignmentItemToRenderInfo(
