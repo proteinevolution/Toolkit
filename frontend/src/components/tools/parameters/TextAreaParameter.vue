@@ -28,7 +28,7 @@ import Switches from 'vue-switches';
 import TextAreaSubComponent from './TextAreaSubComponent.vue';
 import { TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
 import ExpandHeight from '@/transitions/ExpandHeight.vue';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameter } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { ConstraintError, ValidationResult } from '@/types/toolkit/validation';
 import { useEventBus } from '@vueuse/core';

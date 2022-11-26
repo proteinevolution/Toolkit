@@ -83,21 +83,19 @@ export interface ToolParameterProps<PARAM extends Parameter = Parameter> extends
     rememberParams: Record<string, any>;
 }
 
-interface UseToolParameterArguments<T> extends Omit<UseSimpleToolParameterArguments<T>, 'parameterName'> {
+interface UseToolParameterArguments<T>
+    extends Omit<UseSimpleToolParameterArguments<T>, 'parameterName' | 'submission'> {
     props: ToolParameterProps;
     // can be overridden in the component depending on the parameter type
     overrideParameterName?: Ref<string>;
-    // Enable parameter remembering
-    rememberParameters?: Ref<boolean>;
 }
 
-export default function useToolParameter<T>({
+export function useToolParameter<T>({
     props,
     defaultSubmissionValue,
     overrideParameterName,
     submissionValueFromString,
     submissionValueToString,
-    rememberParameters,
 }: UseToolParameterArguments<T>) {
     const { submission, validationErrors } = toRefs(props);
     const parameterName = overrideParameterName ?? computed(() => props.parameter.name);
@@ -115,12 +113,38 @@ export default function useToolParameter<T>({
         submissionValueToString,
     });
 
+    return { parameterName, submissionValue, error, hasError, errorMessage, setError, valueToString };
+}
+
+interface UseToolParameterWithRememberArguments<T> extends UseToolParameterArguments<T> {
+    // Enables parameter remembering
+    rememberParameters: Ref<boolean>;
+}
+
+export function useToolParameterWithRemember<T>({
+    props,
+    defaultSubmissionValue,
+    overrideParameterName,
+    submissionValueFromString,
+    submissionValueToString,
+    rememberParameters,
+}: UseToolParameterWithRememberArguments<T>) {
+    const { parameterName, submissionValue, valueToString, error, hasError, errorMessage, setError } = useToolParameter(
+        {
+            props,
+            defaultSubmissionValue,
+            overrideParameterName,
+            submissionValueFromString,
+            submissionValueToString,
+        }
+    );
+
     const isNonDefaultValue = computed(() => submissionValue.value == defaultSubmissionValue.value);
 
     watch(
         submissionValue,
         (value) => {
-            if (rememberParameters?.value ?? false) {
+            if (rememberParameters.value) {
                 if (isNonDefaultValue.value) {
                     props.rememberParams[parameterName.value] = valueToString(value);
                 } else {

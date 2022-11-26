@@ -8,7 +8,7 @@
 import { computed, ref, watch } from 'vue';
 import Switches from 'vue-switches';
 import { BooleanParameter, ValidationParams } from '@/types/toolkit/tools';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameterWithRemember } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { ConstraintError } from '@/types/toolkit/validation';
 
@@ -34,7 +34,7 @@ watch(
 
 const defaultSubmissionValue = computed(() => props.enabledOverride || props.parameter.default);
 
-const { submissionValue } = useToolParameter({
+const { submissionValue } = useToolParameterWithRemember({
     props,
     defaultSubmissionValue,
     submissionValueFromString: (value: string): boolean => value === 'true',

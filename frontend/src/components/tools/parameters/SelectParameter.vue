@@ -35,7 +35,7 @@ import Multiselect from '@suadelabs/vue3-multiselect';
 import { SelectOption, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
 import { useEventBus } from '@vueuse/core';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameterWithRemember } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { isNullable } from '@/util/nullability-helpers';
 import { ConstraintError } from '@/types/toolkit/validation';
@@ -74,7 +74,7 @@ const optionsLimit = computed(() => {
 
 const defaultSubmissionValue = computed(() => parameter.value.default || '');
 
-const { submissionValue, isNonDefaultValue } = useToolParameter({
+const { submissionValue, isNonDefaultValue } = useToolParameterWithRemember({
     props,
     defaultSubmissionValue,
     rememberParameters: computed(() => !disabled.value),

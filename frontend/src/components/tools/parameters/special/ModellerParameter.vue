@@ -17,7 +17,7 @@ import { computed, ref, toRef, watch } from 'vue';
 import { authService } from '@/services/AuthService';
 import { debounce } from 'lodash-es';
 import { ConstraintError } from '@/types/toolkit/validation';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameter } from '@/composables/useToolParameter';
 import { useAuthStore } from '@/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';

@@ -15,7 +15,7 @@
 import { computed, onMounted, ref, toRef, watch } from 'vue';
 import { TextInputParameter, ValidationParams } from '@/types/toolkit/tools';
 import { useEventBus } from '@vueuse/core';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameterWithRemember } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable } from '@/util/nullability-helpers';
 import { ConstraintError } from '@/types/toolkit/validation';
@@ -37,7 +37,7 @@ const rememberParameters = computed(() => !(parameter.value.disableRemember ?? f
 
 const defaultSubmissionValue = ref('');
 
-const { submissionValue, isNonDefaultValue, hasError, setError } = useToolParameter({
+const { submissionValue, isNonDefaultValue, hasError, setError } = useToolParameterWithRemember({
     props,
     defaultSubmissionValue,
     rememberParameters,

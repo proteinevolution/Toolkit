@@ -21,7 +21,7 @@
 import { computed, ref, toRef, watch } from 'vue';
 import { NumberParameter, ValidationParams } from '@/types/toolkit/tools';
 import { ConstraintError } from '@/types/toolkit/validation';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { ToolParameterProps, useToolParameterWithRemember } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -40,7 +40,7 @@ const parameter = toRef(props, 'parameter');
 
 const defaultSubmissionValue = computed(() => parameter.value.default ?? 0);
 
-const { submissionValue, isNonDefaultValue, errorMessage, hasError, setError } = useToolParameter({
+const { submissionValue, isNonDefaultValue, errorMessage, hasError, setError } = useToolParameterWithRemember({
     props,
     defaultSubmissionValue,
     submissionValueFromString: (value: string): number => parseFloat(value),
