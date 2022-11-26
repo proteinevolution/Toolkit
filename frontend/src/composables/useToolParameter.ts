@@ -1,4 +1,4 @@
-import { computed, Ref, watch } from 'vue';
+import { computed, Ref, toRefs, watch } from 'vue';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { TranslateResult, useI18n } from 'vue-i18n';
 import { Parameter, ValidationParams } from '@/types/toolkit/tools';
@@ -11,7 +11,7 @@ export interface SimpleToolParameterProps {
 }
 
 interface UseSimpleToolParameterArguments<T> {
-    props: SimpleToolParameterProps;
+    submission: Ref<Record<string, any>>;
     defaultSubmissionValue: Ref<T>;
     parameterName: Ref<string>;
     submissionValueFromString?: (value: string) => T;
@@ -19,7 +19,7 @@ interface UseSimpleToolParameterArguments<T> {
 }
 
 export function useSimpleToolParameter<T>({
-    props,
+    submission,
     defaultSubmissionValue,
     parameterName,
     submissionValueFromString,
@@ -29,15 +29,15 @@ export function useSimpleToolParameter<T>({
     const valueToString = submissionValueToString ?? ((v) => String(v));
 
     function setSubmissionValue(value: T) {
-        props.submission[parameterName.value] = valueToString(value);
+        submission.value[parameterName.value] = valueToString(value);
     }
 
     const submissionValue = computed({
         get(): T {
-            if (!(parameterName.value in props.submission)) {
+            if (!(parameterName.value in submission.value)) {
                 setSubmissionValue(defaultSubmissionValue.value);
             }
-            return valueFromString(props.submission[parameterName.value]);
+            return valueFromString(submission.value[parameterName.value]);
         },
         set(value: T) {
             setSubmissionValue(value);
@@ -45,6 +45,33 @@ export function useSimpleToolParameter<T>({
     });
 
     return { submissionValue, valueToString };
+}
+
+interface UseToolParameterValidationArguments {
+    parameterName: Ref<string>;
+    validationErrors: Ref<Record<string, ConstraintError>>;
+}
+
+export function useToolParameterValidation({ parameterName, validationErrors }: UseToolParameterValidationArguments) {
+    const { t } = useI18n();
+    const error = computed<ConstraintError>(() => validationErrors.value[parameterName.value]);
+    const hasError = computed(() => isNonNullable(error.value));
+    const errorMessage = computed<TranslateResult>(() => {
+        if (!hasError.value) {
+            return '';
+        }
+        return t(error.value.textKey, error.value.textKeyParams);
+    });
+
+    function setError(error?: ConstraintError) {
+        if (error) {
+            validationErrors.value[parameterName.value] = error;
+        } else {
+            delete validationErrors.value[parameterName.value];
+        }
+    }
+
+    return { error, hasError, errorMessage, setError };
 }
 
 // Because of limitations around the defineProps function, we cannot use the imported type directly
@@ -72,29 +99,16 @@ export default function useToolParameter<T>({
     submissionValueToString,
     rememberParameters,
 }: UseToolParameterArguments<T>) {
-    const { t } = useI18n();
-
+    const { submission, validationErrors } = toRefs(props);
     const parameterName = overrideParameterName ?? computed(() => props.parameter.name);
 
-    const error = computed<ConstraintError>(() => props.validationErrors[parameterName.value]);
-    const hasError = computed(() => isNonNullable(error.value));
-    const errorMessage = computed<TranslateResult>(() => {
-        if (!hasError.value) {
-            return '';
-        }
-        return t(error.value.textKey, error.value.textKeyParams);
+    const { error, hasError, errorMessage, setError } = useToolParameterValidation({
+        parameterName,
+        validationErrors,
     });
 
-    function setError(error?: ConstraintError) {
-        if (error) {
-            props.validationErrors[parameterName.value] = error;
-        } else {
-            delete props.validationErrors[parameterName.value];
-        }
-    }
-
     const { submissionValue, valueToString } = useSimpleToolParameter({
-        props,
+        submission,
         defaultSubmissionValue,
         parameterName,
         submissionValueFromString,

@@ -16,51 +16,47 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, toRefs } from 'vue';
 import { authService } from '@/services/AuthService';
-import useToolParameter, { ToolParameterProps } from '@/composables/useToolParameter';
+import { SimpleToolParameterProps, useToolParameterValidation } from '@/composables/useToolParameter';
 import { ConstraintError } from '@/types/toolkit/validation';
 import { CustomJobIdValidationResult } from '@/types/toolkit/jobs';
 import { debounce } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
-import { Parameter, ValidationParams } from '@/types/toolkit/tools';
 
 const { t } = useI18n();
 
 // We need to manually declare the props here because of how defineProps is defined
-interface CustomJobIdInputProps extends ToolParameterProps {
-    parameter: Parameter;
-    validationParams: ValidationParams;
+interface CustomJobIdInputProps extends SimpleToolParameterProps {
     validationErrors: Record<string, ConstraintError>;
     submission: Record<string, any>;
-    rememberParams: Record<string, any>;
 }
 
 const props = defineProps<CustomJobIdInputProps>();
+const { validationErrors, submission } = toRefs(props);
 
 const suggestion = ref('');
 const parameterName = ref('jobID');
 
-const { error, hasError, setError } = useToolParameter({
-    props,
-    overrideParameterName: parameterName,
-    defaultSubmissionValue: ref(''),
+const { error, hasError, setError } = useToolParameterValidation({
+    parameterName,
+    validationErrors,
 });
 
 const customJobId = computed({
     // handle submission manually (not via ToolParameterMixin) to exclude empty strings
     get(): string {
-        if (!(parameterName.value in props.submission)) {
+        if (!(parameterName.value in submission.value)) {
             return '';
         }
-        return props.submission[parameterName.value];
+        return submission.value[parameterName.value];
     },
     set(value: string) {
         // don't set submission if its empty
         if (value !== '') {
-            props.submission[parameterName.value] = value;
+            submission.value[parameterName.value] = value;
         } else {
-            delete props.submission[parameterName.value];
+            delete submission.value[parameterName.value];
         }
     },
 });

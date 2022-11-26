@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, toRef } from 'vue';
 import { SimpleToolParameterProps, useSimpleToolParameter } from '@/composables/useToolParameter';
 import { Job } from '@/types/toolkit/jobs';
 import { useJobsStore } from '@/stores/jobs';
@@ -26,13 +26,14 @@ interface JobPublicToggleProps extends SimpleToolParameterProps {
 }
 
 const props = defineProps<JobPublicToggleProps>();
+const submission = toRef(props, 'submission');
 
 const parameterName = ref('isPublic');
 // default is private if logged in else public
 const defaultSubmissionValue = computed(() => !authStore.loggedIn);
 
 const { submissionValue } = useSimpleToolParameter({
-    props,
+    submission,
     parameterName,
     defaultSubmissionValue,
     submissionValueFromString: (value: string): boolean => value === 'true',

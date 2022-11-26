@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, toRef } from 'vue';
 import Switches from 'vue-switches';
 import { SimpleToolParameterProps, useSimpleToolParameter } from '@/composables/useToolParameter';
 import { useI18n } from 'vue-i18n';
@@ -18,12 +18,13 @@ interface EmailNotificationSwitchProps extends SimpleToolParameterProps {
 }
 
 const props = defineProps<EmailNotificationSwitchProps>();
+const submission = toRef(props, 'submission');
 
 const parameterName = ref('emailUpdate');
 const defaultSubmissionValue = ref(false);
 
 const { submissionValue } = useSimpleToolParameter({
-    props,
+    submission,
     parameterName,
     defaultSubmissionValue,
     submissionValueFromString: (value: string): boolean => value === 'true',
