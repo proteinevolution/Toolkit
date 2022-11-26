@@ -182,7 +182,7 @@ import { resultsService } from '@/services/ResultsService';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import useSearchResultTab from '@/composables/useSearchResultTab';
 import Logger from 'js-logger';
-import { computed, toRef } from 'vue';
+import { computed, toRefs } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { isNonNullable, isNullable } from '@/util/nullability-helpers';
 import { useRouter } from 'vue-router';
@@ -207,7 +207,9 @@ const props = withDefaults(defineProps<ResultTabProps>(), {
     resultTabName: '',
     renderOnCreate: true,
 });
-const job = toRef(props, 'job');
+const { job, tool } = toRefs(props);
+const jobID = computed(() => job.value.jobID);
+const toolParameters = computed(() => tool.value.parameters);
 
 function alignmentItemToRenderInfo(
     al: HHpredAlignmentItem,
@@ -274,7 +276,10 @@ const {
     showModalsBus,
 } = useSearchResultTab<HHpredAlignmentItem, HHpredHHInfoResult>({
     logger,
-    props,
+    jobID,
+    toolParameters,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
     breakAfter: 80,
     alignmentItemToRenderInfo,
     initialColor: true,

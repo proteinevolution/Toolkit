@@ -165,7 +165,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { computed, toRefs } from 'vue';
 import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
@@ -194,7 +194,9 @@ const props = withDefaults(defineProps<ResultTabProps>(), {
     resultTabName: '',
     renderOnCreate: true,
 });
-const job = toRef(props, 'job');
+const { job, tool } = toRefs(props);
+const jobID = computed(() => job.value.jobID);
+const toolParameters = computed(() => tool.value.parameters);
 
 function alignmentItemToRenderInfo(
     al: HHompAlignmentItem,
@@ -259,7 +261,10 @@ const {
     forwardQueryA3M,
 } = useSearchResultTab<HHompAlignmentItem, HHompHHInfoResult>({
     logger,
-    props,
+    jobID,
+    toolParameters,
+    resultTabName: props.resultTabName,
+    renderOnCreate: props.renderOnCreate,
     breakAfter: 70,
     alignmentItemToRenderInfo,
 });

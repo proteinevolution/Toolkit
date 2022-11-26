@@ -1,7 +1,7 @@
 import { ILogger } from 'js-logger';
 import { HHInfoResult, SearchAlignmentItem, SearchAlignmentItemRender } from '@/types/toolkit/results';
 import { colorSequence, ssColorSequence } from '@/util/SequenceUtils';
-import useResultTab, { ResultTabPropsWithDefaults } from '@/composables/useResultTab';
+import useResultTab from '@/composables/useResultTab';
 import { resultsService } from '@/services/ResultsService';
 import handyScroll from 'handy-scroll';
 import { debounce, range } from 'lodash-es';
@@ -9,6 +9,7 @@ import { ModalParams } from '@/types/toolkit/utils';
 import { useEventBus } from '@vueuse/core';
 import { computed, nextTick, onBeforeUnmount, ref, Ref } from 'vue';
 import { isNonNullable, isNullable } from '@/util/nullability-helpers';
+import { ToolParameters } from '@/types/toolkit/tools';
 
 type AlignmentItemRenderer<T> = (
     item: T,
@@ -24,8 +25,10 @@ type AlignmentItemRenderer<T> = (
 
 interface UseSearchResultTabArguments<T> {
     logger: ILogger;
-    // We want to pass through the props themselves because they are reactive
-    props: Readonly<ResultTabPropsWithDefaults>;
+    jobID: Ref<string>;
+    toolParameters: Ref<ToolParameters | undefined>;
+    resultTabName: string;
+    renderOnCreate: boolean;
     breakAfter: number;
     alignmentItemToRenderInfo: AlignmentItemRenderer<T>;
     onInitialized?: () => void;
@@ -34,7 +37,10 @@ interface UseSearchResultTabArguments<T> {
 
 export default function useSearchResultTab<T extends SearchAlignmentItem, S extends HHInfoResult>({
     logger,
-    props,
+    jobID,
+    toolParameters,
+    resultTabName,
+    renderOnCreate,
     breakAfter,
     alignmentItemToRenderInfo,
     onInitialized,
@@ -66,7 +72,7 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
     }
 
     async function loadAlignments(start: number, end: number): Promise<void> {
-        const res = await resultsService.fetchHHAlignmentResults<T, S>(props.job.jobID, start, end);
+        const res = await resultsService.fetchHHAlignmentResults<T, S>(jobID.value, start, end);
         total.value = res.total;
         info.value = res.info;
         if (isNullable(alignments.value)) {
@@ -105,8 +111,8 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
 
     const { loading } = useResultTab({
         init,
-        resultTabName: props.resultTabName,
-        renderOnCreate: props.renderOnCreate,
+        resultTabName,
+        renderOnCreate,
     });
 
     async function intersected(): Promise<void> {
@@ -217,13 +223,13 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
     const showModalsBus = useEventBus<ModalParams>('show-modal');
 
     function displayTemplateAlignment(accession: string): void {
-        if (isNonNullable(props.tool.parameters)) {
+        if (isNonNullable(toolParameters.value)) {
             showModalsBus.emit({
                 id: 'templateAlignmentModal',
                 props: {
-                    jobID: props.job.jobID,
+                    jobID: jobID.value,
                     accession,
-                    forwardingMode: props.tool.parameters.forwarding,
+                    forwardingMode: toolParameters.value.forwarding,
                 },
             });
         } else {
@@ -232,12 +238,12 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
     }
 
     function forward(disableSequenceLengthSelect: boolean = false): void {
-        if (isNonNullable(props.tool.parameters)) {
+        if (isNonNullable(toolParameters.value)) {
             showModalsBus.emit({
                 id: 'forwardingModal',
                 props: {
-                    forwardingJobID: props.job.jobID,
-                    forwardingMode: props.tool.parameters.forwarding,
+                    forwardingJobID: jobID.value,
+                    forwardingMode: toolParameters.value.forwarding,
                     forwardingApiOptions: {
                         disableSequenceLengthSelect,
                         selectedItems: selectedItems.value,
@@ -250,11 +256,11 @@ export default function useSearchResultTab<T extends SearchAlignmentItem, S exte
     }
 
     async function forwardQueryA3M() {
-        const a3mData: any = await resultsService.getFile(props.job.jobID, 'reduced.a3m');
+        const a3mData: any = await resultsService.getFile(jobID.value, 'reduced.a3m');
         showModalsBus.emit({
             id: 'forwardingModal',
             props: {
-                forwardingJobID: props.job.jobID,
+                forwardingJobID: jobID.value,
                 forwardingData: a3mData,
                 forwardingMode: {
                     alignment: ['hhpred', 'formatseq', 'hhblits', 'hhomp', 'hhrepid'],

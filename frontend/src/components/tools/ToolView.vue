@@ -89,7 +89,7 @@
                                         v-if="job && !job.foreign"
                                         class="tool-action tool-action-push-up fa fa-trash mr-4"
                                         :title="t('jobs.delete')"
-                                        @click="$emit('delete-job')"></i>
+                                        @click="emit('delete-job')"></i>
                                     <i
                                         class="tool-action tool-action-lg fa mr-1"
                                         :title="t('jobs.toggleFullscreen')"
