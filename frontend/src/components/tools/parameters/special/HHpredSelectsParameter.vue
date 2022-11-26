@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
-import { HHpredSelectsParameter, SelectParameter, TextAreaParameter, ValidationParams } from '@/types/toolkit/tools';
+import { HHpredSelectsParameter, SelectParameter, ValidationParams } from '@/types/toolkit/tools';
 import SelectParameterComponent from '@/components/tools/parameters/SelectParameter.vue';
 import { ParameterType } from '@/types/toolkit/enums';
 import { ConstraintError } from '@/types/toolkit/validation';
