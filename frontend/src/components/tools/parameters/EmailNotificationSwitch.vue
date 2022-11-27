@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex">
-        <switches v-model="submissionValue" :label="t('tools.parameters.emailNotification')" />
+        <switches v-model:model-value="submissionValue" :label="t('tools.parameters.emailNotification')" />
     </div>
 </template>
 

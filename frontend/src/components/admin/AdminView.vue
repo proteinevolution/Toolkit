@@ -11,7 +11,7 @@
                 <b-row class="mb-2">
                     <b-col>
                         <span class="mr-2">Block Submit</span>
-                        <switches v-model="maintenance.submitBlocked" />
+                        <switches v-model:model-value="maintenance.submitBlocked" />
                     </b-col>
                 </b-row>
                 <b-button

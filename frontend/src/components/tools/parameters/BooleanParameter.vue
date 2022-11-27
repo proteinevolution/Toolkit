@@ -1,6 +1,6 @@
 <template>
     <b-form-group :label="t('tools.parameters.labels.' + parameter.name)">
-        <switches v-model="submissionValue" />
+        <switches v-model:model-value="submissionValue" />
     </b-form-group>
 </template>
 

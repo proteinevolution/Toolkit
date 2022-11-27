@@ -19,7 +19,9 @@
                 @validation="handleValidationSecond" />
         </ExpandHeight>
         <b-form-group v-if="parameter.allowsTwoTextAreas">
-            <Switches v-model="secondTextAreaEnabled" :label="t('tools.parameters.textArea.alignTwoSeqToggle')" />
+            <Switches
+                v-model:model-value="secondTextAreaEnabled"
+                :label="t('tools.parameters.textArea.alignTwoSeqToggle')" />
         </b-form-group>
     </div>
 </template>
