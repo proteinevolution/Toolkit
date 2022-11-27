@@ -17,7 +17,7 @@ export const PIR: Format = {
             return false;
         }
 
-        const sequences = value.substr(1).split('\n>');
+        const sequences = value.slice(1).split('\n>');
 
         for (let sequence of sequences) {
             // remove all spaces

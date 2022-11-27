@@ -18,7 +18,7 @@ export const FASTA: Format = {
                 return false;
             }
 
-            const sequences = value.substr(1).split('\n>');
+            const sequences = value.slice(1).split('\n>');
 
             for (let sequence of sequences) {
                 // remove all spaces
@@ -28,7 +28,7 @@ export const FASTA: Format = {
                 const headerEnd: number = sequence.includes('\n') ? sequence.indexOf('\n') : sequence.length;
                 const header: string = sequence.substring(0, headerEnd);
 
-                sequence = sequence.substr(headerEnd).replace(/\s/g, '');
+                sequence = sequence.slice(headerEnd).replace(/\s/g, '');
 
                 // it must start with a alphanumerical character
                 if (header.length < 1 || !/[A-Z0-9]/i.test(header[0].toUpperCase())) {

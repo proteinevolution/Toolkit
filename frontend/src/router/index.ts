@@ -12,8 +12,8 @@ const router = createRouter({
 // fallback for hash mode
 router.beforeEach((to, from, next) => {
     // Redirect if fullPath begins with a hash (ignore hashes later in path)
-    if (to.fullPath.substr(0, 2) === '/#') {
-        const path = to.fullPath.substr(2);
+    if (to.fullPath.slice(0, 2) === '/#') {
+        const path = to.fullPath.slice(2);
         logger.info('hash mode detected. Redirecting to: ' + path);
         next(path);
         return;
