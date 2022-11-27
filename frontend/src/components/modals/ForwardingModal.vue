@@ -1,7 +1,7 @@
 <template>
     <BaseModal
         id="forwardingModal"
-        :title="$t('jobs.results.actions.forward')"
+        :title="t('jobs.results.actions.forward')"
         :size="largeModal ? 'lmd' : 'sm'"
         @hidden="onHidden"
         @shown="onShown">
@@ -50,7 +50,7 @@
                     <template #first>
                         <option
                             :value="null"
-                            v-text="$t('jobs.forwarding.' + (hasData ? 'selectPlaceholder' : 'noData'))"></option>
+                            v-text="t('jobs.forwarding.' + (hasData ? 'selectPlaceholder' : 'noData'))"></option>
                     </template>
                 </b-form-select>
             </b-col>
@@ -61,8 +61,8 @@
                     :class="{ 'mt-md-0': largeModal }"
                     :disabled="forwardingDisabled"
                     @click="forward">
-                    <Loading v-if="loading" :size="16" :message="$t('loading')" />
-                    <span v-else v-text="$t('jobs.results.actions.forward')"></span>
+                    <Loading v-if="loading" :size="16" :message="t('loading')" />
+                    <span v-else v-text="t('jobs.results.actions.forward')"></span>
                 </b-button>
             </b-col>
         </b-row>
@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import BaseModal from './BaseModal.vue';
 import { ForwardingApiOptions, ForwardingApiOptionsAlignment, ForwardingMode, Tool } from '@/types/toolkit/tools';
 import Logger from 'js-logger';
@@ -78,10 +78,12 @@ import { resultsService } from '@/services/ResultsService';
 import Loading from '@/components/utils/Loading.vue';
 import { ForwardHitsMode, SequenceLengthMode } from '@/types/toolkit/enums';
 import { AlignmentItem } from '@/types/toolkit/results';
-import { mapStores } from 'pinia';
 import { useToolsStore } from '@/stores/tools';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import { useEventBus } from '@vueuse/core';
+import { isNonNullable, isNullable } from '@/util/nullability-helpers';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 const logger = Logger.get('ForwardingModal');
 
@@ -115,28 +117,34 @@ export default defineComponent({
     },
     emits: ['hidden'],
     setup() {
+        const { t } = useI18n();
+
+        const toolsStore = useToolsStore();
+        const tools = computed(() => toolsStore.tools);
+
+        const router = useRouter();
+
         const { alert } = useToolkitNotifications();
+
         const forwardDataBus = useEventBus<{ data: string; jobID: string }>('forward-data');
         const hideModalsBus = useEventBus<string>('hide-modal');
         const pasteAreaLoadedBus = useEventBus<void>('paste-area-loaded');
-        return { alert, forwardDataBus, hideModalsBus, pasteAreaLoadedBus };
+
+        return { tools, alert, t, router, forwardDataBus, hideModalsBus, pasteAreaLoadedBus };
     },
     data() {
         return {
             selectedTool: undefined as string | undefined,
-            forwardHitsMode: ForwardHitsMode.SELECTED,
+            forwardHitsMode: ForwardHitsMode.SELECTED as ForwardHitsMode,
             sequenceLengthMode: SequenceLengthMode.ALN,
             evalThreshold: 0.001 as number | string,
-            internalForwardData: '',
+            internalForwardData: '' as string | undefined,
             loading: false,
             SequenceLengthMode,
             ForwardHitsMode,
         };
     },
     computed: {
-        tools(): Tool[] {
-            return this.toolsStore.tools;
-        },
         hasData(): boolean {
             return (
                 Boolean(this.forwardingApiOptions) ||
@@ -170,23 +178,22 @@ export default defineComponent({
         forwardingDisabled(): boolean {
             return (
                 this.loading ||
-                !this.selectedTool ||
+                isNullable(this.selectedTool) ||
                 !this.hasData ||
-                (this.forwardingApiOptions &&
+                (isNonNullable(this.forwardingApiOptions) &&
                     this.forwardHitsMode === ForwardHitsMode.SELECTED &&
                     this.forwardingApiOptions.selectedItems.length < 1) ||
-                (this.forwardingApiOptions &&
+                (isNonNullable(this.forwardingApiOptions) &&
                     this.forwardHitsMode === ForwardHitsMode.EVALUE &&
                     isNaN(parseFloat(this.evalThreshold.toString())))
             );
         },
         selectModePossible(): boolean {
-            return this.forwardingApiOptions && this.forwardingApiOptions.selectedItems.length > 0;
+            return isNonNullable(this.forwardingApiOptions) && this.forwardingApiOptions.selectedItems.length > 0;
         },
         largeModal(): boolean {
-            return this.forwardingApiOptions && !this.forwardingApiOptions.disableSequenceLengthSelect;
+            return isNonNullable(this.forwardingApiOptions) && !this.forwardingApiOptions.disableSequenceLengthSelect;
         },
-        ...mapStores(useToolsStore),
     },
     watch: {
         sequenceLengthMode(value: SequenceLengthMode): void {
@@ -195,12 +202,12 @@ export default defineComponent({
     },
     methods: {
         async forward() {
-            if (this.selectedTool) {
+            if (isNonNullable(this.selectedTool)) {
                 this.loading = true;
                 this.internalForwardData = this.forwardingData;
 
                 try {
-                    if (this.forwardingApiOptions) {
+                    if (isNonNullable(this.forwardingApiOptions)) {
                         this.internalForwardData = await resultsService.generateForwardingData(this.forwardingJobID, {
                             forwardHitsMode: this.forwardHitsMode,
                             sequenceLengthMode: this.sequenceLengthMode,
@@ -210,20 +217,19 @@ export default defineComponent({
                                     ? this.forwardingApiOptions.selectedItems
                                     : [],
                         });
-                    } else if (this.forwardingApiOptionsAlignment) {
+                    } else if (isNonNullable(this.forwardingApiOptionsAlignment)) {
+                        const { selectedItems, resultField } = this.forwardingApiOptionsAlignment;
                         // care: items are one-based
-                        const start = Math.min(...this.forwardingApiOptionsAlignment.selectedItems) - 1;
-                        const end = Math.max(...this.forwardingApiOptionsAlignment.selectedItems);
+                        const start = Math.min(...selectedItems) - 1;
+                        const end = Math.max(...selectedItems);
                         const response = await resultsService.fetchAlignmentResults(
                             this.forwardingJobID,
                             start,
                             end,
-                            this.forwardingApiOptionsAlignment.resultField
+                            resultField
                         );
                         this.internalForwardData = response.alignments
-                            .filter((a: AlignmentItem) =>
-                                this.forwardingApiOptionsAlignment.selectedItems.includes(a.num)
-                            )
+                            .filter((a: AlignmentItem) => selectedItems.includes(a.num))
                             .reduce(
                                 (acc: string, cur: AlignmentItem) => acc + '>' + cur.accession + '\n' + cur.seq + '\n',
                                 ''
@@ -231,19 +237,18 @@ export default defineComponent({
                     }
                 } catch (e) {
                     logger.error(e);
-                    this.alert(this.$t('errors.couldNotLoadForwardData'), 'danger');
+                    this.alert(this.t('errors.couldNotLoadForwardData'), 'danger');
                     this.loading = false;
                     return;
                 }
 
-                if (this.internalForwardData) {
-                    this.$router.push('/tools/' + this.selectedTool, () => {
-                        this.pasteAreaLoadedBus.on(this.pasteForwardData);
-                    });
+                if (isNonNullable(this.internalForwardData)) {
+                    this.router.push('/tools/' + this.selectedTool);
+                    this.pasteAreaLoadedBus.on(this.pasteForwardData);
                     this.hideModalsBus.emit('forwardingModal');
                     this.resetData();
                 } else {
-                    this.alert(this.$t('jobs.forwarding.noData'), 'danger');
+                    this.alert(this.t('jobs.forwarding.noData'), 'danger');
                 }
                 this.loading = false;
             } else {
@@ -252,7 +257,7 @@ export default defineComponent({
         },
         pasteForwardData() {
             this.pasteAreaLoadedBus.off(this.pasteForwardData);
-            this.forwardDataBus.emit({ data: this.internalForwardData, jobID: this.forwardingJobID });
+            this.forwardDataBus.emit({ data: this.internalForwardData as string, jobID: this.forwardingJobID });
         },
         onShown(): void {
             if (this.forwardingApiOptions) {
