@@ -1,12 +1,9 @@
 import { expect } from 'chai';
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { ParameterType } from '@/types/toolkit/enums';
 import { SelectOption } from '@/types/toolkit/tools';
 import SelectParameter from '@/components/tools/parameters/SelectParameter.vue';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const options: SelectOption[] = [
     {
@@ -25,11 +22,13 @@ const options: SelectOption[] = [
 
 function initSelectParameter(maxSelectedOptions: number, submission?: string) {
     return shallowMount(SelectParameter, {
-        localVue,
-        mocks: {
-            $t: (arg: string) => arg,
+        global: {
+            plugins: [BootstrapVue],
+            mocks: {
+                $t: (arg: string) => arg,
+            },
         },
-        propsData: {
+        props: {
             submission: {
                 select: submission ? submission : '',
             },

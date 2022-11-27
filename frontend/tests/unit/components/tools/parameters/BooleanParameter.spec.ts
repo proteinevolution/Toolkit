@@ -1,19 +1,18 @@
 import { expect } from 'chai';
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { ParameterType } from '@/types/toolkit/enums';
 import BooleanParameter from '@/components/tools/parameters/BooleanParameter.vue';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
+import BootstrapVue from 'bootstrap-vue';
 
 function initBooleanParameter(defaultValue: boolean, enabledOverride: boolean) {
     return shallowMount(BooleanParameter, {
-        localVue,
-        mocks: {
-            $t: (arg: string) => arg,
+        global: {
+            plugins: [BootstrapVue],
+            mocks: {
+                $t: (arg: string) => arg,
+            },
         },
-        propsData: {
+        props: {
             submission: {},
             validationErrors: {},
             rememberParams: {},
