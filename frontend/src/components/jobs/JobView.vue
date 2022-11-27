@@ -73,6 +73,7 @@ import { DateTime } from 'luxon';
 import useToolkitNotifications from '@/composables/useToolkitNotifications';
 import { useEventBus } from '@vueuse/core';
 import { useRoute } from 'vue-router';
+import { isNonNullable } from '@/util/nullability-helpers';
 
 const logger = Logger.get('JobView');
 
@@ -150,7 +151,9 @@ export default defineComponent({
         $route: {
             deep: true,
             handler(to) {
-                this.loadJobDetails(to.params.jobID);
+                if (isNonNullable(to.params.jobID)) {
+                    this.loadJobDetails(to.params.jobID);
+                }
             },
         },
         loggedIn(login) {
