@@ -65,7 +65,7 @@ const valid = computed<boolean | null>(() => {
     if (customJobId.value.length === 0) {
         return null;
     }
-    return !hasError;
+    return !hasError.value;
 });
 
 function validateCustomJobId(value: string) {
