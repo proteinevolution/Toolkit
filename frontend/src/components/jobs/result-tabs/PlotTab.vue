@@ -1,9 +1,9 @@
 <template>
     <Loading v-if="loading" :message="t('loading')" />
     <div v-else class="font-small">
-        <b v-if="results.vals.length === 0" v-html="t('jobs.results.plot.noResults')"></b>
+        <b v-if="numHits === 0" v-html="t('jobs.results.plot.noResults')"></b>
         <div v-else class="high-chart-container">
-            <div v-html="t('jobs.results.plot.numHits', { num: results.vals.length })"></div>
+            <div v-html="t('jobs.results.plot.numHits', { num: numHits })"></div>
             <br /><br />
             <chart :options="chartOptions" class="high-chart" />
         </div>
@@ -39,6 +39,8 @@ const props = withDefaults(defineProps<ResultTabProps>(), {
 });
 
 const results = ref<ProbEvalList | undefined>(undefined);
+
+const numHits = computed(() => results.value?.vals.length ?? 0);
 
 async function init() {
     results.value = (await resultsService.getFile(props.job.jobID, 'plot_data.json')) as ProbEvalList;
