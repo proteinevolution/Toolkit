@@ -15,6 +15,7 @@ const i18n = createI18n({
     fallbackLocale: defaultLanguage,
     messages, // set locale messages
     silentTranslationWarn: import.meta.env.PROD,
+    warnHtmlMessage: false,
 });
 
 export const possibleLanguages: string[] = [defaultLanguage, 'de'];
