@@ -79,6 +79,10 @@ class ParamAccess @Inject() (tel: TEL) {
     case "MATRIX"            => select("matrix", default = Some("BLOSUM62"))
     case "MIN_SEQID_QUERY"   => select("min_seqid_query", default = Some("0"))
 
+    // DIAMOND-DeepClust
+    case "DIAMOND_MIN_SEQID"   => select("diamond_min_seqid", default = Some("80"))
+    case "DIAMOND_MIN_ALN_COV" => select("diamond_min_aln_cov", default = Some("80"))
+
     // HHblits
     case "HHBLITSDB" => select("hhblitsdb", default = Some("UniRef30"))
     case "HHBLITS_INCL_EVAL" =>

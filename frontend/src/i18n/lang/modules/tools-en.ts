@@ -113,6 +113,8 @@ export default {
             clans_eval: "Extract BLAST HSP's up to E-values of",
             min_seqid: 'Minimum sequence identity',
             min_aln_cov: 'Minimum alignment coverage',
+            diamond_min_seqid: 'Min. approx. identity% to cluster sequences',
+            diamond_min_aln_cov: 'Min. cov% of the cluster member sequence',
             clustering_mode: 'Clustering mode',
             matrix_phyml: 'Model of AminoAcid replacement',
             no_replicates: 'Number of replicates',
@@ -316,6 +318,10 @@ export default {
             'MMseqs2 enables sensitive protein sequence searching for the analysis of massive data sets.<br>' +
             'Steinegger,M, Söding J. <a href="https://www.nature.com/articles/nbt.3988" target="_blank" ' +
             'rel="noopener">Nat Biotechnol. 2017 Nov;35(11):1026-1028</a>.',
+        diamond_deepclust:
+            'Sensitive clustering of protein sequences at tree-of-life scale using DIAMOND DeepClust.<br>' +
+            'Buchfink B, Ashkenazy H, Reuter K, Kennedy JA, Drost HG. <a href="https://doi.org/10.1101/2023.01.24.525373" ' +
+            'target="_blank" rel="noopener">bioRxiv 2023.01.24.525373</a>.',
         sixframe: '',
         backtrans: '',
         patsearch:
