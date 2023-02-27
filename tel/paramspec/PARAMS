@@ -62,3 +62,5 @@ cosine_percentile_cutoff GEN  cosine_percentile_cutoff.prop
 alignment_cutoff GEN alignment_cutoff.prop
 merge_hits GEN merge_hits.prop
 win_len GEN win_len.prop
+diamond_min_seqid GEN diamond_min_seqid.prop
+diamond_min_aln_cov GEN diamond_min_aln_cov.prop

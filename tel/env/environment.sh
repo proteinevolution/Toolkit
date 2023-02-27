@@ -51,6 +51,8 @@ export PSSPRED="${BIOPROGS}/tools/PSSpred"
 export DEEPCNF="${BIOPROGS}/tools/DeepCNF_SS_v1.02_release"
 # PiPred
 export PIPRED="${BIOPROGS}/tools/pipred"
+# DIAMOND
+export DIAMONDPATH="${BIOPROGS}/tools/diamond"
 # DeepCoil
 export DEEPCOIL="${BIOPROGS}/tools/deepcoil"
 # DeepCoil2
