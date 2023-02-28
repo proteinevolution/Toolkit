@@ -1,8 +1,8 @@
 SEQ_COUNT=$(egrep '^>' ../params/alignment | wc -l)
 CHAR_COUNT=$(wc -m < ../params/alignment)
 
-if [[ ${CHAR_COUNT} -gt "10000000" ]] ; then
-      echo "#Input may not contain more than 10000000 characters." >> ../results/process.log
+if [[ ${CHAR_COUNT} -gt "100000000" ]] ; then
+      echo "#Input may not contain more than 100000000 characters." >> ../results/process.log
       false
 fi
 
@@ -30,8 +30,8 @@ else
 fi
 echo "done"  >> ../results/process.log
 
-if [[ ${SEQ_COUNT} -gt "20000" ]] ; then
-      echo "#Input contains more than 20000 sequences." >> ../results/process.log
+if [[ ${SEQ_COUNT} -gt "50000" ]] ; then
+      echo "#Input contains more than 50000 sequences." >> ../results/process.log
       false
 fi
 
