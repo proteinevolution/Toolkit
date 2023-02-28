@@ -29,7 +29,10 @@ export default {
                 ],
                 references: `<p>Sensitive clustering of protein sequences at tree-of-life scale using DIAMOND DeepClust.<br> 
                 Buchfink B, Ashkenazy H, Reuter K, Kennedy JA, Drost HG. <a href="https://doi.org/10.1101/2023.01.24.525373" 
-                target="_blank" rel="noopener"> bioRxiv 2023.01.24.525373</a>.</p>`,
+                target="_blank" rel="noopener"> bioRxiv 2023.01.24.525373</a>.<br><br>
+                Sensitive protein alignments at tree-of-life scale using DIAMOND.<br> 
+                Buchfink B, Reuter K, Drost HG. <a href="https://www.nature.com/articles/s41592-021-01101-x" 
+                target="_blank" rel="noopener"> Nature Methods 18, 366–368 (2021)</a>.</p>`,
             },
         },
     },

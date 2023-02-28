@@ -162,7 +162,7 @@ export default {
         protIdentifiers: 'Enter a newline separated list of identifiers and choose the corresponding database.',
         protFasta: 'Enter protein sequences in FASTA format.',
         protFastaClans: 'Enter protein sequences with up to 10000 sequences in FASTA format.',
-        protFastaMmseqs: 'Enter up to 20000 protein sequences in FASTA format.',
+        protFastaMmseqs: 'Enter up to 50000 protein sequences in FASTA format.',
     },
     validation: {
         invalidCharacters: 'Invalid Characters.',
@@ -321,7 +321,10 @@ export default {
         diamond_deepclust:
             'Sensitive clustering of protein sequences at tree-of-life scale using DIAMOND DeepClust.<br>' +
             'Buchfink B, Ashkenazy H, Reuter K, Kennedy JA, Drost HG. <a href="https://doi.org/10.1101/2023.01.24.525373" ' +
-            'target="_blank" rel="noopener">bioRxiv 2023.01.24.525373</a>.',
+            'target="_blank" rel="noopener">bioRxiv 2023.01.24.525373</a>.<br><br>' +
+            'Sensitive protein alignments at tree-of-life scale using DIAMOND.<br>' +
+            'Buchfink B, Reuter K, Drost HG. <a href="https://www.nature.com/articles/s41592-021-01101-x" ' +
+            'target="_blank" rel="noopener">Nature Methods 18, 366–368 (2021)</a>.<br><br>',
         sixframe: '',
         backtrans: '',
         patsearch:
