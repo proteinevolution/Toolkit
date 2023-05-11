@@ -1,5 +1,4 @@
 node_modules
 /dist
-**/.min.js
+*.min.*
 package.json
-src/modules/msa/msa.min.js
