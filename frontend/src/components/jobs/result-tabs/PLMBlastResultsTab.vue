@@ -33,7 +33,6 @@ import Loading from '@/components/utils/Loading.vue';
 import HitListTable from '@/components/jobs/result-tabs/sections/HitListTable.vue';
 import HitMap from '@/components/jobs/result-tabs/sections/HitMap.vue';
 import SearchResultTabMixin from '@/mixins/SearchResultTabMixin';
-import EventBus from '@/util/EventBus';
 import {resultsService} from '@/services/ResultsService';
 import Logger from 'js-logger';
 const logger = Logger.get('PLMBlastResultsTab');
