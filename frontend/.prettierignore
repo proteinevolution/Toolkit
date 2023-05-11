@@ -2,3 +2,4 @@ node_modules
 /dist
 **/.min.js
 package.json
+modules/msa/msa.min.js
