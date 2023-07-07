@@ -64,3 +64,6 @@ merge_hits GEN merge_hits.prop
 win_len GEN win_len.prop
 diamond_min_seqid GEN diamond_min_seqid.prop
 diamond_min_aln_cov GEN diamond_min_aln_cov.prop
+plm_aln_mode GEN plm_aln_mode.prop
+span GEN span.prop
+sigma_factor GEN sigma_factor.prop
