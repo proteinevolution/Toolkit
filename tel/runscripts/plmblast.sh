@@ -29,45 +29,48 @@ if [[ ${SEQ_COUNT} = "0" ]] ; then
       fi
 fi
 source ${BIOPROGS}/dependencies/anaconda3/etc/profile.d/conda.sh
-conda activate plm-blast
+conda activate plmblast
 
 echo "#Calculating embedding for query sequence." >> ../results/process.log
+# calculate index
+python3.9 $PLMBLASTPATH/scripts/makeindex.py ../results/${JOBID}.fas ../results/${JOBID}.csv
 
 # calculate query embedding
-python3.9 $PLMBLASTPATH/scripts/query_emb.py \
+python3.9 $PLMBLASTPATH/embeddings.py \
           ../results/${JOBID}.fas \
-          ../results/${JOBID}.pt_emb.p \
-          ../results/${JOBID}.csv
+          ../results/${JOBID}.pt
 echo "done" >> ../results/process.log
 
+set -e
 export MKL_NUM_THREADS=1
 export NUMEXPR_NUM_THREADS=1
 export OMP_NUM_THREADS=1
 
 echo "#Searching %plmblastdb.content." >> ../results/process.log
 
+if [[ "%span.content" -lt "%win_len.content"  ]]
+then
+  adjusted_span="%win_len.content"
+else
+  adjusted_span="%span.content"
+fi
 
-python3.9 $PLMBLASTPATH/scripts/plm_blast.py %PLMBLAST/%plmblastdb.content \
+python3.9 $PLMBLASTPATH/scripts/run_plm_blast.py %PLMBLAST/%plmblastdb.content \
                                              ../results/${JOBID} \
                                              ../results/${JOBID}.hits.csv \
                                              -cosine_percentile_cutoff %cosine_percentile_cutoff.content \
                                              -alignment_cutoff %alignment_cutoff.content \
                                              -max_targets %desc.content \
-                                             -workers %THREADS
+                                             -workers %THREADS \
+                                             -sigma_factor %sigma_factor.content \
+                                             -use_chunks \
+                                             -win %win_len.content \
+                                             -span ${adjusted_span} \
+                                             --global_aln %plm_aln_mode.content
+
 echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
-
-if [[ %merge_hits.content = "1" ]] ; then
-
-# pLM-BLAST tends to yield rather short hits therefore it is beneficial to merge those associated
-# with a single database sequence; additionally, a more strict score cut-off is used
-python3.9 $PLMBLASTPATH/scripts/merge.py ../results/${JOBID}.hits.csv \
-                                         ../results/${JOBID}.hits_merged.csv -score \
-                                         %alignment_cutoff.content
-mv ../results/${JOBID}.hits_merged.csv ../results/${JOBID}.hits.csv
-
-fi
 
 python3.9 $PLMBLASTPATH/scripts/csv2nice.py ../results/${JOBID}.hits.csv > ../results/${JOBID}.hits.txt
 
