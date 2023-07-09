@@ -72,6 +72,14 @@ echo "done" >> ../results/process.log
 
 echo "#Preparing output." >> ../results/process.log
 
+if [[ %merge_hits.content = "1" ]] ; then
+# pLM-BLAST tends to yield rather short hits therefore it is beneficial to merge those associated
+# with a single database sequence; additionally, a more strict score cut-off is used
+  python3.9 $PLMBLASTPATH/scripts/merge.py ../results/${JOBID}.hits.csv \
+                                         ../results/${JOBID}.hits_merged.csv
+  mv ../results/${JOBID}.hits_merged.csv ../results/${JOBID}.hits.csv
+fi
+
 python3.9 $PLMBLASTPATH/scripts/csv2nice.py ../results/${JOBID}.hits.csv > ../results/${JOBID}.hits.txt
 
 plmblast_csv_to_json.py ../results/${JOBID}.hits.csv ../results/results.json
