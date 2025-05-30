@@ -75,8 +75,8 @@ class JobActor @Inject() (
   @volatile private var currentJobLogs: Map[String, JobEventLog]                = Map.empty[String, JobEventLog]
   @volatile private var currentExecutionContexts: Map[String, ExecutionContext] = Map.empty[String, ExecutionContext]
 
-  private val fetchLatestInterval = 500 millis
-  private val Tick: Cancellable = {
+  private val fetchLatestInterval = 500.millis
+  private val Tick: Cancellable   = {
     // scheduler should use the system dispatcher
     context.system.scheduler.scheduleWithFixedDelay(Duration.Zero, fetchLatestInterval, self, UpdateLog)(
       context.system.dispatcher
@@ -109,7 +109,7 @@ class JobActor @Inject() (
   private def getCurrentExecutionContext(jobID: String): Option[ExecutionContext] = {
     currentExecutionContexts.get(jobID) match {
       case Some(executionContext) => Some(executionContext)
-      case None =>
+      case None                   =>
         if ((constants.jobPath / jobID).exists) {
           val executionContext = ExecutionContext(constants.jobPath / jobID, reOpen = true)
           currentExecutionContexts = currentExecutionContexts.updated(jobID, executionContext)
@@ -196,7 +196,7 @@ class JobActor @Inject() (
     jobDao.updateJobStatus(job.jobID, job.status).map { _ =>
       val jobLog = currentJobLogs.get(job.jobID) match {
         case Some(jobEventLog) => jobEventLog.addJobStateEvent(job.status)
-        case None =>
+        case None              =>
           JobEventLog(
             jobID = job.jobID,
             toolName = job.tool,
@@ -355,7 +355,7 @@ class JobActor @Inject() (
         .getCurrentJob(jobID)
         .flatMap {
           case Some(job) => fuccess(Some(job))
-          case None =>
+          case None      =>
             if (verbose)
               log.info(
                 s"[JobActor[$jobActorNumber].Delete] jobID $jobID not found in current jobs. Loading job from DB."
