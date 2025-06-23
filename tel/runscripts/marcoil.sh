@@ -79,7 +79,7 @@ else
 fi
 
 # Numerical output
-create_numerical_marcoil.rb "$(readlink -f ../params/)/"
+create_numerical_marcoil.py "$(readlink -f ../params/)/"
 
 cp ../params/* ../results/
 
