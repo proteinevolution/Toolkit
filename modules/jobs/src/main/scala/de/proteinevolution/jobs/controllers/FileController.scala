@@ -40,7 +40,7 @@ class FileController @Inject() (
     with ContentTypes {
 
   def getStructureFile(accession: String): Action[AnyContent] = Action { implicit request =>
-    val db = LinkUtil.identifyDatabase(accession)
+    val db     = LinkUtil.identifyDatabase(accession)
     val ending = db match {
       case "scop"   => "pdb"
       case "ecod"   => "pdb"
