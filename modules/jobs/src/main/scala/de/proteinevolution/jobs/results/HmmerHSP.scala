@@ -62,7 +62,7 @@ case class HmmerHSP(
       "hitLen"          -> hit_len.asJson,
       "observedDomains" -> domain_obs_num.asJson,
       "agree"           -> midline.asJson,
-      "query" -> Map(
+      "query"           -> Map(
         "start" -> query_start.asJson,
         "end"   -> query_end.asJson,
         "seq"   -> query_seq.asJson
