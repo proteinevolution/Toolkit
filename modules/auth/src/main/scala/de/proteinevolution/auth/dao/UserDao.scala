@@ -108,7 +108,7 @@ class UserDao @Inject() (
         User.ACCOUNT_TYPE          -> AccountType.REGISTEREDUSER.toInt,
         User.DELETION_WARNING_SENT -> false,
         User.CONNECTED             -> false,
-        User.DATE_LAST_LOGIN -> BSONDocument(
+        User.DATE_LAST_LOGIN       -> BSONDocument(
           "$lt" -> BSONDateTime(warnRegistratedUserAfterLoginDate.toInstant.toEpochMilli)
         )
       )
