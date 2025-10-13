@@ -54,10 +54,10 @@ final class JobDispatcher @Inject() (
       EitherT.leftT(JobSubmitError.ModellerKeyInvalid)
     } else {
       for {
-        generatedId <- generateJobId(parts)
-        _           <- validateJobId(generatedId)
-        _           <- checkNotAlreadyTaken(generatedId)
-        job         <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
+        generatedId     <- generateJobId(parts)
+        _               <- validateJobId(generatedId)
+        _               <- checkNotAlreadyTaken(generatedId)
+        job             <- EitherT.pure[Future, JobSubmitError](generateJob(toolName, generatedId, parts, user))
         isFromInstitute <- EitherT.pure[Future, JobSubmitError](
           user.userData.map(_.eMail).getOrElse("").matches(".+@tuebingen.mpg.de")
         )
@@ -114,7 +114,7 @@ final class JobDispatcher @Inject() (
       form: Map[String, String],
       user: User
   ): Job = {
-    val now = ZonedDateTime.now
+    val now            = ZonedDateTime.now
     val dateDeletionOn = now.plusDays(
       if (user.isRegistered) constants.jobDeletionRegistered.toLong
       else constants.jobDeletion.toLong
