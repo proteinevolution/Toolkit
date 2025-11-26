@@ -53,7 +53,7 @@ case class PLMBlastHSP(
       "eval"     -> eValue.asJson,
       "bitScore" -> (identScore * 100).round.asJson,
       "hitLen"   -> hit_len.asJson,
-      "query" -> Map(
+      "query"    -> Map(
         "start" -> query_start.asJson,
         "end"   -> query_end.asJson
       ).asJson,

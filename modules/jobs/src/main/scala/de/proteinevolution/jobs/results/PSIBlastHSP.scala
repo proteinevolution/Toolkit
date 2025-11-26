@@ -71,7 +71,7 @@ case class PSIBlastHSP(
       "refLen"    -> ref_len.asJson,
       "hitLen"    -> hit_len.asJson,
       "agree"     -> midLine.asJson,
-      "query" -> Map(
+      "query"     -> Map(
         "start" -> query_start.asJson,
         "end"   -> query_end.asJson,
         "seq"   -> query_seq.asJson

@@ -101,7 +101,7 @@ final class BackendController @Inject() (
   def setMaintenanceState(): Action[Json] = userAction(circe.json) { implicit request =>
     if (request.user.isSuperuser) {
       request.body.asObject match {
-        case None => BadRequest
+        case None        => BadRequest
         case Some(value) =>
           maintenanceMessage = value("message").get.asString.orElse(Some("")).get
           maintenanceSubmitBlocked = value("submitBlocked").get.asBoolean.orElse(Some(false)).get
