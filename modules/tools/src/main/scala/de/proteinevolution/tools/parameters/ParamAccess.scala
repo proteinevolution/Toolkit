@@ -84,7 +84,7 @@ class ParamAccess @Inject() (tel: TEL) {
     case "DIAMOND_MIN_ALN_COV" => select("diamond_min_aln_cov", default = Some("80"))
 
     // HHblits
-    case "HHBLITSDB" => select("hhblitsdb", default = Some("UniRef30"))
+    case "HHBLITSDB"         => select("hhblitsdb", default = Some("UniRef30"))
     case "HHBLITS_INCL_EVAL" =>
       select("hhblits_incl_eval", default = Some("1e-3"))
 
@@ -93,14 +93,12 @@ class ParamAccess @Inject() (tel: TEL) {
     case "COSINE_PERCENTILE_CUTOFF" => select("cosine_percentile_cutoff", default = Some("70"))
     case "ALIGNMENT_CUTOFF"         => select("alignment_cutoff", default = Some("0.30"))
     case "WIN_LEN"                  => select("win_len", default = Some("15"))
-    case "MERGE_HITS" => select("merge_hits", default = Some("1"))
-    case "PLM_ALN_MODE" => select("plm_aln_mode", default = Some("loc"))
-    case "SPAN" => select("span", default = Some("25"))
-    case "SIGMA_FACTOR" => select("sigma_factor", default = Some("2"))
-    case "BFACTOR" => select("bfactor", default = Some("2"))
-    case "PLM_GAP_EXT" => select("plm_gap_ext", default = Some("0.5"))
-
-
+    case "MERGE_HITS"               => select("merge_hits", default = Some("1"))
+    case "PLM_ALN_MODE"             => select("plm_aln_mode", default = Some("loc"))
+    case "SPAN"                     => select("span", default = Some("25"))
+    case "SIGMA_FACTOR"             => select("sigma_factor", default = Some("2"))
+    case "BFACTOR"                  => select("bfactor", default = Some("2"))
+    case "PLM_GAP_EXT"              => select("plm_gap_ext", default = Some("0.5"))
 
     // HHpred
     case "TWOTEXTALIGNMENT" =>
@@ -125,7 +123,7 @@ class ParamAccess @Inject() (tel: TEL) {
     case "MACTHRESHOLD" => select("macthreshold", default = Some("0.3"))
 
     // HMMER
-    case "HMMER_DB" => select("hmmerdb", default = Some("alphafold_uniprot50"))
+    case "HMMER_DB"         => select("hmmerdb", default = Some("alphafold_uniprot50"))
     case "MAX_HHBLITS_ITER" =>
       select("max_hhblits_iter", default = Some("1"), onDetectedMSA = Some("0"))
 
@@ -139,7 +137,7 @@ class ParamAccess @Inject() (tel: TEL) {
       select("blast_incl_eval", default = Some("1e-3"))
 
     // Kalign
-    case "GAP_OPEN" => NumberParameter("gap_open", default = Some(11))
+    case "GAP_OPEN"     => NumberParameter("gap_open", default = Some(11))
     case "GAP_EXT_KALN" =>
       NumberParameter(
         "gap_ext_kaln",
@@ -174,8 +172,8 @@ class ParamAccess @Inject() (tel: TEL) {
     // HHrepID
     case "MSA_GEN_MAX_ITER_HHREPID" =>
       select("msa_gen_max_iter_hhrepid", default = Some("3"), onDetectedMSA = Some("0"))
-    case "SCORE_SS"           => select("score_ss", default = Some("2"))
-    case "REP_PVAL_THRESHOLD" => select("rep_pval_threshold", default = Some("1e-2"))
+    case "SCORE_SS"                => select("score_ss", default = Some("2"))
+    case "REP_PVAL_THRESHOLD"      => select("rep_pval_threshold", default = Some("1e-2"))
     case "SELF_ALN_PVAL_THRESHOLD" =>
       select("self_aln_pval_threshold", default = Some("1e-1"))
     case "MERGE_ITERS"            => select("merge_iters", default = Some("3"))
@@ -283,7 +281,7 @@ class ParamAccess @Inject() (tel: TEL) {
     case "OUT_FORMAT" => select("out_format", default = Some("fas"))
 
     // HHfilter
-    case "MAX_SEQID" => NumberParameter("max_seqid", default = Some(90))
+    case "MAX_SEQID"     => NumberParameter("max_seqid", default = Some(90))
     case "MIN_QUERY_COV" =>
       NumberParameter(
         "min_query_cov",

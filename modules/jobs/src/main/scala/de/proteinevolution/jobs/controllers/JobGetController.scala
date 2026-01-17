@@ -57,7 +57,7 @@ class JobGetController @Inject() (
 
   def suggestJobsForQuery(queryString: String): Action[AnyContent] =
     userAction.async { implicit request =>
-      val user = request.user
+      val user              = request.user
       val tools: List[Tool] = toolConfig.values
         .unsafeRunSync()
         .values

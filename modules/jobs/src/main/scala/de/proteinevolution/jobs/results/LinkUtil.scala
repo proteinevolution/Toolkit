@@ -80,7 +80,7 @@ object LinkUtil {
       case "ecod"    => val idEcod = id.slice(5, 14); generateLink(ecodBaseLink, idEcod, id)
       case "cath"    => val idCath = id.slice(5, 12); generateLink(cathBaseLink, idCath, id)
       case "phrog"   => val idPhrog = id.replaceAll("phrog_", ""); generateLink(phrogBaseLink, idPhrog, id)
-      case "keggoc" =>
+      case "keggoc"  =>
         val idKeggoc = id.split("OC.").last; generateLink(keggocBaseLink, idKeggoc, id)
 
       case _ => id
@@ -116,7 +116,7 @@ object LinkUtil {
       case prokaryoticProteasomeNameReg(_) => links += generateLink(ncbiProteinBaseLink, idNcbi, "NCBI Fasta")
       case pdbNameReg(_)                   => links += generateLink(pdbeBaseLink, idPdb, "PDBe")
       case pfamNameReg(_)                  => links += generateLink(cddBaseLink, idCDD, "CDD")
-      case alphafolddbNameReg(_) =>
+      case alphafolddbNameReg(_)           =>
         links += generateLink(uniprotBaseLink, idAlphaFold, "UniProt")
         links += generateLink(uniprotBaseLink, idAlphaFold + ".fasta", "UniProt FASTA")
       case uniprotNameReg(_) =>

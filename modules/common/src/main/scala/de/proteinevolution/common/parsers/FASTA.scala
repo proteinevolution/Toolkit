@@ -140,7 +140,7 @@ object FASTA {
     private[FASTA] def parse(input: String): Option[FASTA] = {
       parseAll(sequence, input) match {
         case Success(es, _) => Some(FASTA(List(Entry("empty header", es))))
-        case _ =>
+        case _              =>
           parseAll(entries, input) match {
             case Success(es, _) => Some(FASTA(es))
             case _              => None
