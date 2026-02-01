@@ -60,11 +60,13 @@ class SubmissionController @Inject() (
           Unauthorized
         } else {
           request.body.asObject match {
-            case None => BadRequest
+            case None      => BadRequest
             case Some(obj) =>
               if (obj.contains("isPublic")) {
-                jobActorAccess
-                  .sendToJobActor(jobID, SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false)))
+                jobActorAccess.sendToJobActor(
+                  jobID,
+                  SetJobPublic(jobID, obj("isPublic").get.asBoolean.getOrElse(false))
+                )
               }
               Ok
           }
@@ -91,7 +93,7 @@ class SubmissionController @Inject() (
 
   def submitJob(toolName: String): Action[Json] = userAction(circe.json).async { implicit request =>
     request.body.asObject match {
-      case None => fuccess(BadRequest)
+      case None      => fuccess(BadRequest)
       case Some(obj) =>
         val parts: Iterable[(String, String)] = for {
           (key, json) <- obj.toIterable
