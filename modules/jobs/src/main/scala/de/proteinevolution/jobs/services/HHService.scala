@@ -42,7 +42,7 @@ class HHService @Inject() (
       tool <- toolFinder.getTool(jobID)
     } yield (json, tool)).map {
       case (json, tool) => resultFiles.parseResult(tool, json)
-      case _ =>
+      case _            =>
         val error = "parsing result json failed."
         logger.error(error)
         Left(DecodingFailure(error, Nil))
