@@ -55,7 +55,7 @@ class Runscript(files: Seq[File]) extends TELRegex with Logging {
   // Special fields to put the runscript into a larger context
 
   private case class Replacer(arguments: Seq[(String, ValidArgument)]) {
-    private var counter = -1
+    private var counter               = -1
     def apply(m: Regex.Match): String = {
       m.groupNames.foreach(s =>
         logger.debug(s)

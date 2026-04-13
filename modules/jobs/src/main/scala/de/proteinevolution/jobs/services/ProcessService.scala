@@ -82,7 +82,7 @@ final class ProcessService @Inject() (
           val generateAlignmentScript = (scriptPath + "/generateAlignment.sh").toFile // HHPRED, HHBLITS alnEval
           val retrieveFullSeq         = (scriptPath + "/retrieveFullSeq.sh").toFile
           val retrieveAlnEval         = (scriptPath + "/retrieveAlnEval.sh").toFile   // Hmmer & PSIBLAST alnEval
-          val retrieveFullSeqHHblits =
+          val retrieveFullSeqHHblits  =
             (scriptPath + "/retrieveFullSeqHHblits.sh").toFile // why so little abstractions ???
 
           val fullEvalAccs: () => String =
@@ -94,7 +94,7 @@ final class ProcessService @Inject() (
                 "%s ".format(result.HSPS(num - 1).accession)
               }.mkString
 
-          val tempFileName = UUID.randomUUID().toString
+          val tempFileName     = UUID.randomUUID().toString
           val (script, params) = (tool, form.forwardHitsMode, form.sequenceLengthMode) match {
             case (HHBLITS, "eval", "aln") | (HHPRED, "eval", "aln") =>
               (
@@ -102,7 +102,7 @@ final class ProcessService @Inject() (
                 List(
                   "jobID"    -> jobId,
                   "filename" -> tempFileName,
-                  "numList" ->
+                  "numList"  ->
                   result.HSPS.filter(_.eValue <= form.eval).map { _.num }.mkString(" ")
                 )
               )
