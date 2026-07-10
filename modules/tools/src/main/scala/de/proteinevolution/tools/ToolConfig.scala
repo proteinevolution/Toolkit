@@ -147,7 +147,7 @@ class ToolConfig @Inject() (
       validationParams
     )
     val inputGroup: Seq[String] = paramAccess.paramGroups("Input")
-    val toolParameterForm = ToolParameters(
+    val toolParameterForm       = ToolParameters(
       Seq(
         ParameterSection(
           "Input",
