@@ -53,7 +53,7 @@ class UserSessionService @Inject() (
       // cache related stuff should remain in the project where the cache is bound
       userCache.get[User](sessionID) match {
         case Some(user) => fuccess(user)
-        case None => // session not known yet in cache
+        case None       => // session not known yet in cache
           val newSessionData = SessionData(
             ip = MurmurHash3.stringHash(request.remoteAddress).toString,
             userAgent = request.headers.get(Http.HeaderNames.USER_AGENT).getOrElse("Not specified"),
